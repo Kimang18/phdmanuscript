@@ -14,6 +14,16 @@ To build your own thesis you can use the provided [Dockerfile](Dockerfile), or d
   - `(GNU)make` (for the Makefile),
   - `texlive` (the full one is provided by Nix, just to be safe).
 
+If you clone from manuscript-template, `xurl.sty` is needed. It can be found on Internet.
+
+Note that for MacUser, Inkscape is required. We install with homebrew by
+
+```
+brew install inkscape
+```
+
+If everything is good, you should be able to launch `make` command without errors. This produces a pdf file called `thesis.pdf`.
+
 # Adding your work
 
 This template contains only the introduction and conclusion chapter.
