@@ -127,12 +127,52 @@
 \newcommand{\repeatfootnote}[1]{\textsuperscript{\ref{#1}}}
 
 
-
-% Math notations
-\newcommand{\Algo}{\mathfrak{A}}
+% MDP Notation
+\newcommand{\StateSpace}{\mathcal{S}}       % MC state space -->
+\newcommand{\nStateSpace}{S}                % state space size
+\newcommand{\mdpTran}{p}                       % mdp transition kernel -->
+\newcommand{\mdpRew}{r}                        % mdp reward function -->
+\newcommand{\tran}{P}                       % MC transition kernel -->
+\newcommand{\rew}{\mathbf{r}}                        % MC reward function -->
+\newcommand{\pol}{\pi}                      % policy -->
+\newcommand{\vfunc}{v}                      % value function -->
+\newcommand{\qfunc}{q}                     % action-value function -->
+\newcommand{\SC}{SC}                        % sample complexity -->
+\newcommand{\Algo}{\mathfrak{A}}            % algorithm used -->
 \newcommand{\Reg}{\mathrm{Regret}}              % regret -->
 \newcommand{\BayReg}{\mathrm{BayesRegret}}              % bayesian regret -->
+\newcommand{\nbStates}{k}                   % number of states in each Markovian bandit -->
+\newcommand{\nbBandits}{n}                  % number of Markovian bandits -->
+\newcommand{\state}{x}                      % Markovian bandit state -->
+\newcommand{\statePrime}{y}                % Markovian bandit next state -->
+\newcommand{\mdpModel}{\mathcal{M}}         % MDP Model
+\newcommand{\mdpStateSpace}{\mathcal{E}}    % MDP state space
+\newcommand{\ActionSpace}{\mathcal{A}}      % MDP action space -->
+\newcommand{\Action}{a}                     % MDP action -->
+\newcommand{\ActionPrime}{b}                % MDP next action -->
+\newcommand{\mdpState}{\mathbf{x}}                   % MDP state -->
+\newcommand{\mdpStatePrime}{\mathbf{y}}              % MDP next state -->
+\newcommand{\discount}{\beta}               % MDP discount factor -->
+\newcommand{\bandit}{\mathcal{B}}           % bandit symbol -->
+\newcommand{\GIndex}{\gamma}                % Gittins Index symbol -->
+\newcommand{\horizon}{H}                    % episode's length in FiniteHorizon setting -->
+\newcommand{\nbEpisodes}{K}                 % the total number of episodes
+% Estimate symbols
+\newcommand{\estTran}{\hat{\tran}}          % estimated transition
+\newcommand{\estRew}{\hat{\rew}}            % estimated reward
+\newcommand{\estMdp}{\hat{\mdpModel}}       % estimated MDP Model
+\newcommand{\estPol}{\hat{\pol}}       % estimated MDP Model
+% Random Variables
+\newcommand{\RVmdpState}{X}                 % MDP state random variable
+\newcommand{\RVmdpStatePrime}{Y}                 % MDP state random variable
+\newcommand{\RVaction}{A}                 % MDP state random variable
+\newcommand{\RVstate}{X}                    % Markovian bandit state random variable
+\newcommand{\RVrew}{R}                      % reward random variable
+\newcommand{\RVvfunc}{V}                    % reward random variable
+\newcommand{\RVqfunc}{Q}                    % reward random variable
 
+
+% Math notations
 \newcommand{\mcal}[1]{\mathcal{#1}}
 \newcommand{\proba}[1]{\mathbb{P}\left(#1\right)}
 \newcommand{\ex}[1]{\mathbb{E}\left[#1\right]}
@@ -163,3 +203,7 @@
 \newcommand{\mTilde}{\tilde{M}}
 \newcommand{\aTilde}{\tilde{a}}
 \newcommand{\piTilde}{\tilde{\pi}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+
