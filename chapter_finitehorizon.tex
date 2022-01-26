@@ -132,22 +132,32 @@
         \subsubsection{Gap from concentration}
         \label{subsubsec:sec_gap_conc}
         
-            Let $\Action_{kh}=\pol_{k}(x_{kh})$ be the action that policy $\pol_k$ takes when at state $x_{kh}$ at time step $h$ in episode $k$. From Bellman's equation, we have
+            Let $a_{kh}=\pik(x_{kh})$ be the action that policy $\pik$ takes when at state $x_{kh}$ at time step $h$ in episode $k$. From Bellman's equation, we have
             \begin{align*}
                 V^{\pik}_{M,H}(x_{k1})
-                &= r(x_{k1},\Action_{k1}) +\sum_{y\in\mdpStateSpace}\tran(x_{k1},\Action_{k1},y)V^{\pik}_{M,H-1}(y) \\
-                &= r(x_{k1},\Action_{k1}) +P(x_{k1},a_{k1})V^{\pik}_{M,H-1} \\
-                V^{\pik}_{M_k,H}(x_{k1}) &= r_k(x_{k1},\Action_{k1}) +P_k(x_{k1},a_{k1})V^{\pik}_{M_k,H-1}
+                &= r^{\pik}(x_{k1}) +\sum_{y\in\mSpace}P^{\pik}(x_{k1},y)V^{\pik}_{M,H-1}(y)
+            \end{align*}
+            In vector form, we have
+            \begin{align*}
+                V^{\pik}_{M,H} &= r^{\pik} +P^{\pik}V^{\pik}_{M,H-1} \\
+                V^{\pik}_{M_k,H} &= r^{\pik}_k +P^{\pik}_kV^{\pik}_{M_k,H-1}.
             \end{align*}
             Then,
             \begin{align*}
                 \Delta_k^{conc}
-                &= V^{\pik}_{M_k,1}(x_{k1}) -V^{\pik}_{M,1}(x_{k1}) \\
-                &= r_k(x_{k1},a_{k1})-r(x_{k1},a_{k1}) +(P_k(x_{k1},a_{k1}) -P(x_{k1},a_{k1}))V^{\pik}_{M_k,2} +P(x_{k1},a_{k1})(V^{\pik}_{M,2}-V^{\pik}_{M_k,2}) \\
-                &= (r_k-r)(x_{k1},a_{k1}) +[(P_k -P)V^{\pik}_{M_k,2}](x_{k1},a_{k1}) +\ex{V^{\pik}_{M,2}(Y)-V^{\pik}_{M_k,2}(Y) \mid Y\sim P(x_{k1},a_{k1})} \\
-                &\le \vert r_k-r\vert(x_{k1},a_{k1}) +(H-1)\Vert P_k -P\Vert_1(x_{k1},a_{k1}) +\ex{V^{\pik}_{M,2}(Y)-V^{\pik}_{M_k,2}(Y) \mid Y\sim P(x_{k1},a_{k1})}.
+                &= V^{\pik}_{M_k,1} -V^{\pik}_{M,1} \\
+                &= r^{\pik}_k-r^{\pik} +(P^{\pik}_k -P^{\pik})V^{\pik}_{M_k,2} +P^{\pik}(V^{\pik}_{M,2}-V^{\pik}_{M_k,2}).
             \end{align*}
-            Continue to rollout Bellman's equation for $V^{\pik}_{M_k,h}-V^{\pik}_{M,h}$, we get
+            So, at state $x_{k1}$
+            \begin{align*}
+                \Delta_k^{conc}(x_{k1})
+                &= r^{\pik}_k(x_{k1})-r^{\pik}(x_{k1}) +[(P^{\pik}_k(x_{k1},\cdot) -P^{\pik}(x_{k1},\cdot))V^{\pik}_{M_k,2}] \\
+                &\qquad +\ex{V^{\pik}_{M,2}(Y)-V^{\pik}_{M_k,2}(Y) \mid Y\sim P^{\pik}(x_{k1},\cdot)} \\
+                &\le \vert r^{\pik}_k(x_{k1}) -r^{\pik}(x_{k1})\vert +(H-1)\Vert P^{\pik}_k(x_{k1},\cdot) -P^{\pik}(x_{k1},\cdot)\Vert_1 \\
+                &\qquad +\ex{V^{\pik}_{M,2}(Y)-V^{\pik}_{M_k,2}(Y) \mid Y\sim P^{\pik}(x_{k1},\cdot)}.
+            \end{align*}
+            Continue to rollout Bellman's equation for $V^{\pik}_{M_k,h}-V^{\pik}_{M,h}$ with $2\le h\le H$, we get
+            %TOCONTINUE
             \begin{align*}
                 \ex{\Delta_k^{conc}} \le \sum_{h=1}^{H}\vert r_k-r\vert(x_{kh},a_{kh}) +(H-1)\Vert P_k -P\Vert_1(x_{kh},a_{kh}).
             \end{align*}
