@@ -4,27 +4,26 @@
     \section{Regret}
     \label{sec:regret}
     
-        In general, in MDP $M=\langle\mcal{E},\mcal{A},r,P,H\rangle$, the agent starts to play from state $x$ with a certain probability given by the distribution $\rho(x)$. When using the algorithm $\Algo$ to play for time $T$, the incurring regret is given by
+        In general, in MDP $M=\langle\mSpace,\aSpace,r,P,H\rangle$, the agent starts to play from state $x$ with a certain probability given by the distribution $\rho(x)$. When using the algorithm $\Algo$ to play for $T$ time steps, the incurring regret is given by
         \begin{align}
-        \Reg(T,\Algo,M)=\sum_{k=1}^{\lceil T/H\rceil}\sum_{x\in\mcal{E}}\rho(x)\big(V_{M,1}^*(x) -V_{M,1}^{\pik}(x)\big) =\sum_{k=1}^{\lceil T/H\rceil}\Delta_k
+            \Reg(T,\Algo,M)=\sum_{k=1}^{\lceil T/H\rceil}\sum_{x\in\mcal{E}}\rho(x)\big(V_{M,1}^*(x) -V_{M,1}^{\pik}(x)\big) =\sum_{k=1}^{\lceil T/H\rceil}\sum_{x\in\mcal{E}}\rho(x)\Delta_k(x)
         \end{align}
-        where, during $k$th episode, $\Algo$ follows the policy $\pik$ which is optimal in the imagined MDP $\Mk$, $V^*_{M,1}(x)$ and $V_{M,1}^{\pik}(x)$ are the value of state $x$ under the optimal policy and the policy $\pik$ starting from time step $1$ to $H$ respectively, and $H$ is the horizon of each episode.
-        Note that we write $V_M$ as the value evaluated using the real MDP $M$ and $V_{\Mk}$ as the one evaluated using the imagined MDP $\Mk$.
-        
+        where, during $k$th episode, $\Algo$ follows policy $\pik$ which is optimal in the imaginary MDP $\Mk$, $V^*_{M,1}(x)$ and $V_{M,1}^{\pik}(x)$ are the value of state $x$ under the optimal policy and the policy $\pik$ starting from time step $1$ to $H$ respectively, and $H$ is the horizon of each episode.
+        Note that we write $V_M$ as the value evaluated using the real MDP $M$ and $V_{\Mk}$ as the one evaluated using the imaginary MDP $\Mk$. It is convenient to seperate the regret gap into two gaps as the following:
         \begin{enumerate}
-        \item the regret gap at $k$th episode:
-        \begin{align*}
-        \Delta_k &=V_{M,1}^*(x) -V_{M,1}^{\pik}(x) \\
-        &=\big(V^*_{M,1}(x) -V^{\pik}_{\Mk,1}(x)\big) +\big(V^{\pik}_{\Mk,1}(x) -V_{M,1}^{\pik}(x)\big) \\
-        &=\Delta_k^{opt}+\Delta_k^{conc}
-        \end{align*}
-        \item the gap from optimism $\Delta_k^{opt}=V^*_{M,1}(x) -V^{\pik}_{\Mk,1}(x)$, where $V^{\pik}_{\Mk,1}(x)$ is the value of state $x$ under the policy $\pik$ from time step $1$ to $H$ and evaluated in the imagined MDP $\Mk$
-        \item the gap from concentration $\Delta_k^{conc}=V^{\pik}_{\Mk,1}(x) -V_{M,1}^{\pik}(x)$.
+            \item the regret gap at $k$th episode:
+            \begin{align*}
+            \Delta_k &=V_{M,1}^* -V_{M,1}^{\pik} \\
+            &=\big(V^*_{M,1} -V^{\pik}_{\Mk,1}\big) +\big(V^{\pik}_{\Mk,1} -V_{M,1}^{\pik}\big) \\
+            &=\Delta_k^{opt}+\Delta_k^{conc}
+            \end{align*}
+        \item the gap from optimism $\Delta_k^{opt}(x)=V^*_{M,1}(x) -V^{\pik}_{\Mk,1}(x)$, where $V^{\pik}_{\Mk,1}(x)$ is the value of state $x$ under the policy $\pik$ from time step $1$ to $H$ and evaluated in the imagined MDP $\Mk$
+        \item the gap from concentration $\Delta_k^{conc}(x)=V^{\pik}_{\Mk,1}(x) -V_{M,1}^{\pik}(x)$.
         \end{enumerate}
         So,
         \begin{equation}
         \label{eq:eq_6}
-        \Reg(T,\Algo,M)= \sum_{k=1}^{\lceil T/H\rceil}(\Delta_k^{opt}+\Delta_k^{conc})
+        \Reg(T,\Algo,M)= \sum_{k=1}^{\lceil T/H\rceil}\sum_{x\in\mcal{E}}\rho(x)(\Delta_k^{opt}(x)+\Delta_k^{conc}(x))
         \end{equation}
     
     \section{UCRL2}
@@ -33,35 +32,35 @@
         \subsection{Optimism in Face of Uncertainty(OFU)}
         \label{subsec:OFU}
         
-            This algorithm uses the principle of "Optimism in Face of Uncertainty": when we are \textbf{uncertain} about the outcome, we consider the \textit{best possible world} and choose the \textit{best decision} in that world.
-            
+        This algorithm uses the principle of "Optimism in Face of Uncertainty": when we are \textbf{uncertain} about the outcome, we consider the \textit{best possible world} and choose the \textit{best decision} in imaginary world. Let $\mcal{O}_k$ be the set of observations collected until the beginning of episode $k$. UCRL2 does
             \begin{enumerate}
-                \item compute a set of plausible MDPs, $\mcal{M}_k$, at the beginning of episode $k$ that contains the unknown MDP $M$ with high probability (this is equivalent to compute $\mcal{R}_k$ and $\mcal{P}_k$ containing $r$ and $P$ respectively with high probability)
+                \item \label{it:ucrl2_1} compute a set of plausible MDPs, $\mcal{M}_k$, based on the observations $\mcal{O}_k$ at the beginning of episode $k$. This set contains the unknown MDP $M$ with high probability (this is equivalent to compute the sets $\mcal{R}_k$ and $\mcal{P}_k$ containing $r$ and $P$ respectively with high probability)
                 \item compute $\pik$ such that
                     \begin{align}
-                    V_{\Mk,1}^{\pik} \ge \max_{\pi}\max_{\Mbar\in\mcal{M}_k} V_{\Mbar,1}^\pi
+                        V_{\Mk,1}^{\pik} \ge \max_{\pi}\max_{\Mbar\in\mcal{M}_k} V_{\Mbar,1}^\pi
                     \end{align}
                 \item follow $\pik$ during the episode $k$
+                \item after finishing episode $k$, update $\mcal{O}_{k+1}$ and go back to \ref{it:ucrl2_1}
             \end{enumerate}
         
         \subsection{High Probability Event}
         \label{subsec:high_prob_event}
+            In order to build the sets $\mcal{R}$ and $\mcal{P}$, we should review some inequalities that are vital to our construction.
         
             \begin{thm}[Hoeffding inequality]
             \label{thm:hoeffding}
                 Let $\{R_i\}_{i\le n}$ be independent and identically distributed random variable with mean $r$ bounded in $[0,1]$.
-                By Hoeffding's inequality,
+                By Hoeffding inequality,
                 \begin{align*}
-                    \proba{\big\vert\frac{1}{n}\sum_{i=1}^nR_i-r\big\vert>\ep}\le2\exp\left(-2n\ep^2\right)
+                    \proba{\Big\vert\frac{1}{n}\sum_{i=1}^nR_i-r\Big\vert>\ep}\le2\exp\left(-2n\ep^2\right)
                 \end{align*}
-                The random variables $\{\RVrew_i\}_{i\le n}$ bounded in $[0,1]$ are $1/2$-sub-Gaussian.
+                The random variables $\{R_i\}_{i\le n}$ bounded in $[0,1]$ are $(1/2)$-sub-Gaussian.
             \end{thm}
-            
             \begin{thm}[Weissman inequality (Inequalities for L1 deviation of the empirical distribution)]
             \label{thm:weissman}
-                Let $\{Y_i\}_{i\le n}$ be $n$ i.i.d sample from a distribution $\tran$ over a finite set $\mdpStateSpace=\{1,\dots,E\}$. Define the empirical distribution $\Pbar(y)=\frac{1}{n}\sum_{i=1}^{n}\mathbb{I}_{Y_i=y}, \forall y\in\mdpStateSpace$. Then, for any $\ep>0$,
+                Let $\{Y_i\}_{i\le n}$ be $n$ i.i.d sample from a distribution $P$ over a finite set $\mSpace=\{1,\dots,\mSize\}$. Define the empirical distribution $\Pbar(y)=\frac{1}{n}\sum_{i=1}^{n}\mathbb{I}_{Y_i=y}, \forall y\in\mSpace$. Then, for any $\ep>0$,
                 \begin{align*}
-                    \proba{\Vert\Pbar-P\Vert_1> \ep} \le 2^E\exp\left(-\frac{n\ep^2}{2}\right)
+                    \proba{\Vert\Pbar-P\Vert_1> \ep} \le 2^\mSize\exp\left(-\frac{n\ep^2}{2}\right)
                 \end{align*}
             \end{thm}
             
@@ -69,9 +68,10 @@
             Let $N_t(x,a)$ be the number of visits to state-action pair $(x,a)$ up to time $t$.
             We have
             \begin{align*}
-                \rbar_t(x,a) =\frac1{N_t(x,a)}\sum_{h=1}^{t}R_h\I_{\{X_h=x\wedge A_t=a\}} \text{ and } \Pbar_t(x,a,y) =\frac1{N_t(x,a)}\sum_{h=1}^{t}\I_{\{X_h=x\wedge A_t=a\wedge X_{h+1}=y\}}
+                \rbar_t(x,a) =\frac1{N_t(x,a)}\sum_{h=1}^{t}R_h\I_{\{X_h=x\wedge A_h=a\}} \text{ and } \Pbar_t(x,a,y) =\frac1{N_t(x,a)}\sum_{h=1}^{t}\I_{\{X_h=x\wedge A_h=a\wedge X_{h+1}=y\}}
             \end{align*}
-            
+
+            Now, we prove a high probability event:
             \begin{lem}
             \label{lem:high_prob_event}
                 Let $L_t:=\sqrt{2\log(4EAt/\delta)}$. Then, the event
@@ -115,10 +115,12 @@
     \subsection{Regret bound}
     \label{subsec:regret_ucrl2}
     
+    %TOCONTINUE
         Let $t_k:=(k-1)H+1$ and $L_{t_k}=\sqrt{2\log(4EAt_k/\delta)}$.
         Define the set of plausible MDPs by
         \begin{align*}
-            \mcal{M}_k :=\left\{(r_k,P_k) \colon \forall x,a, \vert r_k(x,a)-\rbar_k(x,a)\vert \le \frac{L_{t_k}}{2\sqrt{N_k(x,a)}} \text{ and } \Vert P_k(x,a)-\Pbar_k(x,a)\Vert_1\le \frac{L_{t_k}+1.5\sqrt{E}}{\sqrt{N_k(x,a)}}\right\}.
+            \mcal{M}_k :=\left\{(r_k,P_k) \colon \forall x,a, \vert r_k(x,a)-\rbar_k(x,a)\vert \le \frac{L_{t_k}}{2\sqrt{N_k(x,a)}} \text{ and }\right. \\
+            \left. \Vert P_k(x,a)-\Pbar_k(x,a)\Vert_1\le \frac{L_{t_k}+1.5\sqrt{E}}{\sqrt{N_k(x,a)}}\right\}.
         \end{align*}
         So, under event $\event_k$, the unknown MDP $M$ belongs to $\mcal{M}_k$.
         By the definition of $\pik$, $\Delta_k^{opt}=V^*_{M,1}(x) -V^{\pik}_{\Mk,1}(x)\le0$.
