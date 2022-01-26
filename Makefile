@@ -40,6 +40,12 @@ chapter_introduction: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\watermarkfalse" >> macros.include.tex
 	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
 
+chapter_multiarmedbandit: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \\\includechaptermultiarmedbandit {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
+
 chapter_finitehorizon: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterfinitehorizon {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
