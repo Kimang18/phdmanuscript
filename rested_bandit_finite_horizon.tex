@@ -1,5 +1,5 @@
-\chapter{Rested Bandit in Finite Horizon}
-\label{ch:rested_bandit}
+\chapter{Reinforement Learning with Finite Horizon}
+\label{ch:rl_finite_horizon}
 
     \section{Regret}
     \label{sec:regret}
@@ -47,9 +47,8 @@
         \subsection{High Probability Event}
         \label{subsec:high_prob_event}
         
-            %\begin{thm}[Hoeffding inequality]
-            \begin{thm}
-                \label{thm:hoeffding}
+            \begin{thm}[Hoeffding inequality]
+            \label{thm:hoeffding}
                 Let $\{R_i\}_{i\le n}$ be independent and identically distributed random variable with mean $r$ bounded in $[0,1]$.
                 By Hoeffding's inequality,
                 \begin{align*}
@@ -58,8 +57,7 @@
                 The random variables $\{\RVrew_i\}_{i\le n}$ bounded in $[0,1]$ are $1/2$-sub-Gaussian.
             \end{thm}
             
-            %\begin{thm}[Weissman inequality (Inequalities for L1 deviation of the empirical distribution)]
-            \begin{thm}
+            \begin{thm}[Weissman inequality (Inequalities for L1 deviation of the empirical distribution)]
             \label{thm:weissman}
                 Let $\{Y_i\}_{i\le n}$ be $n$ i.i.d sample from a distribution $\tran$ over a finite set $\mdpStateSpace=\{1,\dots,E\}$. Define the empirical distribution $\Pbar(y)=\frac{1}{n}\sum_{i=1}^{n}\mathbb{I}_{Y_i=y}, \forall y\in\mdpStateSpace$. Then, for any $\ep>0$,
                 \begin{align*}
@@ -74,7 +72,7 @@
                 \rbar_t(x,a) =\frac1{N_t(x,a)}\sum_{h=1}^{t}R_h\I_{\{X_h=x\wedge A_t=a\}} \text{ and } \Pbar_t(x,a,y) =\frac1{N_t(x,a)}\sum_{h=1}^{t}\I_{\{X_h=x\wedge A_t=a\wedge X_{h+1}=y\}}
             \end{align*}
             
-            \begin{lemma}
+            \begin{lem}
             \label{lem:high_prob_event}
                 Let $L_t:=\sqrt{2\log(4EAt/\delta)}$. Then, the event
                 \begin{align}
@@ -82,7 +80,7 @@
                 \text{ and } &\Vert\Pbar_{t'}(x,a)-P(x,a)\Vert_1\le \frac{L_t+1.5\sqrt{E}}{\sqrt{N_{t'}(x,a)}}\bigg\}
                 \end{align}
                 is true with probability $1-\delta$.
-            \end{lemma}
+            \end{lem}
             \begin{proof}
                 By Theorem~\ref{thm:hoeffding}, for any $\ep>0$, one has
                 \begin{align*}
@@ -198,198 +196,197 @@
                 &\le H\Big(\sqrt{2\log(4EAT/\delta)} +1.5\sqrt{E}\Big) \Big(EAH +2\sqrt{EAT}\Big) +T\delta
             \end{align*}
             
-            This result is a significant statistical guarantee as its scaling is close to the fundamental lower bound $\Omega(\sqrt{HEAT})$ \cite{jakschNearoptimalRegretBounds; osbandLowerBoundsRegret2016}.
+            This result is a significant statistical guarantee as its scaling is close to the fundamental lower bound $\Omega(\sqrt{HEAT})$ \cite{jaksch2010near, osband2016lower}.
     
     \section{UCBVI}
     \label{sec:ucbvi}
-    TOCONTinUE
-    OFU algorithm presented above applies the confidence sets on the parameters of the model, namely $(r,P)$. Another approach from \cite{gheshlaghiazarMinimaxRegretBounds2017} is to directly apply the confidence set on the value function. One known algorithm is UCBVI that works as the following
-    
-    At the start of episode $k$,
-    \begin{enumerate}
-    \item compute the empirical reward and transition $(\rbar_k,\Pbar_k)$ for all state-action pairs
-    \item set $V_{k,H+1}=0$
-    \item for each time step $h=H,\dots,1$, compute the value and quality function for each $(x,a)$ state-action pairs:
-    \begin{align*}
-    Q_{k,h}(x,a) &=\min\left\{Q_{k-1,h}(x,a), H, \rbar_k(x,a) +\Pbar_k(x,a)V_{k,h+1} +b_k(x,a)\right\} \\
-    V_{k,h}(x) &= \max_{a\in\ActionSpace}Q_{k,h}(x,a)
-    \end{align*}
-    \item during episode $k$, for each time step $h=1,\dots,H$, 
-    \begin{align*}
-    \pol_{k}(x_{kh}) =\arg\max_{a\in\ActionSpace}Q_{k,h}(x_{kh},a)=\Action_{kh}
-    \end{align*}
-    \end{enumerate}
-    
-    \subsection{High Probability Event}
-    \label{subsec:high_prob_event}
-    
-    Let $L_t:=\log(4E^2At/\delta)$. For any deterministic mappings $f\colon \mcal{E}\mapsto[0,H-1]$, and any $g\colon\mcal{E}\mapsto[0,H]$, we define the following events:
-    \begin{align}
-    &\event_1:=\left\{\forall x, a, t'\le t,|\rhat_{t'}(x,a)-r(x,a)+[(\Phat_{t'}-P)f](x,a)| \le H\sqrt{\frac{L_t}{2N_{t'}(x,a)}}\right\} \\
-    &\event_2:=\left\{\forall x, a, y, t'\le t,|\Phat_{t'}(x,a,y)-P(x,a,y)|g(y) \le\sqrt{\frac{2P(x,a,y)[1-P(x,a,y)]g^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x,a)}\right\} \\
-    &\event:=\event_1\cap\event_2.
-    \end{align}
-    
-    \begin{lemma}
-    \label{lem:high_prob}
-    For any deterministic mappings $f\colon \mcal{E}\mapsto[0,H-1]$ and $g\colon \mcal{E}\mapsto[0,H]$, we have $\proba{\event}\ge1-\delta$.
-    \end{lemma}
-    \begin{proof}
-    Given $\{U_i\}_{1\le i\le n}$ independent samples of random variable $U\in[0, c]$ where $c\in\R$, Theorem~\ref{thm:hoeffding} gives, for $\ep>0$,
-    \begin{align*}
-    \proba{|\bar{U}-\ex{U}|\ge \varepsilon} \le 2e^{-2\frac{n}{c^2}\varepsilon^2}
-    \end{align*}
-    Consider a fixed $(x,a)$.
-    For any deterministic mapping $f\colon\mcal{E}\mapsto[0,H-1]$, let $U:=R+\beta f(Y)$ be a random variable where $R\in[0,1]$ and $Y\in\mcal{E}$ are random variables such that $\ex{R}=r(x,a)$ and $\proba{Y=y}=P(x,a,y)$.
-    Hence, the expectation of $U$ is given by 
-    \begin{align*}
-    \ex{U}=r(x,a) +\sum_{y\in\mcal{E}}P(x,a,y)f(y)=r(x,a) +P(x,a)f.
-    \end{align*}
-    Also, $U\in [0,H]$.
-    After $n$ of activations, we will have collected $\{U_i\}_{1\le i\le n}$.
-    The empirical estimate of $U$ is
-    $$\bar{U}:=\frac1n\sum_{i=1}^{n} U_i=\rbar(x,a) +\Pbar(x,a)f.$$
-    Then,
-    \begin{align*}
-    &\proba{\vert\bar{U}-\ex{U}\vert >\varepsilon} \le2e^{-2\frac{n\varepsilon^2}{H^2}} \\
-    &\proba{\vert \rbar(x,a)-r(x,a) +(\Pbar(x,a) -P(x,a))f\vert >\varepsilon} \le2e^{-2\frac{n\varepsilon^2}{H^2}}.
-    \end{align*}
-    Using the same approach above,
-    \begin{align*}
-    \proba{\neg\event_1} 
-    &=\proba{\exists x,a, t'\le t,|\rbar_{t'}(x,a)-r(x,a)+(\Pbar_{t'}(x,a)-P(x,a))f| >H\sqrt{\frac{L_t}{2N_{t'}(x_a)}}} \\
-    &\le2\sum_{x,a} \sum_{t'=1}^{t}e^{-\log(4E^2At/\delta)} =2EAt\frac{\delta}{4E^2At}=\frac{\delta}{2E}
-    \end{align*}
-    Given $\{U_i\}_{1\le i\le n}$ independent samples of random variable $U\in[0, c]$ where $c\in\R$ and $\var{U}=\sigma^2$, Bernstein inequality gives
-    \begin{align*}
-    \proba{|\bar{U}-\ex{U}|> \varepsilon} \le 2e^{-\frac{n\varepsilon^2}{2\sigma^2+\frac{2c}3\varepsilon}}
-    \end{align*}
-    Consider a fixed $(x,a,y)$. For any deterministic mapping $g\colon\mcal{E}\mapsto[0,H]$, let $U:=g(Y)$ be a random variable and $Y\in\mcal{E}$ where $\proba{Y=y}=P(x,a,y)$.
-    So, we have
-    \begin{align*}
-    \ex{U}=P(x,a,y)g(y),\ \var{U}=P(x,a,y)(1-P(x,a,y))g^2(y):=\sigma^2(y), \text{ and } U\in[0,H].
-    \end{align*}
-    Then,
-    \begin{align*}
-    \proba{\neg\event_2}
-    &=\proba{\exists x,a,y,t'\le t,|\Pbar_{t'}(x,a,y)-P(x,a,y)|g(y) >\sqrt{\frac{2\sigma^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x,a)}} \\
-    &\le\sum_{x,a,y} \sum_{t'=1}^{t} \proba{|\Pbar_{t'}(x,a,y)-P(x,a,y)|g(y) \le\sqrt{\frac{2\sigma^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x_a)}\mid N_{t'}(x_a)=n} \\
-    &\le E^2At 2\exp\left(-\frac{n\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)^2}{2\sigma^2(y)+\frac{2H}{3}\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)}\right) \\
-    &\le 2E^2At\exp\left(-\frac{n\left[\frac{2\sigma^2(y)L_t}{n} +\frac{2HL_t}{3n}\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)\right]}{2\sigma^2(y)+\frac{2H}{3}\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)}\right) \\
-    &=2E^2At\exp(-\log(4E^2At/\delta)) = \frac{\delta}2
-    \end{align*}
-    Now,
-    \begin{align*}
-    \proba{\neg\event} 
-    &\le\proba{\neg\event_1} +\proba{\neg\event_2}\le\frac{\delta}{2E} +\frac{\delta}2\le \delta\frac{1+E}{2E} \le \delta.
-    \end{align*}
-    \end{proof}
-    
-    \begin{lemma}
-    \label{lem:bern}
-    Under event $\event$, for any $g\colon\mcal{E}\mapsto[0,H]$ and any $x,a$,
-    \begin{align*}
-    \vert (\Pbar_t(x,a)-P(x,a))g \vert
-    \le \frac1H\ex{g(Y) \mid Y\sim P(x,a)} +\frac{SH^2L_t}{N_t(x,a)}
-    \end{align*}
-    \end{lemma}
-    \begin{proof}
-    \begin{align*}
-    \vert (\Pbar_t(x,a)-P(x,a))g \vert
-    &= \vert\sum_{y\in\mcal{E}}\big(\Pbar_t(x,a,y) -P(x,a,y)\big)g(y)\vert \\
-    &\le \sum_{y\in\mcal{E}}|\Pbar_t(x,a,y) -P(x,a,y)|g(y) \\
-    &\overset{(a)}{\le} \sum_{y\in\mcal{E}} \sqrt{\frac{2P(x,a,y)[1-P(x,a,y)]g^2(y)L_t}{N_t(x,a)}} +\sum_{y\in\mcal{E}}\frac{2HL_t}{3N_t(x,a)} \\
-    &\le \sum_{y\in\mcal{E}} \sqrt{\frac{2P(x,a,y)g^2(y)L_t}{N_t(x,a)}} +\frac{2EHL_t}{3N_t(x,a)} \\
-    &\overset{(b)}{\le}\sqrt{E}\sqrt{\frac{2L_t}{N_t(x,a)} \sum_{y\in\mcal{E}}P(x,a,y)g^2(y)} +\frac{2EHL_t}{3N_t(x,a)} \\
-    &=\sqrt{\frac{2EH^2L_t}{N_t(x,a)} \sum_{y\in\mcal{E}}P(x,a,y)\frac{g^2(y)}{H^2}} +\frac{2EHL_t}{3N_t(x,a)} \\
-    &\overset{(c)}{\le}\frac{EH^2L_t}{N_t(x,a)} +\sum_{y\in\mcal{E}}P(x,a,y)\frac{g^2(y)}{H^2} +\frac{2EHL_t}{3N_t(x,a)} \\
-    &\overset{(d)}{\le} \sum_{y\in\mcal{E}}P(x,a,y)\frac{g(y)}{H} +\frac{EH^2L_t}{N_t(x,a)}\\
-    &=\frac1H\ex{g(Y) \mid Y\sim P(x,a)} +\frac{EH^2L_t}{N_t(x,a)} 
-    \end{align*}
-    where $(a)$ is true under the event $\xi$, $(b)$ is true due to Cauchy-Schwartz inequality, $(c)$ is true due to $ab\le(a^2+b^2)/2$ and $(d)$ is true due to $g\le H$.
-    \end{proof}
-    
-    \begin{lemma}
-    \label{lem:bonus}
-    Let $L_t:=\log(4E^2At/\delta)$. For any $x,a$, define $b(x,a):=H\sqrt{\frac{L_t}{2N_t(x,a)}}$.
-    Let $\mTilde:=\langle\mcal{E}, [n], \rhat+b, \Phat\rangle$ be a MDP and $V_{\mTilde}^{*}$ be the optimal value function in $\mTilde$.
-    Under event $\event$, $$V_{\mTilde}^{*} \ge V_M^*.$$
-    \end{lemma}
-    \begin{proof}
-    Let $\pik$ be the policy used during episode $k$. By Bellman, we have
-    \begin{align*}
-    V_{k,h}(x)
-    &= \rbar(x,\pik(x)) +b(x,\pik(x)) +\Pbar(x,\pik(x)) V_{k,h+1} \\
-    &\ge \rbar(x,\pi_*(x)) +b(x,\pi_*(x)) +\Pbar(x,\pi_*(x)) V_{k,h+1}.
-    \end{align*}
-    Then,
-    \begin{align*}
-    V_{k,h}(x) -V_{M,h}^{*}(x)
-    &= \rbar(x,\pik(x)) +b(x,\pik(x)) +\Pbar(x,\pik(x)) V_{k,h+1} 
-    -r(x,\pi_*(x)) -P(x,\pi_*(x))V_{M,h+1}^{*} \\
-    &\ge \rbar(x,\pi_*(x)) +b(x,\pi_*(x)) +(\Pbar(x,\pi_*(x)) V_{k,h+1}
-    -r(x,\pi_*(x)) -P(x,\pi_*(x))V_{M,h+1}^{*} \\
-    &= b(x,\pi_*(x)) +(\rbar-r)(x,\pi_*(x)) +[(\Pbar-P)V_{M,h+1}^{*}](x,\pi_*(x)) +\Pbar(x,\pi_*(x))(V_{k,h+1} -V_{M,h+1}^{*}).
-    \end{align*}
-    For $h=H$, we have $V_{k,H}(x) -V_{M,h}^*(x) \ge b(x,\pi_*(x)) +(\rbar-r)(x,\pi_*(x)) \ge0$ where the last inequality is true under event $\event_k$.
-    Suppose that $V_{k,h}\ge V_{M,h}^*$ is true for $h=\{h+1,\dots,H\}$.
-    We prove that $V_{k,l}\ge V_{M,l}^*$ is also true for $l=h$.
-    We have
-    \begin{align*}
-    V_{k,h}(x) -V_{M,h}^{*}(x)
-    &\ge b(x,\pi_*(x)) +(\rbar-r)(x,\pi_*(x)) +[(\Pbar-P)V_{M,h+1}^{*}](x,\pi_*(x)) +\Pbar(x,\pi_*(x))(V_{k,h+1} -V_{M,h+1}^{*}) \\
-    &\ge b(x,\pi_*(x)) +(\rbar-r)(x,\pi_*(x)) +[(\Pbar-P)V_{M,h+1}^{*}](x,\pi_*(x)) \ge0.
-    \end{align*}
-    where the last inequality is true, again, under event $\event_k$.
-    \end{proof}
-    
-    \subsection{Regret bound}
-    \label{subsec:regret_ucbvi}
-    
-    Let $b_k:=H\sqrt{\log(4E^2At_k/\delta)/(2N_k)}$. Under $\event_k$, Lemma~\ref{lem:bonus} implies that $V_M^*-V_M^{\pik} \le V_{k}-V_M^{\pik}$.
-    Then,
-    \begin{align*}
-    V_{k,1}(x_{k1}) -V_{M,1}^{\pik}(x_{k1})
-    &=\rbar_k(x_{k1},a_{k1}) +\Pbar_k(x_{k1},a_{k1})V_{k,2} +b_k(x_{k1},a_{k1}) -r(x_{k1},a_{k1}) -P(x_{k1},a_{k1})V_{M,2}^{\pik} \\
-    &=\rbar_k(x_{k1},a_{k1}) -r(x_{k1},a_{k1}) +(\Pbar_k(x_{k1},a_{k1}) -P(x_{k1},a_{k1}))V_{M,2}^*
-    \end{align*}
-    Since $\Pbar V_k -PV_M^{\pik}=(\Pbar-P)V_M^* +P(V_k-V_M^{\pik}) +(\Pbar-P)(V_k-V_M^*)$, we have
-    \begin{align*}
-    V_{k,1}(x_{k1}) -V_{M,1}^{\pik}(x_{k1})
-    &=\underbrace{\rbar_k(x_{k1},a_{k1}) -r(x_{k1},a_{k1}) +(\Pbar_k(x_{k1},a_{k1}) -P(x_{k1},a_{k1}))V_{M,2}^*}_{I_1} +b_k(x_{k1},a_{k1}) \\
-    &\qquad +P(x_{k1},a_{k1})(V_{k,2}-V_{M,2}^{\pik}) +\underbrace{(\Pbar_k(x_{k1},a_{k1})-P(x_{k1},a_{k1}))(V_{k,2}-V_{M,2}^*)}_{I_2}.
-    \end{align*}
-    Under $\event_k$, we have
-    \begin{align*}
-    I_1&\le H\sqrt{\frac{L_{t_k}}{2N_k(x_{k1},a_{k1})}}
-    \end{align*}
-    by when taking $f=V_{M,2}^{*}$ under event $\event_k$.
-    Also, by Lemma~\ref{lem:bern} with $g=V_{k,2} -V_{M,2}^{*}$,
-    \begin{align*}
-    I_2
-    &\le\frac1{H}\ex{V_{k,2}(Y) -V_{M,2}^{*}(Y) \mid Y\sim P(x_{k1}, a_{k1})} +\frac{EH^2L_{t_k}}{N_k(x,a)} \\
-    &\le\frac1{H}\ex{V_{k,2}(Y) -V_{M,2}^{\pik}(Y) \mid Y\sim P(x_{k1}, a_{k1})} +\frac{EH^2L_{t_k}}{N_k(x,a)}
-    \end{align*}
-    where the last inequality is true due to $V^*_M\ge V^{\pik}_{M}$.
-    Then,
-    \begin{align*}
-    V_{k,1}(x_{k1}) -V_{M,1}^{\pik}(x_{k1})
-    &\le b_k(x_{k1},a_{k1}) +H\sqrt{\frac{L_{t_k}}{2N_k(x_{k1},a_{k1})}} +\frac{EH^2L_{t_k}}{N_k(x_{k1},a_{k1})} \\
-    &\qquad +\left(1+\frac1H\right)\ex{V_{k,2}(Y) -V_{M,2}^{\pik}(Y) \mid Y\sim P(x_{k1}, a_{k1})}
-    \end{align*}
-    Continue to rollout $V_{k,h}-V_{M,h}^{\pik}$, we get
-    \begin{align*}
-    \ex{V_{k,1}(x_{k1})-V_{M,1}^{\pik}(x_{k1})}
-    &\le\sum_{t=t_k}^{t_{k+1}-1}\underbrace{\left(1+\frac1H\right)^{t-t_k}}_{\le e} \left(2H\sqrt{\frac{L_{t_k}}{2N_k(x_t,a_t)}} +\frac{EH^2L_{t_k}}{N_k(x_t,a_t)}\right).
-    \end{align*}
-    Then, the upper bound of expected regret of UCBVI is
-    \begin{align*}
-    \ex{\Reg(T,\mathrm{UCBVI},M)}
-    &\le e\sum_{k=1}^{\lceil T/H\rceil}\sum_{t=t_k}^{t_{k+1}-1}  \left(H\sqrt{\frac{2L_{t_k}}{N_k(x_t,a_t)}} +\frac{EH^2L_{t_k}}{N_k(x_t,a_t)}\right) +T\delta \\
-    &\le e\sum_{k=1}^{\lceil T/H\rceil}\sum_{t=t_k}^{t_{k+1}-1}  \left(H\sqrt{\frac{2L_T}{N_k(x_t,a_t)}} +\frac{EH^2L_T}{N_k(x_t,a_t)}\right) +T\delta
-    \end{align*}
-    Using the same approach to bound $\sum_{k=1}^{\lceil T/H\rceil}\sum_{t=t_k}^{t_{k+1}-1}[1/\sqrt{N_k(x_t,a_t)} +1/N_k(x_t,a_t)]$,
-    the expected regret is roughly upper bounded by $\tilde{O}\left(H\sqrt{EAT}\right)$.
+        OFU algorithm presented above applies the confidence sets on the parameters of the model, namely $(r,P)$. Another approach from \cite{gheshlaghiazarMinimaxRegretBounds2017} is to directly apply the confidence set on the value function. One known algorithm is UCBVI that works as the following
+        
+        At the start of episode $k$,
+        \begin{enumerate}
+            \item compute the empirical reward and transition $(\rbar_k,\Pbar_k)$ for all state-action pairs
+            \item set $V_{k,H+1}=0$
+            \item for each time step $h=H,\dots,1$, compute the value and quality function for each $(x,a)$ state-action pairs:
+            \begin{align*}
+                Q_{k,h}(x,a) &=\min\left\{Q_{k-1,h}(x,a), H, \rbar_k(x,a) +\Pbar_k(x,a)V_{k,h+1} +b_k(x,a)\right\} \\
+                V_{k,h}(x) &= \max_{a\in\ActionSpace}Q_{k,h}(x,a)
+            \end{align*}
+            \item during episode $k$, for each time step $h=1,\dots,H$, 
+            \begin{align*}
+                \pol_{k}(x_{kh}) =\arg\max_{a\in\ActionSpace}Q_{k,h}(x_{kh},a)=\Action_{kh}
+            \end{align*}
+        \end{enumerate}
+        
+        \subsection{High Probability Event}
+        \label{subsec:high_prob_event}
+        
+            Let $L_t:=\log(4E^2At/\delta)$. For any deterministic mappings $f\colon \mcal{E}\mapsto[0,H-1]$, and any $g\colon\mcal{E}\mapsto[0,H]$, we define the following events:
+            \begin{align}
+                &\event_1:=\left\{\forall x, a, t'\le t,|\rhat_{t'}(x,a)-r(x,a)+[(\Phat_{t'}-P)f](x,a)| \le H\sqrt{\frac{L_t}{2N_{t'}(x,a)}}\right\} \\
+                &\event_2:=\left\{\forall x, a, y, t'\le t,|\Phat_{t'}(x,a,y)-P(x,a,y)|g(y) \le\sqrt{\frac{2P(x,a,y)[1-P(x,a,y)]g^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x,a)}\right\} \\
+                &\event:=\event_1\cap\event_2.
+            \end{align}
+            
+            \begin{lem}
+            \label{lem:high_prob}
+                For any deterministic mappings $f\colon \mcal{E}\mapsto[0,H-1]$ and $g\colon \mcal{E}\mapsto[0,H]$, we have $\proba{\event}\ge1-\delta$.
+            \end{lem}
+            \begin{proof}
+            Given $\{U_i\}_{1\le i\le n}$ independent samples of random variable $U\in[0, c]$ where $c\in\R$, Theorem~\ref{thm:hoeffding} gives, for $\ep>0$,
+            \begin{align*}
+            \proba{|\bar{U}-\ex{U}|\ge \varepsilon} \le 2e^{-2\frac{n}{c^2}\varepsilon^2}
+            \end{align*}
+            Consider a fixed $(x,a)$.
+            For any deterministic mapping $f\colon\mcal{E}\mapsto[0,H-1]$, let $U:=R+\beta f(Y)$ be a random variable where $R\in[0,1]$ and $Y\in\mcal{E}$ are random variables such that $\ex{R}=r(x,a)$ and $\proba{Y=y}=P(x,a,y)$.
+            Hence, the expectation of $U$ is given by 
+            \begin{align*}
+            \ex{U}=r(x,a) +\sum_{y\in\mcal{E}}P(x,a,y)f(y)=r(x,a) +P(x,a)f.
+            \end{align*}
+            Also, $U\in [0,H]$.
+            After $n$ of activations, we will have collected $\{U_i\}_{1\le i\le n}$.
+            The empirical estimate of $U$ is
+            $$\bar{U}:=\frac1n\sum_{i=1}^{n} U_i=\rbar(x,a) +\Pbar(x,a)f.$$
+            Then,
+            \begin{align*}
+            &\proba{\vert\bar{U}-\ex{U}\vert >\varepsilon} \le2e^{-2\frac{n\varepsilon^2}{H^2}} \\
+            &\proba{\vert \rbar(x,a)-r(x,a) +(\Pbar(x,a) -P(x,a))f\vert >\varepsilon} \le2e^{-2\frac{n\varepsilon^2}{H^2}}.
+            \end{align*}
+            Using the same approach above,
+            \begin{align*}
+            \proba{\neg\event_1} 
+            &=\proba{\exists x,a, t'\le t,|\rbar_{t'}(x,a)-r(x,a)+(\Pbar_{t'}(x,a)-P(x,a))f| >H\sqrt{\frac{L_t}{2N_{t'}(x_a)}}} \\
+            &\le2\sum_{x,a} \sum_{t'=1}^{t}e^{-\log(4E^2At/\delta)} =2EAt\frac{\delta}{4E^2At}=\frac{\delta}{2E}
+            \end{align*}
+            Given $\{U_i\}_{1\le i\le n}$ independent samples of random variable $U\in[0, c]$ where $c\in\R$ and $\var{U}=\sigma^2$, Bernstein inequality gives
+            \begin{align*}
+            \proba{|\bar{U}-\ex{U}|> \varepsilon} \le 2e^{-\frac{n\varepsilon^2}{2\sigma^2+\frac{2c}3\varepsilon}}
+            \end{align*}
+            Consider a fixed $(x,a,y)$. For any deterministic mapping $g\colon\mcal{E}\mapsto[0,H]$, let $U:=g(Y)$ be a random variable and $Y\in\mcal{E}$ where $\proba{Y=y}=P(x,a,y)$.
+            So, we have
+            \begin{align*}
+            \ex{U}=P(x,a,y)g(y),\ \var{U}=P(x,a,y)(1-P(x,a,y))g^2(y):=\sigma^2(y), \text{ and } U\in[0,H].
+            \end{align*}
+            Then,
+            \begin{align*}
+            \proba{\neg\event_2}
+            &=\proba{\exists x,a,y,t'\le t,|\Pbar_{t'}(x,a,y)-P(x,a,y)|g(y) >\sqrt{\frac{2\sigma^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x,a)}} \\
+            &\le\sum_{x,a,y} \sum_{t'=1}^{t} \proba{|\Pbar_{t'}(x,a,y)-P(x,a,y)|g(y) \le\sqrt{\frac{2\sigma^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x_a)}\mid N_{t'}(x_a)=n} \\
+            &\le E^2At 2\exp\left(-\frac{n\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)^2}{2\sigma^2(y)+\frac{2H}{3}\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)}\right) \\
+            &\le 2E^2At\exp\left(-\frac{n\left[\frac{2\sigma^2(y)L_t}{n} +\frac{2HL_t}{3n}\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)\right]}{2\sigma^2(y)+\frac{2H}{3}\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)}\right) \\
+            &=2E^2At\exp(-\log(4E^2At/\delta)) = \frac{\delta}2
+            \end{align*}
+            Now,
+            \begin{align*}
+            \proba{\neg\event} 
+            &\le\proba{\neg\event_1} +\proba{\neg\event_2}\le\frac{\delta}{2E} +\frac{\delta}2\le \delta\frac{1+E}{2E} \le \delta.
+            \end{align*}
+            \end{proof}
+            
+            \begin{lem}
+            \label{lem:bern}
+            Under event $\event$, for any $g\colon\mcal{E}\mapsto[0,H]$ and any $x,a$,
+            \begin{align*}
+            \vert (\Pbar_t(x,a)-P(x,a))g \vert
+            \le \frac1H\ex{g(Y) \mid Y\sim P(x,a)} +\frac{SH^2L_t}{N_t(x,a)}
+            \end{align*}
+            \end{lem}
+            \begin{proof}
+            \begin{align*}
+            \vert (\Pbar_t(x,a)-P(x,a))g \vert
+            &= \vert\sum_{y\in\mcal{E}}\big(\Pbar_t(x,a,y) -P(x,a,y)\big)g(y)\vert \\
+            &\le \sum_{y\in\mcal{E}}|\Pbar_t(x,a,y) -P(x,a,y)|g(y) \\
+            &\overset{(a)}{\le} \sum_{y\in\mcal{E}} \sqrt{\frac{2P(x,a,y)[1-P(x,a,y)]g^2(y)L_t}{N_t(x,a)}} +\sum_{y\in\mcal{E}}\frac{2HL_t}{3N_t(x,a)} \\
+            &\le \sum_{y\in\mcal{E}} \sqrt{\frac{2P(x,a,y)g^2(y)L_t}{N_t(x,a)}} +\frac{2EHL_t}{3N_t(x,a)} \\
+            &\overset{(b)}{\le}\sqrt{E}\sqrt{\frac{2L_t}{N_t(x,a)} \sum_{y\in\mcal{E}}P(x,a,y)g^2(y)} +\frac{2EHL_t}{3N_t(x,a)} \\
+            &=\sqrt{\frac{2EH^2L_t}{N_t(x,a)} \sum_{y\in\mcal{E}}P(x,a,y)\frac{g^2(y)}{H^2}} +\frac{2EHL_t}{3N_t(x,a)} \\
+            &\overset{(c)}{\le}\frac{EH^2L_t}{N_t(x,a)} +\sum_{y\in\mcal{E}}P(x,a,y)\frac{g^2(y)}{H^2} +\frac{2EHL_t}{3N_t(x,a)} \\
+            &\overset{(d)}{\le} \sum_{y\in\mcal{E}}P(x,a,y)\frac{g(y)}{H} +\frac{EH^2L_t}{N_t(x,a)}\\
+            &=\frac1H\ex{g(Y) \mid Y\sim P(x,a)} +\frac{EH^2L_t}{N_t(x,a)} 
+            \end{align*}
+            where $(a)$ is true under the event $\xi$, $(b)$ is true due to Cauchy-Schwartz inequality, $(c)$ is true due to $ab\le(a^2+b^2)/2$ and $(d)$ is true due to $g\le H$.
+            \end{proof}
+            
+            \begin{lem}
+            \label{lem:bonus}
+            Let $L_t:=\log(4E^2At/\delta)$. For any $x,a$, define $b(x,a):=H\sqrt{\frac{L_t}{2N_t(x,a)}}$.
+            Let $\mTilde:=\langle\mcal{E}, [n], \rhat+b, \Phat\rangle$ be a MDP and $V_{\mTilde}^{*}$ be the optimal value function in $\mTilde$.
+            Under event $\event$, $$V_{\mTilde}^{*} \ge V_M^*.$$
+            \end{lem}
+            \begin{proof}
+            Let $\pik$ be the policy used during episode $k$. By Bellman, we have
+            \begin{align*}
+            V_{k,h}(x)
+            &= \rbar(x,\pik(x)) +b(x,\pik(x)) +\Pbar(x,\pik(x)) V_{k,h+1} \\
+            &\ge \rbar(x,\pi_*(x)) +b(x,\pi_*(x)) +\Pbar(x,\pi_*(x)) V_{k,h+1}.
+            \end{align*}
+            Then,
+            \begin{align*}
+            V_{k,h}(x) -V_{M,h}^{*}(x)
+            &= \rbar(x,\pik(x)) +b(x,\pik(x)) +\Pbar(x,\pik(x)) V_{k,h+1} 
+            -r(x,\pi_*(x)) -P(x,\pi_*(x))V_{M,h+1}^{*} \\
+            &\ge \rbar(x,\pi_*(x)) +b(x,\pi_*(x)) +(\Pbar(x,\pi_*(x)) V_{k,h+1}
+            -r(x,\pi_*(x)) -P(x,\pi_*(x))V_{M,h+1}^{*} \\
+            &= b(x,\pi_*(x)) +(\rbar-r)(x,\pi_*(x)) +[(\Pbar-P)V_{M,h+1}^{*}](x,\pi_*(x)) +\Pbar(x,\pi_*(x))(V_{k,h+1} -V_{M,h+1}^{*}).
+            \end{align*}
+            For $h=H$, we have $V_{k,H}(x) -V_{M,h}^*(x) \ge b(x,\pi_*(x)) +(\rbar-r)(x,\pi_*(x)) \ge0$ where the last inequality is true under event $\event_k$.
+            Suppose that $V_{k,h}\ge V_{M,h}^*$ is true for $h=\{h+1,\dots,H\}$.
+            We prove that $V_{k,l}\ge V_{M,l}^*$ is also true for $l=h$.
+            We have
+            \begin{align*}
+            V_{k,h}(x) -V_{M,h}^{*}(x)
+            &\ge b(x,\pi_*(x)) +(\rbar-r)(x,\pi_*(x)) +[(\Pbar-P)V_{M,h+1}^{*}](x,\pi_*(x)) +\Pbar(x,\pi_*(x))(V_{k,h+1} -V_{M,h+1}^{*}) \\
+            &\ge b(x,\pi_*(x)) +(\rbar-r)(x,\pi_*(x)) +[(\Pbar-P)V_{M,h+1}^{*}](x,\pi_*(x)) \ge0.
+            \end{align*}
+            where the last inequality is true, again, under event $\event_k$.
+            \end{proof}
+        
+        \subsection{Regret bound}
+        \label{subsec:regret_ucbvi}
+        
+        Let $b_k:=H\sqrt{\log(4E^2At_k/\delta)/(2N_k)}$. Under $\event_k$, Lemma~\ref{lem:bonus} implies that $V_M^*-V_M^{\pik} \le V_{k}-V_M^{\pik}$.
+        Then,
+        \begin{align*}
+        V_{k,1}(x_{k1}) -V_{M,1}^{\pik}(x_{k1})
+        &=\rbar_k(x_{k1},a_{k1}) +\Pbar_k(x_{k1},a_{k1})V_{k,2} +b_k(x_{k1},a_{k1}) -r(x_{k1},a_{k1}) -P(x_{k1},a_{k1})V_{M,2}^{\pik} \\
+        &=\rbar_k(x_{k1},a_{k1}) -r(x_{k1},a_{k1}) +(\Pbar_k(x_{k1},a_{k1}) -P(x_{k1},a_{k1}))V_{M,2}^*
+        \end{align*}
+        Since $\Pbar V_k -PV_M^{\pik}=(\Pbar-P)V_M^* +P(V_k-V_M^{\pik}) +(\Pbar-P)(V_k-V_M^*)$, we have
+        \begin{align*}
+        V_{k,1}(x_{k1}) -V_{M,1}^{\pik}(x_{k1})
+        &=\underbrace{\rbar_k(x_{k1},a_{k1}) -r(x_{k1},a_{k1}) +(\Pbar_k(x_{k1},a_{k1}) -P(x_{k1},a_{k1}))V_{M,2}^*}_{I_1} +b_k(x_{k1},a_{k1}) \\
+        &\qquad +P(x_{k1},a_{k1})(V_{k,2}-V_{M,2}^{\pik}) +\underbrace{(\Pbar_k(x_{k1},a_{k1})-P(x_{k1},a_{k1}))(V_{k,2}-V_{M,2}^*)}_{I_2}.
+        \end{align*}
+        Under $\event_k$, we have
+        \begin{align*}
+        I_1&\le H\sqrt{\frac{L_{t_k}}{2N_k(x_{k1},a_{k1})}}
+        \end{align*}
+        by when taking $f=V_{M,2}^{*}$ under event $\event_k$.
+        Also, by Lemma~\ref{lem:bern} with $g=V_{k,2} -V_{M,2}^{*}$,
+        \begin{align*}
+        I_2
+        &\le\frac1{H}\ex{V_{k,2}(Y) -V_{M,2}^{*}(Y) \mid Y\sim P(x_{k1}, a_{k1})} +\frac{EH^2L_{t_k}}{N_k(x,a)} \\
+        &\le\frac1{H}\ex{V_{k,2}(Y) -V_{M,2}^{\pik}(Y) \mid Y\sim P(x_{k1}, a_{k1})} +\frac{EH^2L_{t_k}}{N_k(x,a)}
+        \end{align*}
+        where the last inequality is true due to $V^*_M\ge V^{\pik}_{M}$.
+        Then,
+        \begin{align*}
+        V_{k,1}(x_{k1}) -V_{M,1}^{\pik}(x_{k1})
+        &\le b_k(x_{k1},a_{k1}) +H\sqrt{\frac{L_{t_k}}{2N_k(x_{k1},a_{k1})}} +\frac{EH^2L_{t_k}}{N_k(x_{k1},a_{k1})} \\
+        &\qquad +\left(1+\frac1H\right)\ex{V_{k,2}(Y) -V_{M,2}^{\pik}(Y) \mid Y\sim P(x_{k1}, a_{k1})}
+        \end{align*}
+        Continue to rollout $V_{k,h}-V_{M,h}^{\pik}$, we get
+        \begin{align*}
+        \ex{V_{k,1}(x_{k1})-V_{M,1}^{\pik}(x_{k1})}
+        &\le\sum_{t=t_k}^{t_{k+1}-1}\underbrace{\left(1+\frac1H\right)^{t-t_k}}_{\le e} \left(2H\sqrt{\frac{L_{t_k}}{2N_k(x_t,a_t)}} +\frac{EH^2L_{t_k}}{N_k(x_t,a_t)}\right).
+        \end{align*}
+        Then, the upper bound of expected regret of UCBVI is
+        \begin{align*}
+        \ex{\Reg(T,\mathrm{UCBVI},M)}
+        &\le e\sum_{k=1}^{\lceil T/H\rceil}\sum_{t=t_k}^{t_{k+1}-1}  \left(H\sqrt{\frac{2L_{t_k}}{N_k(x_t,a_t)}} +\frac{EH^2L_{t_k}}{N_k(x_t,a_t)}\right) +T\delta \\
+        &\le e\sum_{k=1}^{\lceil T/H\rceil}\sum_{t=t_k}^{t_{k+1}-1}  \left(H\sqrt{\frac{2L_T}{N_k(x_t,a_t)}} +\frac{EH^2L_T}{N_k(x_t,a_t)}\right) +T\delta
+        \end{align*}
+        Using the same approach to bound $\sum_{k=1}^{\lceil T/H\rceil}\sum_{t=t_k}^{t_{k+1}-1}[1/\sqrt{N_k(x_t,a_t)} +1/N_k(x_t,a_t)]$,
+        the expected regret is roughly upper bounded by $\tilde{O}\left(H\sqrt{EAT}\right)$.
     
     \section{PSRL}
     \label{sec:psrl}
@@ -433,7 +430,7 @@
     - from Bayes's theorem: $$p(\theta|x_1,\dots,x_n) =\frac{l_{(x_1,\dots,x_n)}(\theta)p(\theta)}{p(x_1,\dots,x_n)} \propto l_{(x_1,\dots,x_n)}(\theta)p(\theta)$$
     - when needed, we draw $\hat{\theta}\sim l_{(x_1,\dots,x_n)}(\theta)p(\theta)$
     
-    ## Application of Posterior Sampling
+    \subsection{Application of Posterior Sampling}
     
     We make a hypothesis that the unknown $\mdpModel$ is drawn from a distribution $\phi(\mdpModel)$. It is our \textbf{prior distribution} about the MDP. So, we draw a MDP from that distribution, compute the respective optimal policy and play that policy in $\mdpModel$ for a whole episode to collect observations. Then, we refine our prior distribution based on Bayes' theorem and the observations collected. The refined distribution is called \textbf{posterior distribution}.
     
