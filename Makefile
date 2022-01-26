@@ -1,5 +1,5 @@
 # Thesis
-THESIS_ALL_TEX= $(wildcard *.tex)
+THESIS_ALL_TEX= $(ls -l *.tex)
 DEFAULT_TARGET= whole_thesis
 DEFAULT_PDF= thesis.pdf
 COMPILE_SLIDES := xelatex -shell-escape
@@ -38,19 +38,25 @@ chapter_introduction: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterintroduction {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	rubber --pdf --unsafe -Wall --jobname $@ thesis.tex
+	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
+
+chapter_finitehorizon: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \\\includechapterfinitehorizon {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
 
 chapter_conclusion: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterconclusion {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	rubber --pdf --unsafe -Wall --jobname $@ thesis.tex
+	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
 
 chapter_appendix: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterappendix {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	rubber --pdf --unsafe -Wall --jobname $@ thesis.tex
+	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
 
 #########################
 # Convenience shortcuts #
