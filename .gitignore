@@ -1,0 +1,13 @@
+*.synctex.gz
+*.aux
+*.bbl
+*.blg
+*.out
+*.log
+*.fls
+*.bcf
+*.run.xml
+thesis.lof
+thesis.lot
+thesis.toc
+svg-inkscape/
