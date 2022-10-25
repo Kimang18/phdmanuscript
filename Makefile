@@ -34,17 +34,21 @@ whole_thesis: $(THESIS_ALL_TEX) Makefile references.bib
 ############################
 # Only compile one chapter #
 ############################
+	
 chapter_introduction: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterintroduction {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	nix-shell -p rubber --run "rubber --pdf --synctex --unsafe -Wall --jobname $@ thesis.tex"
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	#nix-shell -p rubber --run "rubber --pdf --synctex --unsafe -Wall --jobname $@ thesis.tex"
 
+
+#nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
 markovianBandit_chapter: $(THESIS_ALL_TEX) Makefile references.bib
-	echo "\\\def \\\includechaptermultiarmedbandit {true}" > macros.include.tex
+	echo "\\\def \\\includemarkovianbanditchapter {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 reinforcementLearning_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterfinitehorizon {true}" > macros.include.tex

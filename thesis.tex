@@ -1,11 +1,5 @@
 %!TEX encoding = UTF-8 Unicode
 
-% rubber: path ./sty
-% rubber: path ./fig
-% rubber: path ./img
-% rubber: path ./inputs
-% rubber: shell_escape
-
 % The structure of this document is based on the my-thesis.tex example provided
 % with the cleanthesis package (see http://cleanthesis.der-ric.de/).
 % It also is inspired by the PhD manuscripts of Raphaël Bleuse, David Beniamine
@@ -45,6 +39,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{bm}
 
 % --- SPECIFIC ABBREVIATIONS MACROS -------------
 
@@ -98,9 +93,16 @@
 \pgfplotsset{compat=1.13}
 \usetikzlibrary{arrows,shapes,positioning,shadows,trees,calc,decorations.text}
 
-\usepackage{bm}
 
-\usepackage{titlesec}
+%\usepackage{titlesec}
+%titlesec is outdated and create Warning Missing number blablabla
+%https://tex.stackexchange.com/questions/302111/multiple-missing-number-treated-as-zero-and-illegal-unit-of-measure-pt-insert
+\makeatletter
+\renewcommand{\sectionlinesformat}[4]{%
+  \Ifstr{#1}{section}{\clearpage}{}%
+  \@hangfrom{\hskip #2#3}{#4}%
+}
+\makeatother
 
 % --- MODULAR CHAPTER COMPILATION -----
 
@@ -147,8 +149,8 @@
 \definecolor{myblue}{cmyk}{1, .50, .10, .01}  % see definition of "bluemagenta" in cleanthesis.sty
 \usepackage[procnames]{listings}
 \lstset{ %
-    backgroundcolor=\color{gray98},    % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
-    basicstyle=\ttfamily\scriptsize,        % the size of the fonts that are used for the code
+    backgroundcolor=\color{gray98},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+    basicstyle=\ttfamily\scriptsize,  % the size of the fonts that are used for the code
     breakatwhitespace=false,          % sets if automatic breaks should only happen at whitespace
     breaklines=true,                  % sets automatic line breaking
     showlines=true,                   % sets automatic line breaking
@@ -171,7 +173,7 @@
     stepnumber=2,                     % the step between two line-numbers. If it's 1, each line will be numbered
     stringstyle=\color{amdove},       % string literal style
     tabsize=2,                        % sets default tabsize to 2 spaces
-    % title=\lstname,                    % show the filename of files included with \lstinputlisting; also try caption instead of title
+    % title=\lstname,                 % show the filename of files included with \lstinputlisting; also try caption instead of title
     procnamekeys={call}
 }
 \definecolor{colorfuncall}{rgb}{0.6,0,0}
@@ -200,17 +202,20 @@
 }
 
 % --- Custom TODO line ------------------------
-\usepackage{mdframed}
-\newmdenv[%
-  linecolor=red,%
-  backgroundcolor=red!20,%
-  linewidth=3pt,%
-  hidealllines=true,%
-  leftline=true,%
-]{todoenv}
-\newcommand{\todo}[1]{\begin{todoenv}#1\end{todoenv}}
-\newcommand{\todoC}[1]{\todo{#1}}
-
+%\usepackage{mdframed}
+%\newmdenv[%
+%  linecolor=red,%
+%  backgroundcolor=red!20,%
+%  linewidth=3pt,%
+%  hidealllines=true,%
+%  leftline=true,%
+%]{todoenv}
+%\newcommand{\todo}[1]{\begin{todoenv}#1\end{todoenv}}
+%\newcommand{\todoC}[1]{\todo{#1}}
+\usepackage[textwidth=\linewidth]{todonotes}		% for todo's
+\renewcommand{\NG}[1]{\todo[color=blue!10,author=\textbf{\small NG},inline]{\small #1\\}}
+\newcommand{\BG}[1]{\todo[color=red!10,author=\textbf{\small BG},inline]{\small #1\\}}
+\newcommand{\KK}[1]{\todo[color=green!10,author=\textbf{\small KK},inline]{\small #1\\}}
 
 % === MACROS DEFINITION =======================================================
 
@@ -287,7 +292,6 @@
 \addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % main chapters go here
@@ -295,11 +299,10 @@
 \inputchapter{\includechapterintroduction}{chapter_introduction.tex}
 
 \bookmarksetup{startatroot}
-\inputchapter{\includechaptermultiarmedbandit}{chapter_multiarmedbandit.tex}
-
+\inputchapter{\includemarkovianbanditchapter}{markovianBandit_chapter.tex}
+%
 \bookmarksetup{startatroot}
-\inputchapter{\includechapterfinitehorizon}{chapter_finitehorizon.tex}
-
+\inputchapter{\includereinforcementlearningchapter}{reinforcementLearning_chapter.tex}
 
 \bookmarksetup{startatroot}  % https://stackoverflow.com/questions/1483396/how-to-explicitly-end-a-part-in-latex-with-hyperref
 \addtocontents{toc}{\bigskip}

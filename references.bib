@@ -2,7 +2,69 @@
 %--------------------- MISC -----------------------------
 %--------------------------------------------------------
 
+% Multi-action
+@article{hodge2015asymptotic,
+  title={On the asymptotic optimality of greedy index heuristics for multi-action restless bandits},
+  author={Hodge, David J and Glazebrook, Kevin D},
+  journal={Advances in Applied Probability},
+  volume={47},
+  number={3},
+  pages={652--667},
+  year={2015},
+  publisher={Cambridge University Press}
+}
+
+@article{glazebrook2011general,
+  title={General notions of indexability for queueing control and asset management},
+  author={Glazebrook, Kevin D and Hodge, David J and Kirkbride, Chris},
+  journal={The Annals of Applied Probability},
+  volume={21},
+  number={3},
+  pages={876--907},
+  year={2011},
+  publisher={Institute of Mathematical Statistics}
+}
+
+@inproceedings{meuleau1998solving,
+  title={Solving very large weakly coupled Markov decision processes},
+  author={Meuleau, Nicolas and Hauskrecht, Milos and Kim, Kee-Eung and Peshkin, Leonid and Kaelbling, Leslie Pack and Dean, Thomas L and Boutilier, Craig},
+  booktitle={AAAI/IAAI},
+  pages={165--172},
+  year={1998}
+}
+
+@article{xiong2021reinforcement,
+  title={Reinforcement Learning for Finite-Horizon Restless Multi-Armed Multi-Action Bandits},
+  author={Xiong, Guojun and Li, Jian and Singh, Rahul},
+  journal={arXiv preprint arXiv:2109.09855},
+  year={2021}
+}
+
+@inproceedings{killian2021beyond,
+  title={Beyond" To Act or Not to Act": Fast Lagrangian Approaches to General Multi-Action Restless Bandits},
+  author={Killian, Jackson A and Perrault, Andrew and Tambe, Milind},
+  booktitle={Proceedings of the 20th International Conference on Autonomous Agents and MultiAgent Systems},
+  pages={710--718},
+  year={2021}
+}
+
+@inproceedings{killian2021q,
+  title={Q-Learning Lagrange Policies for Multi-Action Restless Bandits},
+  author={Killian, Jackson A and Biswas, Arpita and Shah, Sanket and Tambe, Milind},
+  booktitle={Proceedings of the 27th ACM SIGKDD Conference on Knowledge Discovery \& Data Mining},
+  pages={871--881},
+  year={2021}
+}
+
 % Whittle Index
+
+@article{gast2022computing,
+  title={Computing Whittle (and Gittins) Index in Subcubic Time},
+  author={Gast, Nicolas and Gaujal, Bruno and Khun, Kimang},
+  journal={arXiv preprint arXiv:2203.05207},
+  year={2022}
+}
+
 @article{akbarzadeh2020conditions,
     title={Conditions for indexability of restless bandits and an algorithm to compute Whittle index},
     author={Akbarzadeh, Nima and Mahajan, Aditya},
@@ -481,19 +543,13 @@
   primaryClass = {cs, math, stat}
 }
 
-@article{ortnerRegretBoundsRestless2012a,
-  title = {Regret {{Bounds}} for {{Restless Markov Bandits}}},
-  author = {Ortner, Ronald and Ryabko, Daniil and Auer, Peter and Munos, R{\'e}mi},
-  year = {2012},
-  month = sep,
-  abstract = {We consider the restless Markov bandit problem, in which the state of each arm evolves according to a Markov process independently of the learner's actions. We suggest an algorithm that after $T$ steps achieves $\tilde\{O\}(\textbackslash{}sqrt\{T\})$ regret with respect to the best policy that knows the distributions of all arms. No assumptions on the Markov chains are made except that they are irreducible. In addition, we show that index-based policies are necessarily suboptimal for the considered problem.},
-  archivePrefix = {arXiv},
-  eprint = {1209.2693},
-  eprinttype = {arxiv},
-  file = {/Users/kimangkhun/Zotero/storage/DCBEGNDZ/Ortner et al. - 2012 - Regret Bounds for Restless Markov Bandits.pdf;/Users/kimangkhun/Zotero/storage/LPHSNTY5/1209.html},
-  journal = {arXiv:1209.2693 [cs, math, stat]},
-  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning},
-  primaryClass = {cs, math, stat}
+@inproceedings{ortner2012regret,
+  title={Regret bounds for restless markov bandits},
+  author={Ortner, Ronald and Ryabko, Daniil and Auer, Peter and Munos, R{\'e}mi},
+  booktitle={International conference on algorithmic learning theory},
+  pages={214--228},
+  year={2012},
+  organization={Springer}
 }
 
 @inproceedings{strehlTheoreticalAnalysisModelBased2005,
@@ -532,15 +588,39 @@
   year={2018},
   publisher={Now Publishers Inc.}
 }
-@inproceedings{azar2017minimax,
-  title={Minimax Regret Bounds for Reinforcement Learning},
-  author={Azar, Mohammad Gheshlaghi and Osband, Ian and Munos, R{\'e}mi},
-  booktitle={International Conference on Machine Learning},
-  pages={263--272},
-  year={2017}
-}
 
 % GittinsPS
+
+@article{gast2021reinforcement,
+  title={Reinforcement Learning for Markovian Bandits: Is Posterior Sampling more Scalable than Optimism?},
+  author={Gast, Nicolas and Gaujal, Bruno and Khun, Kimang},
+  journal={arXiv preprint arXiv:2106.08771},
+  year={2021}
+}
+
+@article{jung2019thompson,
+  title={Thompson sampling in non-episodic restless bandits},
+  author={Jung, Young Hun and Abeille, Marc and Tewari, Ambuj},
+  journal={arXiv preprint arXiv:1910.05654},
+  year={2019}
+}
+
+@article{wang2020restless,
+  title={Restless-UCB, an Efficient and Low-complexity Algorithm for Online Restless Bandits},
+  author={Wang, Siwei and Huang, Longbo and Lui, John},
+  journal={Advances in Neural Information Processing Systems},
+  volume={33},
+  pages={11878--11889},
+  year={2020}
+}
+
+@article{jung2019regret,
+  title={Regret bounds for thompson sampling in episodic restless bandit problems},
+  author={Jung, Young Hun and Tewari, Ambuj},
+  journal={Advances in Neural Information Processing Systems},
+  volume={32},
+  year={2019}
+}
 
 @article{jaksch2010near,
   title={Near-optimal Regret Bounds for Reinforcement Learning.},
@@ -558,27 +638,22 @@
   year={2016}
 }
 
-@article{gheshlaghiazarMinimaxRegretBounds2017,
-  title = {Minimax {{Regret Bounds}} for {{Reinforcement Learning}}},
-  author = {Gheshlaghi Azar, Mohammad and Osband, Ian and Munos, R{\'e}mi},
-  year = {2017},
-  month = mar,
-  volume = {1703},
-  pages = {arXiv:1703.05449},
-  abstract = {We consider the problem of provably optimal exploration in reinforcement learning for finite horizon MDPs. We show that an optimistic
-modification to value iteration achieves a regret bound of $\textbackslash{}tilde\{O\}( \textbackslash{}sqrt\{HSAT\} + H\^2S\^2A+H\textbackslash{}sqrt\{T\})$ where $H$ is the time horizon, $S$ the number of states, $A$ the number of actions and $T$ the number of time-steps. This result improves over the best previous known bound $\tilde\{O\}(HS \textbackslash{}sqrt\{AT\})$ achieved by the UCRL2 algorithm of Jaksch et al., 2010. The key significance of our new results is that when $T\textbackslash{}geq H\^3S\^3A$ and $SA\textbackslash{}geq H$, it leads to a regret of
-$\textbackslash{}tilde\{O\}(\textbackslash{}sqrt\{HSAT\})$ that matches the established lower bound of $\textbackslash{}Omega(\textbackslash{}sqrt\{HSAT\})$ up to a logarithmic factor. Our analysis contains two key insights. We use careful application of concentration
-inequalities to the optimal value function as a whole, rather than to the transitions probabilities (to improve scaling in $S$), and we define Bernstein-based "exploration bonuses" that use the empirical variance of the estimated values at the next states (to improve scaling in $H$).},
-  file = {/Users/kimangkhun/Zotero/storage/5YV5MWX8/Gheshlaghi Azar et al. - 2017 - Minimax Regret Bounds for Reinforcement Learning.pdf},
-  journal = {arXiv e-prints},
-  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Statistics - Machine Learning}
+@inproceedings{azar2017minimax,
+  title={Minimax regret bounds for reinforcement learning},
+  author={Azar, Mohammad Gheshlaghi and Osband, Ian and Munos, R{\'e}mi},
+  booktitle={International Conference on Machine Learning},
+  pages={263--272},
+  year={2017},
+  organization={PMLR}
 }
 
-@article{bourel2020tightening,
-  title={Tightening Exploration in Upper Confidence Reinforcement Learning},
-  author={Bourel, Hippolyte and Maillard, Odalric-Ambrym and Talebi, Mohammad Sadegh},
-  journal={arXiv preprint arXiv:2004.09656},
-  year={2020}
+@inproceedings{bourel2020tightening,
+  title={Tightening exploration in upper confidence reinforcement learning},
+  author={Bourel, Hippolyte and Maillard, Odalric and Talebi, Mohammad Sadegh},
+  booktitle={International Conference on Machine Learning},
+  pages={1056--1066},
+  year={2020},
+  organization={PMLR}
 }
 
 @article{bubeck2012regret,
@@ -782,20 +857,15 @@ inequalities to the optimal value function as a whole, rather than to the transi
   keywords = {algorithm theory,Chernoff bound,Convergence,entropy,Entropy,error probability,Error probability,expander graphs,finite random walk,graph theory,Graph theory,Iron,Ising system,Mathematics,partition function,Partitioning algorithms,probability,Random variables,random walks,Sampling methods,weighted graph,Writing}
 }
 
-@article{gittinsBanditProcessesDynamic1979a,
-  title = {Bandit {{Processes}} and {{Dynamic Allocation Indices}}},
-  author = {Gittins, J. C.},
-  year = {1979},
-  month = jan,
-  volume = {41},
-  pages = {148--164},
-  issn = {00359246},
-  doi = {10.1111/j.2517-6161.1979.tb01068.x},
-  abstract = {The paper aims to give a unified account of the central concepts in recent work on bandit processes and dynamic allocation indices; to show how these reduce some previously intractable problems to the problem of calculating such indices; and to describe how these calculations may be carried out. Applications to stochastic scheduling, sequential clinical trials and a class of search problems are discussed.},
-  file = {/Users/kimangkhun/Zotero/storage/ZRGJAEBX/Gittins - 1979 - Bandit Processes and Dynamic Allocation Indices.pdf},
-  journal = {Journal of the Royal Statistical Society: Series B (Methodological)},
-  language = {en},
-  number = {2}
+@article{gittins1979bandit,
+  title={Bandit processes and dynamic allocation indices},
+  author={Gittins, John C},
+  journal={Journal of the Royal Statistical Society: Series B (Methodological)},
+  volume={41},
+  number={2},
+  pages={148--164},
+  year={1979},
+  publisher={Wiley Online Library}
 }
 
 @article{katehakisMultiArmedBanditProblem1987a,
@@ -815,65 +885,31 @@ inequalities to the optimal value function as a whole, rather than to the transi
   number = {2}
 }
 
-@incollection{duffQLearningBanditProblems1995a,
-  title = {Q-{{Learning}} for {{Bandit Problems}}},
-  booktitle = {Machine {{Learning Proceedings}} 1995},
-  author = {Duff, Michael O.},
-  editor = {Prieditis, Armand and Russell, Stuart},
-  year = {1995},
-  month = jan,
-  pages = {209--217},
-  publisher = {{Morgan Kaufmann}},
-  address = {{San Francisco (CA)}},
-  doi = {10.1016/B978-1-55860-377-6.50034-7},
-  abstract = {Multi-armed bandits may be viewed as decompositionally-structured Markov decision processes (MDP's) with potentially very-large state sets. A particularly elegant methodology for computing optimal policies was developed over twenty ago by Gittins [Gittins \& Jones, 1974]. Gittins' approach reduces the problem of finding optimal policies for the original MDP to a sequence of low-dimensional stopping problems whose solutions determine the optimal policy through the so-called ``Gittins indices.'' Katehakis and Veinott [Katehakis \& Veinott, 1987] have shown that the Gittins index for a process in state i may be interpreted as a particular component of the maximum-value function associated with the ``restart-in-i'' process, a simple MDP to which standard solution methods for computing optimal policies, such as successive approximation, apply. This paper explores the problem of learning the Gittins indices on-line without the aid of a process model; it suggests utilizing process-state- specific Q-learning agents to solve their respective restart-in-state-i subproblems, and includes an example in which the online reinforcement learning approach is applied to a problem of stochastic scheduling-one instance drawn from a wide class of problems that may be formulated as bandit problems.},
-  file = {/Users/kimangkhun/Zotero/storage/5SESFE34/B9781558603776500347.html},
-  isbn = {978-1-55860-377-6},
-  language = {en}
+@incollection{duff1995q,
+  title={Q-learning for bandit problems},
+  author={Duff, Michael O},
+  booktitle={Machine Learning Proceedings 1995},
+  pages={209--217},
+  year={1995},
+  publisher={Elsevier}
 }
 
-
-@article{auerFinitetimeAnalysisMultiarmed2002,
-  title = {Finite-Time {{Analysis}} of the {{Multiarmed Bandit Problem}}},
-  author = {Auer, Peter and {Cesa-Bianchi}, Nicol{\`o} and Fischer, Paul},
-  year = {2002},
-  month = may,
-  volume = {47},
-  pages = {235--256},
-  issn = {1573-0565},
-  doi = {10.1023/A:1013689704352},
-  abstract = {Reinforcement learning policies face the exploration versus exploitation dilemma, i.e. the search for a balance between exploring the environment to find profitable actions while taking the empirically best action as often as possible. A popular measure of a policy's success in addressing this dilemma is the regret, that is the loss due to the fact that the globally optimal policy is not followed all the times. One of the simplest examples of the exploration/exploitation dilemma is the multi-armed bandit problem. Lai and Robbins were the first ones to show that the regret for this problem has to grow at least logarithmically in the number of plays. Since then, policies which asymptotically achieve this regret have been devised by Lai and Robbins and many others. In this work we show that the optimal logarithmic regret is also achievable uniformly over time, with simple and efficient policies, and for all reward distributions with bounded support.},
-  file = {/Users/kimangkhun/Zotero/storage/W7EBAECX/Auer et al. - 2002 - Finite-time Analysis of the Multiarmed Bandit Prob.pdf},
-  journal = {Machine Learning},
-  language = {en},
-  number = {2}
+@article{auer2002finite,
+  title={Finite-time analysis of the multiarmed bandit problem},
+  author={Auer, Peter and Cesa-Bianchi, Nicolo and Fischer, Paul},
+  journal={Machine learning},
+  volume={47},
+  number={2},
+  pages={235--256},
+  year={2002},
+  publisher={Springer}
 }
 
-@incollection{auerNearoptimalRegretBounds2009,
-  title = {Near-Optimal {{Regret Bounds}} for {{Reinforcement Learning}}},
-  booktitle = {Advances in {{Neural Information Processing Systems}} 21},
-  author = {Auer, Peter and Jaksch, Thomas and Ortner, Ronald},
-  editor = {Koller, D. and Schuurmans, D. and Bengio, Y. and Bottou, L.},
-  year = {2009},
-  pages = {89--96},
-  publisher = {{Curran Associates, Inc.}},
-  file = {/Users/kimangkhun/Zotero/storage/NVGQSD7P/Auer et al. - 2009 - Near-optimal Regret Bounds for Reinforcement Learn.pdf;/Users/kimangkhun/Zotero/storage/ZFQ5FWZT/3401-near-optimal-regret-bounds-for-reinforcement-learning.html}
-}
-
-@inproceedings{bartlettREGALRegularizationBased2009,
-  title = {{{REGAL}}: A Regularization Based Algorithm for Reinforcement Learning in Weakly Communicating {{MDPs}}},
-  shorttitle = {{{REGAL}}},
-  booktitle = {Proceedings of the {{Twenty}}-{{Fifth Conference}} on {{Uncertainty}} in {{Artificial Intelligence}}},
-  author = {Bartlett, Peter L. and Tewari, Ambuj},
-  year = {2009},
-  month = jun,
-  pages = {35--42},
-  publisher = {{AUAI Press}},
-  address = {{Montreal, Quebec, Canada}},
-  abstract = {We provide an algorithm that achieves the optimal regret rate in an unknown weakly communicating Markov Decision Process (MDP). The algorithm proceeds in episodes where, in each episode, it picks a policy using regularization based on the span of the optimal bias vector. For an MDP with S states and A actions whose optimal bias vector has span bounded by H, we show a regret bound of {\~O}(HS{$\surd$}AT). We also relate the span to various diameter-like quantities associated with the MDP, demonstrating how our results improve on previous regret bounds.},
-  file = {/Users/kimangkhun/Zotero/storage/LXYJCB2E/Bartlett and Tewari - 2009 - REGAL a regularization based algorithm for reinfo.pdf},
-  isbn = {978-0-9749039-5-8},
-  series = {{{UAI}} '09}
+@article{bartlett2012regal,
+  title={REGAL: A regularization based algorithm for reinforcement learning in weakly communicating MDPs},
+  author={Bartlett, Peter L and Tewari, Ambuj},
+  journal={arXiv preprint arXiv:1205.2661},
+  year={2012}
 }
 
 @incollection{fruitRegretMinimizationMDPs2017,
@@ -951,32 +987,42 @@ inequalities to the optimal value function as a whole, rather than to the transi
   number = {3/4}
 }
 
-@inproceedings{strensBayesianFrameworkReinforcement2000a,
-  title = {A {{Bayesian Framework}} for {{Reinforcement Learning}}},
-  booktitle = {Proceedings of the {{Seventeenth International Conference}} on {{Machine Learning}}},
-  author = {Strens, Malcolm J. A.},
-  year = {2000},
-  month = jun,
-  pages = {943--950},
-  publisher = {{Morgan Kaufmann Publishers Inc.}},
-  address = {{San Francisco, CA, USA}},
-  isbn = {978-1-55860-707-1},
-  series = {{{ICML}} '00}
+@inproceedings{bellemare2017distributional,
+  title={A distributional perspective on reinforcement learning},
+  author={Bellemare, Marc G and Dabney, Will and Munos, R{\'e}mi},
+  booktitle={International Conference on Machine Learning},
+  pages={449--458},
+  year={2017},
+  organization={PMLR}
 }
 
-@inproceedings{gopalanThompsonSamplingLearning2015,
-  title = {Thompson {{Sampling}} for {{Learning Parameterized Markov Decision Processes}}},
-  booktitle = {Conference on {{Learning Theory}}},
-  author = {Gopalan, Aditya and Mannor, Shie},
-  year = {2015},
-  month = jun,
-  pages = {861--898},
-  publisher = {{PMLR}},
-  issn = {1938-7228},
-  abstract = {We consider reinforcement learning in parameterized Markov Decision Processes (MDPs), where the parameterization may induce correlation across transition probabilities or rewards. Consequently, obs...},
-  file = {/Users/kimangkhun/Zotero/storage/K4QKDUN3/Gopalan and Mannor - 2015 - Thompson Sampling for Learning Parameterized Marko.pdf;/Users/kimangkhun/Zotero/storage/4BHJ9JK4/Gopalan15.html},
-  language = {en}
+@inproceedings{dabney2018distributional,
+  title={Distributional reinforcement learning with quantile regression},
+  author={Dabney, Will and Rowland, Mark and Bellemare, Marc and Munos, R{\'e}mi},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={32},
+  number={1},
+  year={2018}
 }
+
+@inproceedings{strens2000bayesian,
+  title={A Bayesian framework for reinforcement learning},
+  author={Strens, Malcolm},
+  booktitle={ICML},
+  volume={2000},
+  pages={943--950},
+  year={2000}
+}
+
+@inproceedings{gopalan2015thompson,
+  title={Thompson sampling for learning parameterized markov decision processes},
+  author={Gopalan, Aditya and Mannor, Shie},
+  booktitle={Conference on Learning Theory},
+  pages={861--898},
+  year={2015},
+  organization={PMLR}
+}
+
 @inproceedings{osband2017posterior,
   title={Why is posterior sampling better than optimism for reinforcement learning?},
   author={Osband, Ian and Van Roy, Benjamin},
@@ -987,16 +1033,12 @@ inequalities to the optimal value function as a whole, rather than to the transi
   organization={PMLR}
 }
 
-
-@incollection{osbandMoreEfficientReinforcement2013a,
-  title = {({{More}}) {{Efficient Reinforcement Learning}} via {{Posterior Sampling}}},
-  booktitle = {Advances in {{Neural Information Processing Systems}} 26},
-  author = {Osband, Ian and Russo, Daniel and Van Roy, Benjamin},
-  editor = {Burges, C. J. C. and Bottou, L. and Welling, M. and Ghahramani, Z. and Weinberger, K. Q.},
-  year = {2013},
-  pages = {3003--3011},
-  publisher = {{Curran Associates, Inc.}},
-  file = {/Users/kimangkhun/Zotero/storage/PVEFW3TL/Osband et al. - 2013 - (More) Efficient Reinforcement Learning via Poster.pdf;/Users/kimangkhun/Zotero/storage/WBCINFT5/5185-more-efficient-reinforcement-learning-via-posterior-sampling.html}
+@article{osband2013more,
+  title={(More) efficient reinforcement learning via posterior sampling},
+  author={Osband, Ian and Russo, Daniel and Van Roy, Benjamin},
+  journal={Advances in Neural Information Processing Systems},
+  volume={26},
+  year={2013}
 }
 
 @book{putermanMarkovDecisionProcesses1994,
@@ -1022,20 +1064,15 @@ journal = {Technometrics},
 doi = {10.1002/9780470980033.ch8}
 }
 
-@incollection{chakravortyMultiArmedBanditsGittins2014,
-  title = {Multi-{{Armed Bandits}}, {{Gittins Index}}, and Its {{Calculation}}},
-  booktitle = {Methods and {{Applications}} of {{Statistics}} in {{Clinical Trials}}},
-  author = {Chakravorty, Jhelum and Mahajan, Aditya},
-  editor = {Balakrishnan, N.},
-  year = {2014},
-  month = jun,
-  pages = {416--435},
-  publisher = {{John Wiley \& Sons, Inc.}},
-  address = {{Hoboken, NJ, USA}},
-  doi = {10.1002/9781118596333.ch24},
-  file = {/Users/kimangkhun/Zotero/storage/IPW8JXAY/Chakravorty and Mahajan - 2014 - Multi-Armed Bandits, Gittins Index, and its Calcul.pdf},
-  isbn = {978-1-118-59633-3 978-1-118-30476-1},
-  language = {en}
+@article{chakravorty2014multi,
+  title={Multi-armed bandits, Gittins index, and its calculation},
+  author={Chakravorty, Jhelum and Mahajan, Aditya},
+  journal={Methods and applications of statistics in clinical trials: Planning, analysis, and inferential methods},
+  volume={2},
+  number={416-435},
+  pages={455},
+  year={2014},
+  publisher={Wiley New York, NY}
 }
 
 @article{weberGittinsIndexMultiarmed1992,
@@ -1144,32 +1181,20 @@ doi = {10.1002/9780470980033.ch8}
   file = {/Users/kimangkhun/Zotero/storage/VXQ8RNQ3/Fink - 1997 - A Compendium of Conjugate Priors.pdf;/Users/kimangkhun/Zotero/storage/JKQLK3KV/summary.html}
 }
 
-@incollection{ouyangLearningUnknownMarkov2017b,
-  title = {Learning {{Unknown Markov Decision Processes}}: {{A Thompson Sampling Approach}}},
-  shorttitle = {Learning {{Unknown Markov Decision Processes}}},
-  booktitle = {Advances in {{Neural Information Processing Systems}} 30},
-  author = {Ouyang, Yi and Gagrani, Mukul and Nayyar, Ashutosh and Jain, Rahul},
-  editor = {Guyon, I. and Luxburg, U. V. and Bengio, S. and Wallach, H. and Fergus, R. and Vishwanathan, S. and Garnett, R.},
-  year = {2017},
-  pages = {1333--1342},
-  publisher = {{Curran Associates, Inc.}},
-  file = {/Users/kimangkhun/Zotero/storage/BX8AP6VQ/Ouyang et al. - 2017 - Learning Unknown Markov Decision Processes A Thom.pdf;/Users/kimangkhun/Zotero/storage/CFL8TFVP/6732-learning-unknown-markov-decision-processes-a-thompson-sampling-approach.html}
+@article{ouyang2017learning,
+  title={Learning unknown markov decision processes: A thompson sampling approach},
+  author={Ouyang, Yi and Gagrani, Mukul and Nayyar, Ashutosh and Jain, Rahul},
+  journal={Advances in neural information processing systems},
+  volume={30},
+  year={2017}
 }
 
-@article{filippiOptimismReinforcementLearning2010a,
-  title = {Optimism in {{Reinforcement Learning}} and {{Kullback}}-{{Leibler Divergence}}},
-  author = {Filippi, Sarah and Capp{\'e}, Olivier and Garivier, Aur{\'e}lien},
-  year = {2010},
-  month = sep,
-  pages = {115--122},
-  doi = {10.1109/ALLERTON.2010.5706896},
-  abstract = {We consider model-based reinforcement learning in finite Markov De- cision Processes (MDPs), focussing on so-called optimistic strategies. In MDPs, optimism can be implemented by carrying out extended value it- erations under a constraint of consistency with the estimated model tran- sition probabilities. The UCRL2 algorithm by Auer, Jaksch and Ortner (2009), which follows this strategy, has recently been shown to guarantee near-optimal regret bounds. In this paper, we strongly argue in favor of using the Kullback-Leibler (KL) divergence for this purpose. By studying the linear maximization problem under KL constraints, we provide an ef- ficient algorithm, termed KL-UCRL, for solving KL-optimistic extended value iteration. Using recent deviation bounds on the KL divergence, we prove that KL-UCRL provides the same guarantees as UCRL2 in terms of regret. However, numerical experiments on classical benchmarks show a significantly improved behavior, particularly when the MDP has reduced connectivity. To support this observation, we provide elements of com- parison between the two algorithms based on geometric considerations.},
-  archivePrefix = {arXiv},
-  eprint = {1004.5229},
-  eprinttype = {arxiv},
-  file = {/Users/kimangkhun/Zotero/storage/BXXIYBMG/Filippi et al. - 2010 - Optimism in Reinforcement Learning and Kullback-Le.pdf;/Users/kimangkhun/Zotero/storage/BSV7KKRC/1004.html},
-  journal = {2010 48th Annual Allerton Conference on Communication, Control, and Computing (Allerton)},
-  keywords = {Computer Science - Machine Learning,Mathematics - Statistics Theory,Statistics - Machine Learning}
+@inproceedings{filippi2010optimism,
+  title={Optimism in reinforcement learning and Kullback-Leibler divergence},
+  author={Filippi, Sarah and Capp{\'e}, Olivier and Garivier, Aur{\'e}lien},
+  booktitle={2010 48th Annual Allerton Conference on Communication, Control, and Computing (Allerton)},
+  pages={115--122},
+  organization={IEEE}
 }
 
 @inproceedings{zanetteProblemDependentReinforcement2018,
@@ -1186,15 +1211,12 @@ doi = {10.1002/9780470980033.ch8}
   language = {en}
 }
 
-@incollection{jinQLearningProvablyEfficient2018,
-  title = {Is {{Q}}-{{Learning Provably Efficient}}?},
-  booktitle = {Advances in {{Neural Information Processing Systems}} 31},
-  author = {Jin, Chi and {Allen-Zhu}, Zeyuan and Bubeck, Sebastien and Jordan, Michael I},
-  editor = {Bengio, S. and Wallach, H. and Larochelle, H. and Grauman, K. and {Cesa-Bianchi}, N. and Garnett, R.},
-  year = {2018},
-  pages = {4863--4873},
-  publisher = {{Curran Associates, Inc.}},
-  file = {/Users/kimangkhun/Zotero/storage/BBEIHQYT/Jin et al. - 2018 - Is Q-Learning Provably Efficient.pdf;/Users/kimangkhun/Zotero/storage/TTUN8RYD/7735-is-q-learning-provably-efficient.html}
+@article{jin2018q,
+  title={Is Q-learning provably efficient?},
+  author={Jin, Chi and Allen-Zhu, Zeyuan and Bubeck, Sebastien and Jordan, Michael I},
+  journal={Advances in neural information processing systems},
+  volume={31},
+  year={2018}
 }
 
 @inproceedings{osbandNearoptimalReinforcementLearning2014a,
