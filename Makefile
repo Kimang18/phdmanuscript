@@ -10,19 +10,6 @@ all: whole_thesis \
 
 thesis.pdf: whole_thesis
 
-# Re-generate the figures by executing the code in figures.org file
-figures:
-	echo "\n\n\n\n\n\n\n" | emacs -batch \
-		--eval "(require 'package)" \
-		--eval "(package-initialize)" \
-		--eval "(setq enable-local-eval t)" \
-		--eval "(setq enable-local-variables t)" \
-		--eval "(org-babel-do-load-languages 'org-babel-load-languages '((shell . t) (python . t) (R . t)))" \
-		--eval "(setq org-export-babel-evaluate t)" \
-		--eval "(setq org-confirm-babel-evaluate nil)" \
-		figures.org \
-		--funcall org-babel-execute-buffer
-
 # Compile the whole thesis
 whole_thesis: $(THESIS_ALL_TEX) Makefile references.bib
 	cp macros.include.default.tex macros.include.tex
@@ -42,8 +29,12 @@ chapter_introduction: $(THESIS_ALL_TEX) Makefile references.bib
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 	#nix-shell -p rubber --run "rubber --pdf --synctex --unsafe -Wall --jobname $@ thesis.tex"
 
+markov_decision_process_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \\\includemdpchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
-#nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
 markovianBandit_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includemarkovianbanditchapter {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
@@ -51,22 +42,22 @@ markovianBandit_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 reinforcementLearning_chapter: $(THESIS_ALL_TEX) Makefile references.bib
-	echo "\\\def \\\includechapterfinitehorizon {true}" > macros.include.tex
+	echo "\\\def \\\includereinforcementlearningchapter {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 chapter_conclusion: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterconclusion {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 chapter_appendix: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterappendix {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	nix-shell -p rubber --run "rubber --pdf --unsafe -Wall --jobname $@ thesis.tex"
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 #########################
 # Convenience shortcuts #
