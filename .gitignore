@@ -7,6 +7,7 @@
 *.fls
 *.bcf
 *.run.xml
+*.pdf
 thesis.lof
 thesis.lot
 thesis.toc
