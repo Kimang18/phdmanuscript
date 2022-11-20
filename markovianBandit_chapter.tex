@@ -1,18 +1,38 @@
 \chapter{Markovian Bandit Problem}
 \label{ch:mab_problem}
 
-\section{Rested Markovian Bandit}
+In this chapter, we present two structured MDPs known as rested and restless markovian bandit.
+
+\section{Rested Markovian bandit}
 \label{sec:rested_mab_pb}
 
-\subsection{Problem Formulation}
+Motivating the problem:
+\begin{itemize}
+    \item a generalization of multi-armed bandit problem?
+    \item give examples
+\end{itemize}
+
+\subsection{Problem formulation}
 \label{subsec:rested_pb_formul}
+
+\begin{itemize}
+    \item explain a Markovian bandit: $n$ arms denote by $M$, Arm $i$ is $\langle\gS_i, \vr_i,\mP_i\rangle$
+    \item state $\vx=(x_1\ \dots\ x_n)$ and $\vx_t=(x_{1,t}\ \dots\ x_{n,t})$
+    \item reward $r(\vx, a)=r_a(x_a)=r(x_a)$
+    \item transition $P(\vy \mid\vx,a)=P_a(x_a,y_a)=P(x_a,y_a)$
+    \item objective function: maximize the value function $\max_{\pi}V^\pi_M$ 
+\end{itemize}
 
 \subsection{Gittins Index Policy}
 \label{subsec:gittins_idx}
 
+\subsubsection{Definition}
+
 \subsubsection{Optimality}
 
-\subsubsection{Value of Gittins Index Policy}
+\subsubsection{Value of Gittins index policy}
+
+Do we need this section?
 
 \subsubsection{Upper bound on the number of switching}
 
@@ -21,15 +41,56 @@
     \item applicability: switching cost?
 \end{itemize}
 
-\section{Restless Markovian Bandit}
+\subsection{Gittins index computation}
+
+\subsubsection{Largest index remaining}
+
+\begin{itemize}
+    \item algorithm explanation
+    \item complexity
+    \item pitfall?
+\end{itemize}
+
+\subsubsection{State elimination}
+
+\begin{itemize}
+    \item algorithm explanation
+    \item complexity
+    \item pitfall?
+\end{itemize}
+
+\section{Restless Markovian bandit}
 \label{sec:restless_mab_pb}
 
-\subsection{Problem Formulation}
+Motivating the problem:
+\begin{itemize}
+    \item a generalization of rested bandit problem?
+    \item give examples
+\end{itemize}
+
+\subsection{Problem formulation}
 \label{subsec:restless_pb_formul}
 
-\subsection{$\lambda$-penalized MDP}
+\begin{itemize}
+    \item explain a restless bandit: $n$ arms denote by $M$, Arm $i$ is $\langle\gS_i, \{0,1\}, r_i,P_i\rangle$
+    \item state $\vx=(x_1\ \dots\ x_n)$ and $\vx_t=(x_{1,t}\ \dots\ x_{n,t})$
+    \item action $\va=(a_1\ \dots\ a_n)$ such that $\sum_{i=1}^{n}a_i =m$
+    \item reward $r(\vx, \va)=\sum_{i=1}^n r_i(x_i,a_i) =\sum_{i=1}^n r(x_i,a_i)$
+    \item transition $P(\vy \mid\vx,a)=\prod_{i=1}^nP_i(y_i \mid x_i,a_i)=\prod_{i=1}^n P(y_i \mid x_i,a_i)$
+    \item objective function: maximize the average reward $\max_{\pi}g^\pi_M$ 
+\end{itemize}
 
-We are given an arm $<[n],\{0,1\},r,P>$. In $\lambda$-penalized MDP, consider the Bellman optimality equations: for each $i\in[n]$,
+
+\subsection{Whittle Index Policy}
+\label{subsec:whittle_idx}
+
+\subsubsection{Definition}
+
+Lagrangian multipliers
+
+\paragraph{$\lambda$-penalized MDP}
+
+We are given an arm $\langle\gS,\{0,1\},r,P\rangle$. In $\lambda$-penalized MDP, consider the Bellman optimality equations: for each $i\in\gS$,
 \begin{align}
     \max_{a\in\{0,1\}}{\left\{\sum_jP^a_{ij}g_j-g_i\right\}} =0 \label{eq:gain_max}\\
 \max_{a\in\{0,1\}}{\left\{r^a_i-\lambda a-g_i +\sum_jP^a_{ij}h_j-h_i\right\}} =0 \label{eq:bias_max}
@@ -79,12 +140,11 @@ Given a $\lambda$-penalized MDP, there exists only one Bellman optimal policy, $
     TODO
 \end{proof}
 
-
-\subsection{Whittle Index Policy}
-\label{subsec:whittle_idx}
-
 \subsubsection{Optimality}
 
-\subsubsection{Value of Whittle Index Policy}
+\subsection{Whittle index computation}
 
-\section{Restless Multi-action Markovian Bandit}
+\subsubsection{Conditions for indexability...}
+
+\subsubsection{Fast-pivoting algorithm}
+
