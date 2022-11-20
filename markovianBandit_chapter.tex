@@ -88,58 +88,6 @@ Motivating the problem:
 
 Lagrangian multipliers
 
-\paragraph{$\lambda$-penalized MDP}
-
-We are given an arm $\langle\gS,\{0,1\},r,P\rangle$. In $\lambda$-penalized MDP, consider the Bellman optimality equations: for each $i\in\gS$,
-\begin{align}
-    \max_{a\in\{0,1\}}{\left\{\sum_jP^a_{ij}g_j-g_i\right\}} =0 \label{eq:gain_max}\\
-\max_{a\in\{0,1\}}{\left\{r^a_i-\lambda a-g_i +\sum_jP^a_{ij}h_j-h_i\right\}} =0 \label{eq:bias_max}
-\end{align}
-
-This system uniquely determined $\vg\in\sR^n$.
-Let $\vg^*$ is be the solution of this system. Given $\vg^*$, let
-\begin{align}
-H:=\{\vh\in \sR^n \mid \vh \text{ satisfies } \eqref{eq:bias_max}\}
-\end{align}
-be the space of solutions of \eqref{eq:bias_max}.
-For any $\vh\in H$, let $b(\vh):=r^1-r^0-\lambda \vone +(P^1-P^0)\vh$. 
-Note that by [Theorem 3.1, Schweitzer, 1978], the space $H$ is nonempty: $\vh^*:=\max_d\{Z^d(r^d -\lambda \vd -\vg^*)\}$ where $Z^d:=(I-P^d +\bar{P}^d)^{-1}$ and $\vh^*\in H$.
-
-\begin{defn}
-\label{defn:BO_policy}
-A policy $\pi$ is Bellman optimal if there exists $\vh\in H$ such that $\pi=\argmax_d\{r^d -\lambda \vd +P^d\vh\}$ and $P^\pi\vg^*=\vg^*$.
-\end{defn}
-
-Moreover, we also have the following lemma
-\begin{lem}
-    \label{lem:policy_improve}
-    Let $\vg^\pi$ and $\vh^\pi$ be a solution of the following system
-    \begin{align}
-        (I-P^\pi)\vg^\pi &=\vzero \label{eq:gain_eval}\\
-        \vg^\pi +(I-P^\pi)\vh^\pi &= r^\pi -\lambda\vpi \label{eq:bias_eval}.
-    \end{align}
-    \begin{enumerate}
-        \item $\vg^\pi$ is uniquely determined by the system while $\vh^\pi$ is unique up to an element of the null space of $(I-P^\pi)$.
-        \item $\pi$ is Bellman optimal if and only if $P^\pi\vg^*=\vg^*$ and
-            \begin{align*}
-                r^1_i-\lambda +\sum_{j}P^1_{ij}h^\pi_j &\ge r^0_i +\sum_{j}P^0_{ij}h^\pi_j \text{ for all } i\in\pi \text{ and } \\
-                r^1_i-\lambda +\sum_{j}P^1_{ij}h^\pi_j &\le r^0_i +\sum_{j}P^0_{ij}h^\pi_j \text{ for all } i\notin\pi.
-        \end{align*}
-    \end{enumerate}
-\end{lem}
-The difference between Lemma~\ref{lem:policy_improve} and Definition~\ref{defn:BO_policy} is that in Definition~\ref{defn:BO_policy}, the policy $\pi$ satisfies the maximum in Equation~\eqref{eq:bias_max} for some $\vh\in H$ while in Lemma~\ref{lem:policy_improve}, the policy $\pi$ cannot be improved over its own bias $\vh^\pi$.
-
-We are now interested in conditions for unicity of Bellman optimal policy.
-Let $\Pi^*$ be the set of all Bellman optimal policies. 
-
-\begin{lem}
-\label{lem:unicity_BO}
-Given a $\lambda$-penalized MDP, there exists only one Bellman optimal policy, $|\Pi^*|=1$, if for any pair $\vh, \tilde{\vh}\in H, b(\vh)_i\times b(\tilde{\vh})_i>0$ for all $i\in[n]$.
-\end{lem}
-\begin{proof}
-    TODO
-\end{proof}
-
 \subsubsection{Optimality}
 
 \subsection{Whittle index computation}

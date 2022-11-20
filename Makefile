@@ -29,7 +29,7 @@ chapter_introduction: $(THESIS_ALL_TEX) Makefile references.bib
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 	#nix-shell -p rubber --run "rubber --pdf --synctex --unsafe -Wall --jobname $@ thesis.tex"
 
-markov_decision_process_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+markovDecisionProcess_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includemdpchapter {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
@@ -37,6 +37,12 @@ markov_decision_process_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 
 markovianBandit_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includemarkovianbanditchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
+indexComputation_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \includeindexComputationchapter {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
