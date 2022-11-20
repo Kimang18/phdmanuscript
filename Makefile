@@ -53,6 +53,12 @@ reinforcementLearning_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\watermarkfalse" >> macros.include.tex
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
+learningAlgorithmsRestedMB_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \includelearningAlgorithmsRestedMBchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
 chapter_conclusion: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterconclusion {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
