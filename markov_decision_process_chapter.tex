@@ -6,21 +6,93 @@ In this section, we are about to decribe what is a Markov decision process and q
 \section{Definition and Notations}
 
 \begin{enumerate}
-    \item what is a MDP: $<++>$ <++>
+    \item explain a MDP: $M:=\langle\gS, \gA, r, P\rangle$, explain $\gS, \gA, r, P$, give example
+    \item explain policy $\pi$: shall we go to detail?
+        \begin{itemize}
+            \item History dependent?
+            \item Stationary? Probabilistic + deterministic?
+        \end{itemize}
+    \item induced stochastic process
+        \begin{itemize}
+            \item shall we give definition of recurrent states?
+            \item shall we give definition of transient states?
+        \end{itemize}
+    \item MDP classification
 \end{enumerate}
 
-\section{Settings}
+\section{Infinite horizon criteria}
 
-Different settings of MDP.
+We consider infinite time horizon:
+\begin{itemize}
+    \item explain what time horizon is
+    \item explain decision epoch is, how it works
+\end{itemize}
 
-\subsection{Finite horizon}
-
-Maybe?
-
-\subsection{Dicounted infinite horizon}
+\subsection{Dicounted markov decision process}
 
 The reward is discounted with discount factor $\beta$.
 
-\subsection{Average reward criteria}
+\begin{itemize}
+    \item give assumptions: reward bounded, $\beta<1$
+\end{itemize}
 
-Optimality equation
+\subsubsection{Definition and problem formulation}
+
+\begin{itemize}
+    \item explain what is Value function $V^\pi_M$
+    \item explain why value function?
+    \item do we need Action value function $Q^\pi_M$ ?
+    \item why action value function?
+\end{itemize}
+
+\subsubsection{Optimality equation}
+
+\begin{itemize}
+    \item explain Bellman equation
+    \item explain evaluation equation 
+    \item shall we explain contraction property?
+    \item shall we explain bound on span?
+    \item shall we give unicity of optimal policy?
+\end{itemize}
+
+\subsubsection{Value Iteration}
+
+Shall we present Value Iteration?
+
+\begin{itemize}
+    \item Algorithm presentation
+    \item Convergence proof
+    \item shall we give example?
+\end{itemize}
+
+\subsection{Average reward criterion}
+
+\subsubsection{Definition and problem formulation}
+
+\begin{itemize}
+    \item give the assumptions needed: bounded reward,...
+    \item explain what is the average reward $g^\pi$
+    \item explain what is bias $h^\pi$
+    \item shall we explain existency of $g^\pi, h^\pi$
+    \item shall we give example?
+    \item define gain optimal, Bellman optimal, (also bias optimal?)
+\end{itemize}
+
+\subsubsection{Optimality equation}
+
+\begin{itemize}
+    \item explain Bellman equation
+    \item explain evaluation equation
+    \item explain the space of solutions of Bellman equation
+    \item give the condition for unicity of Bellman optimal policy
+\end{itemize}
+
+\subsubsection{Relative Value Iteration}
+
+Shall we present Relative Value Iteration
+
+\begin{itemize}
+    \item Algorithm presentation
+    \item Convergence proof
+    \item shall we give example?
+\end{itemize}
