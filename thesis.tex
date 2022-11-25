@@ -243,6 +243,9 @@
 
 % === DOCUMENT CONTENT ========================================================
 
+%% Comment the following to have chapters numbered without interruption (numbering through parts)
+%\makeatletter\@addtoreset{chapter}{part}\makeatother%
+
 \begin{document}
 
 % --- FRONT MATTER ---------------------
@@ -297,6 +300,9 @@
 % main chapters go here
 \bookmarksetup{startatroot}
 \inputchapter{\includechapterintroduction}{chapter_introduction.tex}
+%TODO: should we put number for introduction and conclusion chapters?
+
+\part{Computation Problem}
 
 \inputchapter{\includemdpchapter}{markovDecisionProcess_chapter.tex}
 
@@ -304,6 +310,10 @@
 
 \inputchapter{\includeindexComputationchapter}{indexComputation_chapter.tex}
 
+%need to add a conclusion
+
+\part{Learning Problem}
+%\bookmarksetup{startatroot}
 \inputchapter{\includereinforcementlearningchapter}{reinforcementLearning_chapter.tex}
 
 \inputchapter{\includelearningAlgorithmsRestedMBchapter}{learningAlgorithmsRestedMB_chapter.tex}
