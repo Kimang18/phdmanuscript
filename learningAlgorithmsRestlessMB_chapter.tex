@@ -28,7 +28,7 @@ We show that:
 
 \subsection{MDP}
 
-We consider a discrete-time MDP $M=(\gS,\gA,P,r)$ with a finite state-space $\gS$ and a finite action space $\gA$. If at time $t$, the process is in state $x$ and action $a$ is taken, it earns a reward $r(x,a)$ and jumps to state $y$ with probability $p(y|x,a)$. A stationary Markovian policy for such a MDP is a function $\pi:\gS\to\gA$. A policy $\pi$ induces a Markov chain with transition matrix $P^\pi$ where $P^\pi(x,y) = p(y | x, \pi(x))$. 
+We consider a discrete-time MDP $M=(\gS,\gA,r,p)$ with a finite state-space $\gS$ and a finite action space $\gA$. At time $t$, if the process is in state $x$ and action $a$ is taken, it earns a reward $r(x,a)$ and jumps to state $y$ with probability $p(y|x,a)$. A stationary Markovian policy for such a MDP is a function $\pi:\gS\to\gA$. A policy $\pi$ induces a Markov chain with transition matrix $\mP^\pi$ where $P^\pi(x,y) = p(y | x, \pi(x))$. 
 
 \subsection{RMAB}
 
@@ -50,15 +50,15 @@ We classify MDPs in two ways:
 
 Following Puterman~\cite{puterman2014markov}, we say that a MDP is:
 \begin{itemize}
-    \item \emph{recurrent} if for all policy $\pi$, the matrix $P^\pi$ defines a Markov chain where all states are recurrent (equivalently, for all states $x$ and $y$, a Markov chain starting in $x$ will visit $y$ with probability $1$);
-    \item \emph{unichain} if for all policy $\pi$, the matrix $P^\pi$ has a single recurrent class plus a possibly empty set of transient states;
+    \item \emph{recurrent} if for all policy $\pi$, the matrix $\mP^\pi$ defines a Markov chain where all states are recurrent (equivalently, for all states $x$ and $y$, a Markov chain starting in $x$ will visit $y$ with probability $1$);
+    \item \emph{unichain} if for all policy $\pi$, the matrix $\mP^\pi$ has a single recurrent class plus a possibly empty set of transient states;
     %\item \emph{communicating} if there exists a policy such that $P^\pi$ induces an ergodic Markov chain. 
+    \item \emph{multichain} if the transition matrix corresponding to \emph{at least one} stationary policy contains two or more closed irreducible recurrent classes;
     \item \emph{communicating} if, for every pair of states, there exists a policy such that one state of the pair is accessible from other state of the same pair; and
     %\item \emph{weakly communicating} if there exists a policy such that $P^\pi$ has a unique recurrent class. No, cuz there is multichain weakly communicating
     \item \emph{weakly communicating} if there exists a closed set of states, with each state in that set accessible from every other state in that set under some deterministic stationary policy, plus a possibly empty set of transient states.
-    \item \emph{multichain} if the transition matrix corresponding to \emph{at least one} stationary policy contains two or more closed irreducible recurrent classes.
 \end{itemize}
-In addition, a recurrent or unichain MDP is called \emph{aperiodic} if all matrices $P^\pi$ are aperiodic.  We say that a MDP is \emph{ergodic} if it is recurrent and aperiodic. 
+In addition, a recurrent or unichain MDP is called \emph{aperiodic} if all matrices $\mP^\pi$ are aperiodic.  We say that a MDP is \emph{ergodic} if it is recurrent and aperiodic. 
 
 We note that:
 \begin{itemize}
@@ -76,8 +76,10 @@ In \cite{fruit2018near}, it is proven that in weakly-communicating MDPs, no algo
 For any stationary policy $\pi$, let $T(y\mid M,\pi,x)$ be the random variable for the first time step in which state $y$ is reached when starting at state $x$ and following the policy $\pi$ in MDP $M$.
 From \cite[Definition 1]{jaksch2010near}, the diameter of a MDP $M$ is defined by
 \begin{align*}
-    \mathrm{diameter}(M) = \max_{x\neq y}\min_{\pi} \ex{T(y\mid M,\pi,x)}
+    \mathrm{diameter}(M) = \max_{x\neq y}\min_{\pi} \ex{T^\pi(y\mid M, x)}.
 \end{align*}
+
+Hence, any noncommunicating MDP has \emph{infinite diameter}.
 
 It is shown in \cite[Appendix A]{jaksch2010near} that the diameter is at least $\log_{|\gA|}|\gS|-3$.
 This implies that the diameter of RMAB model in which each arm has the same state size $S$, is at least
@@ -87,19 +89,29 @@ This implies that the diameter of RMAB model in which each arm has the same stat
 
 \subsection{Span}
 
-The span is:
+\KK{How do we define bias? What MDP structure should we assume?}
+
+Following \cite[Chapter~8]{puterman2014markov}, in finite-state Markov reward process $(\vr, \mP)$, we define $\bar{\mP}=\displaystyle\lim_{N\to+\infty}\frac1N\sum_{t=1}^N\mP^{t-1}$ as the Cesaro limit of the sequence $\{\mP^t\}_{t\ge0}$.
+This limit always exists for finite-state process (see Section~A.4 of Appendix~A of \cite{puterman2014markov}).
+If $\bar{\mP}$ is stochastic, then the gain is $\vg=\bar{\mP}\vr$.
+The bias is defined according to the structure of Markov chain:
+\begin{enumerate}
+    \item if the Markov chain is \emph{aperiodic}, then the bias is $\vh=\displaystyle\sum_{t=0}^\infty(\mP^t-\bar{\mP})\vr$
+    \item if the Markov chain is \emph{periodic}, then the bias is $\vh=\displaystyle\lim_{N\to\infty}\frac1N\sum_{k=1}^N\sum_{t=0}^k(\mP^t-\bar{\mP})\vr$
+\end{enumerate}
+
+Let $\vh\in\sR^S$. The span of $\vh$ is given by $sp(\vh)=\max_xh(x) - \min_xh(x)$.
 
 \subsection{Mixing time}
 
-To be defined?
-\cite[Definition 5.1]{wei2020model}
+Following \cite[Definition 5.1]{wei2020model},
 \begin{defn}
     \label{def:mixing_time}
     The mixing time of an ergodic MDP is defined as
     \begin{align*}
-        t_{mix} := \max_{\pi}\min\left\{ t\ge1 \mid \lVert (P^\pi)^t(x,\cdot) - \mu^\pi\rVert_1 \le \frac14, \forall x\right\},
+        t_{mix} := \max_{\pi}\min\left\{ t\ge1 \mid \lVert (\mP^\pi)^t(x,\cdot) - \mu^\pi\rVert_1 \le \frac14, \forall x\right\},
     \end{align*}
-    that is, the maximum time required for any policy starting at any initial state to make the state distribution $\frac14$-close (in $l_1$ norm) to the stationary distribution.
+    that is, the maximum time required for any policy starting at any initial state to make the state distribution $\frac14$-close (in $\ell_1$ norm) to the stationary distribution.
 \end{defn}
 
 
@@ -110,16 +122,16 @@ To be defined?
 The following theorem shows that a restless bandit whose arms are all ergodic is not necessarily ergodic.
 \begin{thm}
     \begin{enumerate}[label=(\roman*)]
-        \item \label{thm:not_ergodic} There exists a Restless bandit whose arms are all recurrent that is noncommunicating. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
+        \item \label{thm:not_ergodic} There exists a RMAB whose arms are all recurrent that is noncommunicating. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
         %\item \label{thm:aperiodic_RB_ergo} There exists a Restless bandit whose arms are all ergodic that is not recurrent. 
-        \item \label{thm:ergodic_arms_multichain_RB} There exists a Restless bandit whose arms are all ergodic that is multichain.
+        \item \label{thm:ergodic_arms_multichain_RB} There exists a RMAB whose arms are all ergodic that is multichain.
     \end{enumerate}
 \end{thm}
 
 \begin{proof}
-    \textbf{Proof of \ref{thm:not_ergodic}} -- It is given by the counter-example in which the Restless bandit has two arms as given by \figurename~\ref{fig:recur_non_communicate}.
+    \textbf{Proof of \ref{thm:not_ergodic}} -- It is given by the counter-example in which the RMAB has two arms as given by \figurename~\ref{fig:recur_non_communicate}.
     For each arm, both "activate" and "rest" induce the same transition.
-    In such example, the Restless bandit is a multichain not weakly communicating MDP because if we start at state $(1,a)$ or $(2,b)$, then, the final recurrent class of states is composed of $\{(1,a), (2,b)\}$ and if we start at state $(1,b)$ or $(2,a)$, then, the final recurrent class is $\{(1,b), (2,a)\}$.
+    In such example, the RMAB is a noncommunicating multichain MDP because if we start at state $(1,a)$ or $(2,b)$, then, there are two recurrent classes: one composed of $\{(1,a), (2,b)\}$ and the other one is $\{(1,b), (2,a)\}$.
     \begin{figure}[ht]
         \centering
         \begin{tabular}{ccc}
@@ -153,7 +165,7 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
         \\
             Arm $1$ & Arm $2$ & Global MDP
         \end{tabular}
-        \caption{A Restless bandit with two 2-state arms that are recurrent.}
+        \caption{A RMAB with two 2-state arms that are recurrent.}
         \label{fig:recur_non_communicate}
     \end{figure}
     \medskip \\
@@ -208,14 +220,14 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
         \end{tikzpicture} \\
         \begin{tikzpicture}[on grid, state/.style={ellipse,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
             \node[state]  (A) {$\begin{tabular}{c}15\\24\\25\end{tabular}$};
-            \node[state]  (B) [right = 1.7cm of A]    {$\begin{tabular}{c}26\\35\\36\end{tabular}$};
-            \node[state]  (C) [right = 1.7cm of B]    {$\begin{tabular}{c}37\\46\\47\end{tabular}$};
-            \node[state]  (D) [right = 1.7cm of C]    {$\begin{tabular}{c}48\\57\\58\end{tabular}$};
-            \node[state]  (E) [below = 2.4cm of D]    {$\begin{tabular}{c}51\\68\\61\end{tabular}$};
-            \node[state]  (F) [left = 1.7cm of E]    {$\begin{tabular}{c}62\\71\\72\end{tabular}$};
-            \node[state]  (G) [left = 1.7cm of F]    {$\begin{tabular}{c}73\\82\\83\end{tabular}$};
-            \node[state]  (H) [left = 1.7cm of G]    {$\begin{tabular}{c}84\\13\\14\end{tabular}$};
-            \node[text width=2cm] (J) [left = 1.5cm of A] {Recurrent\\Class 1};
+            \node[state]  (B) [right = 2cm of A]    {$\begin{tabular}{c}26\\35\\36\end{tabular}$};
+            \node[state]  (C) [right = 2cm of B]    {$\begin{tabular}{c}37\\46\\47\end{tabular}$};
+            \node[state]  (D) [right = 2cm of C]    {$\begin{tabular}{c}48\\57\\58\end{tabular}$};
+            \node[state]  (E) [below = 3cm of D]    {$\begin{tabular}{c}51\\68\\61\end{tabular}$};
+            \node[state]  (F) [left = 2cm of E]    {$\begin{tabular}{c}62\\71\\72\end{tabular}$};
+            \node[state]  (G) [left = 2cm of F]    {$\begin{tabular}{c}73\\82\\83\end{tabular}$};
+            \node[state]  (H) [left = 2cm of G]    {$\begin{tabular}{c}84\\13\\14\end{tabular}$};
+            \node[text width=2cm] (J) [left = 1.5cm of A] {Recurrent\\Class $\bar{\gS}^{(1)}$};
             \path[->]
             (A) edge     node{}	(B)
             (B) edge     node{}	(C)
@@ -228,14 +240,14 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
         \end{tikzpicture} \\ \hfill\\
         \begin{tikzpicture}[on grid, state/.style={ellipse,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
             \node[state]  (A) {$\begin{tabular}{c}11\\28\\21\end{tabular}$};
-            \node[state]  (B) [right = 1.7cm of A]    {$\begin{tabular}{c}22\\31\\32\end{tabular}$};
-            \node[state]  (C) [right = 1.7cm of B]    {$\begin{tabular}{c}33\\42\\43\end{tabular}$};
-            \node[state]  (D) [right = 1.7cm of C]    {$\begin{tabular}{c}44\\53\\54\end{tabular}$};
-            \node[state]  (E) [below = 2.4cm of D]    {$\begin{tabular}{c}55\\64\\63\end{tabular}$};
-            \node[state]  (F) [left = 1.7cm of E]    {$\begin{tabular}{c}66\\75\\74\end{tabular}$};
-            \node[state]  (G) [left = 1.7cm of F]    {$\begin{tabular}{c}77\\86\\84\end{tabular}$};
-            \node[state]  (H) [left = 1.7cm of G]    {$\begin{tabular}{c}88\\17\\15\end{tabular}$};
-            \node[text width=2cm] (J) [left = 1.5cm of A] {Recurrent\\Class 2};
+            \node[state]  (B) [right = 2cm of A]    {$\begin{tabular}{c}22\\31\\32\end{tabular}$};
+            \node[state]  (C) [right = 2cm of B]    {$\begin{tabular}{c}33\\42\\43\end{tabular}$};
+            \node[state]  (D) [right = 2cm of C]    {$\begin{tabular}{c}44\\53\\54\end{tabular}$};
+            \node[state]  (E) [below = 3cm of D]    {$\begin{tabular}{c}55\\64\\63\end{tabular}$};
+            \node[state]  (F) [left = 2cm of E]    {$\begin{tabular}{c}66\\75\\74\end{tabular}$};
+            \node[state]  (G) [left = 2cm of F]    {$\begin{tabular}{c}77\\86\\84\end{tabular}$};
+            \node[state]  (H) [left = 2cm of G]    {$\begin{tabular}{c}88\\17\\15\end{tabular}$};
+            \node[text width=2cm] (J) [left = 1.5cm of A] {Recurrent\\Class $\bar{\gS}^{(2)}$};
             \path[->]
             (A) edge     node{}	(B)
             (B) edge     node{}	(C)
@@ -248,7 +260,7 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
         \end{tikzpicture}
         \end{tabular}
         \caption{We consider a RMAB with 2 arms, each is an 8-state ergodic MDP where the arm goes from states $1$ and $2$ to state $2$ or $3$, states $3$ and $4$ to state $4$ or $5$, etc, under passive action, and goes from states $1$ and $8$ to state $1$ or $2$, etc, under active action. Both arms have the same structure.
-        The first row shows the state transition of the arm: the black arrows represent passive transition and the red ones represent active transition.
+        The first row shows the state transition of the arm: the black arrows represent active transition and the red ones represent passive transition.
         The second and third rows show the state transition of two recurrent classes under any policies that activate Arm 2 for any impair $x\in[8]$ and Arm 1 for any pair $x\in[8]$ when RMAB is in states $(x,x),(x,x+4),(x+1,x),(x+1,x+3),(x+1,x+4),(x+1,x+7)$.
         The first recurrent class is $\bar{\gS}^{(1)} =\{(x,x+4),(x+1,x+3),(x+1,x+4) : x\in[8]\}$ and the second one is $\bar{\gS}^{(2)} =\{(x,x),(x+1,x),(x+1,x+7) : x\in[8]\}$. The rest of the states $\bar{\gS}\setminus(\bar{\gS}^{(1)}\cup\bar{\gS}^{(2)})$ are transient regardless of whether Arm $1$ or Arm $2$ is pulled.
     }
@@ -256,28 +268,59 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
     \end{figure}
 \end{proof}
 
+\subsubsection{Diameter and span: counter-examples and positive results}
+
+\paragraph{Diameter can be exponential in the number of arms?}
+
+$\Rightarrow$ Yes, we have an example in which the diameter is exponential in the number of arms.
+Consider an example of $n$ arms, each arm is a Markov chain with binary state space and $0.5$ probability of changing state under both actions.
+The probability that RMAB goes from state $(1,\dots,1)$ to state $(0,\dots,0)$ is $(1/2)^n$.
+Hence, the diameter is exponential in the number of arms.
+
+\paragraph{Mixing time also?}
+
+$\Rightarrow$ If we define the mixing time as in Definition~\ref{def:mixing_time}, that is, the maximum time required for any policy to make the state distribution $1/4$-close to the stationary distribution, then, the hypothesis of ergodicity on all arms is not enough to define a mixing time for RMAB because a RMAB can be multichain by Theorem~\ref{thm:ergodic_arms_multichain_RB} and the corresponding policy does not have unique stationary distribution.
+
+If RMAB is ergodic, then, the mixing time is defined?
+We can construct an ergodic RMAB problem having infinite mixing time.
+Let $\mP^m$ be the transition matrix of the arm given in \figurename~\ref{fig:local_ergodic_multichain_RB}.
+Let $\mU$ be the transition matrix such that the state transition is uniform in any state.
+Any arm having $\mU$ as the transition matrix is ergodic and the RMAB problem that is composed of such arms is ergodic too.
+Now, consider the arms having the transition matrix $\mP=(1-\varepsilon)\mP^m +\varepsilon \mU$ for $\varepsilon\in(0,1)$.
+Such arms are ergodic and the RMAB problem having such arms is also ergodic.
+However, the mixing time of such RMAB problem tends to infinity when $\varepsilon$ tends to $0$ because when $\varepsilon=0$ the problem is multichain by Theorem~\ref{thm:ergodic_arms_multichain_RB}.
+Hence, the hypothesis of ergodicity on RMAB problem is still not enough for mixing time to be defined.
+%\KK{Is the conclusion of this paragraph correct?}
+
+In this case, the mixing time is not bounded.
+
+\paragraph{What about span?}
+
+
+
+
 \subsection{Positive Results}
 
 \begin{thm}
-    \label{thm:aperiodic_RB_comm} A Restless bandit whose arms are all ergodic is communicating. 
+    \label{thm:aperiodic_RB_comm} A RMAB whose arms are all ergodic is communicating. 
 \end{thm}
 \begin{proof}
     to be proved
 \end{proof}
 
 \begin{thm}
-    \label{thm:unichain} If all arms are unichain MDP with at least one state reachable in one step from any other states under both passive and active modes, then, the corresponding RMAB is also a unichain MDP with at least one state reachable in one step from any other global states under any policies.
+    \label{thm:unichain} If all arms are unichain MDP with at least one state reachable in one step from any other states under both passive and active actions, then, the corresponding RMAB is also a unichain MDP with at least one state reachable in one step from any other global states under any policies.
 \end{thm}
 \begin{proof}
-    For each arm $i\in[n]$, let $z_i$ be the state that is reachable in one step from any other states under both passive and active modes.
-    We have that for all $i\in[n],x_i\in\gS_i,a\in\{0,1\}, {P^a_i(x_i, z_i)>0}$.
-    For simplification, we write $P^a(x_i,z_i) =P^a_i(x_i, z_i)$.
-    For any action $\va\in\bar{\gA}$, any state $\vx,\vy\in\bar{\gS},$ the RMAB's state transition is given by ${\mP^{\va}(\vx,\vy) =\prod_{i=1}^n P^{a_i}(x_i,y_i)}$.
+    For each arm $i\in[n]$, let $z_i$ be the state that is reachable in one step from any other states under both passive and active actions.
+    We have that $p(z_i \mid x_i, a_i)>0$ for all $i\in[n], x_i\in\gS_i,a\in\{0,1\}$.
+    %For simplification, we write $P^a(x_i,z_i) =P^a_i(x_i, z_i)$.
+    For any action $\va\in\bar{\gA}$, any state $\vx,\vy\in\bar{\gS},$ the RMAB's state transition is given by ${\vp(\vy \mid \vx, \va) =\prod_{i=1}^n p(y_i \mid x_i, a_i)}$.
     Then, for any action $\va\in\bar{\gA}$, any state $\vx\in\bar{\gS}$, we have
     \begin{align*}
-        \mP^{\va}(\vx,\vz) =\prod_{i=1}^n P^{a_i}(x_i,z_i) > 0,
+        \vp(\vz \mid \vx, \va) =\prod_{i=1}^n p(z_i \mid x_i,a_i) > 0,
     \end{align*}
-    because $n$ is finite and for any $i$, $P^{a_i}(x_i, z_i)>0$.
+    because $n$ is finite and for any $i$, $p(z_i \mid x_i, a_i)>0$.
     Hence, $\vz$ is reachable from any other global states in one step under any policies.
     Consequently, no policies induce the global Markov chain that has multiple closed irreducible recurrent classes.
     %there cannot be multiple recurrent classes that are closed under any policies.
@@ -314,34 +357,6 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
     We conclude the proof using the definition of $\vbeta$.
 \end{proof}
 
-
-\section{Diameter and span: counter-examples and positive results}
-
-\paragraph{Diameter can be exponential in the number of arms?}
-
-$\Rightarrow$ Yes, we have an example in which the diameter is exponential in the number of arms.
-Consider an example of $n$ arms, each arm is a Markov chain with binary state space and $0.5$ probability of changing state under both actions.
-The probability that RMAB goes from state $(1,\dots,1)$ to state $(0,\dots,0)$ is $(1/2)^n$.
-Hence, the diameter is exponential in the number of arms.
-
-\paragraph{Mixing time also?}
-
-$\Rightarrow$ If we define the mixing time as in Definition~\ref{def:mixing_time}, that is, the maximum time required for any policy to make the state distribution $1/4$-close to the stationary distribution, then, the hypothesis of ergodicity on all arms is not enough to define a mixing time for RMAB because a RMAB can be multichain by Theorem~\ref{thm:ergodic_arms_multichain_RB} and the corresponding policy does not have unique stationary distribution.
-
-If RMAB is ergodic, then, the mixing time is defined?
-We can construct an ergodic RMAB problem having infinite mixing time.
-Let $P^m$ be the transition matrix of the arm given in \figurename~\ref{fig:local_ergodic_multichain_RB}.
-Let $U$ be the transition matrix such that the state transition is uniform in any state.
-Any arms having $U$ as the transition matrix are ergodic and the RMAB problem that is composed of such arms is ergodic too.
-Now, consider the arms having the transition matrix $P=(1-\varepsilon)P^m +\varepsilon U$ for $\varepsilon\in(0,1)$.
-Such arms are ergodic and the RMAB problem having such arms is also ergodic.
-However, the mixing time of such RMAB problem tends to infinity when $\varepsilon$ tends to $0$ because when $\varepsilon=0$ the problem is multichain by Theorem~\ref{thm:ergodic_arms_multichain_RB}.
-Hence, the hypothesis of ergodicity on RMAB problem is still not enough for mixing time to be defined.
-%\KK{Is the conclusion of this paragraph correct?}
-
-In this case, the mixing time is not bounded.
-
-\paragraph{What about span?}
 
 \section{Learning RMAB}
 
