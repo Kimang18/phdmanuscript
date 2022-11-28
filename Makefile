@@ -34,11 +34,15 @@ markovDecisionProcess_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 markovianBandit_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includemarkovianbanditchapter {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 indexComputation_chapter: $(THESIS_ALL_TEX) Makefile references.bib
@@ -46,11 +50,15 @@ indexComputation_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 reinforcementLearning_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includereinforcementlearningchapter {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 learningAlgorithmsRestedMB_chapter: $(THESIS_ALL_TEX) Makefile references.bib
@@ -58,11 +66,15 @@ learningAlgorithmsRestedMB_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 learningAlgorithmsRestlessMB_chapter: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \includelearningAlgorithmsRestlessMBchapter {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 chapter_conclusion: $(THESIS_ALL_TEX) Makefile references.bib
