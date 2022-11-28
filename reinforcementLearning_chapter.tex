@@ -60,7 +60,7 @@
             Let $\{R_i\}_{i\le n}$ be independent and identically distributed random variable with mean $r$ bounded in $[0,1]$.
             By Hoeffding inequality,
             \begin{align*}
-                \proba{\Big\vert\frac{1}{n}\sum_{i=1}^nR_i-r\Big\vert>\ep}\le2\exp\left(-2n\ep^2\right)
+                \Proba{\Big\vert\frac{1}{n}\sum_{i=1}^nR_i-r\Big\vert>\ep}\le2\exp\left(-2n\ep^2\right)
             \end{align*}
             The random variables $\{R_i\}_{i\le n}$ bounded in $[0,1]$ are $(1/2)$-sub-Gaussian.
         \end{thm}
@@ -68,7 +68,7 @@
         \label{thm:weissman}
             Let $\{Y_i\}_{i\le n}$ be $n$ i.i.d sample from a distribution $P$ over a finite set $\mSpace=\{1,\dots,\mSize\}$. Define the empirical distribution $\Pbar(y)=\frac{1}{n}\sum_{i=1}^{n}\mathbb{I}_{Y_i=y}, \forall y\in\mSpace$. Then, for any $\ep>0$,
             \begin{align*}
-                \proba{\Vert\Pbar-P\Vert_1> \ep} \le 2^\mSize\exp\left(-\frac{n\ep^2}{2}\right)
+                \Proba{\Vert\Pbar-P\Vert_1> \ep} \le 2^\mSize\exp\left(-\frac{n\ep^2}{2}\right)
             \end{align*}
         \end{thm}
         
@@ -92,29 +92,29 @@
         \begin{proof}
             By Theorem~\ref{thm:hoeffding}, for any $\ep>0$, one has
             \begin{align*}
-            \proba{\vert\rbar_{t}(x,a)-r(x,a)\vert>\ep \mid N_{t}(x,a)} \le 2\exp\left(-2N_{t}(x,a)\ep^2\right)
+            \Proba{\vert\rbar_{t}(x,a)-r(x,a)\vert>\ep \mid N_{t}(x,a)} \le 2\exp\left(-2N_{t}(x,a)\ep^2\right)
             \end{align*}
             This holds for $\ep=\sqrt{\frac{\log(4EAt/\delta)}{2N_t(x,a)}}$ where $0<\delta<1$.
             As $N_t(x,a)\le t$, by using the union-bound, this implies that
             \begin{align}
-            &\proba{\exists x,a, t'\le t: \vert\rbar_{t'}(x,a)-r(x,a)\vert>\sqrt{\frac{\log(4EAt/\delta)}{2N_{t'}(x,a)}}} \label{eq:conc_r}\\
-            &\qquad \le \sum_{t'=1}^{t}\sum_{x,a} \proba{\vert\rbar_{t'}(x,a)-r(x,a)\vert>\sqrt{\frac{\log(4EAt/\delta)}{2N_{t'}(x,a)}}} \nonumber \\
+            &\Proba{\exists x,a, t'\le t: \vert\rbar_{t'}(x,a)-r(x,a)\vert>\sqrt{\frac{\log(4EAt/\delta)}{2N_{t'}(x,a)}}} \label{eq:conc_r}\\
+            &\qquad \le \sum_{t'=1}^{t}\sum_{x,a} \Proba{\vert\rbar_{t'}(x,a)-r(x,a)\vert>\sqrt{\frac{\log(4EAt/\delta)}{2N_{t'}(x,a)}}} \nonumber \\
             &\qquad \le \sum_{t'=1}^{t}\sum_{x,a} 2\exp\left(-2N_{t'}(x,a)\times\frac{\log(4EAt/\delta)}{2N_{t'}(x,a)}\right) =2EAt \frac{\delta}{4EAt}=\frac{\delta}2 \nonumber
             \end{align}
             By Theorem~\ref{thm:weissman}, for any $\ep>0$, one has
             \begin{align*}
-            \proba{\Vert\Pbar_t(x,a)-P(x,a)\Vert_1 > \ep \mid N_t(x,a)} \le 2^E\exp\left(-\frac{N_t(x,a)\ep^2}{2}\right)
+            \Proba{\Vert\Pbar_t(x,a)-P(x,a)\Vert_1 > \ep \mid N_t(x,a)} \le 2^E\exp\left(-\frac{N_t(x,a)\ep^2}{2}\right)
             \end{align*}
             Similarly, with $\ep=\sqrt{2\log(2EAt2^E/\delta)/N_t(x,a)}$, we have
             \begin{align*}
-            &\proba{\exists x,a, t'\le t: \Vert\Pbar_t(x,a)-P(x,a)\Vert_1 >\sqrt{\frac{2\log(2EAt2^E/\delta)}{N_{t'}(x,a)}}} \\
+            &\Proba{\exists x,a, t'\le t: \Vert\Pbar_t(x,a)-P(x,a)\Vert_1 >\sqrt{\frac{2\log(2EAt2^E/\delta)}{N_{t'}(x,a)}}} \\
             &\qquad \le 2^EEAt\exp\left(-\frac{N_t(x,a)}{2}\times\frac{2\log(2EAt2^E/\delta)}{N_{t'}(x,a)}\right) =\frac{\delta}2
             \end{align*}
             Since $L_t=\sqrt{2\log(4EAt/\delta)}$ and $\sqrt{x+y}\le\sqrt{x}+\sqrt{y}$, we have $\sqrt{2\log(2EAt2^E/\delta)}=\sqrt{2\log(4EAt/\delta) +2(E-1)\log2}\le L_t + \sqrt{2(E-1)\log2} \le L_t +1.5\sqrt{E}$.
             Hence,
             \begin{align}
             \label{eq:conc_p}
-            \proba{\exists x,a, t'\le t: \Vert\Pbar_t(x,a)-P(x,a)\Vert_1 >\frac{L_t+1.5\sqrt{E}}{\sqrt{N_{t'}(x,a)}}} \le \frac{\delta}2
+            \Proba{\exists x,a, t'\le t: \Vert\Pbar_t(x,a)-P(x,a)\Vert_1 >\frac{L_t+1.5\sqrt{E}}{\sqrt{N_{t'}(x,a)}}} \le \frac{\delta}2
             \end{align}
             The complement of event $\event_t$ defined in the statement of Lemma~\ref{lem:high_prob_event} is the union of \eqref{eq:conc_r} and \eqref{eq:conc_p}.
             Hence, the union-bound concludes the proof of the lemma.
@@ -207,7 +207,7 @@
         \begin{align*}
             \ex{\Delta_k}
             &=\ex{\Delta_k\I_{\event_k} +\Delta_k\I_{\neg\event_k}} \\
-            &\le \ex{\Delta_k\I_{\event_k}} +H\proba{\neg\event_k} =\ex{\Delta_k\I_{\event_k}} +H\delta.
+            &\le \ex{\Delta_k\I_{\event_k}} +H\Proba{\neg\event_k} =\ex{\Delta_k\I_{\event_k}} +H\delta.
         \end{align*}
         Finally, the expected regret UCRL2 is bounded by
         \begin{align*}
@@ -220,7 +220,7 @@
 
 \section{UCBVI}
 \label{sec:ucbvi}
-    OFU algorithm presented above applies the confidence sets on the parameters of the model, namely $(r,P)$. Another approach from \cite{gheshlaghiazarMinimaxRegretBounds2017} is to directly apply the confidence set on the value function. One known algorithm is UCBVI that works as the following
+    OFU algorithm presented above applies the confidence sets on the parameters of the model, namely $(r,P)$. Another approach from \cite{azar2017minimax} is to directly apply the confidence set on the value function. One known algorithm is UCBVI that works as the following
     
     At the start of episode $k$,
     \begin{enumerate}
@@ -238,7 +238,7 @@
     \end{enumerate}
     
     \subsection{High Probability Event}
-    \label{subsec:high_prob_event}
+    \label{subsec:high_prob_event1}
     
         Let $L_t:=\log(4E^2At/\delta)$. For any deterministic mappings $f\colon \mcal{E}\mapsto[0,H-1]$, and any $g\colon\mcal{E}\mapsto[0,H]$, we define the following events:
         \begin{align}
@@ -249,15 +249,15 @@
         
         \begin{lem}
         \label{lem:high_prob}
-            For any deterministic mappings $f\colon \mcal{E}\mapsto[0,H-1]$ and $g\colon \mcal{E}\mapsto[0,H]$, we have $\proba{\event}\ge1-\delta$.
+            For any deterministic mappings $f\colon \mcal{E}\mapsto[0,H-1]$ and $g\colon \mcal{E}\mapsto[0,H]$, we have $\Proba{\event}\ge1-\delta$.
         \end{lem}
         \begin{proof}
         Given $\{U_i\}_{1\le i\le n}$ independent samples of random variable $U\in[0, c]$ where $c\in\R$, Theorem~\ref{thm:hoeffding} gives, for $\ep>0$,
         \begin{align*}
-        \proba{|\bar{U}-\ex{U}|\ge \varepsilon} \le 2e^{-2\frac{n}{c^2}\varepsilon^2}
+        \Proba{|\bar{U}-\ex{U}|\ge \varepsilon} \le 2e^{-2\frac{n}{c^2}\varepsilon^2}
         \end{align*}
         Consider a fixed $(x,a)$.
-        For any deterministic mapping $f\colon\mcal{E}\mapsto[0,H-1]$, let $U:=R+\beta f(Y)$ be a random variable where $R\in[0,1]$ and $Y\in\mcal{E}$ are random variables such that $\ex{R}=r(x,a)$ and $\proba{Y=y}=P(x,a,y)$.
+        For any deterministic mapping $f\colon\mcal{E}\mapsto[0,H-1]$, let $U:=R+\beta f(Y)$ be a random variable where $R\in[0,1]$ and $Y\in\mcal{E}$ are random variables such that $\ex{R}=r(x,a)$ and $\Proba{Y=y}=P(x,a,y)$.
         Hence, the expectation of $U$ is given by 
         \begin{align*}
         \ex{U}=r(x,a) +\sum_{y\in\mcal{E}}P(x,a,y)f(y)=r(x,a) +P(x,a)f.
@@ -268,37 +268,37 @@
         $$\bar{U}:=\frac1n\sum_{i=1}^{n} U_i=\rbar(x,a) +\Pbar(x,a)f.$$
         Then,
         \begin{align*}
-        &\proba{\vert\bar{U}-\ex{U}\vert >\varepsilon} \le2e^{-2\frac{n\varepsilon^2}{H^2}} \\
-        &\proba{\vert \rbar(x,a)-r(x,a) +(\Pbar(x,a) -P(x,a))f\vert >\varepsilon} \le2e^{-2\frac{n\varepsilon^2}{H^2}}.
+        &\Proba{\vert\bar{U}-\ex{U}\vert >\varepsilon} \le2e^{-2\frac{n\varepsilon^2}{H^2}} \\
+        &\Proba{\vert \rbar(x,a)-r(x,a) +(\Pbar(x,a) -P(x,a))f\vert >\varepsilon} \le2e^{-2\frac{n\varepsilon^2}{H^2}}.
         \end{align*}
         Using the same approach above,
         \begin{align*}
-        \proba{\neg\event_1} 
-        &=\proba{\exists x,a, t'\le t,|\rbar_{t'}(x,a)-r(x,a)+(\Pbar_{t'}(x,a)-P(x,a))f| >H\sqrt{\frac{L_t}{2N_{t'}(x_a)}}} \\
+        \Proba{\neg\event_1} 
+        &=\Proba{\exists x,a, t'\le t,|\rbar_{t'}(x,a)-r(x,a)+(\Pbar_{t'}(x,a)-P(x,a))f| >H\sqrt{\frac{L_t}{2N_{t'}(x_a)}}} \\
         &\le2\sum_{x,a} \sum_{t'=1}^{t}e^{-\log(4E^2At/\delta)} =2EAt\frac{\delta}{4E^2At}=\frac{\delta}{2E}
         \end{align*}
         Given $\{U_i\}_{1\le i\le n}$ independent samples of random variable $U\in[0, c]$ where $c\in\R$ and $\var{U}=\sigma^2$, Bernstein inequality gives
         \begin{align*}
-        \proba{|\bar{U}-\ex{U}|> \varepsilon} \le 2e^{-\frac{n\varepsilon^2}{2\sigma^2+\frac{2c}3\varepsilon}}
+        \Proba{|\bar{U}-\ex{U}|> \varepsilon} \le 2e^{-\frac{n\varepsilon^2}{2\sigma^2+\frac{2c}3\varepsilon}}
         \end{align*}
-        Consider a fixed $(x,a,y)$. For any deterministic mapping $g\colon\mcal{E}\mapsto[0,H]$, let $U:=g(Y)$ be a random variable and $Y\in\mcal{E}$ where $\proba{Y=y}=P(x,a,y)$.
+        Consider a fixed $(x,a,y)$. For any deterministic mapping $g\colon\mcal{E}\mapsto[0,H]$, let $U:=g(Y)$ be a random variable and $Y\in\mcal{E}$ where $\Proba{Y=y}=P(x,a,y)$.
         So, we have
         \begin{align*}
         \ex{U}=P(x,a,y)g(y),\ \var{U}=P(x,a,y)(1-P(x,a,y))g^2(y):=\sigma^2(y), \text{ and } U\in[0,H].
         \end{align*}
         Then,
         \begin{align*}
-        \proba{\neg\event_2}
-        &=\proba{\exists x,a,y,t'\le t,|\Pbar_{t'}(x,a,y)-P(x,a,y)|g(y) >\sqrt{\frac{2\sigma^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x,a)}} \\
-        &\le\sum_{x,a,y} \sum_{t'=1}^{t} \proba{|\Pbar_{t'}(x,a,y)-P(x,a,y)|g(y) \le\sqrt{\frac{2\sigma^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x_a)}\mid N_{t'}(x_a)=n} \\
+        \Proba{\neg\event_2}
+        &=\Proba{\exists x,a,y,t'\le t,|\Pbar_{t'}(x,a,y)-P(x,a,y)|g(y) >\sqrt{\frac{2\sigma^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x,a)}} \\
+        &\le\sum_{x,a,y} \sum_{t'=1}^{t} \Proba{|\Pbar_{t'}(x,a,y)-P(x,a,y)|g(y) \le\sqrt{\frac{2\sigma^2(y)L_t}{N_{t'}(x,a)}} +\frac{2HL_t}{3N_{t'}(x_a)}\mid N_{t'}(x_a)=n} \\
         &\le E^2At 2\exp\left(-\frac{n\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)^2}{2\sigma^2(y)+\frac{2H}{3}\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)}\right) \\
         &\le 2E^2At\exp\left(-\frac{n\left[\frac{2\sigma^2(y)L_t}{n} +\frac{2HL_t}{3n}\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)\right]}{2\sigma^2(y)+\frac{2H}{3}\left(\sqrt{\frac{2\sigma^2(y)L_t}{n}} +\frac{2HL_t}{3n}\right)}\right) \\
         &=2E^2At\exp(-\log(4E^2At/\delta)) = \frac{\delta}2
         \end{align*}
         Now,
         \begin{align*}
-        \proba{\neg\event} 
-        &\le\proba{\neg\event_1} +\proba{\neg\event_2}\le\frac{\delta}{2E} +\frac{\delta}2\le \delta\frac{1+E}{2E} \le \delta.
+        \Proba{\neg\event} 
+        &\le\Proba{\neg\event_1} +\Proba{\neg\event_2}\le\frac{\delta}{2E} +\frac{\delta}2\le \delta\frac{1+E}{2E} \le \delta.
         \end{align*}
         \end{proof}
         
