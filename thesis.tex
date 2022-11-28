@@ -240,6 +240,7 @@
 \makeatother
 
 \usepackage{enumitem}
+%\usepackage{minitoc}
 
 % === DOCUMENT CONTENT ========================================================
 
@@ -261,8 +262,8 @@
 
 \pagenumbering{roman}  % roman page numbering (e.g., i ii iii), reset counter
 
-\input{dedication.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%\input{dedication.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 %
 \input{epigraph.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
@@ -302,7 +303,9 @@
 \inputchapter{\includechapterintroduction}{chapter_introduction.tex}
 %TODO: should we put number for introduction and conclusion chapters?
 
+\iftotalcompilation
 \part{Computation Problem}
+\fi
 
 \inputchapter{\includemdpchapter}{markovDecisionProcess_chapter.tex}
 
@@ -312,7 +315,10 @@
 
 %need to add a conclusion
 
+\iftotalcompilation
 \part{Learning Problem}
+\fi
+
 %\bookmarksetup{startatroot}
 \inputchapter{\includereinforcementlearningchapter}{reinforcementLearning_chapter.tex}
 
