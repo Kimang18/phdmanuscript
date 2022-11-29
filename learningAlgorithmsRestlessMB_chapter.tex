@@ -36,9 +36,7 @@ A discrete-time multi-armed restless bandit problem with $n$ arms is a collectio
 
 A RMAB is a MDP with specific structure. 
 
-\subsection{Structural properties}
-
-Quote Puterman
+\subsection{Structural properties of MDP}
 
 We classify MDPs in two ways:
 
@@ -73,7 +71,7 @@ In \cite{fruit2018near}, it is proven that in weakly communicating MDPs, no algo
 
 \subsection{Diameter}
 
-For any stationary policy $\pi$, let $T(y\mid M,\pi,x)$ be the random variable for the first time step in which state $y$ is reached when starting at state $x$ and following the policy $\pi$ in MDP $M$.
+For any stationary policy $\pi$, let $T^\pi(y \mid M, x)$ be the random variable for the first time step in which state $y$ is reached when starting at state $x$ and following the policy $\pi$ in MDP $M$.
 From \cite[Definition 1]{jaksch2010near}, the diameter of a MDP $M$ is defined by
 \begin{align*}
     \mathrm{diameter}(M) = \max_{x\neq y}\min_{\pi} \ex{T^\pi(y\mid M, x)}.
@@ -91,13 +89,13 @@ This implies that the diameter of RMAB model in which each arm has the same stat
 
 \KK{What MDP structure should we assume?}
 
-Following \cite[Chapter~8]{puterman2014markov}, in finite-state Markov reward process $(\vr, \mP)$, we define $\bar{\mP}=\displaystyle\lim_{N\to+\infty}\frac1N\sum_{t=1}^N\mP^{t-1}$ as the Cesaro limit of the sequence $\{\mP^t\}_{t\ge0}$.
+Following \cite[Chapter~8]{puterman2014markov}, in finite-state Markov reward process $(\vr, \mP)$, we define $\bar{\mP}=\displaystyle\lim_{N\to+\infty}\frac1N\sum_{t=0}^{N-1}\mP^{t}$ as the Cesaro limit of the sequence $\{\mP^t\}_{t\ge0}$.
 This limit exists for finite-state process (see Section~A.4 of Appendix~A of \cite{puterman2014markov}).
 If $\bar{\mP}$ is stochastic, then the gain is $\vg=\bar{\mP}\vr$.
 The bias is defined according to the structure of Markov chain:
 \begin{enumerate}
     \item if the Markov chain is \emph{aperiodic}, then the bias is $\vh=\displaystyle\sum_{t=0}^\infty(\mP^t-\bar{\mP})\vr$
-    \item if the Markov chain is \emph{periodic}, then the bias is $\vh=\displaystyle\lim_{N\to\infty}\frac1N\sum_{k=1}^N\sum_{t=0}^k(\mP^t-\bar{\mP})\vr$
+    \item if the Markov chain is \emph{periodic}, then the bias is $\vh=\displaystyle\lim_{N\to\infty}\frac1N\sum_{k=1}^N\sum_{t=0}^{k-1}(\mP^t-\bar{\mP})\vr$
 \end{enumerate}
 
 Let $\vh\in\sR^S$. The span of $\vh$ is given by $sp(\vh)=\max_xh(x) - \min_xh(x)$.
@@ -268,7 +266,7 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
     \end{figure}
 \end{proof}
 
-\subsubsection{Diameter and span: counter-examples and positive results}
+\subsubsection{Diameter, mixing time, and span}
 
 \begin{thm}
     \begin{enumerate}[label=(\roman*)]
@@ -300,79 +298,82 @@ The RMABs having such arms are communicating.
 However, the upper bound on the global span tends to infinity when $\varepsilon$ tends to $0$.
 \end{proof}
 
-\subsubsection{Towards lower bound}
+\subsubsection{Minimax lower bound on the expected regret}
 
 \begin{thm}
-    There exists an ergodic RMAB in which any learning algorithm suffers a regret that is at least in $T$, the total number of time steps.
+    There exists an ergodic RMAB in which any generic reinforcement learning algorithm suffers a regret that is at least linear in $T$, the total number of time steps.
 \end{thm}
+\begin{proof}
+    We show this theorem by constructing a RMAB whose span of the optimal bias is as big as total time $T$.
+    Then, we use the existing result on the lower bound of general MDP to conclude the proof.
 
-Consider a RMAB with 2 arms whose transition is given in Figure~\ref{fig:lower_bound} and at each time step, we activate only one arm.
-This RMAB is weakly communicating.
-The reward in local states $1$ and $a$ is $1$, and states $2$ and $b$ is $0$.
-To maximize the average reward in this RMAB, we need to stay in local state $1$ as frequent as possible.
-So, an optimal policy is
-\begin{align*}
-    \pi^*(1a)=1, \pi^*(1b)=1, \pi^*(2a)=2, \pi^*(2b)=2.
-\end{align*}
-That is, when the RMAB is in state $1a$, it is optimal to activate Arm~$1$.
-Under policy $\pi^*$, the Markov chain $\mP^{\pi^*}$ is ergodic (see Figure~\ref{fig:lower_bound}(c)).
-The reward vector under this policy is $r^{\pi^*}(1a)=1, r^{\pi^*}(1b)=1, r^{\pi^*}(2a)=1, r^{\pi^*}(2b)=0$.
-Using Bellman equations with a condition that $h^*(2b)=0$, we get
-\begin{align*}
-    g^*=h^*(1a)=\frac{3-\varepsilon}{4-2\varepsilon}, h^*(1b)=\frac1{\varepsilon(2-\varepsilon)},
-    h^*(2a)=\frac{1+\varepsilon}{2\varepsilon}.
-\end{align*}
-Then, the span of $\vh^*$ is given by $sp(\vh^*)=\displaystyle\frac{1+\varepsilon}{2\varepsilon}$.
-Following \cite{jaksch2010near, zhang2019regret}, the minimax lower bound on expected regret in this RMAB is $\displaystyle\Omega\left(\sqrt{\frac{T}{2\varepsilon}(1+\varepsilon)}\right)$.
-Then, for $\varepsilon=1/T$, any learning algorithm suffers a regret that is at least linear in $T$.
-\KK{How to define the upper bound on span? $H=sp(\vh^*)$ or $H=\max_{\pi}sp(\vh^\pi)$?}
-\KK{Define $H=\max_{\pi}sp(\vh^\pi)$ requires that the MDP is unichain}
-\KK{Define $H=sp(\vh^*)$ requires that the MDP is weakly communicating.}
-
-\begin{figure}[ht]
-    \centering
-    \begin{tabular}{ccc}
-    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-        \node[state]  (A) {$1$};
-        \node[state]  (B) [below = 2cm of A]   {$2$};
-        \path[->]
-        (A) edge[bend left, color=red]     node{}	(B)
-        (A) edge[bend left=80]     node{$1-\varepsilon$}	(B)
-        (A) edge[loop above]     node{$\varepsilon$}	(A)
-	    (B) edge[bend left, color=red]     node{}	(A)
-	    (B) edge[bend left=80]     node{}	(A);
-    \end{tikzpicture}
-    &
-    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-        \node[state]  (A) {$a$};
-        \node[state]  (B) [below = 2cm of A]   {$b$};
-        \path[->]
-        (A) edge[bend left=80]     node{}	(B)
-        (A) edge[bend left, color=red]     node{}	(B)
-	    (B) edge[bend left=80]     node{}	(A)
-	    (B) edge[bend left, color=red]     node{}	(A);
-    \end{tikzpicture}
-    &
-    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-        \node[state]  (A) {$1a$};
-        \node[state]  (B) [right = 1.5cm of A]   {$1b$};
-        \node[state]  (C) [right = 1.5cm of B]   {$2a$};
-        \node[state]  (D) [right = 1.5cm of C]   {$2b$};
-        \path[->]
-        (A) edge[bend left=50]     node{$1-\varepsilon$}	(D)
-        (A) edge[bend left]     node{$\varepsilon$}	(B)
-	    (B) edge[bend left]     node{$1-\varepsilon$}	(C)
-	    (B) edge[bend left]     node{$\varepsilon$}	(A)
-        (C) edge[bend left]     node{$1$}	(B)
-        (D) edge[bend left=50] node{$1$} (A);
-    \end{tikzpicture}
-    \\
-        (a) Arm $1$ & (b) Arm $2$ & (c) Markov chain under $\pi^*$
-    \end{tabular}
-    \caption{A RMAB with two 2-state arms that are recurrent.}
-    \label{fig:lower_bound}
-\end{figure}
-
+    Consider a RMAB with 2 arms whose transition is given in Figure~\ref{fig:lower_bound} and at each time step, we activate only one arm.
+    This RMAB is weakly communicating.
+    The reward in local states $1$ and $a$ is $1$, and states $2$ and $b$ is $0$.
+    To maximize the average reward in this RMAB, we need Arm~$1$ to stay in state $1$ as frequent as possible.
+    So, one optimal policy is
+    \begin{align*}
+        \pi^*(1a)=1, \pi^*(1b)=1, \pi^*(2a)=2, \pi^*(2b)=2.
+    \end{align*}
+    That is, when the RMAB is in state $1a$, it is optimal to activate Arm~$1$.
+    Under policy $\pi^*$, the Markov chain $\mP^{\pi^*}$ is ergodic (see Figure~\ref{fig:lower_bound}(c)).
+    The reward under this policy is $r^{\pi^*}(1a)=1, r^{\pi^*}(1b)=1, r^{\pi^*}(2a)=1, r^{\pi^*}(2b)=0$.
+    Using Bellman equations with a condition that $h^*(2b)=0$, we get
+    \begin{align*}
+        g^*=h^*(1a)=\frac{3-\varepsilon}{4-2\varepsilon}, h^*(1b)=\frac1{\varepsilon(2-\varepsilon)},
+        h^*(2a)=\frac{1+\varepsilon}{2\varepsilon}.
+    \end{align*}
+    Then, the span of $\vh^*$ is given by $sp(\vh^*)=\displaystyle\frac{1+\varepsilon}{2\varepsilon}$.
+    Following \cite{jaksch2010near, zhang2019regret}, the minimax lower bound on the expected regret in this RMAB is $\displaystyle\Omega\left(\sqrt{\frac{1+\varepsilon}{2\varepsilon}T}\right)$.
+    Then, for $\varepsilon=1/T$, any learning algorithm suffers a regret that is at least linear in $T$.
+    \KK{How to define the upper bound on span? $H=sp(\vh^*)$ or $H=\max_{\pi}sp(\vh^\pi)$?}
+    \KK{Define $H=\max_{\pi}sp(\vh^\pi)$ requires that the MDP is unichain}
+    \KK{Define $H=sp(\vh^*)$ requires that the MDP is weakly communicating. This is what is used in \cite{bartlett2012regal,zhang2019regret}}
+    
+    \begin{figure}[ht]
+        \centering
+        \begin{tabular}{ccc}
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state]  (A) {$1$};
+            \node[state]  (B) [below = 2cm of A]   {$2$};
+            \path[->]
+            (A) edge[bend left, color=red]     node{}	(B)
+            (A) edge[bend left=80]     node{$1-\varepsilon$}	(B)
+            (A) edge[loop above]     node{$\varepsilon$}	(A)
+    	    (B) edge[bend left, color=red]     node{}	(A)
+    	    (B) edge[bend left=80]     node{}	(A);
+        \end{tikzpicture}
+        &
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state]  (A) {$a$};
+            \node[state]  (B) [below = 2cm of A]   {$b$};
+            \path[->]
+            (A) edge[bend left=80]     node{}	(B)
+            (A) edge[bend left, color=red]     node{}	(B)
+    	    (B) edge[bend left=80]     node{}	(A)
+    	    (B) edge[bend left, color=red]     node{}	(A);
+        \end{tikzpicture}
+        &
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state]  (A) {$1a$};
+            \node[state]  (B) [right = 1.5cm of A]   {$1b$};
+            \node[state]  (C) [right = 1.5cm of B]   {$2a$};
+            \node[state]  (D) [right = 1.5cm of C]   {$2b$};
+            \path[->]
+            (A) edge[bend left=50]     node{$1-\varepsilon$}	(D)
+            (A) edge[bend left]     node{$\varepsilon$}	(B)
+    	    (B) edge[bend left]     node{$1-\varepsilon$}	(C)
+    	    (B) edge[bend left]     node{$\varepsilon$}	(A)
+            (C) edge[bend left]     node{$1$}	(B)
+            (D) edge[bend left=50] node{$1$} (A);
+        \end{tikzpicture}
+        \\
+            (a) Arm $1$ & (b) Arm $2$ & (c) Markov chain under $\pi^*$
+        \end{tabular}
+        \caption{A RMAB with two 2-state arms. The red arrows show the state transition due to passive action and black ones show the state transition under active action.}
+        \label{fig:lower_bound}
+    \end{figure}
+\end{proof}
 
 
 \subsection{Positive Results}
@@ -388,11 +389,11 @@ Then, for $\varepsilon=1/T$, any learning algorithm suffers a regret that is at 
 \end{proof}
 
 \begin{thm}
-    \label{thm:unichain} If all arms are unichain MDP with at least one state reachable in one step from any other states under both passive and active actions, then, the corresponding RMAB is also a unichain MDP with at least one state reachable in one step from any other global states under any policies.
+    \label{thm:unichain} If all arms are unichain MDP with at least one state reachable in one step from any other states under both passive and active actions, then the corresponding RMAB is also a unichain MDP with at least one state reachable in one step from any other global states under any policies.
 \end{thm}
 \begin{proof}
     For each arm $i\in[n]$, let $z_i$ be the state that is reachable in one step from any other states under both passive and active actions.
-    We have that $p(z_i \mid x_i, a_i)>0$ for all $i\in[n], x_i\in\gS_i,a\in\{0,1\}$.
+    We have that $p(z_i \mid x_i, a)>0$ for all $i\in[n], x_i\in\gS_i,a\in\{0,1\}$.
     %For simplification, we write $P^a(x_i,z_i) =P^a_i(x_i, z_i)$.
     For any action $\va\in\bar{\gA}$, any state $\vx,\vy\in\bar{\gS},$ the RMAB's state transition is given by ${\vp(\vy \mid \vx, \va) =\prod_{i=1}^n p(y_i \mid x_i, a_i)}$.
     Then, for any action $\va\in\bar{\gA}$, any state $\vx\in\bar{\gS}$, we have
@@ -442,7 +443,38 @@ Then, for $\varepsilon=1/T$, any learning algorithm suffers a regret that is at 
 We consider learning a RMAB problem whose arms' rewards, $\{r_i\}_{i\in[n]}$, are known to the learner.
 Only the arms' transition, $\{P_i\}_{i\in[n]}$, are unknown and need to be learnt via observations.
 
-\subsection{Assumptions on the unknown parameters}
+\subsection{Regret definition and minimal assumptions}
+
+Classically, the regret of the learner after $T$ time steps is given by
+\begin{align}
+    \Reg(M,T) = Tg^* - \sum_{t=1}^{T} \vr(\bX_{t},\bA_{t}). \label{eq:regret}
+\end{align}
+This definition implicitly requires that the unknown MDP $M$ is weakly communicating.
+
+\subsubsection{UCRL2 framework}
+
+The algorithm updates its policy using doubling trick.
+Let $M^k$ be the imagined MDP of the algorithm at episode $k$.
+Let $\pi^k$ be an optimal policy in $M^k$.
+We require $M^k$ to be weakly communicating in order to have the Bellman equations
+\begin{align*}
+    g^k +h^{\pi^k}(\vx) = \vr^k(\vx, \pi^k(\vx)) +\sum_{\vy}\vp^k(\vy \mid \vx, \pi^k(\vx))h^{\pi^k}(\vy).
+\end{align*}
+Then,
+\begin{align*}
+    \Reg(M, T)&=\sum_{k=1}^{K_T}\sum_{t=t_k}^{t_{k+1}-1} (g^*-g^k) {+}(\vr^k-\vr)(\mX_t,\mA_t) {+}\sum_{\vy}(\vp^k-\vp)(\vy \mid \mX_t, \mA_t)h^{\pi^k}(\vy)\\
+              &\quad  +\sum_{\vy}\vp(\vy \mid \mX_t, \mA_t)h^{\pi^k}(\vy)-h^{\pi^k}(\mX_t)
+\end{align*}
+
+When $\{r_i\}_{i\in[n]}$ is given and uppber bounded by $1$, the second term of regret is zero and the first term is bounded by $K_T$.
+The last term is bounded by Azuma-Hoeffding inequality for the sequence of martingale differences.
+
+Since our algorithm uses Bayesian approach, we measure its performance by
+\begin{align}
+    \BayReg(T) = \ex{\Reg(T)}. \label{eq:bayreg}
+\end{align}
+
+
 
 For each arm $i\in[n]$, the unknown parameter $P_i$ belongs to a compact set $\Theta_i$.
 Using Whittle index policy as a baseline, we need the two following assumptions:
@@ -470,14 +502,6 @@ Let $(g^W, h^W)$ be the average gain and bias function under $\vpi^W$ and satisf
 \label{ssec:regret}
 
 \KK{Add text}
-After $T$ time steps, the regret of learner is given by
-\begin{align}
-    \Reg(T) = Tg^W - \sum_{t'=1}^{T} \vr(\bX_{t'},\bA_{t'}). \label{eq:regret}
-\end{align}
-Since our algorithm uses Bayesian approach, we measure its performance by
-\begin{align}
-    \BayReg(T) = \ex{\Reg(T)}. \label{eq:bayreg}
-\end{align}
 
 \subsection{Learning Algorithm}
 \label{ssec:learn_algo}
