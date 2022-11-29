@@ -69,7 +69,7 @@ We note that:
 \end{itemize}
 %\KK{I think communicating implies weakly communicating.}
 
-In \cite{fruit2018near}, it is proven that in weakly-communicating MDPs, no algorithm can ever achieve a logarithmic growth of the regret without first suffering a linear regret for a number of steps that is exponential in the parameters of the MDP.
+In \cite{fruit2018near}, it is proven that in weakly communicating MDPs, no algorithm can ever achieve a logarithmic growth of the regret without first suffering a linear regret for a number of steps that is exponential in the parameters of the MDP.
 
 \subsection{Diameter}
 
@@ -89,10 +89,10 @@ This implies that the diameter of RMAB model in which each arm has the same stat
 
 \subsection{Span}
 
-\KK{How do we define bias? What MDP structure should we assume?}
+\KK{What MDP structure should we assume?}
 
 Following \cite[Chapter~8]{puterman2014markov}, in finite-state Markov reward process $(\vr, \mP)$, we define $\bar{\mP}=\displaystyle\lim_{N\to+\infty}\frac1N\sum_{t=1}^N\mP^{t-1}$ as the Cesaro limit of the sequence $\{\mP^t\}_{t\ge0}$.
-This limit always exists for finite-state process (see Section~A.4 of Appendix~A of \cite{puterman2014markov}).
+This limit exists for finite-state process (see Section~A.4 of Appendix~A of \cite{puterman2014markov}).
 If $\bar{\mP}$ is stochastic, then the gain is $\vg=\bar{\mP}\vr$.
 The bias is defined according to the structure of Markov chain:
 \begin{enumerate}
@@ -270,32 +270,108 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
 
 \subsubsection{Diameter and span: counter-examples and positive results}
 
-\paragraph{Diameter can be exponential in the number of arms?}
-
-$\Rightarrow$ Yes, we have an example in which the diameter is exponential in the number of arms.
-Consider an example of $n$ arms, each arm is a Markov chain with binary state space and $0.5$ probability of changing state under both actions.
+\begin{thm}
+    \begin{enumerate}[label=(\roman*)]
+        \item \label{thm:diam} There exists an ergodic RMAB, whose arms all have a bounded diameter, that has a diameter exponential in the number of arms. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
+        %\item \label{thm:aperiodic_RB_ergo} There exists a Restless bandit whose arms are all ergodic that is not recurrent. 
+        \item \label{thm:mixing} There exists an ergodic RMAB, whose arms are all ergodic, that has an unbounded mixing time.
+        \item \label{thm:span} There exists a communicating RMAB, whose arms all have a bounded span, that has an unbounded span.
+    \end{enumerate}
+\end{thm}
+\begin{proof}
+    \textbf{Proof of \ref{thm:diam}} -- consider an example of $n$ arms, each arm is a Markov chain with binary state space and $0.5$ probability of changing state under both actions.
 The probability that RMAB goes from state $(1,\dots,1)$ to state $(0,\dots,0)$ is $(1/2)^n$.
 Hence, the diameter is exponential in the number of arms.
-
-\paragraph{Mixing time also?}
-
-$\Rightarrow$ If we define the mixing time as in Definition~\ref{def:mixing_time}, that is, the maximum time required for any policy to make the state distribution $1/4$-close to the stationary distribution, then, the hypothesis of ergodicity on all arms is not enough to define a mixing time for RMAB because a RMAB can be multichain by Theorem~\ref{thm:ergodic_arms_multichain_RB} and the corresponding policy does not have unique stationary distribution.
-
-If RMAB is ergodic, then, the mixing time is defined?
-We can construct an ergodic RMAB problem having infinite mixing time.
-Let $\mP^m$ be the transition matrix of the arm given in \figurename~\ref{fig:local_ergodic_multichain_RB}.
+\medskip \\
+\textbf{Proof of \ref{thm:mixing}} -- Let $\mP^m$ be the transition matrix of the arm given in \figurename~\ref{fig:local_ergodic_multichain_RB}.
 Let $\mU$ be the transition matrix such that the state transition is uniform in any state.
-Any arm having $\mU$ as the transition matrix is ergodic and the RMAB problem that is composed of such arms is ergodic too.
+Any arm having $\mU$ as the transition matrix is ergodic and the RMAB that is composed of such arms is also ergodic.
 Now, consider the arms having the transition matrix $\mP=(1-\varepsilon)\mP^m +\varepsilon \mU$ for $\varepsilon\in(0,1)$.
-Such arms are ergodic and the RMAB problem having such arms is also ergodic.
-However, the mixing time of such RMAB problem tends to infinity when $\varepsilon$ tends to $0$ because when $\varepsilon=0$ the problem is multichain by Theorem~\ref{thm:ergodic_arms_multichain_RB}.
-Hence, the hypothesis of ergodicity on RMAB problem is still not enough for mixing time to be defined.
-%\KK{Is the conclusion of this paragraph correct?}
+Such arms are ergodic and the RMAB having such arms is also ergodic.
+However, the mixing time of such RMAB tends to infinity when $\varepsilon$ tends to $0$ because when $\varepsilon=0$ the RMAB is multichain as shown in Theorem~\ref{thm:ergodic_arms_multichain_RB}.
+%Hence, the hypothesis of ergodicity on RMAB problem is still not enough for mixing time to be defined.
+\medskip \\
+\textbf{Proof of \ref{thm:span}} -- First of all, consider the RMAB in Figure~\ref{fig:recur_non_communicate}.
+The reward in local state $1$ and $a$ is $1$ and in local state $2$ and $b$ is $0$ independently of the action taken.
+Thus, the upper bound on the local span of each arm is $1$ but the RMAB is multichain whose upper bound on the global span is infinite.
+Using the same technique above, let $\mP^m$ be the transition matrix of one arm in Figure~\ref{fig:recur_non_communicate} and $\mU$ be the transition matrix such that the state transition is uniform in any state.
+The arms having the transition matrix $\mP=(1-\varepsilon)\mP^m +\varepsilon \mU$ for $\varepsilon\in(0,1)$ are ergodic with finite upper bound on the local span. 
+The RMABs having such arms are communicating.
+However, the upper bound on the global span tends to infinity when $\varepsilon$ tends to $0$.
+\end{proof}
 
-In this case, the mixing time is not bounded.
+\subsubsection{Towards lower bound}
 
-\paragraph{What about span?}
+\begin{thm}
+    There exists an ergodic RMAB in which any learning algorithm suffers a regret that is at least in $T$, the total number of time steps.
+\end{thm}
 
+Consider a RMAB with 2 arms whose transition is given in Figure~\ref{fig:lower_bound} and at each time step, we activate only one arm.
+This RMAB is weakly communicating.
+The reward in local states $1$ and $a$ is $1$, and states $2$ and $b$ is $0$.
+To maximize the average reward in this RMAB, we need to stay in local state $1$ as frequent as possible.
+So, an optimal policy is
+\begin{align*}
+    \pi^*(1a)=1, \pi^*(1b)=1, \pi^*(2a)=2, \pi^*(2b)=2.
+\end{align*}
+That is, when the RMAB is in state $1a$, it is optimal to activate Arm~$1$.
+Under policy $\pi^*$, the Markov chain $\mP^{\pi^*}$ is ergodic (see Figure~\ref{fig:lower_bound}(c)).
+The reward vector under this policy is $r^{\pi^*}(1a)=1, r^{\pi^*}(1b)=1, r^{\pi^*}(2a)=1, r^{\pi^*}(2b)=0$.
+Using Bellman equations with a condition that $h^*(2b)=0$, we get
+\begin{align*}
+    g^*=h^*(1a)=\frac{3-\varepsilon}{4-2\varepsilon}, h^*(1b)=\frac1{\varepsilon(2-\varepsilon)},
+    h^*(2a)=\frac{1+\varepsilon}{2\varepsilon}.
+\end{align*}
+Then, the span of $\vh^*$ is given by $sp(\vh^*)=\displaystyle\frac{1+\varepsilon}{2\varepsilon}$.
+Following \cite{jaksch2010near, zhang2019regret}, the minimax lower bound on expected regret in this RMAB is $\displaystyle\Omega\left(\sqrt{\frac{T}{2\varepsilon}(1+\varepsilon)}\right)$.
+Then, for $\varepsilon=1/T$, any learning algorithm suffers a regret that is at least linear in $T$.
+\KK{How to define the upper bound on span? $H=sp(\vh^*)$ or $H=\max_{\pi}sp(\vh^\pi)$?}
+\KK{Define $H=\max_{\pi}sp(\vh^\pi)$ requires that the MDP is unichain}
+\KK{Define $H=sp(\vh^*)$ requires that the MDP is weakly communicating.}
+
+\begin{figure}[ht]
+    \centering
+    \begin{tabular}{ccc}
+    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+        \node[state]  (A) {$1$};
+        \node[state]  (B) [below = 2cm of A]   {$2$};
+        \path[->]
+        (A) edge[bend left, color=red]     node{}	(B)
+        (A) edge[bend left=80]     node{$1-\varepsilon$}	(B)
+        (A) edge[loop above]     node{$\varepsilon$}	(A)
+	    (B) edge[bend left, color=red]     node{}	(A)
+	    (B) edge[bend left=80]     node{}	(A);
+    \end{tikzpicture}
+    &
+    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+        \node[state]  (A) {$a$};
+        \node[state]  (B) [below = 2cm of A]   {$b$};
+        \path[->]
+        (A) edge[bend left=80]     node{}	(B)
+        (A) edge[bend left, color=red]     node{}	(B)
+	    (B) edge[bend left=80]     node{}	(A)
+	    (B) edge[bend left, color=red]     node{}	(A);
+    \end{tikzpicture}
+    &
+    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+        \node[state]  (A) {$1a$};
+        \node[state]  (B) [right = 1.5cm of A]   {$1b$};
+        \node[state]  (C) [right = 1.5cm of B]   {$2a$};
+        \node[state]  (D) [right = 1.5cm of C]   {$2b$};
+        \path[->]
+        (A) edge[bend left=50]     node{$1-\varepsilon$}	(D)
+        (A) edge[bend left]     node{$\varepsilon$}	(B)
+	    (B) edge[bend left]     node{$1-\varepsilon$}	(C)
+	    (B) edge[bend left]     node{$\varepsilon$}	(A)
+        (C) edge[bend left]     node{$1$}	(B)
+        (D) edge[bend left=50] node{$1$} (A);
+    \end{tikzpicture}
+    \\
+        (a) Arm $1$ & (b) Arm $2$ & (c) Markov chain under $\pi^*$
+    \end{tabular}
+    \caption{A RMAB with two 2-state arms that are recurrent.}
+    \label{fig:lower_bound}
+\end{figure}
 
 
 
@@ -305,7 +381,10 @@ In this case, the mixing time is not bounded.
     \label{thm:aperiodic_RB_comm} A RMAB whose arms are all ergodic is communicating. 
 \end{thm}
 \begin{proof}
-    to be proved
+    We prove the theorem by its contraposition. Assume that a given RMAB is noncommunicating.
+    In this RMAB, there are global states that are not reachable from each other.
+    This implies to two possibilities: 1. for some arms, some local states are not recurrent, 2. all arms are periodic.
+    Each possibility implies that there exists at least one arm that is not ergodic.
 \end{proof}
 
 \begin{thm}
