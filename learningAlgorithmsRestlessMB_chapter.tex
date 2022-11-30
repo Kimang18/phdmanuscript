@@ -440,41 +440,92 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
 
 \section{Learning RMAB}
 
-We consider learning a RMAB problem whose arms' rewards, $\{r_i\}_{i\in[n]}$, are known to the learner.
-Only the arms' transition, $\{P_i\}_{i\in[n]}$, are unknown and need to be learnt via observations.
+We consider learning a RMAB problem whose arms' rewards $\{r_i\}_{i\in[n]}$ and transition $\{P_i\}_{i\in[n]}$ are unknown and need to be learnt via observations.
 
-\subsection{Regret definition and minimal assumptions}
+\subsection{Regret definition and required assumptions}
 
 Classically, the regret of the learner after $T$ time steps is given by
 \begin{align}
-    \Reg(M,T) = Tg^* - \sum_{t=1}^{T} \vr(\bX_{t},\bA_{t}). \label{eq:regret}
+    \Reg(M,T) := Tg^* - \sum_{t=1}^{T} \vr(\bX_{t},\bA_{t}). \label{eq:regret}
 \end{align}
-This definition implicitly requires that the unknown MDP $M$ is weakly communicating.
+%This definition implicitly requires that the unknown MDP $M$ is weakly communicating and the reward is bounded.
+This definition implicitly requires that the reward is bounded and the optimal gain $g^*$ is state-independent.
 
-\subsubsection{UCRL2 framework}
+For Bayesian approach, the prior distribution $\phi$ of the unknown MDP is given. We define the Bayesian regret by 
+\begin{align}
+    \BayReg(\phi, T) := \ex{\Reg(M, T)} \label{eq:bayreg}
+\end{align}
+where the expectation over all the randomness ($\phi$, agent's trajectory...).
 
-The algorithm updates its policy using doubling trick.
-Let $M^k$ be the imagined MDP of the algorithm at episode $k$.
-Let $\pi^k$ be an optimal policy in $M^k$.
-We require $M^k$ to be weakly communicating in order to have the Bellman equations
+In the following, We present a methodology to bound the regret.
+Then, we go through the assumptions required for such methodology.
+
+\subsubsection{UCRL2 and TSDE framework}
+
+The algorithm updates its policy in episodic manner using doubling trick.
+Let $K_T$ be the total number of episodes (or policy updates) up to time $T$.
+Let $t^k$ be the time step when episode $k$ with the convention that $t^1:=1$.
+Let $M^k$ be the imagined MDP of the algorithm for episode $k$ and $\pi^k$ be the policy used in episode $k$.
+We require $\pi^k$ to induce state-independent gain in order to have the Bellman evaluation equations
 \begin{align*}
     g^k +h^{\pi^k}(\vx) = \vr^k(\vx, \pi^k(\vx)) +\sum_{\vy}\vp^k(\vy \mid \vx, \pi^k(\vx))h^{\pi^k}(\vy).
 \end{align*}
 Then,
 \begin{align*}
-    \Reg(M, T)&=\sum_{k=1}^{K_T}\sum_{t=t_k}^{t_{k+1}-1} (g^*-g^k) {+}(\vr^k-\vr)(\mX_t,\mA_t) {+}\sum_{\vy}(\vp^k-\vp)(\vy \mid \mX_t, \mA_t)h^{\pi^k}(\vy)\\
-              &\quad  +\sum_{\vy}\vp(\vy \mid \mX_t, \mA_t)h^{\pi^k}(\vy)-h^{\pi^k}(\mX_t)
+    \Reg(M, T)&=\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \underbrace{(g^*{-}g^k)}_{\Delta_1} {+}\underbrace{(\vr^k{-}\vr)(\mX_t,\mA_t)}_{\Delta_2} {+}\underbrace{\sum_{\vy}(\vp^k-\vp)(\vy \mid \mX_t, \mA_t)h^{\pi^k}(\vy)}_{\Delta_3}\\
+              &\quad  \underbrace{h^{\pi^k}(\mX_{t+1}){-}h^{\pi^k}(\mX_{t})}_{\Delta_4} {+}\underbrace{\sum_{\vy}\vp(\vy \mid \mX_t, \mA_t)h^{\pi^k}(\vy)-h^{\pi^k}(\mX_{t+1})}_{\Delta_5}
 \end{align*}
 
-When $\{r_i\}_{i\in[n]}$ is given and uppber bounded by $1$, the second term of regret is zero and the first term is bounded by $K_T$.
-The last term is bounded by Azuma-Hoeffding inequality for the sequence of martingale differences.
+\begin{itemize}
+    \item The second term $\Delta_2$ is bounded by sub-Gaussian inequality (or simply zero if $\{r_i\}_{i\in[n]}$ is known);
+    \item The first term $\Delta_1$ and the last term $\Delta_5$ are bounded based on the approach used: for optimism, $\Delta_1$ is non-positive due to optimism and the sum of $\Delta_5$ is bounded by Azuma-Hoeffding inequality for martingale differences sequence. For Bayesian, $\Delta_1$ is bounded by $K_T$ and $\Delta_5$ has zero expectation.
+\end{itemize}
+The terms $\Delta_3$ and $\Delta_4$ require additional assumption on $h^{\pi^k}$
+\begin{align*}
+    sp(\vh^{\pi^k})\le H^k \text{ where } H^k<+\infty.
+\end{align*}
+%Let $\Pi^k$ be the set of \emph{gain optimal} policies in MDP $M^k$.
+%The assumption needed is that 
+%\begin{align*}
+%    \Pi^k\neq \emptyset \text{ and }\sup_{\pi^k\in\Pi^k}sp(\vh^{\pi^k})\le H^k \text{ where } H^k<+\infty.
+%\end{align*}
+Under this assumption
+\begin{itemize}
+    \item the sum of $\Delta_4$ is the \emph{telescopic sum} which is bounded by $K_TH$ where $H:=\max_{k\le K_T}H^k$. Depending on the doubling trick used, $K_T$ is bounded \emph{a priori} by $\sqrt{SA\log(T)}$;
+    \item $\Delta_3$ is bounded by $H\vert\vp^k-\vp\vert_{1}$ and $\vert\vp^k-\vp\vert_{1}$ is bounded by Weissman's inequality.
+\end{itemize}
 
-Since our algorithm uses Bayesian approach, we measure its performance by
-\begin{align}
-    \BayReg(T) = \ex{\Reg(T)}. \label{eq:bayreg}
-\end{align}
+\paragraph{UCRL2 assumption}
 
+The assumption used in UCRL2 is that the unknown MDP $M$ is \emph{communicating} (if not, the diameter is infinite) and has bounded non-negative reward.
+This assumption implies
+\begin{itemize}
+    \item $g^*$ is state-independent and the regret is well defined;
+    \item for each $k\ge1$, $M^k$ is communicating and $g^k$ is state-independent;
+    \item for each $k\ge1$, $sp(\vh^{\pi^k})$ is bounded by the diameter of $M$.
+\end{itemize}
+The second item is true because the set of plausible MDPs $\gM^k$ can be considered as a MDP with finitely many actions.
+If $M$ belongs to $\gM^k$, then $\gM^k$ is also \emph{communicating}.
+$g^k$ can be considered as the optimal gain of this finitely many actions MDP $\gM^k$.
+So, $g^k$ is state-independent.
+The third item is true because $M$ belongs to $\gM^k$ and $\gM^k$ is a MDP with finitely many actions imply that the diameter of $\gM^k$ is upper bounded by the diameter of $M$.
+Under the assumption, \cite[Theorem~4]{bartlett2012regal} implies that the span of the optimal bias (the bias that verifies Bellman optimality equation) is bounded by the diameter of the MDP times the optimal gain.
 
+\KK{I cannot find any assumption about $sp(\vh^{\pi^k})\le H^k$ in UCRL2 paper}
+
+\paragraph{TSDE assumption}
+
+The assumption used for TSDE is that the support of $\phi$ is the set of \emph{weakly communicating} MDPs and there exists $H<+\infty$ such that in any MDP of the support, if $\vh\in\sR^S$ verifies Bellman optimality equation, then $sp(\vh)\le H$.
+This assumption implies that
+\begin{itemize}
+    \item $g^*$ is state-independent and the regret is well defined;
+    \item for each $k\ge1$, $M^k$ is weakly communicating and $g^k$ is state-independent;
+    \item for each $k\ge1$, $sp(\vh^{\pi^k})$ is bounded by $H$.
+\end{itemize}
+
+\KK{What follows is just a draft. The notations are not rigorous at all.}
+
+\subsubsection{Our assumptions}
 
 For each arm $i\in[n]$, the unknown parameter $P_i$ belongs to a compact set $\Theta_i$.
 Using Whittle index policy as a baseline, we need the two following assumptions:
@@ -497,11 +548,6 @@ Let $(g^W, h^W)$ be the average gain and bias function under $\vpi^W$ and satisf
 \begin{align}
     g^W + h^W(\vx) = \vr(\vx,\va) +\sum_{\vz\in\bar{\gS}} \mP^{\va}(\vx, \vz)h^W(\vz),\hspace{1cm} \forall \vx\in\bar{\gS}, \va=\vpi^W(\vx). \label{eq:bellman}
 \end{align}
-
-\subsection{Regret}
-\label{ssec:regret}
-
-\KK{Add text}
 
 \subsection{Learning Algorithm}
 \label{ssec:learn_algo}
