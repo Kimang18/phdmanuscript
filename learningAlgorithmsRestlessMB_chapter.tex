@@ -129,7 +129,7 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
 \begin{proof}
     \textbf{Proof of \ref{thm:not_ergodic}} -- It is given by the counter-example in which the RMAB has two arms as given by \figurename~\ref{fig:recur_non_communicate}.
     For each arm, both "activate" and "rest" induce the same transition.
-    In such example, the RMAB is a noncommunicating multichain MDP because if we start at state $(1,a)$ or $(2,b)$, then, there are two recurrent classes: one composed of $\{(1,a), (2,b)\}$ and the other one is $\{(1,b), (2,a)\}$.
+    In such example, the RMAB is a noncommunicating multichain MDP because if we start at state $1a$ or $2b$, then, there are two recurrent classes: one composed of $\{1a, 2b\}$ and the other one is $\{1b, 2a\}$.
     \begin{figure}[ht]
         \centering
         \begin{tabular}{ccc}
@@ -304,7 +304,7 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
     There exists an ergodic RMAB in which any generic reinforcement learning algorithm suffers a regret that is at least linear in $T$, the total number of time steps.
 \end{thm}
 \begin{proof}
-    We show this theorem by constructing a RMAB whose span of the optimal bias is as big as total time $T$.
+    We show this theorem by constructing a RMAB whose span of the optimal bias is as big as the total time $T$.
     Then, we use the existing result on the lower bound of general MDP to conclude the proof.
 
     Consider a RMAB with 2 arms whose transition is given in Figure~\ref{fig:lower_bound} and at each time step, we activate only one arm.
@@ -410,30 +410,30 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
 \begin{thm}
     \label{thm:ergodicity_coeff} For each arm $i\in[n]$, let $\beta_i$ be defined by
     \begin{align*}
-        \beta_i = 1-\min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{P^{a}(x_i,z_i), P^{a'}(y_i,z_i)\}.
+        \beta_i = 1-\min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\}.
     \end{align*}
     Similarly, for a RMAB, let $\vbeta$ be defined by
     \begin{align*}
-        \vbeta = 1-\min_{\substack{\vx,\vy\in\bar{\gS} \\\va,\va'\in\bar{\gA}}} \sum_{\vz\in\bar{\gS}} \min\{\mP^{\va}(\vx,\vz), \mP^{\va'}(\vy,\vz)\}.
+        \vbeta = 1-\min_{\substack{\vx,\vy\in\bar{\gS} \\\va,\va'\in\bar{\gA}}} \sum_{\vz\in\bar{\gS}} \min\{\vp(\vz \mid \vx, \va), \vp(\vz \mid \vy, \va')\}.
     \end{align*}
-    If for any arm $i$ $\beta_i<1$, then, $\vbeta<1$.
+    If $\beta_i<1$ for any arm $i$, then $\vbeta<1$.
     Moreover, if there exists $\varepsilon>0$ such that for any arm $i\in[n]$,
     \begin{align*}
-        \min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{P^{a}(x_i,z_i), P^{a'}(y_i,z_i)\} \ge \varepsilon,
+        \min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\} \ge \varepsilon,
     \end{align*}
     then, $\vbeta\le 1-\varepsilon^n$.
 \end{thm}
 \begin{proof}
     For any pair $(\vx,\vy)\in\bar{\gS}^2$ and any pair $(\va,\va')\in\bar{\gA}^2$,
     \begin{align*}
-        \sum_{\vz\in\bar{\gS}} \min\{\mP^{\va}(\vx,\vz), \mP^{\va'}(\vy,\vz)\}
-        &= \sum_{\vz\in\bar{\gS}} \min\left\{\prod_{i=1}^nP^{a_i}(x_i,z_i), \prod_{i=1}^nP^{a_i'}(y_i,z_i)\right\} \\
-        &\ge \sum_{\vz\in\bar{\gS}}\prod_{i=1}^n \min\{P^{a_i}(x_i,z_i), P^{a_i'}(y_i,z_i)\} \\
-        &= \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\{P^{a_i}(x_i,z_i), P^{a_i'}(y_i,z_i)\}\right)
+        \sum_{\vz\in\bar{\gS}} \min\{\vp(\vz \mid \vx, \va), \vp(\vz \mid \vy, \va')\}
+        &= \sum_{\vz\in\bar{\gS}} \min\left\{\prod_{i=1}^np(z_i \mid x_i, a), \prod_{i=1}^np(z_i \mid y_i, a')\right\} \\
+        &\ge \sum_{\vz\in\bar{\gS}}\prod_{i=1}^n \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\} \\
+        &= \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\}\right)
     \end{align*}
     %\KK{Add more detail about the second equality}
     Since $\beta_i<1$, we have that $\sum_{z_i\in\gS_i} \min\{P^{a_i}(x_i,z_i), P^{a_i'}(y_i,z_i)\}>0$.
-    In consequences, for any pair $(\vx,\vy)\in\bar{\gS}^2$ and any pair $(\va,\va')\in\bar{\gA}^2,$ we have ${\sum_{\vz\in\bar{\gS}} \min\{\mP^{\va}(\vx,\vz), \mP^{\va'}(\vy,\vz)\}>0}$.
+    In consequences, for any pair $(\vx,\vy)\in\bar{\gS}^2$ and any pair $(\va,\va')\in\bar{\gA}^2,$ we have ${\sum_{\vz\in\bar{\gS}} \min\{\vp(\vz \mid \vx, \va), \vp(\vz \mid \vy, \va')\}{>}0}$.
     We conclude the proof using the definition of $\vbeta$.
 \end{proof}
 
@@ -451,7 +451,8 @@ Classically, the regret of the learner after $T$ time steps is given by
 %This definition implicitly requires that the unknown MDP $M$ is weakly communicating and the reward is bounded.
 This definition implicitly requires that the reward is bounded and the optimal gain $g^*$ is state-independent.
 
-For Bayesian approach, the prior distribution $\phi$ of the unknown MDP is given. We define the Bayesian regret by 
+For Bayesian approach, the prior distribution $\phi$ of the unknown MDP is given.
+We define the Bayesian regret by 
 \begin{align}
     \BayReg(\phi, T) := \ex{\Reg(M, T)} \label{eq:bayreg}
 \end{align}
@@ -478,7 +479,7 @@ Then,
 
 \begin{itemize}
     \item The second term $\Delta_2$ is bounded by sub-Gaussian inequality (or simply zero if $\{r_i\}_{i\in[n]}$ is known);
-    \item The first term $\Delta_1$ and the last term $\Delta_5$ are bounded based on the approach used: for optimism, $\Delta_1$ is non-positive due to optimism and the sum of $\Delta_5$ is bounded by Azuma-Hoeffding inequality for martingale differences sequence. For Bayesian, $\Delta_1$ is bounded by $K_T$ and $\Delta_5$ has zero expectation.
+    \item The first term $\Delta_1$ and the last term $\Delta_5$ are bounded based on the approach used: for optimism, $\Delta_1$ is non-positive due to optimism and the sum of $\Delta_5$ is bounded by Azuma-Hoeffding inequality for martingale difference sequence. For Bayesian, $\Delta_1$ is bounded by $K_T$ and $\Delta_5$ has zero expectation.
 \end{itemize}
 The terms $\Delta_3$ and $\Delta_4$ require additional assumption on $h^{\pi^k}$
 \begin{align*}
@@ -491,7 +492,7 @@ The terms $\Delta_3$ and $\Delta_4$ require additional assumption on $h^{\pi^k}$
 %\end{align*}
 Under this assumption
 \begin{itemize}
-    \item the sum of $\Delta_4$ is the \emph{telescopic sum} which is bounded by $K_TH$ where $H:=\max_{k\le K_T}H^k$. Depending on the doubling trick used, $K_T$ is bounded \emph{a priori} by $\sqrt{SA\log(T)}$;
+    \item the sum of $\Delta_4$ is the \emph{telescopic sum} which is bounded by $K_TH$ where $H:=\max_{k\le K_T}H^k$. Depending on the doubling trick used, $K_T$ is bounded \emph{a priori} by $O\big(\sqrt{SA\ln(T)}\big)$;
     \item $\Delta_3$ is bounded by $H\vert\vp^k-\vp\vert_{1}$ and $\vert\vp^k-\vp\vert_{1}$ is bounded by Weissman's inequality.
 \end{itemize}
 
@@ -511,11 +512,12 @@ So, $g^k$ is state-independent.
 The third item is true because $M$ belongs to $\gM^k$ and $\gM^k$ is a MDP with finitely many actions imply that the diameter of $\gM^k$ is upper bounded by the diameter of $M$.
 Under the assumption, \cite[Theorem~4]{bartlett2012regal} implies that the span of the optimal bias (the bias that verifies Bellman optimality equation) is bounded by the diameter of the MDP times the optimal gain.
 
-\KK{I cannot find any assumption about $sp(\vh^{\pi^k})\le H^k$ in UCRL2 paper}
+%\KK{I cannot find any assumption about $sp(\vh^{\pi^k})\le H^k$ in UCRL2 paper}
 
 \paragraph{TSDE assumption}
 
-The assumption used for TSDE is that the support of $\phi$ is the set of \emph{weakly communicating} MDPs and there exists $H<+\infty$ such that in any MDP of the support, if $\vh\in\sR^S$ verifies Bellman optimality equation, then $sp(\vh)\le H$.
+Let $\mathrm{supp}(\phi)$ denote the support of the distribution $\phi$.
+The assumption used for TSDE is that $\mathrm{supp}(\phi)$ is a set of \emph{weakly communicating} MDPs and there exists $H<+\infty$ such that in any MDP drawn from the support, if $\vh\in\sR^S$ verifies Bellman optimality equation, then $sp(\vh)\le H$.
 This assumption implies that
 \begin{itemize}
     \item $g^*$ is state-independent and the regret is well defined;
