@@ -24,6 +24,25 @@ We show that:
     \item For globally ergodic, diameter can be exponential in the number of arms
 \end{itemize}
 
+\begin{table}[ht]
+\begin{tabular}{|l|l|l|l|}
+\hline
+Algorithm   & Regret & Structure assumption                                              & Policy computation            \\ \hline
+REGAL       & $\tilde{O}(sp(\vh^*)\sqrt{SAT})$ \cite{bartlett2012regal} & weakly communicating & No efficient implementation   \\ 
+UCRL2       & $\tilde{O}(DS\sqrt{AT})$ \cite{jaksch2010near} & diameter is finite        & Extended value iteration(EVI) \\ 
+TSDE        & $\tilde{O}(sp(\vh^*)S\sqrt{AT})$ \cite{ouyang2017learning} & weakly communicating & Value iteration        \\ 
+OSP         & $\tilde{O}(\sqrt{t_{mix}SAT})$ \cite{ortner2020regret} & ergodic           & No efficient implementation   \\ 
+SCAL        & $\tilde{O}(sp(\vh^*)S\sqrt{AT})$ \cite{fruit2018efficient} & weakly communicating & modified EVI           \\
+%KL-UCRL     & $\tilde{O}$(\sqrt{S\sum_{x,a}\sV^*_{x,a}T}) & ergodic                     & modified EVI                  \\ \hline
+UCRL2B      & $\tilde{O}(S\sqrt{DAT})$ \cite{fruit2020improved}& diameter is finite      & EVI                           \\
+EBF         & $\tilde{O}(\sqrt{DSAT})$ \cite{zhang2019regret} & weakly communicating     & No efficient implementation   \\ \hline
+lower bound & $\Omega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
+\end{tabular}
+\caption{Regret comparison for model-based RL algorithms in long-term average reward MDPs with $S$ states, $A$ actions, and $T$ steps.
+$D$ is the diameter of the MDP, $sp(\vh^*)\le D$ is the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP. For more concrete definition of these parameters see Sections~\ref{ssec:mdp_params}.}
+\end{table}
+
+
 \section{Basic definitions}
 
 \subsection{MDP}
@@ -37,6 +56,7 @@ A discrete-time multi-armed restless bandit problem with $n$ arms is a collectio
 A RMAB is a MDP with specific structure. 
 
 \subsection{Structural properties of MDP}
+\label{ssec:mdp_params}
 
 We classify MDPs in two ways:
 
@@ -74,10 +94,10 @@ In \cite{fruit2018near}, it is proven that in weakly communicating MDPs, no algo
 For any stationary policy $\pi$, let $T^\pi(y \mid M, x)$ be the random variable for the first time step in which state $y$ is reached when starting at state $x$ and following the policy $\pi$ in MDP $M$.
 From \cite[Definition 1]{jaksch2010near}, the diameter of a MDP $M$ is defined by
 \begin{align*}
-    \mathrm{diameter}(M) = \max_{x\neq y}\min_{\pi} \ex{T^\pi(y\mid M, x)}.
+    D = \max_{x\neq y}\min_{\pi} \ex{T^\pi(y\mid M, x)}.
 \end{align*}
 
-Hence, any noncommunicating MDP has \emph{infinite diameter}.
+Hence, any noncommunicating MDP has \emph{infinite diameter}. Conversely, any MDP having finite diameter is communicating.
 
 It is shown in \cite[Appendix A]{jaksch2010near} that the diameter is at least $\log_{|\gA|}|\gS|-3$.
 This implies that the diameter of RMAB model in which each arm has the same state size $S$, is at least
@@ -300,7 +320,7 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
 
 \subsubsection{Minimax lower bound on the expected regret}
 
-\begin{thm}
+\begin{thm}[incomplete]
     There exists an ergodic RMAB in which any generic reinforcement learning algorithm suffers a regret that is at least linear in $T$, the total number of time steps.
 \end{thm}
 \begin{proof}
