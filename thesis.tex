@@ -114,8 +114,15 @@
 \usepackage{xspace}  % easy macros definition
 \usepackage{booktabs}
 %\usepackage[font=footnotesize]{subfig}
-\usepackage{subfigure}
-\usepackage[ruled,noend]{algorithm2e}
+\usepackage{subcaption}
+\usepackage[linesnumbered,ruled,noend,vlined]{algorithm2e}
+\SetKwProg{Init}{Init.}{}{}
+\newenvironment{subroutine}[1][htb]
+{\renewcommand{\algorithmcfname}{Subroutine}% Update algorithm name
+   \begin{algorithm}[#1]%
+}{\end{algorithm}}
+
+
 \usepackage{csquotes}
 \usepackage{tabularx}
 \usepackage{pifont}
@@ -216,6 +223,7 @@
 \renewcommand{\NG}[1]{\todo[color=blue!10,author=\textbf{\small NG},inline]{\small #1\\}}
 \newcommand{\BG}[1]{\todo[color=red!10,author=\textbf{\small BG},inline]{\small #1\\}}
 \newcommand{\KK}[1]{\todo[color=green!10,author=\textbf{\small KK},inline]{\small #1\\}}
+\graphicspath{{}{img/}}
 
 % === MACROS DEFINITION =======================================================
 
@@ -229,7 +237,7 @@
 %   - http://web.ece.ucdavis.edu/~jowens/commonerrors.html
 
 % === META DATA ===============================================================
-\title{Reinforcement Learning in Structured Dynamic System}
+\title{Algorithms for Markovian Bandits: Indexability and Learning}
 \author{Kimang KHUN}
 
 % fill pdf meta data
@@ -240,6 +248,7 @@
 \makeatother
 
 \usepackage{enumitem}
+\setlistdepth{9}
 %\usepackage{minitoc}
 
 % === DOCUMENT CONTENT ========================================================
@@ -304,10 +313,16 @@
 %TODO: should we put number for introduction and conclusion chapters?
 
 \iftotalcompilation
-\part{Computation Problem}
+\part{Background}
 \fi
 
 \inputchapter{\includemdpchapter}{markovDecisionProcess_chapter.tex}
+
+\inputchapter{\includereinforcementlearningchapter}{reinforcementLearning_chapter.tex}
+
+\iftotalcompilation
+\part{Indexability}
+\fi
 
 \inputchapter{\includemarkovianbanditchapter}{markovianBandit_chapter.tex}
 
@@ -316,11 +331,10 @@
 %need to add a conclusion
 
 \iftotalcompilation
-\part{Learning Problem}
+\part{Learning in Markovian bandits}
 \fi
 
 %\bookmarksetup{startatroot}
-\inputchapter{\includereinforcementlearningchapter}{reinforcementLearning_chapter.tex}
 
 \inputchapter{\includelearningAlgorithmsRestedMBchapter}{learningAlgorithmsRestedMB_chapter.tex}
 
