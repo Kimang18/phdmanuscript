@@ -5,7 +5,7 @@ Whittle index is a generalization of Gittins index that provides very efficient 
 
 \section{Related work}
 
-The computation of Gittins index has received a lot of attention in the past, see for instance \cite{chen1986linear, katehakis1987multi, nino20072, sonin2008generalized} and the recent survey \citep{chakravorty2014multi}. For a $n$-state arm, the algorithms having the smallest complexity perform $(2/3)n^3+O(n^2)$ arithmetic operations \cite{chakravorty2014multi}. Note that in page $4$ of \citep{nino2020fast} the author claims that it is unlikely that this complexity can be improved. As we see later, we do improve upon this complexity. 
+The computation of Gittins index has received a lot of attention in the past, see for instance \cite{chen1986linear, katehakis1987multi, nino20072, sonin2008generalized} and the recent survey \cite{chakravorty2014multi}. For a $n$-state arm, the algorithms having the smallest complexity perform $(2/3)n^3+O(n^2)$ arithmetic operations \cite{chakravorty2014multi}. Note that in page $4$ of \cite{nino2020fast} the author claims that it is unlikely that this complexity can be improved. As we see later, we do improve upon this complexity. 
 
 Concerning Whittle index, to the best of our knowledge, there is no efficient general purpose algorithm to test indexability, and most papers studying Whittle index either assume that the studied model is indexable or focus on specific classes of restless bandits for which the structure of arms can be used to show indexability, see \emph{e.g.} \cite{aalto2011properties,akbarzadeh2019restless,akbarzadeh2021maintenance,borkar2017whittle}.  Assuming indexability, the computation of Whittle index has been considered by a few papers.
 
@@ -19,14 +19,14 @@ the work of \cite{nakhleh2021neurwin} uses deep reinforcement learning framework
 
 For non-discounted restless bandit $\beta=1$,  the author of \cite{nino2020fast} only provides a brief description of how the fast-pivoting algorithm given in the discounted case can be adapted although no explicit algorithm is given in that paper. For continuous-time $n$-state restless bandits, the work of \cite{ayesta2021computation} proposes an algorithm to check indexability and compute Whittle index with a complexity exponential in the number of states $n$ of each arm. According to Remark 4.1 of that paper, this complexity can be reduced to $O(n^5)$ if the restless bandit is known to be indexable and threshold-based policies are optimal. It is stated that their approach is not applicable for discounted restless bandits.
 For learning aspect, the work of \cite{gibson2021novel} shows as to learn Whittle index in non-discounted case by maintaining two Q-functions, updating them using Q-learning algorithm, and deducing Whittle index from them when needed. The way that Whittle indices are computed is very close to our work but less efficient than our algorithm since the authors are more interested in learning the index. 
-%In addition, there is no specification of the structure of MDPs in the paper. In multichain non-discounted MDPs, Q-function is generally not unique (see \citep[Chapter~9]{puterman2014markov}).
-% The authors of \citep{multiArmedAction} consider a more general problem than non-discounted restless bandit and introduces a new index function that relies on Linear Programming solution in \emph{finite-horizon} setting and proposes an optimistic algorithm to learn their index function when the model is not given.}
+%In addition, there is no specification of the structure of MDPs in the paper. In multichain non-discounted MDPs, Q-function is generally not unique (see \cite[Chapter~9]{puterman2014markov}).
+% The authors of \cite{multiArmedAction} consider a more general problem than non-discounted restless bandit and introduces a new index function that relies on Linear Programming solution in \emph{finite-horizon} setting and proposes an optimistic algorithm to learn their index function when the model is not given.}
 
 \textbf{Contributions.} In this paper, we investigate Whittle index computation in restless multi-armed bandit problems and present four main contributions. 
 
 Our first contribution is to propose a univocal definition of indexability. This definition clarifies ambiguities that exist in the classical definitions: Classical definitions assume that an arm is indexable if the optimal policy is a non-decreasing function of some penalty term $\lambda$. While this definition works for most practical cases, it is not always precise enough because the optimal policy is in general not unique. In our definition, we specify the notion of increasingness that should be used. Our definition guarantees the uniqueness of Whittle indices.
 
-Our second contribution is to propose a unified algorithm that computes the Whittle indices for both discounted and non-discounted restless bandits. Our algorithm, which can be viewed as a refinement of the algorithm in \cite{akbarzadeh2020conditions}, tests whether the input arm is indexable or not, and computes Whittle index if the arm is. As a byproduct, our algorithm can compute Gittins index in rested bandits which are a subclass of restless bandits.  This algorithm computes the indices in increasing order, and relies on an efficient use of the Sherman-Morrison formula to compute Whittle index in $(2/3)n^3 + O(n^2)$ plus subcubic time \citep{strassen1969gaussian} to solve a linear system of order $n$.
+Our second contribution is to propose a unified algorithm that computes the Whittle indices for both discounted and non-discounted restless bandits. Our algorithm, which can be viewed as a refinement of the algorithm in \cite{akbarzadeh2020conditions}, tests whether the input arm is indexable or not, and computes Whittle index if the arm is. As a byproduct, our algorithm can compute Gittins index in rested bandits which are a subclass of restless bandits.  This algorithm computes the indices in increasing order, and relies on an efficient use of the Sherman-Morrison formula to compute Whittle index in $(2/3)n^3 + O(n^2)$ plus subcubic time \cite{strassen1969gaussian} to solve a linear system of order $n$.
 This algorithm can detect on the fly if a computed index violates the indexability condition, which adds an extra $(1/3)n^3+O(n^2)$ arithmetic operations. This later test is optional: the complexity of our algorithm is $n^3+o(n^3)$ when testing indexability and $(2/3)n^3 +o(n^3)$ without the test. For discounted problems, our algorithm works for any finite-state arm.  For non-discounted problems, our algorithm takes as an input any weakly communicating arm and can output three results: the arm is indexable, non-indexable, or multichain. % These three cases are not mutually exclusive.
 We show the correctness of the algorithm which proves that for unichain arms, our algorithm can always test if the arm is indexable or not. The possible outputs of our algorithm are summarized in Figure~\ref{fig:possible_outputs}.
 
@@ -87,7 +87,7 @@ In his seminar paper \cite{whittle1988restless}, Whittle proposes the following 
 
 \subsection{Indexability and Whittle index}
 
-%We consider that a decision maker seeks to maximize the average gain over an infinite horizon (the discounted case will be discussed in Section~\ref{sec:discounted}). To avoid the dependence on initial states, we assume that the arm is unichain\footnote{a MDP is unichain if all policies induce a Markov chain with a unique stationary distribution (see \citep{puterman2014markov})}.
+%We consider that a decision maker seeks to maximize the average gain over an infinite horizon (the discounted case will be discussed in Section~\ref{sec:discounted}). To avoid the dependence on initial states, we assume that the arm is unichain\footnote{a MDP is unichain if all policies induce a Markov chain with a unique stationary distribution (see \cite{puterman2014markov})}.
 
 For the remaining of the paper, we consider a single arm $(r, P)$ that has $n$ states and that is assumed to be \emph{weakly communicating} (see definition below). In this section, we introduce the notion of indexability and discuss some ambiguities that we have found when using the definition of indexability defined in previous works.
 
@@ -110,9 +110,9 @@ Testing if a policy is unichain is computationally feasible and can be solved in
 \subsubsection{Gain optimality and Bellman optimality}
 \label{ssec:bellman_optimal}
 
-Following a policy $\pi$, we denote by $g^\pi_i$ the long-term average reward that a decision maker would obtain when starting in state $i$. In the remainder of the paper, we use the term ``gain'' to denote the long-term average reward. Let $g^*_i=\max_\pi g^\pi_i$ be the maximal gain starting from state $i$.  As we assume that the arm is weakly communicating, it is shown in \citep[Chapter 8]{puterman2014markov} that the quantity $g^*_i$ does not depend on $i$ and we simply denote it by $g^*$.  We say that a policy is gain optimal if $g^\pi_i=g^*$ for all state $i$.
+Following a policy $\pi$, we denote by $g^\pi_i$ the long-term average reward that a decision maker would obtain when starting in state $i$. In the remainder of the paper, we use the term ``gain'' to denote the long-term average reward. Let $g^*_i=\max_\pi g^\pi_i$ be the maximal gain starting from state $i$.  As we assume that the arm is weakly communicating, it is shown in \cite[Chapter 8]{puterman2014markov} that the quantity $g^*_i$ does not depend on $i$ and we simply denote it by $g^*$.  We say that a policy is gain optimal if $g^\pi_i=g^*$ for all state $i$.
 
-It is shown in \citep[Chapter 8]{puterman2014markov} that $g^*$ is the optimal gain if and only if there exists a vector $\vh^*$, called the bias vector that satisfies the Bellman optimality equation:  for all $i\in[n]$,
+It is shown in \cite[Chapter 8]{puterman2014markov} that $g^*$ is the optimal gain if and only if there exists a vector $\vh^*$, called the bias vector that satisfies the Bellman optimality equation:  for all $i\in[n]$,
 \begin{equation}
     g^* + h^*_i = \max_{a\in\{0,1\}} \Big( r^{a}_i + \sum_{j=1}^n P^{a}_{ij}h^*_j \Big).  \label{eq:bias_eval_opt}
 \end{equation}
@@ -333,7 +333,7 @@ To illustrate how the algorithm works, we plot in Figure~\ref{fig:illustrate_alg
     \item For \ref{fig:illustrate_algo_nind}, the algorithm realizes that $\alpha^{\pi^3}_{\sigma^1}(\mu^3_{\min})>0$ which shows that this model is not indexable. 
 \end{itemize}
 
-\noindent Note that for the indexable example of Figure~\ref{fig:illustrate_algo_ind}, the active advantage function is not a decreasing function of $\lambda$. Hence, this example is neither PCL-indexable (defined in \citep[Definition~3]{nino2020fast}) nor strongly-indexable (defined in \cite{nakhleh2021neurwin}). However, this does not prevent our algorithm from working. 
+\noindent Note that for the indexable example of Figure~\ref{fig:illustrate_algo_ind}, the active advantage function is not a decreasing function of $\lambda$. Hence, this example is neither PCL-indexable (defined in \cite[Definition~3]{nino2020fast}) nor strongly-indexable (defined in \cite{nakhleh2021neurwin}). However, this does not prevent our algorithm from working. 
 
 \subsection{Correctness of Algorithm~\ref{algo:whittle_informal}}
 
@@ -749,14 +749,6 @@ To see why this can be more efficient, we illustrate in Figure~\ref{fig:fast_mm}
             \foreach \i in {2,...,20}{
                 \draw (1,\i+0.5) edge[->] (\i,\i+0.5);
             }
-            %\node at (0,-1) {}; % to have the same vertical size as the right figure. 
-            % \foreach \j in {1,...,6}{
-            %     \foreach \k in {\j,...,6}{
-            %         \draw (\j+0.5,\k+0.5) edge[->] (\j-0.7,\k+0.5) (\j+0.5,\k+0.5) edge[->] (\j-0.5,\k-0.5);
-            %     }
-            % }
-            % \node at (6,9) {$\udots$};
-            % \node at (3,9) {$\vdots$};
         \end{tikzpicture}
         &
         \begin{tikzpicture}[scale=0.19, shorten >=2pt]
@@ -786,5 +778,232 @@ To see why this can be more efficient, we illustrate in Figure~\ref{fig:fast_mm}
     \caption{Illustration of the improvement proposed by replacing Subroutine~\ref{algo:update_X} with Subroutine~\ref{algo:FMM} when we do not test the indexability. For Subroutine~\ref{algo:FMM}, we solve more linear systems (each vertical blue line corresponds to solving a linear system) but we reduce the gray zone to compute. A linear arrow corresponds to the internal loop of Line~\ref{algoFMM:internal loop} of Subroutine~\ref{algo:FMM}.}
     \label{fig:fast_mm}
 \end{figure}
+
+Note that the $y$-axis of Figure~\ref{fig:fast_mm} is ordered by increasing value of $\sigma^k$ (and not by increasing value of $k$). The value of $\sigma^k$ is computed at iteration $k$ but unknown before iteration $k$. This explains why in Subroutine~\ref{algo:FMM}, when we recompute the matrix $(X^{k}_{ij})$ at an iteration $k$ (vertical blue lines in Figure~\ref{fig:fast_mm}(b)), we recompute it for all $i,j$ and not just $i,j\in\{\sigma^{k}, \dots, \sigma^K\}$ (which are the only values that we will use): Indeed, $\sigma^{k}, \dots, \sigma^K$ are unknown at iteration $k$. 
+
+\subsection{A subcubic algorithm for Whittle index}
+
+We now assume to have access to a subcubic matrix multiplication algorithm that satisfies the following property:
+\begin{enumerate}[label=(FMM)]    
+    \item \label{hypo:FMM} There exists an algorithm to multiply a matrix of size $n\times n$ by a matrix of size\footnote{We write $n^\gamma$ which is possibly non-integer. For the sake of simplicity, we write $n^\gamma$ and $n^{1-\gamma}$ but they should be understood as $\floor{n^\gamma}$ and $\floor{n^{1-\gamma}}$ respectively.} $n\times  n^\gamma $ that runs in $O(n^{\omega(\gamma)})$, where $\omega:[0,1]\to[2,3]$ is a non-decreasing function.
+\end{enumerate}
+
+Going back to Algorithm~\ref{algo:whittle_n3} where Line~\ref{line:update_X} is Subroutine~\ref{algo:FMM}, we now assume that we recompute the whole matrix $\mX^k$ every $O(n^\gamma)$ iterations. The new algorithm has a subcubic complexity:
+
+\begin{thm}
+    \label{th:subcubic}
+    Given a $n$-state weakly communicating arm, Algorithm~\ref{algo:whittle_n3} with Subroutine~\ref{algo:FMM} checks indexability and computes Whittle (and Gittins) index in time at least $\Omega(n^{2.5})$ and at most $O(n^{2.5286})$ when choosing $\gamma=0.5286$.
+\end{thm}
+
+We believe that Theorem~\ref{th:subcubic} is the first theoretical result that shows that Whittle index can be computed in subcubic time. As we show in Section~\ref{sec:discounted}, this algorithm can be directly extended to discounted index. As a byproduct, we also obtain the first subcubic algorithm to compute Gittins index.
+
+
+\begin{proof}
+    The algorithm starts by computing $\mX^1$ which can be done in $O( n^{\omega(1)})$. Then, there are $ n^{1-\gamma} $ times that we do:
+    \begin{enumerate}
+        \item We fill the ``gray'' mini matrices by using \eqref{eq:X^ell+1-i}. This amounts to three for loops of size $n$ (for $i$), $ n^\gamma $ (for $k$) and $ n^\gamma $ (for $\ell$). Hence, each small gray matrix costs $O( n^{1+2\gamma} )$.
+        \item At the end of a cycle, we recompute the full inverse by updating $(\mA^{\pi^k})^{-1}$ from $(\mA^{\pi^{k- n^\gamma }})^{-1}$. As we show in Lemma~\ref{lem:woodbury} (stated below), this can be done in $O( n^{\omega(\gamma)} )$.
+    \end{enumerate}
+This implies that the algorithm has a complexity:
+    \begin{align*}
+        O( n^{\omega(\gamma)} ) +  n^{1-\gamma}  \left(O( n^{1+2\gamma} )+O( n^{\omega(\gamma)} )\right)  = O( n^{\max\{2+\gamma, 1-\gamma + \omega(\gamma)\}} ).
+    \end{align*}
+    
+    To compute the optimal value of $\gamma$ minimizing this expression requires the knowledge of the function 
+    $\omega(\gamma)$ which is  not known. The current state of the art  only gives  a lower bound ($\omega(\gamma) \geq 2$ ) and an upper bound described in  \cite{gall2018improved}.
+    
+    It is shown in \cite{gall2018improved} that $\gamma=0.5286$ is the smallest currently known value of $\gamma$ for which  $\omega(\gamma)<1+2\gamma$. This implies that the complexity is  at most $O(n^{2.5286})$.
+    
+    As for the lower bound,  $\omega(\gamma) \geq 2$ implies that the complexity of the
+    algorithm is at least  $\Omega(n^{2.5})$.
+\end{proof}
+  
+In the next lemma, $\mB$ plays the role of $\mA^{\pi^k}$ and $\mA$ the role of $\mA^{\pi^{k- n^{\gamma} }}$. Note that as required in the lemma, exactly $ n^\gamma $ rows and columns are changed between the two.
+\begin{lem}
+    \label{lem:woodbury}
+    Assume~\ref{hypo:FMM}. Let $\mA$ be a square matrix whose inverse $\mA^{-1}$ has already been computed, and let $\mB$ be an invertible square matrix such that $\mA-\mB$ is of rank smaller than $ n^{\gamma} $. Then, it is possible to compute the inverse of $\mB$ in $O(n^{\omega(\gamma)})$. 
+\end{lem}
+\begin{proof}
+    The matrix $\mB$ can be written as $\mB=\mA + \mU\mC\mV$ where $\mU$ is a $n\times n^\gamma $ matrix, $\mC$ is $ n^\gamma \times n^\gamma $ and $\mV$ is $ n^\gamma \times n$. The Sherman–Morrison–Woodbury formula~\cite{woodbury1950inverting} states that
+    \begin{align*}
+        \mB^{-1} = \left(\mA + \mU\mC\mV \right)^{-1} = \mA^{-1} - \mA^{-1}\mU \left(\mC^{-1} + \mV\mA^{-1}\mU \right)^{-1} \mV\mA^{-1}.
+    \end{align*}
+    This shows that $\mB^{-1}$ can be computed by:
+    \begin{itemize}
+        \item Computing $\mD:=\mA^{-1}\mU$ and $\mE:=\mV\mA^{-1}$: this takes $O(n^{\omega(\gamma)})$. 
+        \item Computing $\mF:=\left(\mC^{-1} + \mV\mA^{-1}\mU \right)^{-1}$: as this is the inversion of a $ n^\gamma \times n^\gamma $ matrix, it can be done in $O(n^{\gamma\omega(1)})$ where $\gamma\omega(1)\le \omega(\gamma)$.
+        \item Computing $\mG:=\mD\mF$ and then $\mG\mE$: this again takes $O(n^{\omega(\gamma)})$. 
+    \end{itemize}
+    Hence, computing $\mB^{-1}$ can be done in $O(n^{\omega(\gamma)})$ operations for the inversion and all   multiplications plus an additional $O(n^2)$ term for the subtraction and the addition. As $\omega(\gamma)\ge2$, this concludes the proof of the lemma.
+\end{proof}
+
+\subsection{The subcubic algorithm in practice}
+
+The complexity of $O(n^{2.5286})$ given in Theorem \ref{th:subcubic} is mainly of theoretical interest. The value $\gamma = 0.5286$ is obtained by using the best upper bound  on $\omega(\gamma)$ known today which is based on the Coppersmith-Winograd algorithm and its variants. The Coppersmith-Winograd algorithm (or its variants) are, however, known as a \emph{galactic algorithm}: the hidden constant in the $O()$ is so large that their runtime is prohibitive for any reasonable value of $n$. Hence, the existence of these algorithms is of theoretical interest but has limited applicability.
+
+This does not discard the practical improvement provided by Subroutine~\ref{algo:FMM} which is based on the mere fact that multiplying  two matrices (or inverting a matrix) is faster than three nested loops even for matrices of moderate size. To verify this, we launched  a detailed profiling of the code of Algorithm \ref{algo:whittle_n3} with the non-optimized Subroutine~\ref{algo:update_X}. It shows that for a problem of dimensions $5000$, the update of Line~\ref{line:update_X} takes more than 90\% of the computation time, the initialization of $\mX^1$ on Line~\ref{algo2:line_inverse} takes about $5\%$ of the time and the rest of the code takes less than $1\%$ of the running time.
+
+Now, if inverting the full matrix takes about $5\%$ of the execution time, and updating the gray zone takes $95\%$, then by doing $5$ updates, one can hope to obtain an algorithm whose running time is roughly $5\times5 + 95/5\approx43\%$ the one of the original implementation. As we observe in Section~\ref{sec:numerical}, this is close to the gain that we obtain in practice. A general way to choose the best number of updates is used in the numerical section. It is based on the following reasoning. For large matrices (say $n\ge 10^3$), the fastest implementations of matrix multiplication and inversion are based on Strassen's algorithm~\cite{huang2016strassen,huang2018practical}. As we report in Appendix~\ref{apx:inversion}, the time to solve a linear system of size $n$ by using the default installation of \texttt{scipy} seems to run in $O(n^{2.8})$. By replacing the function $\omega(\gamma)$ used in Theorem \ref{th:subcubic} by a more practical bound ($\omega(\gamma)=2.8$), the best value for $\gamma$ becomes $\gamma = 0.9$. This indicates that our algorithm can be implemented in $O(n^{2.9})$ by doing $O(n^{0.1})$ recomputation of $\mX^k$ from $\mA^{\pi^k}$. Note that even for very large values of $n$ (like $n=15000$), $n^{0.1}$ remains quite small, \emph{e.g.}, $15000^{0.1}\approx 2.6$. In practice, we observe that updating $\mathrm{int}(2n^{0.1})$ times (the notation $\mathrm{int}(x)$ indicates that it is rounded to the closest integer) gives the best performance among all algorithms, as reported in the next section.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Numerical experiments}
+\label{sec:numerical}
+
+In complement to our theoretical analysis, we developed a python package that implements Algorithm~\ref{algo:whittle_n3} and gives the choice of using the variant of Subroutine~\ref{algo:update_X} or of Subroutine~\ref{algo:FMM} to do the ``update\_X()'' function. This package relies on three python libraries: \texttt{scipy} and \texttt{numpy} for matrix operations, and \texttt{numba} to compile the python code. To facilitate its usage, this package can be installed by using \texttt{pip install markovianbandit-pkg}.
+
+All experiments were conducted on a laptop (Macbook Pro 2020) with an Intel Core i9 CPU at 2.3 GHz with 16GB of Memory using Python 3.6.9 :: Anaconda custom (64-bit) under macOS Big Sur version 11.6.2. The version of the packages are \texttt{scipy} version 1.5.4, \texttt{numpy} version 1.19.5 and \texttt{numba} version 0.53.1. The code of all experiments is available at \url{https://gitlab.inria.fr/markovianbandit/efficient-whittle-index-computation}.
+
+Finally, in all of our experiments, the generated arms are all unichain.
+
+\subsection{Time to compute Whittle indices}
+
+To test the implementation of our algorithm, we randomly generate restless bandit arms with $n$ states where $n\in\{100,1000,\dots,15000\}$. In each case, both transition matrices are uniform probabilistic matrices: for each row of each matrix, we generate $n$ i.i.d. entries following the exponential distribution and divide the row by its sum. This means that all matrices are dense.
+We use dense matrix since it is the worst case for computational interest. By running our algorithms on sparse matrix, we would expect to have faster running time.
+Note that all tested matrices are indexable. This is coherent with \cite{gast2020exponential,nino2007dynamic} that report that for uniform matrices, the probability of finding a non-indexable example decreases very rapidly with the dimension $n$. Finally, reward vectors were generated from random Uniform[0,1) entries.
+
+\begin{table}[ht]
+    \caption{Running time (in seconds) of the variants of Algorithm~\ref{algo:whittle_n3}}
+    \label{table:running_time}
+    \begin{tabular}{|c|c|c||c|c|}
+        \hline
+        &\multicolumn{2}{c||}{$O(n^3)$ algorithm (Subroutine~\ref{algo:update_X})} & \multicolumn{2}{c|}{Subcubic algorithm (Subroutine~\ref{algo:FMM})}\\
+        $n$    &  (a) With index. test &  (b) Without test  & (c) With index. test &  (d) Without test  \\
+        \hline
+        100 & 0.006 & 0.004 & 0.007 & 0.005 \\
+        1000 &   0.2 &   0.2 &   0.2 &   0.2 \\
+        2000 &   1.9 &   1.2 &   1.1 &   1.0 \\
+        3000 &   7.2 &   5.0 &   3.2 &   2.6 \\
+        4000 &    17 &    12 &     8 &     6 \\
+        5000 &    34 &    25 &    16 &    12 \\
+        6000 &    60 &    43 &    27 &    20 \\
+        7000 &    95 &    68 &    42 &    33 \\
+        8000 &   142 &    99 &    63 &    49 \\
+        9000 &   199 &   141 &    92 &    70 \\
+        10000 &   275 &   191 &   122 &    95 \\
+        11000 &   361 &   257 &   164 &   133 \\
+        12000 &   471 &   339 &   225 &   190 \\
+        13000 &   620 &   428 &   286 &   243 \\
+        14000 &   790 &   553 &   408 &   317 \\
+        15000 &   965 &   685 &   501 &   403 \\
+        \hline
+    \end{tabular}
+\end{table}
+We record the runtime of the different variants of our algorithm and report the results in Table~\ref{table:running_time}. Note that these results present the whole execution time of the algorithm, including the initialization phase in which $\mX^1$ is computed. For each value of $n$, we run Algorithm~\ref{algo:whittle_n3} with four variants: 
+\begin{itemize}
+    \item The first two columns correspond to the $O(n^3)$ algorithm (that uses Subroutine~\ref{algo:update_X} for Line~\ref{line:update_X}), either (a) with the indexability test, or (b) without the indexability test. 
+    \item The last two columns correspond to the subcubic algorithm (that uses Subroutine~\ref{algo:FMM} for Line~\ref{line:update_X} with int($2n^{0.1}$) updates), either (c) with the indexability test, or (d) without the indexability test.
+\end{itemize}
+Our numbers show that our algorithm can compute the Whittle index in less than one second for $n=1000$ states and slightly less than $7$ minutes for $n=15000$ states with variant (d). As expected, not doing the indexability test does improve the performance compared to doing the indexability test (here by a factor approximately $1/3$ for Subroutine~\ref{algo:update_X} and $1/5$ for Subroutine~\ref{algo:FMM}). More importantly, this table shows that the time when using the subcubic variant, Subroutine~\ref{algo:FMM}, diminishes the computation time by about 40\% to 50\% compared to when using Subroutine~\ref{algo:update_X}. Note that for $n=100$, using the Subroutine~\ref{algo:update_X} is slightly faster than using the Subroutine~\ref{algo:FMM} (while both takes only a few milliseconds). This indicates that the subcubic algorithm becomes interesting when $n$ is large enough (say $n\ge2000$).
+
+To give a visual idea of how the various variants of the algorithms compare, we plot in Figure~\ref{fig:benchmark_algo_whittle_generic} the runtime of the four variants along with the runtime reported \cite{nino2020fast}, that we believe was the fastest algorithm to compute Whittle index so far for discounted restless bandit. We plot in Figure~\ref{fig:speedup} the runtime of each variant divided by the runtime from \cite{nino2020fast}. For large $n$, our best implementation is about $10$ to $20$ times faster than the one of \cite{nino2020fast}. For instance, for $n=15000$, our implementation takes about $7$ minutes to compute the index (or $9$ minutes when checking indexability) whereas \cite{nino2020fast} reports $2$ hours. Recall that the algorithm of \cite{nino2020fast} cannot check indexability on the fly. In our implementation, not testing indexability reduces the computation time of $15-20\%$ for Subroutine~\ref{algo:FMM} or $25-30\%$ for Subroutine~\ref{algo:update_X} compared to the version that tests indexability.
+
+It should be clear that the comparison between our implementation and the numbers reported in \cite{nino2020fast} has its limits. First, there is no public implementation of the algorithm of \cite{nino2020fast} and we did not re-implement it. Hence, the computation was not done on the same machine, and not implemented in the same programming language. The characteristic of the machine described in \cite{nino2020fast} seems comparable if not better to ours, and our implementation is in python/numpy whereas the one of \cite{nino2020fast} is in matlab.  Second, it is written in \cite{nino2020fast} that the reported numbers do not ``count the initialization stage of computing the initial tableau''. There is no mention of the cost of the initialization stage in \cite{nino2020fast}. On the contrary, the numbers that we report in this paper include all initialization stages, which puts our running time at disadvantage. 
+
+\begin{figure}[ht]
+    \begin{tabular}{cc}
+        \begin{subfigure}[t]{0.45\linewidth}
+            \includegraphics[width=\linewidth]{runtime_algorithms}
+            \caption{Runtime of our implementations as a function of the state size $n$.}
+            \label{fig:benchmark_algo_whittle_generic}
+        \end{subfigure}            
+        &\begin{subfigure}[t]{0.45\linewidth}
+            \includegraphics[width=\linewidth]{speedup}
+            \caption{Speedup of each implementation over the data from \cite{nino2020fast} as a function of the state size $n$.}
+            \label{fig:speedup}
+        \end{subfigure}
+    \end{tabular}
+    \caption{Numerical result over 7 simulations taking around 21 hours in total: in each simulation, we run the algorithm over randomly generated RBs with the state size ranging over $\{1000,\dots,15000\}$. We plot the average runtime over 7 simulations. The solid lines represent the result of Subroutine~\ref{algo:update_X} and the dashed-dot lines represent the one of Subroutine~\ref{algo:FMM}. The marker ``$+$'' indicates that algorithms test indexability and the triangles indicates that algorithms do not test indexability.}
+    \label{fig:numerical_result}
+\end{figure}
+
+\subsection{Statistics of indexable problems}
+
+To the best of our knowledge, our algorithm provides the first indexability test that scales well with the dimension $n$. We used this to answer a very natural question: given a randomly generated arm, how likely is it to be indexable? This question was partially answered in \cite{nino2007dynamic} that shows that when generating dense arms, the probability of generating a non-indexable arm is close to $10^{-n}$ for $n\in\{3,\dots,7\}$. This suggests that most arms are indexable. Below, we answer two questions: what happens for larger values of $n$, and more importantly, what happens when the state transition matrices are not dense? 
+
+To answer these questions, we consider randomly generated arms where the matrices $\mP^0$ and $\mP^1$ are $b$-diagonal matrices with $b$  non-null diagonals. In particular, $b=3$ corresponds to tridiagonal matrices, $b=5$ corresponds to pentadiagonal matrices and $b=7$ corresponds to septadiagonal matrices. We also compare with the classical case of dense matrices (which corresponds to $b=2n-1$).  For each model, the entries are generated from the exponential distribution for each row and we divide the row by the sum of generated entries for this row.   We vary $n$ from $3$ to $50$ and for each case, we generate $100000$ arms. We report in Table~\ref{tb:number_indexable} the number of indexable arms for each case. Note that pentadiagonal matrices are dense matrices for $n=3$ and septadiagonal matrices are dense matrices for $n=4$ and do not make sense for $n=3$, which is why no numbers are reported.
+
+\begin{table}[ht]
+    \caption{Number of indexable problems among $100\,000$ randomly generated problems.}
+    %\vspace{-.5cm}
+    \centering
+    \label{tb:number_indexable}
+    \begin{tabular}{|c|r|r|r|r|}
+        \hline
+        Problem size $n$ &  Tridiagonal &  5-diagonal &  7-diagonal &  Dense \\
+        \hline
+        3  &     98\,731 &        -- &        -- &   99\,883 \\
+        4  &     95\,067 &     99\,655 &        -- &   99\,931 \\
+        5  &     89\,198 &     99\,309 &     99\,902 &   99\,969 \\
+        10 &     54\,129 &     90\,377 &     98\,914 &  100\,000 \\
+%        20 &     17\,749 &     55\,267 &     86\,845 &  100\,000 \\
+        30 &      7\,094 &     29\,699 &     66\,143 &  $100\,000$ \\
+%        40 &      3\,356 &     15\,949 &     46\,478 &  $100\,000$ \\
+        50 &      1\,823 &      9\,332 &     32\,069 &  $100\,000$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Based on these results, we can assert that dense models are essentially always indexable which conforms with the data reported in \cite{nino2007dynamic}. The situation is, however, radically different for sparse models: the number of indexable problems decreases quickly with the number of states. For instance, there are only $1\,823$ indexable $50$-state problems among $100\,000$ generated tridiagonal models (\emph{i.e.} around $1.8\%$ are indexable). Note that a tridiagonal model is a birth-death Markov chain which is frequently used for queueing systems. Hence, it is very important to check the indexability of the problem because it is not a prevalent property for sparse models. This also calls for new efficient policies in restless multi-arm bandit problems that are not based on Whittle indices.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Extension to the discounted case}
+\label{sec:discounted}
+
+The model described in Section~\ref{sec:bandits} corresponds to the definition of Whittle index for a time-average criterion, for which Whittle index is known to be asymptotically optimal \cite{weber1990index} for restless bandits. Yet, Whittle index can also be defined for the discounted case \cite{nino2020fast, akbarzadeh2020conditions}. Notably, the discounted Whittle index simplifies into Gittins index when the bandit is rested (\emph{i.e.}, when $\mP^0=\mI$ and $\vr^0=\boldsymbol{0}$). In this section, we show how to adapt our algorithm to the discounted case. As a by product, we obtain the first subcubic algorithm to compute Gittins index rested bandit.
+
+\subsection{Discounted Whittle index}
+
+We now consider a $\widx$-penalized MDP in which the instantaneous reward received at time $t\ge0$ is discounted by a factor $\beta^t$, where $\beta\in(0,1)$ is called the discount factor: when executing action $a$ in state $i$ at time $t\ge0$, the decision maker earns a reward $\beta^t (r^a_i - \lambda a)$. For a given policy $\pi$, we denote by $u^\pi_i(\lambda)$ the expected sum of discounted rewards earned by the decision maker when the MDP starts in state $i$ at time $0$. The vector $\vu^\pi(\lambda)=[u^\pi_1(\lambda)\ \dots\ u^\pi_n(\lambda)]^\top$ is called the value function of the policy $\pi$. From \cite{puterman2014markov}, it satisfies Bellman's equation, that is, for all state $i$ we have: 
+\begin{align}
+    \label{eq:u^pi_discounted}
+    u^\pi_i(\lambda) = r_i^{\pi_i} - \lambda \pi_i + \beta \sum_{j=1}^n P^{\pi_i}_{ij} u^\pi_j(\lambda).
+\end{align}
+The above equation is a linear equation, whose solution is unique because $\beta<1$. It is given by:
+\begin{align}
+    \label{eq:h is linear discounted}
+    \vu^\pi(\lambda) = (\mI - \beta \mP^\pi)^{-1}(\vr^{\pi} - \lambda \vpi).
+\end{align}
+For a given penalty $\lambda$ and a state $i$, we denote by $u^*_i(\lambda):=\max_\pi u^\pi_i(\lambda)$ be the optimal value of state $i$.  A policy $\pi$ is optimal for the penalty $\lambda$, \ie, $\pi\in\Pi^*(\lambda)$, if for all state $i\in[n]$, $u^*_i(\lambda)=u^\pi_i(\lambda)$. By~\cite{puterman2014markov} such a policy exists, $\lvert\Pi^*(\lambda)\rvert >0$.
+As mentioned in Section~\ref{sssec:penal_mdp}, the distinction between Bellman optimal and gain optimal disappears in discounted MDP in which we are concerned with maximizing the value function.
+Similarly to the time-average criterion studied before, a $\beta$-discounted RB is called indexable if for all penalty $\lambda<\lambda'$, all $\pi\in\Pi^*(\lambda)$ and $\pi'\in\Pi^*(\lambda')$, one has $\pi\supseteq\pi'$.
+
+\subsection{Analogy between the time-average and the discounted versions}
+
+Let $\pi$ be a policy and $i\in\pi$ be an active state.
+Similarly to average reward model studied before, the advantage of action activate over action rest in state $i$ right before following policy $\pi$ is given by,
+$\alpha^\pi_i(\lambda):=r^1_i -r^0_i -\lambda +\beta\sum_{j=1}^n (P^1_{ij} -P^1_{ij})u^\pi_j(\lambda)$.
+Then $\alpha^\pi_i(\lambda)=0$ if and only if $\lambda = \delta_i + \sum_{j=1}^n\tilde{\Delta}_{ij} u_j^\pi(\lambda)$. 
+where $\delta_i$ is defined as for the average reward model and $\tilde{\mDelta}$ is such that for all\footnote{Note that the definition of $\tilde{\mDelta}$ is identical to $\mDelta$ except when $j=1$, for which $\Delta_{i1}:=0$ but $\tilde{\Delta}_{i1}:=\beta(P^1_{i1}-P^0_{i1})$.} states $i,j\in[n]$: $\tilde{\Delta}_{ij}:=\beta(P^1_{ij}-P^0_{ij})$.
+
+To finish the derivation of the algorithm, one should note that the value function $\vu(\lambda)$ plays the same role as the vector $\vv(\lambda)$ defined for the average reward model.
+In particular, the definition of $\vu$ in Equation~\eqref{eq:h is linear discounted} is the analogue of the definition of $\vv$ in \eqref{eq:h is linear} up to the replacement of the matrix $\mA^\pi$ in \eqref{eq:h is linear} by the matrix $\mI-\beta \mP^\pi$.
+This means that similarly to $\vv$, the value function $\vu(\widx)$ is affine in $\lambda$.
+
+Hence, following the same development in Section~\ref{sec:formal_widx_algo}, we can modify Algorithm~\ref{algo:whittle_n3} to compute the discounted Whittle index by modifying only the initialization phase:
+\begin{align*}
+    \tilde{\mDelta}:=\beta(\mP^1-\mP^0) \text{ and } \mX^1:=\tilde{\mDelta}(\mI-\beta \mP^{\pi^1})^{-1}.
+\end{align*}
+
+Note that we still have $\vy^1=\pmb{0}$ because $(\mI-\beta \mP^{\pi^1})^{-1}\vpi^1=\frac1{1-\beta}\pmb{1}$ (value function in a $\beta$-discounted Markov reward process with reward equals to $1$ in all states) and $\tilde{\mDelta}\pmb{1}=\pmb{0}$. Also, if Subroutine~\ref{algo:FMM} is used, Line~\ref{algoFMM:recompute} should be changed to $\mX^{k_0}:=\tilde{\mDelta}(\mI-\beta \mP^{\pi^{k_0}})^{-1}$. Last but not least, in the discounted case, we no longer needed the arm to be weakly communicating nor the optimal policies to be unichain because the matrix $(\mI-\beta \mP^\pi)$ is invertible for any policy $\pi$ as long as $\beta<1$ (from Perron-Frobenius' Theorem).
+
+\subsection{Gittins index}
+
+The notion of ``restless'' bandit comes from the fact that even when the action ``rest'' is taken, the Markov chain can still change state and generate rewards. When this is not the case (\emph{i.e.}, when $\mP^0=\mI$ and $\vr^0=\boldsymbol{0}$), an arm is no longer restless and is simply called a Markovian bandit (or a \emph{rested} Markovian bandit if one wants to emphasize that it is not restless).
+
+In a discounted rested bandit, the notion of Whittle index coincides with the notion of Gittins index (In fact, Whittle index was first introduced as a generalization of Gittins index to restless bandit in \cite{whittle1988restless}). In such a case, there is no notion of indexability: a discounted rested bandit is always indexable. Its index can be computed by Algorithm~\ref{algo:whittle_n3} without testing indexability. The best known algorithms to compute Gittins index runs in $(2/3) n^3 +O(n^2)$ \cite{chakravorty2014multi}. When using fast multiplication, our algorithm computes Gittins index in $O(n^{2.5286})$ which makes it the first algorithm to compute Gittins index in subcubic time.  
+
+Note that when $\mP^1=\mI$, it is possible to compute $\mX^1=\tilde{\mDelta}/(1-\beta)$ without having to solve a linear system which means that, when $\mP^1=\mI$, our algorithm with the variant Subroutine~\ref{algo:update_X} has complexity $(2/3) n^3 +O(n^2)$.
+This shows that our cubic algorithm can compute the Gittins index also in $(2/3) n^3 +O(n^2)$ instead of $(2/3)n^3 +o(n^3)$.
+% by switching $(P^0,\vr^0)$ and $(P^1,\vr^1)$. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+\label{sec:conclusion}
+
+In this paper, we propose a univocal definition of indexability and present an algorithm that is efficient for detecting the non-indexability and computing the Whittle index of all indexable finite-state restless bandits whose arms are all unichain. For weaker assumption where the arms are just weakly communicating, this algorithm can still test the indexability and compute the Whittle index of some arms that are multichain and remains efficient if it is able to do so.
+Our algorithm is based on the efficient application of the Sherman-Morrison formula. This is a unified algorithm that works for both discounted and non-discounted restless bandits, and can be used for Gittins index computation.  We present a first version of our algorithm that runs in $n^3+o(n^3)$ arithmetic operations (or in $(2/3)n^3+o(n^3)$ if we do not test the indexability). So, we conclude that Whittle index is not harder to compute than Gittins index. The second version of our algorithm uses the fastest matrix multiplication method and has a complexity of $O(n^{2.5286})$. This makes it the first subcubic algorithm to compute Whittle index or Gittins index. We provide numerical simulations that show that our algorithm is very efficient in practice: it can test indexability and compute the index of a $n$-state restless bandit arm in less than one second for $n=1000$, and in a few minutes for $n=15000$. These numbers are provided for dense matrices. One might expect to have more efficient algorithms if the arm has a sparse structure. We leave this question for future work. 
 
 
