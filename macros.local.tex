@@ -12,6 +12,7 @@
 \newtheorem{cor}[thm]{Corollary}
 \newtheorem{conj}[thm]{Conjecture}
 \newtheorem{asmp}[thm]{Assumption}
+\newtheorem{prob}{Problem}
 
 % asymptotic complexity (Landau) notations
 \newcommand{\landauO}{\ensuremath{\mathcal{O}}\xspace}
@@ -131,9 +132,12 @@
 \newcommand{\RVrew}{R}                      % reward random variable
 \newcommand{\RVvfunc}{V}                    % reward random variable
 \newcommand{\RVqfunc}{Q}                    % reward random variable
-\newcommand\floor[1]{\left\lfloor#1\right\rfloor}
 
-% Math notations
+\newcommand\floor[1]{\left\lfloor#1\right\rfloor}
+\newcommand\norm[1]{\left\|#1\right\|}      % norm
+\newcommand\ind[1]{\mathbb{I}_{\{#1\}}} % indicator function
+
+\newcommand\Eqref[1]{Equation~\eqref{#1}}
 
 % Matrix
 \def\mA{{\bm{A}}}
@@ -261,6 +265,8 @@
 \def\sX{{\mathbb{X}}}
 \def\sY{{\mathbb{Y}}}
 \def\sZ{{\mathbb{Z}}}
+\def\hatB{\hat{\gB}}
+
 
 \newcommand{\widx}{\lambda}
 \newcommand{\mcal}[1]{\mathcal{#1}}
@@ -292,3 +298,16 @@
 \newcommand{\piTilde}{\tilde{\pi}}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
+
+% For a custom label (in underbrace)
+\makeatletter
+\newcommand{\customlabel}[2]{%
+   \protected@write \@auxout {}{\string \newlabel {#1}{{#2}{\thepage}{#2}{#1}{}} }%
+   \hypertarget{#1}{#2}
+}
+\makeatother
+
+% Math notations
+
+
+

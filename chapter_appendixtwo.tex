@@ -14,6 +14,66 @@ The appendix are organized as follows:
     \item In Appendix~\ref{apx:envi}, we provide details about the experimental environment and the computation time needed. 
 \end{itemize}
 
+\section{Proof of Theorem~\ref{thm:regret_upper_bound}}
+\label{apx:proof_thm1}
+
+The proof of the regret bounds for our three algorithms share a common structure but with different technical details.  In this section, we do a detailed proof of the three algorithms by factorizing as much as possible what can be factorized in the different proofs. This proof is organized as follows:
+\begin{itemize}
+    \item In Section~\ref{ssec:overview}, we give an overview of the proof that is common to all algorithms. 
+    \item In Section~\ref{ssec:technical_lemmas}, we provide technical lemmas that are used in the detailed proofs of each algorithms. 
+    \item In Section~\ref{ssec:proof_PSRL}, \ref{ssec:proof_UCRL2} and \ref{ssec:proof_UCBVI}, we provide detailed analysis of MB-PSRL, MB-UCRL2, and MB-UCBVI. 
+\end{itemize}
+
+\subsection{Overview of the Proof}
+\label{ssec:overview}
+
+Let $\pi_*$ be the optimal policy of the true MDP $M$ and $\pi_k$ the optimal policy for $M_k$, the sampled MDP at episode $k$. Recall that the expected regret is $\sum_{k=1}^K \ex{\Delta_k}$, where $\Delta_k {=} W_{M,1:H_k}^{\pi_*}(\mX_{t_k}) {-} W_{M,1:H_k}^{\pi_k}(\mX_{t_k})$.
+For each of the three algorithms, we will define an event $\gE^\text{Algo}_{k-1}$ that is $\gO_{k-1}$-measurable. $\gE^\text{Algo}_{k-1}$ is true with high probability and guarantees that $M$ and $M_k$ are close.
+We have:
+\begin{align}
+    \ex{\Delta_k}
+    &= \ex{\Delta_k\ind{\lnot\gE_{k-1}^\text{Algo}} +\Delta_k\ind{\gE_{k-1}^\text{Algo}} } \nonumber\\
+    &\le \ex{H_k}\Proba{\lnot\gE_{k-1}^\text{Algo}} + \ex{\Delta_k \ind{\gE_{k-1}^\text{Algo}}} \label{eq:gap_overview}
+\end{align}
+because $\Delta_k\le H_k$ and the random variables $H_k$ and $\ind{\gE_{k-1}^\text{Algo}}$ are independent.
+For each of the three algorithms, the policy $\pi_k$ used at episode $k$ is optimal for a model $M_k$, that is either sampled from the posterior distribution for MB-PSRL, or computed by extended value iteration for MB-UCRL2, or equal to the model with the bonus for MB-UCBVI. We have
+\begin{align*}
+    \Delta_k=\underbrace{W_{M,1:H_k}^{\pi_*}(\mX_{t_k}) - W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k})}_{:=\Delta^{model}_k}%
+    + \underbrace{W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k}) - W_{M,1:H_k}^{\pi_k}(\mX_{t_k})}_{:=\Delta^{conc}_k}.
+\end{align*}
+As we deal with the expected regret and $H_k$ is independent of the model $M_k$ and of the policy $\pi_k$, we have:
+\begin{align}
+    \ex{\Delta^{model}_k} = V_{M}^{\pi_*}(\mX_{t_k}) - V_{M_k}^{\pi_k}(\mX_{t_k}) \label{eq:def_model}
+\end{align}
+As we see later, the above equation can be used to show that $\ex{\Delta^{model}_k \ind{\gE_{k-1}^\text{Algo}}}$ is either $0$ (for MB-PSRL) or non-positive (for MB-UCRL2 or MB-UCBVI). 
+
+We are then left with $\ex{\Delta^{conc}_k \ind{\gE_{k-1}^\text{Algo}}}$. To do so, we use Lemma~\ref{lem:regret_decomposition} to show that there exists a constant $B_k$ (equal to $H_k$ for MB-PSRL and MB-UCRL2, and $H_kL_{k-1}/(2(1-\beta))$ for MB-UCBVI) such that 
+\begin{align}
+    &\ex{\Delta^{conc}_k\ind{\gE_{k-1}^\text{Algo}}}=\ex{\ind{\gE_{k-1}^\text{Algo}} \Big(W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k}){-}W_{M,1:H_k}^{\pi_k}(\mX_{t_k})\Big)} \nonumber\\
+    & {\le} \mathbb{E}\left[\ind{\gE_{k-1}^\text{Algo}} \sum_{t=t_k}^{t_{k+1}{-}1}\norm{r_k(X_{t,A_t}){-}r(X_{t,A_t})}{+}B_k\norm{Q_{k}(X_{t,A_t},\cdot){-}Q(X_{t,A_t},\cdot)}_1\right] \label{eq:proof2}
+\end{align}
+where ${\norm{Q_{k}(x_a,\cdot)-Q(x_a,\cdot)}_1=\sum_{y_a}\norm{Q_{k}(x_a,y_a)-Q(x_a,y_a)}}$. 
+For an arm $a$ and a state $x_a\in\gS^a$, we denote\footnote{In the paper, we use the notation $\ind{E}$ to denote a random variable that equals $1$ if $E$ is true and $0$ otherwise. For instance, $\ind{Y_i=y}=1$ if $Y_i=y$ and $0$ otherwise.} by $N_{k-1}(x_a){=} \sum_{t=1}^{t_{k}-1} \ind{X_{t,A_t}=x_a}$ the number of times that Arm~$a$ is activated before episode $k$ while being in state $x_a$. \Eqref{eq:proof2} relates the performance gap to the distance between the reward functions and transition matrices of the MDPs $M$ and $M_k$. 
+With $L_K{=}\sqrt{2\log\frac{4SnK^2\log K}{1-\beta}}$, the event $\gE_{k-1}^\text{Algo}$ guarantees that for all $a, x_a$ and $ k\ge1$, 
+\begin{align}
+    \label{eq:concentration}
+    \norm{r_k(x_a){-}r(x_a)} {\le} \frac{L_K}{\sqrt{\max\{1,N_{k-1}(x_a)\}}} \text{ and }
+    \norm{Q_{k}(x_a,\cdot){-}Q(x_a, .)}_1 {\le} \frac{2L_K {+}3\sqrt{S}}{\sqrt{\max\{1,N_{k-1}(x_a)\}}}
+\end{align}
+We use this with \Eqref{eq:proof2} to show that:
+\begin{align}
+    \label{eq:proof3}
+    \sum_{k=1}^K\ex{\Delta^{conc}_k \ind{\gE^\text{Algo}_{k-1}}} &\le  \ex{C^\text{Algo}_K\sum_{k=1}^K\sum_{t=t_k}^{t_{k+1}-1}\frac{1}{\sqrt{\max\{1,N_{k-1}(x_a)\}}}},
+\end{align}
+where $C^\text{Algo}_K$ is a random variable that depends on the algorithm studied. 
+
+The final analysis takes care of the right term of \Eqref{eq:proof3} and is more technical. It uses the fact that there cannot be too many large terms in this sum because if an arm is activated many times, then $1/\sqrt{N_{k-1}(X_{t,A_t})}$ is small. 
+The main technical hurdle here is to deal with the $K$ random episodes $H_1,\ldots, H_K$. 
+This is specific to our approach compared to the analysis of finite horizons. 
+To bound this, one needs to bound terms of the form $\ex{\max_{1\leq k\leq K} (H_k)^\alpha}$ with $\alpha\in\{1.5,2\}$ (see \Eqref{eq:proof_bound}). 
+To bound this, we use the geometric distribution of $H_k$ to show that $\ex{\max_{1\leq k\leq K} (H_k)^{\alpha}}=O((\frac{\log K}{1-\beta})^{\alpha})$ (see Lemma~\ref{lem:moment}).
+
+
 
 \endgroup
 
