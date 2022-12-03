@@ -544,10 +544,7 @@ At iteration $k+1$, we use $\mX^{1}_{: \sigma^k}$ to compute all values of $\mX^
     \label{fig:apx_fast_mm}
 \end{figure}
 
-
 This  leads to the next fundamental  question: {why should the computation of Whittle index be harder than matrix inversion (or multiplication)?} To us, the main difference is that when computing Whittle indices, the permutation $\sigma$ is not known a priori but discovered as the algorithm progresses: $\sigma^k$ is only known at iteration $k$. Hence, while all terms of the matrices $X^k_{ij}$ are not needed, it is difficult to know a priori which ones are needed and which ones are not. Hence, a simple divide and conquer algorithm cannot be used. This is why when recomputing $\mX^{k+1}$ in Subroutine~\ref{algo:FMM}, we recompute the whole matrix (the vertical blue line) and not just the part that  will be used to compute the gray zone: we do not know \emph{a priori} what part of $X^{k+1}_{ij}$ will be useful or not.
-
-
 
 \endgroup
 
