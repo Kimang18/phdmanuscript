@@ -89,6 +89,13 @@ chapter_appendix: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\watermarkfalse" >> macros.include.tex
 	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
+chapter_appendixtwo: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \\\includechapterappendixtwo {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
+
 #########################
 # Convenience shortcuts #
 #########################
