@@ -6,11 +6,28 @@
 
 %\minitoc
 
-In this section, we are about to decribe what is a Markov decision process and quantities used.
+In this chapter, we define the notion of Markov decision process (MDP) used to mathematically describe the environment in Reinforcement learning (RL) framework.
+A MDP models a discrete-time decision problem where the decision maker executes available ``action'' over time steps and receives immediate incentive known as ``reward'' for each time step.
+In such problem, the decision maker seeks to maximize the expected cumulative rewards by identifying a sequence of actions that produces such effect.
+
+In Section~\ref{ch:mdp:sec:defn}, we describe...
 
 %\let\clearpage\relax
 
-\section{Definition and Notations}
+\section{Definitions and notations}
+\label{ch:mdp:sec:defn}
+
+In this section, we give the \emph{formalism} of Markov decision process and present several notations of \emph{optimality}.
+We also lay out existing results (see \cite{puterman2014markov}) that are pillar of our contribution.
+We essentially follow the notations of \cite{puterman2014markov}.
+
+A Markov decision process $M$ is defined as a $4$-tuple $M:=\langle\gS, \gA, r, p\rangle$.
+$\gS$ and $\gA:=\cup_{s\in\gS}\gA_s$ denote the \emph{state} and \emph{action} space of the MDP.
+When the MDP is in state $s\in\gS$, the decision maker can execute one of the available actions in $\gA_s$.
+As a result of executing action $a\in\gA_s$ when the MDP is in state $s$, the MDP incurs a random \emph{reward} with \emph{expected value} $r(s,a)$ and then transitions to new state $s'\in\gS$ with probability $p(s'\mid s, a)\in[0,1]$ where $\sum_{s'\in\gS}p(s'\mid s,a)=1$.
+The name \emph{Markov} comes from the fact that the random reward and the next state depend only on state $s$ and action $a$.
+In this thesis, we consider the MDPs with \emph{finite} state and action spaces, $S=\abs{\gS}, \abs{\gA}\in\sN$.
+Also, we assume that all random rewards are bounded and lie in $[0,1]$.
 
 \begin{enumerate}
     \item explain a MDP: $M:=\langle\gS, \gA, r, P\rangle$, explain $\gS, \gA, r, P$, give example
