@@ -21,13 +21,136 @@ In this section, we give the \emph{formalism} of Markov decision process and pre
 We also lay out existing results (see \cite{puterman2014markov}) that are pillar of our contribution.
 We essentially follow the notations of \cite{puterman2014markov}.
 
+\subsection{State, action, reward, and state transition}
+
 A Markov decision process $M$ is defined as a $4$-tuple $M:=\langle\gS, \gA, r, p\rangle$.
 $\gS$ and $\gA:=\cup_{s\in\gS}\gA_s$ denote the \emph{state} and \emph{action} space of the MDP.
 When the MDP is in state $s\in\gS$, the decision maker can execute one of the available actions in $\gA_s$.
-As a result of executing action $a\in\gA_s$ when the MDP is in state $s$, the MDP incurs a random \emph{reward} with \emph{expected value} $r(s,a)$ and then transitions to new state $s'\in\gS$ with probability $p(s'\mid s, a)\in[0,1]$ where $\sum_{s'\in\gS}p(s'\mid s,a)=1$.
-The name \emph{Markov} comes from the fact that the random reward and the next state depend only on state $s$ and action $a$.
-In this thesis, we consider the MDPs with \emph{finite} state and action spaces, $S=\abs{\gS}, \abs{\gA}\in\sN$.
+As a result of executing action $a\in\gA_s$ in state $s$, the MDP incurs a random \emph{reward} with \emph{expected value} $r(s,a)$ and then transitions to new state $s'\in\gS$ with probability $p(s'\mid s, a)\in[0,1]$ where $\sum_{s'\in\gS}p(s'\mid s,a)=1$.
+The name \emph{Markov} comes from the fact that the random reward and the next state depend only on state $s$ and action $a$ and are independent from anything else.
+In this thesis, we consider the MDPs with \emph{finite} state and action spaces, $\abs{\gS}, \abs{\gA}\in\sN$.
 Also, we assume that all random rewards are bounded and lie in $[0,1]$.
+We provide an example of a MDP with two states and two actions per state in \figurename~\ref{fig:MDP_example}.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+        \node[state,color=blue]  (A) {$s_1$};
+        \node[state,color=blue]  (B) [left =3cm of A]   {$s_0$};
+        \path[->]
+            (A) edge[loop above, color=black] node{$a_1$} (A)
+            (A) edge[loop right, color=red, dashed] node{$a_0$} (A)
+            (B) edge[bend left, color=black] node{$a_1$} (A)
+            (B) edge[bend right, color=red, dashed] node[below]{$a_0$} (A);
+    \end{tikzpicture}
+    \caption{Graphical representation of a MDP with $2$ states ($s_0$ and $s_1$) and 2 actions per state (black arrow and red dashed arrow). We have $p(s_0\mid s_0,a_0)=0, p(s_1\mid s_0,a_0)=1$ and so on.}
+    \label{fig:MDP_example}
+\end{figure}
+
+\subsection{Sequential decision problem and policy}
+
+In this thesis, the decision maker executes actions at \emph{discrete} time steps.
+We denote the decision time by $t\ge1$ which is a positive integer.
+At time step $t\ge1$, the MDP is in state $s_t$ and the decision maker executes an action $a_t$.
+The MDP incurs a (random) reward denoted by $r_t$ and transitions to next state denoted by $s_{t+1}$.
+This mechanism is repeated and one obtains a sequence of the form $\{s_1,a_1,r_1,\dots,s_t,a_t,r_t,s_{t+1},\dots\}$ that is called \emph{observations} (also known as a ``trajectory'').
+We denote the observations up to time $t\ge1$ by
+\begin{align*}
+    \gO_t:=\{s_1,a_1,r_1,s_2,\dots,s_{t-1},a_{t-1},r_{t-1},s_t\}
+\end{align*}
+with a convention that $\gO_1:=\{s_1\}$.
+A \emph{deterministic decision rule} $d$ is a function that maps the observations up to time $t$ to available actions at decision time $t$ with certainty, $d(\gO_t)\in\gA$.
+The decision rules that depend on previous observations $\gO_t$ only through the current state $s_t$ of the MDP are called \emph{Markovian} decision rule, $d:\gS\mapsto\gA$.
+
+In this thesis, we restrict our attention to \emph{deterministic Markovian decision rule} and a policy $\pi:=\{d_1,d_2,\dots\}$ is a sequence of deterministic Markovian decision rules for each time step such that at time $t\ge1$, the decision maker follows policy $\pi$ by executing the action $d_t(s_t)\in\gA$. 
+We denote the set of all policies by $\Pi$.
+A \emph{stationary} policy is a sequence of decision rules $\{d_t\}_{t\ge1}$ where $d_t=d$ for all $t\ge1$ and $d:\gS\mapsto\gA$ is a mapping function from state space to action space.
+By abuse of notation, we will write $d$ and $\pi$ \emph{interchangeably} in the rest of the thesis when policy $\pi=\{d, d,...\}$ is stationary.
+%Under policy $\pi$, the MDP becomes a Markov reward process (MRP) where the reward for each state is encoded by the vector $\vr^\pi$ and the state transition is governed by the matrix $\mP^\pi$.
+
+The state of the MDP at time step $1$ is called \emph{initial state} and generally drawn from a probability distribution $\rho$ such that $\sum_{s\in\gS}\rho(s)=1$.
+A policy $\pi\in\Pi$ and an initial state distribution $\rho$ incur a sequence $\{s_1,a_1,r_1,\dots,s_t,a_t,r_t,\dots\}$ which is a \emph{stochastic process} with a well-defined probability distribution \cite[Section~2.1.6]{puterman2014markov}.
+We will denote by $\sP^\pi(\cdot\mid s_1\sim\rho)$ the \emph{probability measure} associated with this stochastic process and denote by $\mathbb{E}^\pi[\cdot \mid s_1\sim\rho]$ the corresponding \emph{expectation}.
+
+
+In the next sections, we specify the objective function of the decision problem.
+
+%The policies that vary over time steps are called \emph{non-stationary} policies denoted by $\pi_t$ where $\pi_t(\gO_t)\in\gA_{s_t}$.
+%The policies that do not vary over time steps are known as \emph{stationary} (or ``time-homogeneous'') policies.
+%The time-dependent or not depending on the objective function of the decision problem.
+%We talk more about this in the following sections.
+
+\section{Finite horizon problems}
+
+This section describes the \emph{finite horizon setting} and contains a brief presentation of optimality criterion in the setting.
+
+In finite horizon setting, the decision maker can collect rewards from a MDP $M$ over a \emph{fixed} number of time steps called \emph{horizon} and denoted by $H\in\N^+$ where $\N^+:=\N\setminus\{0\}$ is the set of positive natural numbers.
+Formally, the decision maker want to find a policy that verifies
+%\begin{equation}
+%    \label{eq:finite_obj}
+%    \sup_{\pi\in\Pi}\sum_{s\in\gS}\rho(s)W_{M,1:H}^\pi(s) \text{ where } W_{M,1:H}^\pi(s){:=}\ex{\sum_{t=1}^H r_t\mid s_1{=}s, a_t{=}\pi_t(s_t)}.
+%\end{equation}
+\begin{equation}
+    \label{eq:finite_obj}
+    \sup_{\pi\in\Pi}\E^\pi\left[\sum_{t=1}^H r_t\mid s_1\sim \rho\right].
+\end{equation}
+From \cite[Chapter~4]{puterman2014markov}, there always exists an \emph{optimal} policy $\pi^*=\{d_1^*,d_2^*,\dots,d^*_H\}$ that verifies \Eqref{eq:finite_obj} for any $\rho$ and such that for all $1\le t\le H$, $d_t^*$ is a deterministic Markovian decision rule and independent of the initial state distribution.
+
+For a given policy $\pi=\{d_1,\dots,d_H\}$, for each state $s$, we define the expected cumulative reward from $s$ over time steps $h$ to $H$ when following policy $\pi$ by $W_{M,h}^\pi(s){:=}\E^\pi\left[\sum_{t=h}^H r_t\mid s_h{=}s\right]$.
+The Bellman \emph{optimality} equations in this setting are written: for $1\le h\le H-1$,
+\begin{equation}
+    \label{eq:finite_be_opt}
+    W_{M,h}^{\pi^*}(s) = \max_{a\in\gA_s}\p{r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)W_{M,h+1:H}^{\pi^*}(s')}
+\end{equation}
+where $W_{M,H}^{\pi^*}(s) =\max_{a\in\gA_s}r(s,a)$.
+%The function $W_{1:H}$ is the expected cumulative reward from time step $1$ to $H$.
+%Suppose that at time step $1\le h\le H$, a policy $\pi$ executes action $a=d_h(s)$ in state $s$ where $a\in\gA_s$ .
+%Then, the Bellman \emph{evaluation} equation in this setting is
+%\begin{equation}
+%    \label{eq:finite_be_eval}
+%    W_{M,h}^{\pi}(s) = r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)W_{M,h+1}^{\pi}(s')
+%\end{equation}
+%with a convention that $W_{H+1}=0$.
+So, we can construct an optimal policy $\pi^*$ using backward induction
+\begin{align}
+    d_H^*(s) &:=\argmax_{a\in\gA_s}r(s,a) \text{ and } W_{M,H}^{\pi^*}(s) = r(s, d_H^*(s)) \label{eq:finite_be_eval1}\\
+    d_h^*(s) &:=\argmax_{a\in\gA_s}\p{r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)W_{M,h+1:H}^{\pi^*}(s')} \text{ and } \nonumber\\
+             &\quad W_{M,h}^{\pi^*}(s) = r(s, d_h^*(s)) +\sum_{s'\in\gS}p(s' \mid s,a)W_{M,h+1}^{\pi^*}(s). \label{eq:finite_be_eval2}
+\end{align}
+Hence, the maximum value of \Eqref{eq:finite_obj} is given by $\sum_{s\in\gS}\rho(s)W^{\pi^*}_{M,1}(s)$.
+
+Note that the last part of Equations~\eqref{eq:finite_be_eval1} and \eqref{eq:finite_be_eval2} are known as Bellman \emph{evaluation} equations.
+
+Performing Equations~\eqref{eq:finite_be_eval1} and \eqref{eq:finite_be_eval2} has $O(\abs{\gS}^2\abs{\gA})$ computational complexity because for each state and action, the inner product between $p$ and $W$ costs $\abs{\gS}$ multiplications at worst.
+
+\section{Infinite horizon problems}
+
+Similar the previous section, we describe two settings for infinite horizon and provide detail about the optimality criteria in this section.
+
+\subsection{Discounted Markov decision process}
+
+In some problems, the immediate reward incurred by the MDP is more important then those rewards in the future.
+To capture this aspect, one can introduce a discount factor denoted by $\beta$ where $\beta\in[0,1)$.
+If $\beta=0$, the decision maker is solely interested in the immediate reward from the current state of the MDP.
+In general, the decision maker wants to find a policy that verifies
+\begin{equation}
+    \label{eq:discount_obj}
+    \sup_{\pi\in\Pi}\E^\pi\left[\sum_{t=1}^{+\infty} \beta^{t-1}r_t \mid s_1\sim \rho\right].
+\end{equation}
+From \cite[Chapter~6]{puterman2014markov}, there always exists a stationary deterministic optimal policy $\pi^*$ that verifies \Eqref{eq:discount_obj} for any initial distribution $\rho$.
+
+For a given stationary policy $\pi:\gS\mapsto\gA$ in a MDP $M$, we define the \emph{value function} of policy $\pi$ by $V_M^\pi(s)=\ex{\sum_{t=1}^{+\infty}\beta^{t-1}r_t \mid s_1{=}s,a_t{=}\pi(s_t)}$.
+Since $0<\beta<1$ and $r_t\in[0,1]$, $V_M^\pi(s)$ is a geometric series bounded between $0$ and $1/(1-\beta)$.
+In state $s$, if policy $\pi$ executes an action $a=\pi(s)$, the Bellman \emph{evaluation} equation is given by
+\begin{equation}
+    \label{eq:discount_be_eval}
+    V_M^\pi(s)= r(s, a) +\beta\sum_{s'\in\gS}p(s'\mid s,a)V_M^\pi(s')
+\end{equation}
+
+
+\subsection{Average reward criterion}
+
+
 
 \begin{enumerate}
     \item explain a MDP: $M:=\langle\gS, \gA, r, P\rangle$, explain $\gS, \gA, r, P$, give example
@@ -44,79 +167,79 @@ Also, we assume that all random rewards are bounded and lie in $[0,1]$.
     \item MDP classification
 \end{enumerate}
 
-\section{Infinite horizon criteria}
-
-We consider infinite time horizon:
-\begin{itemize}
-    \item explain what time horizon is
-    \item explain decision epoch is, how it works
-\end{itemize}
-
-\subsection{Dicounted markov decision process}
-
-The reward is discounted with discount factor $\beta$.
-
-\begin{itemize}
-    \item give assumptions: reward bounded, $\beta<1$
-\end{itemize}
-
-\subsubsection{Definition and problem formulation}
-
-\begin{itemize}
-    \item explain what is Value function $V^\pi_M$
-    \item explain why value function?
-    \item do we need Action value function $Q^\pi_M$ ?
-    \item why action value function?
-\end{itemize}
-
-\subsubsection{Optimality equation}
-
-\begin{itemize}
-    \item explain Bellman equation
-    \item explain evaluation equation 
-    \item shall we explain contraction property?
-    \item shall we explain bound on span?
-    \item shall we give unicity of optimal policy?
-\end{itemize}
-
-\subsubsection{Value Iteration}
-
-Shall we present Value Iteration?
-
-\begin{itemize}
-    \item Algorithm presentation
-    \item Convergence proof
-    \item shall we give example?
-\end{itemize}
-
-\subsection{Average reward criterion}
-
-\subsubsection{Definition and problem formulation}
-
-\begin{itemize}
-    \item give the assumptions needed: bounded reward,...
-    \item explain what is the average reward $g^\pi$
-    \item explain what is bias $h^\pi$
-    \item shall we explain existency of $g^\pi, h^\pi$
-    \item shall we give example?
-    \item define gain optimal, Bellman optimal, (also bias optimal?)
-\end{itemize}
-
-\subsubsection{Optimality equation}
-
-\begin{itemize}
-    \item explain Bellman equation
-    \item explain evaluation equation
-    \item explain the space of solutions of Bellman equation
-    \item give the condition for unicity of Bellman optimal policy
-\end{itemize}
-
-\subsubsection{Relative Value Iteration}
-
-Shall we present Relative Value Iteration
-
-\begin{itemize}
-    \item Algorithm presentation
-    \item Convergence proof
-    \item shall we give example?
-\end{itemize}
+%\section{Infinite horizon criteria}
+%
+%We consider infinite time horizon:
+%\begin{itemize}
+%    \item explain what time horizon is
+%    \item explain decision epoch is, how it works
+%\end{itemize}
+%
+%\subsection{Dicounted markov decision process}
+%
+%The reward is discounted with discount factor $\beta$.
+%
+%\begin{itemize}
+%    \item give assumptions: reward bounded, $\beta<1$
+%\end{itemize}
+%
+%\subsubsection{Definition and problem formulation}
+%
+%\begin{itemize}
+%    \item explain what is Value function $V^\pi_M$
+%    \item explain why value function?
+%    \item do we need Action value function $Q^\pi_M$ ?
+%    \item why action value function?
+%\end{itemize}
+%
+%\subsubsection{Optimality equation}
+%
+%\begin{itemize}
+%    \item explain Bellman equation
+%    \item explain evaluation equation 
+%    \item shall we explain contraction property?
+%    \item shall we explain bound on span?
+%    \item shall we give unicity of optimal policy?
+%\end{itemize}
+%
+%\subsubsection{Value Iteration}
+%
+%Shall we present Value Iteration?
+%
+%\begin{itemize}
+%    \item Algorithm presentation
+%    \item Convergence proof
+%    \item shall we give example?
+%\end{itemize}
+%
+%\subsection{Average reward criterion}
+%
+%\subsubsection{Definition and problem formulation}
+%
+%\begin{itemize}
+%    \item give the assumptions needed: bounded reward,...
+%    \item explain what is the average reward $g^\pi$
+%    \item explain what is bias $h^\pi$
+%    \item shall we explain existency of $g^\pi, h^\pi$
+%    \item shall we give example?
+%    \item define gain optimal, Bellman optimal, (also bias optimal?)
+%\end{itemize}
+%
+%\subsubsection{Optimality equation}
+%
+%\begin{itemize}
+%    \item explain Bellman equation
+%    \item explain evaluation equation
+%    \item explain the space of solutions of Bellman equation
+%    \item give the condition for unicity of Bellman optimal policy
+%\end{itemize}
+%
+%\subsubsection{Relative Value Iteration}
+%
+%Shall we present Relative Value Iteration
+%
+%\begin{itemize}
+%    \item Algorithm presentation
+%    \item Convergence proof
+%    \item shall we give example?
+%\end{itemize}
