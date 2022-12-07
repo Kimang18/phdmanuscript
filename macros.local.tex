@@ -4,6 +4,12 @@
 % requires amsthm, xspace
 
 % theorem-like environment
+\newtheoremstyle{break}
+  {\topsep}{\topsep}%
+  {\itshape}{}%
+  {\bfseries}{}%
+  {\newline}{}%
+\theoremstyle{break}
 \newtheorem{thm}{Theorem}
 \newtheorem{lem}[thm]{Lemma}
 \newtheorem{prop}{Proposition}
@@ -141,6 +147,7 @@
 \newcommand\norm[1]{\left\|#1\right\|}      % norm
 \newcommand\abs[1]{\left\vert#1\right\vert}      % norm
 \newcommand\ind[1]{\mathbb{I}_{\{#1\}}} % indicator function
+
 
 \newcommand\Eqref[1]{Equation~\eqref{#1}}
 
@@ -304,6 +311,7 @@
 \newcommand{\piTilde}{\tilde{\pi}}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Clim}{C-\,lim}
 
 % For a custom label (in underbrace)
 \makeatletter

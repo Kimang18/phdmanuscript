@@ -141,6 +141,7 @@
 
 \usepackage{color,colortbl}
 \definecolor{gray98}{rgb}{0.98,0.98,0.98}
+\definecolor{gray95}{rgb}{0.95,0.95,0.95}
 \definecolor{gray20}{rgb}{0.20,0.20,0.20}
 \definecolor{gray25}{rgb}{0.25,0.25,0.25}
 \definecolor{gray16}{rgb}{0.161,0.161,0.161}
@@ -224,6 +225,30 @@
 \newcommand{\BG}[1]{\todo[color=red!10,author=\textbf{\small BG},inline]{\small #1\\}}
 \newcommand{\KK}[1]{\todo[color=green!10,author=\textbf{\small KK},inline]{\small #1\\}}
 \graphicspath{{}{img/}}
+
+% -- command for box colored --
+\usepackage[most]{tcolorbox}
+\tcolorboxenvironment{thm}{colback=JungleGreen!5, colframe=JungleGreen!40!black}
+\tcolorboxenvironment{prop}{
+    enhanced,
+    boxrule=0pt,frame hidden,
+    borderline west={4pt}{0pt}{amblu},
+    colback=gray98,
+    coltitle=amblu,
+    colframe=amblu,
+    sharp corners
+}
+\tcolorboxenvironment{defn}{
+    sharp corners,
+    colback=gray98,
+    colframe=gray16, 
+    rightrule=0pt, bottomrule=0pt,
+    enhanced,
+    breakable,
+    boxed title style={colframe=gray98, sharp corners},
+    attach boxed title to top left,
+}
+
 
 % === MACROS DEFINITION =======================================================
 
