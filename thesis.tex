@@ -228,26 +228,44 @@
 
 % -- command for box colored --
 \usepackage[most]{tcolorbox}
-\tcolorboxenvironment{thm}{colback=JungleGreen!5, colframe=JungleGreen!40!black}
+\tcolorboxenvironment{thm}{
+    enhanced,
+    breakable,
+    fonttitle=\bfseries,
+    colback=RoyalBlue!5,
+    colframe=RoyalBlue!40!black,
+    coltitle=RoyalBlue!40!black
+}
 \tcolorboxenvironment{prop}{
     enhanced,
     boxrule=0pt,frame hidden,
     borderline west={4pt}{0pt}{amblu},
-    colback=gray98,
+    colback=gray95,
     coltitle=amblu,
     colframe=amblu,
     sharp corners
 }
 \tcolorboxenvironment{defn}{
     sharp corners,
-    colback=gray98,
-    colframe=gray16, 
+    colback=gray95,
+    colframe=myblue, 
     rightrule=0pt, bottomrule=0pt,
     enhanced,
     breakable,
-    boxed title style={colframe=gray98, sharp corners},
+    boxed title style={colframe=gray95, sharp corners},
     attach boxed title to top left,
 }
+\tcolorboxenvironment{lem}{
+    sharp corners,
+    colback=gray95,
+    colframe=amgreen, 
+    rightrule=0pt, toprule=0pt,
+    enhanced,
+    breakable,
+    boxed title style={colframe=gray95, sharp corners},
+    attach boxed title to top left,
+}
+
 
 
 % === MACROS DEFINITION =======================================================
