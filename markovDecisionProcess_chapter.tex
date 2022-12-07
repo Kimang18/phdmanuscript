@@ -291,6 +291,9 @@ By \cite[Theorem~9.1.7]{puterman2014markov}, Bellman optimal policy always exist
 However, the converse is not true in general.
 So, the notion of Bellman optimality is stronger than the notion of gain optimality.
 
+A Bellman optimal policy can be obtained using \emph{Multichain Policy Iteration} algorithm.
+We refer to \cite[Section~9.2.1]{puterman2014markov} for more detail about this algorithm.
+
 \paragraph{Characterization of gain optimal policies.}
 
 Given a deterministic stationary policy $\pi$, let $\vg$ and $\vh$ be a solution of \eqref{eq:gain_eval} and \eqref{eq:bias_eval}.
@@ -313,7 +316,7 @@ The following lemma characterizes gain optimal policy by showing that the policy
 \begin{proof}
     \ref{it:opt_pol1} $\Rightarrow$ \ref{it:opt_pol2} is trivial.
 
-    \ref{it:opt_pol2} $\Rightarrow$ \ref{it:opt_pol3}: By definition of $B_i^a(\vh)$, we have $r^{\pi}(s)-g^*(s) = h(s)-\sum_{s'\in\gS} P^{\pi}(s,s')h(s')$ for any recurrent state $s$ of $\pi$.  Multiply this with $\bar{P}^\pi(j,s)$ and sum over $s\in\gS$ (if $s$ is not recurrent, then $\bar{P}^\pi(j,s)=0$) gives
+    \ref{it:opt_pol2} $\Rightarrow$ \ref{it:opt_pol3}: By definition of $B_s^a(\vh)$, we have $r^{\pi}(s)-g^*(s) = h(s)-\sum_{s'\in\gS} P^{\pi}(s,s')h(s')$ for any recurrent state $s$ of $\pi$.  Multiply this with $\bar{P}^\pi(j,s)$ and sum over $s\in\gS$ (if $s$ is not recurrent, then $\bar{P}^\pi(j,s)=0$) gives
     \begin{align*}
         \sum_{s\in\gS} \bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s)\Big) = \sum_{s\in\gS} \bar{P}^\pi(j,s)h(s) - \underbrace{\sum_{s\in\gS} \bar{P}^\pi(j,s)\sum_{s'\in\gS} P^{\pi}(s,s')h(s')}_{=\sum_{s'\in\gS} \bar{P}^\pi(j,s')h(s') \text{ since $\bar{\mP}^\pi\mP^\pi=\bar{\mP}^\pi$.}}
         &= \vzero.
@@ -335,34 +338,35 @@ The following lemma characterizes gain optimal policy by showing that the policy
 
 \paragraph{Characterization of Bellman optimal policies.}
 
-The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_max}.
-The following lemma shows the relationship between two policies that are unichain and satisfy \eqref{eq:bias_max} on all states.
+The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_opt}.
+The following lemma shows the relationship between two policies that are unichain\footnote{a policy is unichain if the induced Markov chain has a single recurrent class.} and satisfy \eqref{eq:bias_opt} on all states.
 
 \begin{lem}
     \label{lem:equi_bias}
-    Suppose that two policies $\pi$ and $\theta$ are Bellman optimal, unichain and have at least one common recurrent state: $\gR^\pi\cap\gR^\theta\neq\emptyset$.
+    Suppose that two policies $\pi$ and $\theta$ are Bellman optimal, unichain and have at least one common recurrent state: $\Phi^\pi\cap\Phi^\theta\neq\emptyset$.
     
-    Then for any $\vh^\pi$ and $\vh^\theta$ solutions of \eqref{eq:bias_eval1} for $\pi$ and $\theta$ respectively, there exists a constant $c$ such that for all state $i$: $h^\pi_i -h^\theta_i =c$. Moreover, in this case, ${B_i^{\theta_i}(\vh^\pi)=B_i^{\pi_i}(\vh^\theta)=0}$ for all $i$.
+    Then for any $\vh^\pi$ and $\vh^\theta$ solutions of \eqref{eq:bias_eval} for $\pi$ and $\theta$ respectively, there exists a constant $c$ such that for all state $s$: $h^\pi(s) -h^\theta(s) =c$. Moreover, in this case, ${B_s^{\theta(s)}(\vh^\pi)=B_s^{\pi(s)}(\vh^\theta)=0}$ for all $s$.
 \end{lem}
 \begin{proof}
-    Since $\pi$ and $\theta$ are Bellman optimal, $\vh^\pi,\vh^\theta\in H$.
+    Since $\pi$ and $\theta$ are Bellman optimal, $\vh^\pi,\vh^\theta$ satisfy \eqref{eq:bias_opt} together with $\vg^*$.
     In consequence, we have
     \begin{align*}
         \vh^\pi \ge \vr^\theta -\vg^* +\mP^\theta\vh^\pi.
     \end{align*}
-    By Lemma~\ref{lem:opt_pol}~\ref{it:opt_pol1}, the above inequality is an equality for all $i\in\gR^\theta$ because $\theta$ is gain optimal.
+    By Lemma~\ref{lem:opt_pol}~\ref{it:opt_pol1}, the above inequality is an equality for all $s\in\Phi^\theta$ because $\theta$ is gain optimal.
 
-    As $\vh^\theta$ satisfies \eqref{eq:bias_eval1}, we have
+    As $\vh^\theta$ satisfies \eqref{eq:bias_eval}, we have
     \begin{align*}
         \vh^\theta -\vh^\pi &\le \vr^\theta -\vg^* +\mP^\theta\vh^\theta -(\vr^\theta -\vg^* +\mP^\theta\vh^\pi) = \mP^\theta(\vh^\theta -\vh^\pi),
     \end{align*}
-    with equality for all state $i\in\gR^\theta$. This shows that for all $t$, $\vh^\theta -\vh^\pi\le (\mP^\theta)^t(\vh^\theta -\vh^\pi)$ which implies that $\vh^\theta -\vh^\pi\le \bar{\mP}^\theta(\vh^\theta -\vh^\pi)$ with equality for all states $i\in\gR^\theta$. Similarly, $\vh^\pi -\vh^\theta \le \bar{\mP}^\pi(\vh^\pi -\vh^\theta)$ with equality for any state $i\in\gR^\pi$.
+    with equality for all state $s\in\Phi^\theta$. This shows that for all $t$, $\vh^\theta -\vh^\pi\le (\mP^\theta)^t(\vh^\theta -\vh^\pi)$ which implies that $\vh^\theta -\vh^\pi\le \bar{\mP}^\theta(\vh^\theta -\vh^\pi)$ with equality for all states $s\in\Phi^\theta$. Similarly, $\vh^\pi -\vh^\theta \le \bar{\mP}^\pi(\vh^\pi -\vh^\theta)$ with equality for any state $s\in\Phi^\pi$.
 
-    Let $c^\pi_i=\sum_{j\in\gS}\bar{P}^\pi_{ij}(h_j^\pi-h_j^\theta)$ and $c^\theta_i=\sum_{j\in\gS}\bar{P}^\theta_{ij}(h_j^\pi-h_j^\theta)$. By what we have just shown, for all state $i$, we have
+    Let $c^\pi_s=\sum_{s'\in\gS}\bar{P}^\pi(s,s')\Big(h^\pi(s')-h^\theta(s')\Big)$ and $c^\theta_s=\sum_{s'\in\gS}\bar{P}^\theta(s,s')\Big(h^\pi(s')-h^\theta(s')\Big)$. By what we have just shown, for all state $s$, we have
     \begin{align*}
-        c^\theta_i \underbrace{\le}_{\text{equality if $i\in\gR^\theta$}} h_i^\pi-h_i^\theta \underbrace{\le}_{\text{equality if $i\in\gR^\pi$}} c^\pi
+        c^\theta_s \underbrace{\le}_{\text{equality if $s\in\Phi^\theta$}} h^\pi(s)-h^\theta(s) \underbrace{\le}_{\text{equality if $s\in\Phi^\pi$}} c^\pi_s
     \end{align*}
-    As both policies are unichain, $c^\pi_i$ and $c^\theta_i$ do not depend on $i$.  Moreover, if there exists $i\in\gR^\theta\cap\gR^\pi$, we have $c^\pi_i=c^\theta_i =: c$. In consequence,  $h_i^\pi-h_i^\theta=c$ for all state $i$. 
+    As both policies are unichain, $c^\pi_s$ and $c^\theta_s$ do not depend on $s$.
+    Moreover, if there exists $s\in\Phi^\theta\cap\Phi^\pi$, we have $c^\pi_s=c^\theta_s = c$. In consequence,  $h^\pi(s)-h^\theta(s)=c$ for all state $s$. 
 \end{proof}
 
 
@@ -371,13 +375,12 @@ The following lemma shows the relationship between two policies that are unichai
 
 \begin{lem}
     \label{lem:unicity_BO}
-    Let $\pi$ be a Bellman optimal policy that is unichain. If $\pi$ is not the unique Bellman optimal policy, then there exists a state $i$ and an action $a\neq\pi_i$ such that $B_i^a(\vh^\pi)=0$.
+    Let $\pi$ be a Bellman optimal policy that is unichain. If $\pi$ is not the unique Bellman optimal policy, then there exists a state $s$ and an action $a\in\gA_s\setminus\{\pi(s)\}$ such that $B_s^a(\vh^\pi)=0$.
 \end{lem}
 \begin{proof}
-    Let $\theta\neq\pi$ be another Bellman optimal policy. Since $\theta$ is gain optimal and $\vh^\pi\in H$, Lemma~\ref{lem:opt_pol} implies that $B_i^{\theta_i}(\vh^\pi) =0$ for all $i\in\gR^\theta$. If there exists $i\in\gR^\theta$ such that $\theta_i\neq\pi_i$, then the proof is concluded.  Otherwise, $\theta_i=\pi_i$ for all $i\in\gR^\theta$. This show that $\pi$ and $\theta$ coincide for all recurrent states of $\theta$ and that $\gR^\theta=\gR^\pi$. Moreover, as $\pi$ is unichain, $\theta$ is also unichain. Hence, Lemma~\ref{lem:equi_bias} implies that $B_i^{\theta_i}(\vh^\pi)=0$ for all $i$. Since $\theta\neq\pi$, there exists at least one state $i\in\gS$ such that $\theta_i\neq\pi_i$.
+    Let $\theta\neq\pi$ be another Bellman optimal policy. Since $\theta$ is gain optimal and $\vh^\pi$ satisfies \eqref{eq:bias_opt}, Lemma~\ref{lem:opt_pol} implies that $B_s^{\theta(s)}(\vh^\pi) =0$ for all $s\in\Phi^\theta$. If there exists $s\in\Phi^\theta$ such that $\theta(s)\neq\pi(s)$, then the proof is concluded.  Otherwise, $\theta(s)=\pi(s)$ for all $s\in\Phi^\theta$. This show that $\pi$ and $\theta$ coincide for all recurrent states of $\theta$ and that $\Phi^\theta=\Phi^\pi$. Moreover, as $\pi$ is unichain, $\theta$ is also unichain. Hence, Lemma~\ref{lem:equi_bias} implies that $B_s^{\theta(s)}(\vh^\pi)=0$ for all $s$. Since $\theta\neq\pi$, there exists at least one state $s\in\gS$ such that $\theta(s)\neq\pi(s)$.
 \end{proof}
-
-
+Lemma~\ref{lem:unicity_BO} implies that a Bellman optimal and unichain policy $\pi$ is the unique Bellman optimal policy if and only if for all $s$, $B_s^a(\vh^\pi)<0$ for all $a\in\gA_s\setminus\{\pi(s)\}$.
 
 %TOCONTINUE
 
