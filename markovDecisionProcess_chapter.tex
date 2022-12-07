@@ -56,10 +56,10 @@ The MDP incurs a (random) reward denoted by $r_t$ and transitions to next state 
 This mechanism is repeated and one obtains a sequence of the form $\{s_1,a_1,r_1,\dots,s_t,a_t,r_t,s_{t+1},\dots\}$ that is called \emph{observations} (also known as a ``trajectory'').
 We denote the observations up to time $t\ge1$ by
 \begin{align*}
-    \gO_t:=\{s_1,a_1,r_1,s_2,\dots,s_{t-1},a_{t-1},r_{t-1},s_t\}
+    O_t:=\{s_1,a_1,r_1,s_2,\dots,s_{t-1},a_{t-1},r_{t-1},s_t\}
 \end{align*}
-with a convention that $\gO_1:=\{s_1\}$.
-A \emph{deterministic decision rule} $d$ is a function that maps the observations up to time $t$ to available actions at decision time $t$ with certainty, $d(\gO_t)\in\gA$.
+with a convention that $O_1:=\{s_1\}$.
+A \emph{deterministic decision rule} $d$ is a function that maps the observations up to time $t$ to available actions at decision time $t$ with certainty, $d(O_t)\in\gA$.
 The decision rules that depend on previous observations $\gO_t$ only through the current state $s_t$ of the MDP are called \emph{Markovian} decision rule, $d:\gS\mapsto\gA$.
 
 In this thesis, we restrict our attention to \emph{deterministic Markovian decision rule} and a policy $\pi:=\{d_1,d_2,\dots\}$ is a sequence of deterministic Markovian decision rules for each time step such that at time $t\ge1$, the decision maker follows policy $\pi$ by executing the action $d_t(s_t)\in\gA$. 
@@ -69,8 +69,8 @@ By abuse of notation, we will write $d$ and $\pi$ \emph{interchangeably} in the 
 %Under policy $\pi$, the MDP becomes a Markov reward process (MRP) where the reward for each state is encoded by the vector $\vr^\pi$ and the state transition is governed by the matrix $\mP^\pi$.
 
 The state of the MDP at time step $1$ is called \emph{initial state} and generally drawn from a probability distribution $\rho$ such that $\sum_{s\in\gS}\rho(s)=1$.
-A policy $\pi\in\Pi$ and an initial state distribution $\rho$ incur a sequence $\{s_1,a_1,r_1,\dots,s_t,a_t,r_t,\dots\}$ which is a \emph{stochastic process} with a well-defined probability distribution \cite[Section~2.1.6]{puterman2014markov}.
-We will denote by $\sP^\pi(\cdot\mid s_1\sim\rho)$ the \emph{probability measure} associated with this stochastic process and denote by $\mathbb{E}^\pi[\cdot \mid s_1\sim\rho]$ the corresponding \emph{expectation}.
+Given the initial state $s_1$, a policy $\pi\in\Pi$ incurs a sequence $\{s_1,a_1,r_1,\dots,s_t,a_t,r_t,\dots\}$ which is a \emph{stochastic process} with a well-defined probability distribution \cite[Section~2.1.6]{puterman2014markov}.
+We will denote by $\sP^\pi(\cdot\mid s_1)$ the \emph{probability measure} associated with this stochastic process and denote by $\mathbb{E}^\pi[\cdot \mid s_1]$ the corresponding \emph{expectation}.
 
 
 In the next sections, we specify the objective function of the decision problem.
@@ -92,17 +92,16 @@ Formally, the decision maker want to find a policy that verifies
 %\end{equation}
 \begin{equation}
     \label{eq:finite_obj}
-    \sup_{\pi\in\Pi}\E^\pi\left[\sum_{t=1}^H r_t\mid s_1\sim \rho\right].
+    \sup_{\pi\in\Pi}\sum_{s\in\gS}\rho(s)\E^\pi\left[\sum_{t=1}^H r_t\mid s_1=s\right].
 \end{equation}
-From \cite[Chapter~4]{puterman2014markov}, there always exists an \emph{optimal} policy $\pi^*=\{d_1^*,d_2^*,\dots,d^*_H\}$ that verifies \Eqref{eq:finite_obj} for any $\rho$ and such that for all $1\le t\le H$, $d_t^*$ is a deterministic Markovian decision rule and independent of the initial state distribution.
-
-For a given policy $\pi=\{d_1,\dots,d_H\}$, for each state $s$, we define the expected cumulative reward from $s$ over time steps $h$ to $H$ when following policy $\pi$ by $W_{M,h}^\pi(s){:=}\E^\pi\left[\sum_{t=h}^H r_t\mid s_h{=}s\right]$.
-The Bellman \emph{optimality} equations in this setting are written: for $1\le h\le H-1$,
-\begin{equation}
-    \label{eq:finite_be_opt}
-    W_{M,h}^{\pi^*}(s) = \max_{a\in\gA_s}\p{r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)W_{M,h+1:H}^{\pi^*}(s')}
-\end{equation}
-where $W_{M,H}^{\pi^*}(s) =\max_{a\in\gA_s}r(s,a)$.
+From \cite[Chapter~4]{puterman2014markov}, there always exists an \emph{optimal} policy $\pi^*=\{d_1^*,d_2^*,\dots,d^*_H\}$ that maximizes \Eqref{eq:finite_obj} for any $\rho$ and such that for all $1\le t\le H$, $d_t^*$ is a deterministic Markovian decision rule and independent of the initial state distribution.
+%For a given policy $\pi=\{d_1,\dots,d_H\}$, for each state $s$, we define the expected cumulative reward from $s$ over time steps $h$ to $H$ when following policy $\pi$ by $W_{M,h:H}^\pi(s){:=}\E^\pi\left[\sum_{t=h}^H r_t\mid s_h{=}s\right]$.
+%The Bellman \emph{optimality} equations in this setting are written: for $1\le h\le H-1$,
+%\begin{equation}
+%    \label{eq:finite_be_opt}
+%    W_{M,h:H}^{\pi^*}(s) = \max_{a\in\gA_s}\p{r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)W_{M,h+1:H}^{\pi^*}(s')}
+%\end{equation}
+%and $W_{M,H:H}^{\pi^*}(s) =\max_{a\in\gA_s}r(s,a)$.
 %The function $W_{1:H}$ is the expected cumulative reward from time step $1$ to $H$.
 %Suppose that at time step $1\le h\le H$, a policy $\pi$ executes action $a=d_h(s)$ in state $s$ where $a\in\gA_s$ .
 %Then, the Bellman \emph{evaluation} equation in this setting is
@@ -111,17 +110,26 @@ where $W_{M,H}^{\pi^*}(s) =\max_{a\in\gA_s}r(s,a)$.
 %    W_{M,h}^{\pi}(s) = r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)W_{M,h+1}^{\pi}(s')
 %\end{equation}
 %with a convention that $W_{H+1}=0$.
-So, we can construct an optimal policy $\pi^*$ using backward induction
-\begin{align}
-    d_H^*(s) &:=\argmax_{a\in\gA_s}r(s,a) \text{ and } W_{M,H}^{\pi^*}(s) = r(s, d_H^*(s)) \label{eq:finite_be_eval1}\\
-    d_h^*(s) &:=\argmax_{a\in\gA_s}\p{r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)W_{M,h+1:H}^{\pi^*}(s')} \text{ and } \nonumber\\
-             &\quad W_{M,h}^{\pi^*}(s) = r(s, d_h^*(s)) +\sum_{s'\in\gS}p(s' \mid s,a)W_{M,h+1}^{\pi^*}(s). \label{eq:finite_be_eval2}
-\end{align}
-Hence, the maximum value of \Eqref{eq:finite_obj} is given by $\sum_{s\in\gS}\rho(s)W^{\pi^*}_{M,1}(s)$.
+Such an optimal policy $\pi^*$ can be constructed using backward induction given in Algorithm~\ref{algo:backward}.
 
-Note that the last part of Equations~\eqref{eq:finite_be_eval1} and \eqref{eq:finite_be_eval2} are known as Bellman \emph{evaluation} equations.
+\begin{algorithm}[ht]
+    \DontPrintSemicolon
+    \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+    \Input{a MDP $M=\langle\gS,\gA,r,p\rangle$ and horizon $H$}
+    \Init{}{Set $u_{H+1}(s)=0$ for all $s\in\gS$}
+    \BlankLine
+    \For{$h=H$ to $1$}{
+        Set $d_h^*(s) := \displaystyle\argmax_{a\in\gA_s}\Big(r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)u_{h+1}(s')\Big)$ \tcp{ties are broken arbitrarily} \;
+        Set $u_{h}(s) = \displaystyle r\big(s, d_h^*(s)\big) +\sum_{s'\in\gS}p\big(s' \mid s, d_h^*(s)\big)u_{h+1}(s). \label{eq:finite_be_eval2}$
+    }
+    \Return $\pi^*=\{d_1^*,\dots,d_H^*\}$ and $\vu_1$
+    \caption{Backward Induction}
+    \label{algo:backward}
+\end{algorithm}
+By \cite[Theorem~4.5.1]{puterman2014markov}, Algorithm~\ref{algo:backward} computes an optimal policy and the maximum value of \Eqref{eq:finite_obj} is given by $\sum_{s\in\gS}\rho(s)u_{1}(s)$ where $\vu_1$ is the second output of the algorithm.
+%Note that the last part of Equations~\eqref{eq:finite_be_eval1} and \eqref{eq:finite_be_eval2} are known as Bellman \emph{evaluation} equations.
 
-Performing Equations~\eqref{eq:finite_be_eval1} and \eqref{eq:finite_be_eval2} has $O(\abs{\gS}^2\abs{\gA})$ computational complexity because for each state and action, the inner product between $p$ and $W$ costs $\abs{\gS}$ multiplications at worst.
+The backward induction has $\landauO(H\abs{\gS}^2\abs{\gA})$ computational complexity because for each time step, state, and action, the inner product between $p$ and $\vu$ costs $\abs{\gS}$ multiplications at worst.
 
 \section{Infinite horizon problems}
 
@@ -129,117 +137,247 @@ Similar the previous section, we describe two settings for infinite horizon and 
 
 \subsection{Discounted Markov decision process}
 
-In some problems, the immediate reward incurred by the MDP is more important then those rewards in the future.
-To capture this aspect, one can introduce a discount factor denoted by $\beta$ where $\beta\in[0,1)$.
-If $\beta=0$, the decision maker is solely interested in the immediate reward from the current state of the MDP.
+In some problems, the immediate reward incurred by the MDP is more important then those rewards in the future time steps.
+To capture this aspect, one can introduce a discount factor denoted by $\gamma$ where $\gamma\in[0,1)$.
+If $\gamma=0$, the decision maker is solely interested in the immediate reward from the current state of the MDP.
 In general, the decision maker wants to find a policy that verifies
 \begin{equation}
     \label{eq:discount_obj}
-    \sup_{\pi\in\Pi}\E^\pi\left[\sum_{t=1}^{+\infty} \beta^{t-1}r_t \mid s_1\sim \rho\right].
+    \sup_{\pi\in\Pi}\sum_{s\in\gS}\rho(s)\E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1=s\right].
 \end{equation}
-From \cite[Chapter~6]{puterman2014markov}, there always exists a stationary deterministic optimal policy $\pi^*$ that verifies \Eqref{eq:discount_obj} for any initial distribution $\rho$.
-
-For a given stationary policy $\pi:\gS\mapsto\gA$ in a MDP $M$, we define the \emph{value function} of policy $\pi$ by $V_M^\pi(s)=\ex{\sum_{t=1}^{+\infty}\beta^{t-1}r_t \mid s_1{=}s,a_t{=}\pi(s_t)}$.
-Since $0<\beta<1$ and $r_t\in[0,1]$, $V_M^\pi(s)$ is a geometric series bounded between $0$ and $1/(1-\beta)$.
-In state $s$, if policy $\pi$ executes an action $a=\pi(s)$, the Bellman \emph{evaluation} equation is given by
+From \cite[Chapter~6]{puterman2014markov}, there always exists a deterministic stationary optimal policy $\pi^*$ that maximizes \Eqref{eq:discount_obj} for any initial distribution $\rho$.
+For a given stationary policy $\pi:\gS\mapsto\gA$, the expectation in \Eqref{eq:discount_obj} is known as the \emph{value} of state $s$ under policy $\pi$ and denoted by $v^\pi(s)$.
+It captures the cumulative discounted reward one would expect when following policy $\pi$ starting from state $s$.
+For any $s$, since $0\le\gamma<1$ and $r_t\in[0,1]$, $v^\pi(s)$ is a geometric series bounded between $0$ and $1/(1-\gamma)$.
+So, $v^\pi(s)$ exists and well-defined for any state $s$ and any policy $\pi\in\Pi$.
+The vector $\vv^\pi\in\R^{\abs{\gS}}$ is known as the \emph{value function} of policy $\pi$ and satisfies the Bellman \emph{evaluation} equations: for each $s\in\gS$
 \begin{equation}
     \label{eq:discount_be_eval}
-    V_M^\pi(s)= r(s, a) +\beta\sum_{s'\in\gS}p(s'\mid s,a)V_M^\pi(s')
+    v^\pi(s) =r(s,\pi(s)) +\gamma\sum_{s'\in\gS}p(s'\mid s,\pi(s))v^\pi(s').
 \end{equation}
+The maximum value of the expectation in \Eqref{eq:discount_obj} is called the \emph{optimal value} denoted by $v^*(s)$.
+By \cite[Theorem~6.2.5]{puterman2014markov}, the optimal value function $\vv^*\in\R^{\abs{\gS}}$ is unique: any optimal policies have the same optimal value function.
+Moreover, $\vv^*$ satisfies the Bellman \emph{optimality} equations: for each $s\in\gS$
+\begin{equation}
+    \label{eq:discount_be_opt}
+     v^*(s)= \max_{a\in\gA_s}\Big(r(s, a) +\gamma\sum_{s'\in\gS}p(s'\mid s,a)v^*(s')\Big)
+\end{equation}
+It is well-known that an optimal policy can be constructed using iterative algorithms such as Value Iteration given in Algorithm~\ref{algo:discounted_vi}.
+From \cite[Chapter~6]{puterman2014markov}, Algorithm~\ref{algo:discounted_vi} always converges: $\lim_{n\to\infty}\vv_n=\vv^*$.
+That is, Algorithm~\ref{algo:discounted_vi} stops after a finite number of iterations and the policy $\pi$ that is the first output satisfies $\norm{\vv^\pi-\vv^*}\le \varepsilon$.
+The maximum value of \Eqref{eq:discount_obj} is given by $\sum_{s\in\gS}\rho(s)v^*(s)$.
+
+\begin{algorithm}[ht]
+    \DontPrintSemicolon
+    \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+    \Input{a MDP $M=\langle\gS,\gA,r,p\rangle$, discount factor $\gamma\in[0,1)$, and accuracy $\varepsilon\in(0,1)$}
+    \Init{}{Set $n=0$ and $v_0(s)=0$ for all $s\in\gS$}
+    \BlankLine
+    Set $v_1(s)=\max_{a\in\gA_s} r(s,a)$ for all $s\in\gS$ \;
+    \While{$\displaystyle\max_{s\in\gS}\big(v_{n+1}(s)-v_n(s)\big) -\min_{s\in\gS}\big(v_{n+1}(s)-v_n(s)\big) \ge \frac{1-\gamma}{\gamma}\varepsilon$}{
+        Set $n=n+1$ \;
+        Set $v_{n+1}(s) = \displaystyle\max_{a\in\gA_s}\Big(r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)v_{n}(s')\Big)$ for all $s\in\gS$
+    }
+    Set $\pi(s):=\displaystyle\argmax_{a\in\gA_s}\Big(r(s,a)+\sum_{s'\in\gS}p(s'\mid s,a)v_{n+1}(s')\Big)$ for all $s\in\gS$ \tcp{ties are broken arbitrarily}\;
+    \Return $\pi$ and $\vv_{n+1}$
+    \caption{Value Iteration}
+    \label{algo:discounted_vi}
+\end{algorithm}
+
+Similar to backward induction, Algorithm~\ref{algo:discounted_vi} has $\landauO(\abs{\gS}^2\abs{\gA})$ computational complexity where $\landauO(\cdot)$ hides the total number of iterations.
+
+This setting with discount factor $\gamma$ can be seen as a finite horizon setting whose horizon is randomly sampled from \emph{geometric distribution} with parameter $(1-\gamma)$.
+That is, at each time step, the decision maker can stop interacting with the MDP with probability $(1-\gamma)$.
+So, the value of state $s$ under deterministic stationary policy $\pi$ is the expected sum of rewards over the random horizon:
+\begin{equation}
+    \label{eq:discount_finite}
+    v^\pi(s) :=\E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1=s\right] =\ex{\E^\pi\left[\sum_{t=1}^H r_t\mid H, s_1=s\right]}
+\end{equation}
+where the outer expectation of the third term integrates over the randomness of the horizon $H$ whose expected value is $1/(1-\gamma)$.
+
+\subsection{Average reward model}
+
+In some problems, the decision maker is more interested in the average reward per decision time than the expected cumulative discounted reward.
+We focus on such criterion in this section.
+
+\subsubsection{Gain and bias}
+
+Formally, the decision maker wants to identify a policy that verifies
+\begin{equation}
+    \label{eq:avg_obj}
+    \sup_{\pi\in\Pi}\sum_{s\in\gS}\rho(s)\liminf_{T\to+\infty}\frac1T \E^\pi\left[ \sum_{t=1}^{T} r_t \mid s_1=s\right].
+\end{equation}
+By the assumption that $r_t\in[0,1]$ and the state space is finite, the infimum limit of \Eqref{eq:avg_obj} equals the supremum limit for any deterministic stationary policy $\pi$ (see \cite[Chapter~8]{puterman2014markov}).
+Hence, the limit of \Eqref{eq:avg_obj} exists and is called the \emph{long-term} average reward or \emph{gain} of state $s$ under policy $\pi$.
+Concretely, it is defined by
+\begin{equation}
+    \label{eq:gain_defn}
+    g^\pi(s) := \lim_{T\to+\infty}\frac1T \E^\pi\left[ \sum_{t=1}^{T} r_t \mid s_1=s\right].
+\end{equation}
+This notion generalizes both finite and discounted settings when $H\to+\infty$ or $\gamma\to1$ because it is shown (see \cite[Sections~8.2.1 and 8.2.2]{puterman2014markov}) that 
+\begin{align*}
+    \E^\pi\left[\sum_{t=1}^H r_t\mid s_1{=}s\right] \underset{H\to+\infty}{\sim} Hg^\pi(s) \text{ and }
+    \E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right] \underset{\gamma\to1}{\sim}
+    g^\pi(s)/(1-\gamma).
+\end{align*}
+In consequence, if $\pi$ and $\pi'$ are two deterministic stationary policies such that $g^\pi(s)\le g^{\pi'}(s)$, then for $H$ big enough and $\gamma$ close enough to $1$, $\E^\pi\left[\sum_{t=1}^H r_t\mid s_1{=}s\right]\le \E^{\pi'}\left[\sum_{t=1}^H r_t\mid s_1{=}s\right]$ and $\E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right]\le \E^{\pi'}\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right]$.
+
+The gain of stationary policy captures the average reward obtained in \emph{steady regime}.
+Another quantity associated to stationary policy $\pi$ is its \emph{bias function} that is defined by: for each $s\in\gS$
+\begin{equation}
+    \label{eq:bias_defn}
+    h^\pi(s) :=\Clim_{T\to+\infty} \E^\pi\left[ \sum_{t=1}^{T} r_t -g^\pi(s_t) \mid s_1=s\right].
+\end{equation}
+The bias function captures the expected total difference between the reward and the average reward in steady regime. 
+The \emph{Cesaro-limit} denoted by $\mathrm{C}$-$\mathrm{lim}$ is used because it is well-defined for any stationary policies albeit the ``classical'' limit may not exist for stationary policy that induces a stochastic process governed by \emph{periodic} Markov chain.
+The difference of bias values $h^\pi(s)-h^\pi(s')$ captures the (dis-)advantage of starting at state $s$ rather than $s'$ when following policy $\pi$.
+We denote by $sp(\vh^\pi):=\max_{s\in\gS}h^\pi(s) -\max_{s\in\gS}h^\pi(s)$ the range or \emph{span} of the bias function of policy $\pi$.
+
+Any deterministic stationary policy $\pi$ induces a Markov reward process (MRP) where the reward function and state transition are respectively encoded by vector $\vr^\pi$ and stochastic matrix $\mP^\pi$ such that for any $s,s'\in\gS$, $r^\pi(s):=r\big(s,\pi(s)\big)$ and $P^\pi(s,s'):=p\big(s'\mid s,\pi(s)\big)$.
+We define the \emph{limiting matrix} $\bar{\mP}^\pi:=\Clim_{t\to+\infty}{(\mP^\pi)^t}$ (\cite[Appendix~A.4]{puterman2014markov}). % which describes the state transition in steady regime under policy $\pi$. That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
+Since the MDP has finite state space, $\bar{\mP}^\pi$ always exists and well-defined for any stationary policy $\pi$.
+It describes the state transition in steady regime under policy $\pi$. That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
+So, the gain of policy $\pi$ can be expressed by for any $s\in\gS$, $g^\pi(s)=\sum_{s'\in\gS}\bar{P}^\pi(s,s')r^\pi(s')$.
+In vector notation, $\vg^\pi=\bar{\mP}^\pi\vr^\pi$.
+However, computing $\vg^\pi$ through $\bar{\mP}^\pi$ might be inefficient.
+Instead, the gain and bias can be computed using Bellman evaluation equations given in Proposition~\ref{prop:be_eval}.
+\begin{prop}[{\cite[Theorem~8.2.6]{puterman2014markov}}]
+    \label{prop:be_eval}
+    For any stationary policy $\pi$, the gain $\vg^\pi$ and bias $\vh^\pi$ are a solution of the following system of Bellman evaluation equations: for any $s\in\gS$
+    \begin{align}
+        g(s) -\sum_{s'\in\gS}P^\pi(s,s')g(s') &=0 \label{eq:gain_eval}\\
+        g(s) -r^\pi(s) +h(s) -\sum_{s'\in\gS}P^\pi(s,s')h(s') &=0. \label{eq:bias_eval}
+    \end{align}
+    Suppose that $\vg$ and $\vh$ satisfy \eqref{eq:gain_eval} and \eqref{eq:bias_eval}. Then, $\vg^\pi=\vg$ and $\vh^\pi=\vh+\vu$ where $\vu=\mP^\pi\vu$.
+    Finally, if $\bar{\mP}^\pi\vh=\vzero$, then $\vh^\pi=\vh$.
+\end{prop}
+%Equations~\eqref{eq:gain_eval} and \eqref{eq:bias_eval} uniquely define $\vg$ and determine $\vh$ up to an element of null space of $(\mI-\mP^\pi)$ where $\mI$ is the identity matrix of size $\abs{\gS}\times\abs{\gS}$.
+
+Since \Eqref{eq:avg_obj} compares policies based on their average reward in steady regime, we need to take into account the \emph{chain structure} induced by the policies.
+We assume that the reader is familiar with the notion of \emph{transient} and (positive) \emph{recurrent} states and/or class of a Markov chain(see \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov} for more detail) and classify the MDPs according to the following definition.
+\begin{defn}[Classification of MDPs]
+    \label{defn:mdp_struct}
+    We say that a MDP is
+    \begin{enumerate}
+        \item \textbf{ergodic} if the Markov chain induced by any deterministic stationary policy has a single recurrent class that equals the state space (\ie, all states are visited infinitely often with probability $1$ independently of initial state);
+        \item \textbf{unichain} if the Markov chain induced by any deterministic stationary policy has a single recurrent class plus a --possibly empty-- set of transient states;
+        \item \textbf{communicating} if for every pair of states $(s,s')\in\gS$, there exists a deterministic stationary policy under which $s'$ is accessible from $s$ in finite time with non-zero probability
+        \item \textbf{weakly communicating} if the state space can be partitioned into two subsets $\gS^C$ and $\gS^T$ (with $\gS^T$ possibly empty), such that for every pair of states $(s,s')\in\gS^C$, there exists a deterministic stationary policy under which $s'$ is accessible from $s$ in finite time with non-zero probability, and all states in $\gS^T$ are transient under all deterministic stationary policies.
+    \end{enumerate}
+    We say that a MDP is \textbf{multichain} if it is not unichain.
+\end{defn}
+
+\subsubsection{Optimality criteria}
 
 
-\subsection{Average reward criterion}
+\paragraph{Gain and Bellman optimality.}
+Similarly to the discounted setting, in MDPs with finite state and action spaces, there always exists an optimal deterministic stationary policy $\pi^*$ that satisfies \Eqref{eq:avg_obj} for any initial distribution $\rho$ (see \cite[Theorem~9.1.8]{puterman2014markov}).
+Such an optimal policy $\pi^*$ induces the \emph{optimal gain} denoted by $\vg^*$ and the maximum value of \Eqref{eq:avg_obj} is given by $\sum_{s\in\gS} \rho(s)g^*(s)$.
+From \cite[Chapter~9]{puterman2014markov}, the optimal gain $\vg^*$ satisfies the system of Bellman \emph{optimality} equations: for each $s\in\gS$,
+\begin{align}
+    g(s) &= \max_{a\in\gA_s} \sum_{s'\in\gS}p(s'\mid s,a)g(s') \label{eq:gain_opt} \\
+    g(s) +h(s) &= \max_{a\in\gA_s}\Big(r(s,a) +\sum_{s'\in\gS}p(s'\mid s,a)h(s')\Big) \label{eq:bias_opt}.
+\end{align}
+So, $\vg^*$ is uniquely defined \eqref{eq:gain_opt} and \eqref{eq:bias_opt}.
+Any policies that achieve $\vg^*$ are said to be \emph{gain optimal} (or average optimal): for any $\pi\in\Pi$, $g^\pi(s)\le g^*(s)$ for all $s\in\gS$.
+The gain optimal policies give more importance to the reward in steady regime. 
+That is, they act optimally in recurrent states and can possibly ignore transient states.
+In this thesis, we distinguish gain optimal policies from the policies that attain the maximum in \eqref{eq:bias_opt} as the following
+\begin{defn}[Bellman optimal policy]
+    %Consider a MDP in which the space $\gS$ is finite and $\gA_s$ is finite for any $s\in\gS$.
+    A policy $\pi$ is \emph{Bellman optimal} if there exists vector $\vh\in\R^{\abs{\gS}}$ that satisfies \eqref{eq:bias_opt} with $\vg^*$ such that $\pi(s)\in\argmax_{a\in\gA_s}\Big(r(s,a) +\sum_{s'\in\gS}p(s'\mid s,a)h(s')\Big)$ for all $s\in\gS$.
+\end{defn}
+By \cite[Theorem~9.1.7]{puterman2014markov}, Bellman optimal policy always exists in MDPs with finite state and action spaces and Bellman optimal implies gain optimal.
+However, the converse is not true in general.
+So, the notion of Bellman optimality is stronger than the notion of gain optimality.
+
+\paragraph{Characterization of gain optimal policies.}
+
+Given a deterministic stationary policy $\pi$, let $\vg$ and $\vh$ be a solution of \eqref{eq:gain_eval} and \eqref{eq:bias_eval}.
+We define the advantage of action\footnote{Note that it is in function of $\vh$} $a\in\gA_s$ in state $s$ over policy $\pi$ by
+\begin{equation}
+    \label{eq:advan}
+    B^a_s(\vh) := r(s,a) +\sum_{s'\in\gS}p(s'\mid s,a)h(s') -g(s) -h(s).
+\end{equation}
+The following lemma characterizes gain optimal policy by showing that the policy must satisfies \eqref{eq:bias_opt} on their recurrent states.
+\begin{lem}
+    \label{lem:opt_pol}
+    Let $\pi:\gS\mapsto\gA$ be a policy and $\Phi^\pi$ be the set of recurrent states of policy $\pi$.
+    The three properties below are equivalent.
+    \begin{enumerate}[label=(\roman*)]
+        \item \label{it:opt_pol1} $\mP^\pi\vg^*=\vg^*$ and for all $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vh)=0$ for all $s\in\Phi^\pi$
+        \item \label{it:opt_pol2} $\mP^\pi\vg^*=\vg^*$ and for some $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vh)=0$ for all $s\in\Phi^\pi$
+        \item \label{it:opt_pol3} $\pi$ is gain optimal.
+    \end{enumerate}
+\end{lem}
+\begin{proof}
+    \ref{it:opt_pol1} $\Rightarrow$ \ref{it:opt_pol2} is trivial.
+
+    \ref{it:opt_pol2} $\Rightarrow$ \ref{it:opt_pol3}: By definition of $B_i^a(\vh)$, we have $r^{\pi}(s)-g^*(s) = h(s)-\sum_{s'\in\gS} P^{\pi}(s,s')h(s')$ for any recurrent state $s$ of $\pi$.  Multiply this with $\bar{P}^\pi(j,s)$ and sum over $s\in\gS$ (if $s$ is not recurrent, then $\bar{P}^\pi(j,s)=0$) gives
+    \begin{align*}
+        \sum_{s\in\gS} \bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s)\Big) = \sum_{s\in\gS} \bar{P}^\pi(j,s)h(s) - \underbrace{\sum_{s\in\gS} \bar{P}^\pi(j,s)\sum_{s'\in\gS} P^{\pi}(s,s')h(s')}_{=\sum_{s'\in\gS} \bar{P}^\pi(j,s')h(s') \text{ since $\bar{\mP}^\pi\mP^\pi=\bar{\mP}^\pi$.}}
+        &= \vzero.
+    \end{align*}
+    By Theorem~8.2.6 of \cite{puterman2014markov}, the gain of $\pi$ is $\bar{\mP}^\pi \vr^\pi$. The above equation shows that $\bar{\mP}^\pi\vr^\pi = \bar{\mP}^\pi\vg^*$. Moreover, the assumption  $\mP^\pi\vg^*=\vg^*$ implies that $\bar{\mP}^\pi\vg^*=\vg^*$ which in turn implies that $\bar{\mP}^\pi\vr^\pi=\vg^*$. This shows that the gain of $\pi$ is $\vg^*$ and therefore $\pi$ is gain optimal.
+    % So, we have $\mP^\pi\vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$.
+
+    \ref{it:opt_pol3} $\Rightarrow$ \ref{it:opt_pol1}: If $\pi$ is gain optimal, then $\mP^\pi \vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$.
+    The latter rewrites as $\sum_{s\in\gS}\bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s)\Big) =0$ for all state $j$. Let $\vh$ be a solution of \eqref{eq:bias_opt}.
+    For all state $j$, we have    
+    \begin{align}
+        \label{eq:apx_proof_H}
+        \sum_{s\in\gS}\bar{P}^\pi(j,s)B^{\pi(s)}_s(\vh) {=} \sum_{s\in\gS}\bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s) {+}\sum_{s'\in\gS}P^{\pi}(s,s')h(s') -h(s)\Big) {=}0.
+    \end{align}
+    As $\vh$ satisfied \eqref{eq:bias_opt}, for all action $a\in\gA_s$, we have $B^{a}_s(\vh) \le0$ for all states $s\in\gS$ and in particular $B^{\pi(s)}_s(\vh) \le0$.
+    This shows that for any state $s$ such that $\bar{P}^\pi(j,s)>0$, one must have $B^{\pi(s)}_s(\vh) =0$. Such state $s$ are the recurrent states of $\pi$.
+    This shows that $B^{\pi(s)}_s(\vh) =0$ for all $s\in\Phi^\pi$.
+\end{proof}
+
+\paragraph{Characterization of Bellman optimal policies.}
+
+The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_max}.
+The following lemma shows the relationship between two policies that are unichain and satisfy \eqref{eq:bias_max} on all states.
+
+\begin{lem}
+    \label{lem:equi_bias}
+    Suppose that two policies $\pi$ and $\theta$ are Bellman optimal, unichain and have at least one common recurrent state: $\gR^\pi\cap\gR^\theta\neq\emptyset$.
+    
+    Then for any $\vh^\pi$ and $\vh^\theta$ solutions of \eqref{eq:bias_eval1} for $\pi$ and $\theta$ respectively, there exists a constant $c$ such that for all state $i$: $h^\pi_i -h^\theta_i =c$. Moreover, in this case, ${B_i^{\theta_i}(\vh^\pi)=B_i^{\pi_i}(\vh^\theta)=0}$ for all $i$.
+\end{lem}
+\begin{proof}
+    Since $\pi$ and $\theta$ are Bellman optimal, $\vh^\pi,\vh^\theta\in H$.
+    In consequence, we have
+    \begin{align*}
+        \vh^\pi \ge \vr^\theta -\vg^* +\mP^\theta\vh^\pi.
+    \end{align*}
+    By Lemma~\ref{lem:opt_pol}~\ref{it:opt_pol1}, the above inequality is an equality for all $i\in\gR^\theta$ because $\theta$ is gain optimal.
+
+    As $\vh^\theta$ satisfies \eqref{eq:bias_eval1}, we have
+    \begin{align*}
+        \vh^\theta -\vh^\pi &\le \vr^\theta -\vg^* +\mP^\theta\vh^\theta -(\vr^\theta -\vg^* +\mP^\theta\vh^\pi) = \mP^\theta(\vh^\theta -\vh^\pi),
+    \end{align*}
+    with equality for all state $i\in\gR^\theta$. This shows that for all $t$, $\vh^\theta -\vh^\pi\le (\mP^\theta)^t(\vh^\theta -\vh^\pi)$ which implies that $\vh^\theta -\vh^\pi\le \bar{\mP}^\theta(\vh^\theta -\vh^\pi)$ with equality for all states $i\in\gR^\theta$. Similarly, $\vh^\pi -\vh^\theta \le \bar{\mP}^\pi(\vh^\pi -\vh^\theta)$ with equality for any state $i\in\gR^\pi$.
+
+    Let $c^\pi_i=\sum_{j\in\gS}\bar{P}^\pi_{ij}(h_j^\pi-h_j^\theta)$ and $c^\theta_i=\sum_{j\in\gS}\bar{P}^\theta_{ij}(h_j^\pi-h_j^\theta)$. By what we have just shown, for all state $i$, we have
+    \begin{align*}
+        c^\theta_i \underbrace{\le}_{\text{equality if $i\in\gR^\theta$}} h_i^\pi-h_i^\theta \underbrace{\le}_{\text{equality if $i\in\gR^\pi$}} c^\pi
+    \end{align*}
+    As both policies are unichain, $c^\pi_i$ and $c^\theta_i$ do not depend on $i$.  Moreover, if there exists $i\in\gR^\theta\cap\gR^\pi$, we have $c^\pi_i=c^\theta_i =: c$. In consequence,  $h_i^\pi-h_i^\theta=c$ for all state $i$. 
+\end{proof}
+
+
+\paragraph{Unicity of Bellman optimal policy.}
+\label{ssec:unicity}
+
+\begin{lem}
+    \label{lem:unicity_BO}
+    Let $\pi$ be a Bellman optimal policy that is unichain. If $\pi$ is not the unique Bellman optimal policy, then there exists a state $i$ and an action $a\neq\pi_i$ such that $B_i^a(\vh^\pi)=0$.
+\end{lem}
+\begin{proof}
+    Let $\theta\neq\pi$ be another Bellman optimal policy. Since $\theta$ is gain optimal and $\vh^\pi\in H$, Lemma~\ref{lem:opt_pol} implies that $B_i^{\theta_i}(\vh^\pi) =0$ for all $i\in\gR^\theta$. If there exists $i\in\gR^\theta$ such that $\theta_i\neq\pi_i$, then the proof is concluded.  Otherwise, $\theta_i=\pi_i$ for all $i\in\gR^\theta$. This show that $\pi$ and $\theta$ coincide for all recurrent states of $\theta$ and that $\gR^\theta=\gR^\pi$. Moreover, as $\pi$ is unichain, $\theta$ is also unichain. Hence, Lemma~\ref{lem:equi_bias} implies that $B_i^{\theta_i}(\vh^\pi)=0$ for all $i$. Since $\theta\neq\pi$, there exists at least one state $i\in\gS$ such that $\theta_i\neq\pi_i$.
+\end{proof}
 
 
 
-\begin{enumerate}
-    \item explain a MDP: $M:=\langle\gS, \gA, r, P\rangle$, explain $\gS, \gA, r, P$, give example
-    \item explain policy $\pi$: shall we go to detail?
-        \begin{itemize}
-            \item History dependent?
-            \item Stationary? Probabilistic + deterministic?
-        \end{itemize}
-    \item induced stochastic process
-        \begin{itemize}
-            \item shall we give definition of recurrent states?
-            \item shall we give definition of transient states?
-        \end{itemize}
-    \item MDP classification
-\end{enumerate}
+%TOCONTINUE
 
-%\section{Infinite horizon criteria}
-%
-%We consider infinite time horizon:
-%\begin{itemize}
-%    \item explain what time horizon is
-%    \item explain decision epoch is, how it works
-%\end{itemize}
-%
-%\subsection{Dicounted markov decision process}
-%
-%The reward is discounted with discount factor $\beta$.
-%
-%\begin{itemize}
-%    \item give assumptions: reward bounded, $\beta<1$
-%\end{itemize}
-%
-%\subsubsection{Definition and problem formulation}
-%
-%\begin{itemize}
-%    \item explain what is Value function $V^\pi_M$
-%    \item explain why value function?
-%    \item do we need Action value function $Q^\pi_M$ ?
-%    \item why action value function?
-%\end{itemize}
-%
-%\subsubsection{Optimality equation}
-%
-%\begin{itemize}
-%    \item explain Bellman equation
-%    \item explain evaluation equation 
-%    \item shall we explain contraction property?
-%    \item shall we explain bound on span?
-%    \item shall we give unicity of optimal policy?
-%\end{itemize}
-%
-%\subsubsection{Value Iteration}
-%
-%Shall we present Value Iteration?
-%
-%\begin{itemize}
-%    \item Algorithm presentation
-%    \item Convergence proof
-%    \item shall we give example?
-%\end{itemize}
-%
-%\subsection{Average reward criterion}
-%
-%\subsubsection{Definition and problem formulation}
-%
-%\begin{itemize}
-%    \item give the assumptions needed: bounded reward,...
-%    \item explain what is the average reward $g^\pi$
-%    \item explain what is bias $h^\pi$
-%    \item shall we explain existency of $g^\pi, h^\pi$
-%    \item shall we give example?
-%    \item define gain optimal, Bellman optimal, (also bias optimal?)
-%\end{itemize}
-%
-%\subsubsection{Optimality equation}
-%
-%\begin{itemize}
-%    \item explain Bellman equation
-%    \item explain evaluation equation
-%    \item explain the space of solutions of Bellman equation
-%    \item give the condition for unicity of Bellman optimal policy
-%\end{itemize}
-%
-%\subsubsection{Relative Value Iteration}
-%
-%Shall we present Relative Value Iteration
-%
-%\begin{itemize}
-%    \item Algorithm presentation
-%    \item Convergence proof
-%    \item shall we give example?
-%\end{itemize}
