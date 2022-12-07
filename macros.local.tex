@@ -4,13 +4,28 @@
 % requires amsthm, xspace
 
 % theorem-like environment
-\newtheoremstyle{break}
-  {\topsep}{\topsep}%
-  {\itshape}{}%
-  {\bfseries}{}%
-  {\newline}{}%
-\theoremstyle{break}
+\newtheoremstyle{breakthm}
+  {\topsep}%
+  {\topsep}%
+  {\itshape}%
+  {}%
+  {\color{RoyalBlue!80!black}\bfseries}%
+  {}%
+  {\newline}%
+  {}%
+\theoremstyle{breakthm}
 \newtheorem{thm}{Theorem}
+
+\newtheoremstyle{breaklem}
+  {\topsep}%
+  {\topsep}%
+  {\itshape}%
+  {}%
+  {\color{JungleGreen!40!black}\bfseries}%
+  {}%
+  {\newline}%
+  {}%
+\theoremstyle{breaklem}
 \newtheorem{lem}[thm]{Lemma}
 \newtheorem{prop}{Proposition}
 \newtheorem{propty}{Property}
