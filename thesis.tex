@@ -234,36 +234,30 @@
     fonttitle=\bfseries,
     colback=RoyalBlue!5,
     colframe=RoyalBlue!40!black,
-    coltitle=RoyalBlue!40!black
 }
 \tcolorboxenvironment{prop}{
     enhanced,
+    breakable,
     boxrule=0pt,frame hidden,
-    borderline west={4pt}{0pt}{amblu},
+    borderline west={4pt}{0pt}{RoyalBlue!80!black},
     colback=gray95,
-    coltitle=amblu,
-    colframe=amblu,
-    sharp corners
+    sharp corners,
 }
 \tcolorboxenvironment{defn}{
-    sharp corners,
-    colback=gray95,
-    colframe=myblue, 
-    rightrule=0pt, bottomrule=0pt,
-    enhanced,
-    breakable,
-    boxed title style={colframe=gray95, sharp corners},
-    attach boxed title to top left,
-}
-\tcolorboxenvironment{lem}{
-    sharp corners,
     colback=gray95,
     colframe=amgreen, 
     rightrule=0pt, toprule=0pt,
     enhanced,
     breakable,
-    boxed title style={colframe=gray95, sharp corners},
-    attach boxed title to top left,
+    sharp corners,
+}
+\tcolorboxenvironment{lem}{
+    enhanced,
+    breakable,
+    boxrule=0pt,frame hidden,
+    borderline west={4pt}{0pt}{RoyalBlue!60!black},
+    colback=gray95,
+    sharp corners,
 }
 
 
@@ -356,7 +350,8 @@
 %TODO: should we put number for introduction and conclusion chapters?
 
 \iftotalcompilation
-\part{Background}
+\part{Background on Markov decision process and reinforcement learning}
+\KK{Motivate why this part should be read, what are essential to understand in this part}
 \fi
 
 \inputchapter{\includemdpchapter}{markovDecisionProcess_chapter.tex}
