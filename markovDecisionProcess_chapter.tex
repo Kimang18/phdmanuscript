@@ -277,24 +277,26 @@ The gain and bias can be computed using Bellman evaluation equations given in Pr
     %Finally, if $\bar{\mP}^\pi\vh=\vzero$, then $\vh^\pi=\vh$.
 \end{prop}
 Equations~\eqref{eq:gain_eval} and \eqref{eq:bias_eval} uniquely define $\vg$ and determine $\vh$ up to an element of the null space of $(\mI-\mP^\pi)$ where $\mI$ is the identity matrix of size $\abs{\gS}\times\abs{\gS}$.
+If $\mP^\pi$ is unichain\footnote{we provide more explanation about unichain in \ref{it:unichain} of Definition~\ref{defn:mdp_class}.}, then we say that policy $\pi$ is unichain and its gain is state independent: $g^\pi(s)=g^\pi(s')$ for any $s,s'\in\gS$.
+So, for unichain policy $\pi$, we just denote its gain by $g^\pi$.
+Moreover, if $\pi$ is unichain, its bias $\vh^\pi$ is defined up to a constant vector.
 
 \subsection{Classification of Markov decision process}
-
 Since \Eqref{eq:avg_obj} compares policies based on their average reward in steady regime, we need to take into account the chain structure induced by the policies.
 %We assume that the reader is familiar with the notion of \emph{transient} and (positive) \emph{recurrent} states and/or class of a Markov chain(see \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov} for more detail) and classify the MDPs according to the following definition.
-Since the state space $\gS$, the states of MDP are either \emph{transient} or \emph{recurrent}.
+Since the state space $\gS$ is finite, the states of the MDP are either \emph{transient} or \emph{recurrent}.
 A state is \emph{transient} if it is never visited in steady regime.
-For more formal definition, one can refer to \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov}.
+For more formal definition, the reader can refer to \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov}.
 We classify the MDPs according to the following definition.
 \begin{defn}[Classification of MDPs]
-    \label{defn:mdp_struct}
+    \label{defn:mdp_class}
     We say that a MDP is
-    \begin{enumerate}
+    \begin{enumerate}[label=(\roman*)]
         \item \textbf{ergodic} if the Markov chain induced by any stationary policy has a single recurrent class that equals the state space (\ie, all states are visited infinitely often with probability $1$ independently of initial state);
-        \item \textbf{unichain} if the Markov chain induced by any stationary policy is \emph{unichain}\footnote{we also say that the corresponding policy is unichain}, \ie, it has a single recurrent class plus a --possibly empty-- set of transient states;
+        \item \label{it:unichain} \textbf{unichain} if the Markov chain induced by any stationary policy is \emph{unichain}, \ie, it has a single recurrent class plus a --possibly empty-- set of transient states;
         \item \textbf{multichain} if it is not unichain;
-        \item \textbf{communicating} if for every pair of states $(s,s')\in\gS$, there exists a deterministic stationary policy under which $s'$ is accessible from $s$ in finite time with non-zero probability
-        \item \textbf{weakly communicating} if the state space can be partitioned into two subsets $\gS^C$ and $\gS^T$ (with $\gS^T$ possibly empty), such that for every pair of states $(s,s')\in\gS^C$, there exists a stationary policy under which $s'$ is accessible from $s$ in finite time with non-zero probability, and all states in $\gS^T$ are transient under all stationary policies.
+        \item \textbf{communicating} if for every pair of states $(s,s')\in\gS$, there exists a stationary policy under which $s'$ is accessible from $s$ in finite time with non-zero probability
+        \item \textbf{weakly communicating} if the state space can be partitioned into two subsets $\gS^{\gC}$ and $\gS^{\gT}$ (with $\gS^{\gT}$ possibly empty), such that for every pair of states $(s,s')\in\gS^{\gC}$, there exists a stationary policy under which $s'$ is accessible from $s$ in finite time with non-zero probability, and all states in $\gS^{\gT}$ are transient under all stationary policies.
     \end{enumerate}
 \end{defn}
 With this definition, ergodic MDPs are special cases of unichain MDPs and weakly communicating MDPs generalize communicating MDPs. 
@@ -305,38 +307,51 @@ Figure~\ref{fig:mdp_class} summarizes this relation.
     \centering
     \begin{tikzpicture}
         \draw (0,1) rectangle (6,4);
-        \draw[dashed] (0,2.4) -- (7.,2.4);%  (-2,1) -- (6.5,1);
         \node at (7,3) {multichain};
         \node at (7,2) {unichain};
         % \node[text width=2cm, align=center] at (-1.5,0.5) {discounted problems};
-        \draw[line width=2pt, fill=blue,opacity=0.3] (0,2.4) rectangle (6,4);
-        \node at (3,3.5) {};
-        \draw[line width=2pt, fill=green,opacity=0.3] (0,1) rectangle (6,3.6);
-        \node[text width=4cm,align=center] at (3,3.3) {Weakly communicating};
-        \draw[line width=2pt, fill=red,opacity=0.3] (0.5,1.2) rectangle (5.5,3);
-        \node[text width=2cm,align=center] at (2.7,2.7) {Communicating};
-        \draw[line width=2pt, fill=white,opacity=0.3] (1,1.6) rectangle (5,2.2);
+        \draw[line width=1pt, fill=white,opacity=0.3] (0,2.5) rectangle (6,4);
+        \node{}; %multichain
+        \draw[line width=1pt, fill=blue,opacity=0.3] (0,1) rectangle (6,3.7);
+        \node[text width=4cm, align=center] at (3,3.4) {Weakly communicating};
+        %\draw[line width=1pt, fill=white,opacity=0.3] (0,1) rectangle (6,2.5);
+        %\node{}; %unichain
+        \draw[line width=1pt, fill=red, opacity=0.3] (0.5,1.3) rectangle (5.5,3.1);
+        \node[text width=2cm, align=center] at (2.7,2.8) {Communicating};
+        \draw[line width=1pt, fill=green,opacity=0.3] (1,1.6) rectangle (5,2.2);
         \node[text width=2cm,align=center] at (3,1.9) {Ergodic};
+        \draw[line width=0.7pt, dashed] (-1,2.5) -- (7,2.5);%  (-2,1) -- (6.5,1);
     \end{tikzpicture}
-    \caption{Possible outputs of our algorithm: For unichain or discounted problems, our algorithm tests indexability and returns the index if and only if the problem is indexable. For some multichain problems, the algorithm can test indexability. For the others, it only returns that the problem is multichain.}
+    \caption{MDP space: the rectangles below the dashed line represents the set of unichain MDPs and the ones above the dashed line represents the set of multichain MDPs.
+        The blue rectangle is the set of weakly communicating MDPs.
+        The red rectangle on top of the blue one is the set of communicating MDPs.
+        Finally, the green rectangle on top of the red one is the set of ergodic MDPs.
+    }
     \label{fig:mdp_class}
 \end{figure}
 
-
-Verifying if a MDP is unichain is NP-hard\cite{tsitsiklis2007np}. However, verifying if a MDP is weakly communicating is feasible in $\landauO(\abs{\gS}^2)$ using Tarjan's strongly connected component algorithm.
-That is, we construct a transition matrix ...
+Verifying if a Markov chain is unichain can be done in $\landauO(\abs{\gS}^2)$ using Tarjan's strongly connected component algorithm.
+Verifying if a MDP is unichain is, however, NP-hard \cite{tsitsiklis2007np}.
+For the pattern of states that are accessible from each other, we can verify if a MDP is weakly communicating in $\landauO(\abs{\gS}^2)$:
+we construct a stochastic matrix $\mP^*$ such that for all $s,s'\in\gS$, $P^*(s,s'):=\displaystyle\frac1{\abs{\gA_s}}\sum_{a\in\gA_s}p(s'\mid s,a)$.
+If $\mP^*$ is unichain, then the MDP is weakly communicating.
+This can be done by Tarjan's strongly connected component algorithm.
 
 \subsection{Gain optimality}
 
-Similarly to the discounted setting, in MDPs with finite state and action spaces, there always exists an optimal deterministic stationary policy $\pi^*$ that satisfies \Eqref{eq:avg_obj} for any initial distribution $\rho$ (see \cite[Theorem~9.1.8]{puterman2014markov}).
+Similarly to the discounted setting, in MDPs with finite state and action spaces, there always exists an optimal stationary policy $\pi^*$ that satisfies \Eqref{eq:avg_obj} for any initial distribution $\rho$ (see \cite[Theorem~9.1.8]{puterman2014markov}).
 Such an optimal policy $\pi^*$ induces the \emph{optimal gain} denoted by $\vg^*$ and the maximum value of \Eqref{eq:avg_obj} is given by $\sum_{s\in\gS} \rho(s)g^*(s)$.
 From \cite[Chapter~9]{puterman2014markov}, the optimal gain $\vg^*$ satisfies the system of Bellman \emph{optimality} equations: for each $s\in\gS$,
 \begin{align}
     g(s) &= \max_{a\in\gA_s} \sum_{s'\in\gS}p(s'\mid s,a)g(s') \label{eq:gain_opt} \\
     g(s) +h(s) &= \max_{a\in\gA_s}\Big(r(s,a) +\sum_{s'\in\gS}p(s'\mid s,a)h(s')\Big) \label{eq:bias_opt}.
 \end{align}
-So, $\vg^*$ is uniquely defined \eqref{eq:gain_opt} and \eqref{eq:bias_opt}.
+So, $\vg^*$ is uniquely defined by \eqref{eq:gain_opt} and \eqref{eq:bias_opt}.
 Any policies that achieve $\vg^*$ are said to be \emph{gain optimal} (or average optimal): for any $\pi\in\Pi$, $g^\pi(s)\le g^*(s)$ for all $s\in\gS$.
+By \cite[Theorem~8.3.2]{puterman2014markov}, if a MDP is weakly communicating, then the optimal gain is state independent: $g^*(s)=g^*(s')$ for any $s,s'\in\gS$.
+So, given weakly communicating MDPs, we just denote by $g^*$ the optimal gain.
+Note that the optimal gain is state independent does not imply that all optimal policies are unichain.
+%TOCONTINUE
 
 \section{Infinite horizon Bellman optimality}
 
