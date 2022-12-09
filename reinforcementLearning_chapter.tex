@@ -1,7 +1,18 @@
 \chapter{Reinforcement Learning}
 \label{ch:rl_finite_horizon}
 
-\section{Problem Formulation}
+In the previous chapter, we used the formalism of MDPs to describe how a decision maker interacts with its environment.
+Depending on the chosen optimality criterion, we explained how an optimal policy can be obtained when the parameters of the MDP are fully known.
+In this chapter, we consider the case when the MDP's parameters are \textbf{unknown} and need to be learned by the decision maker via trial and error.
+
+In Section~\ref{ch:rl:sec:blabla}, we introduce...
+
+The reader can skip this chapter and go directly to Part~\ref{part:idx} and come back before starting Part~\ref{part:learning}.
+
+\section{The learning problem}
+
+We consider the learning problem in which the state and action spaces $\gS$ and $\gA$ are known and the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown}.
+A usual measure of the performance of a learning algorithm is its regret over any finite number of steps $T$ (i.e., the difference gap between the cumulative reward of the optimal policy and the one of the learning algorithm over $T$ steps)
 
 \subsection{Finite-Horizon}
 
