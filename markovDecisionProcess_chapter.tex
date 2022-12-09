@@ -10,7 +10,11 @@ In this chapter, we define the notion of Markov decision process (MDP) used to m
 A MDP models a discrete-time decision problem where the decision maker executes available ``action'' over time steps and receives immediate incentive known as ``reward'' for each time step.
 In such problem, the decision maker seeks to maximize the expected cumulative rewards by identifying a sequence of actions that produces such effect.
 
-In Section~\ref{ch:mdp:sec:defn}, we describe...
+In Section~\ref{ch:mdp:sec:defn}, we fix the notation about MDP's parameter and the dynamic of the decision process.
+In Section~\ref{ch:mdp:sec:finite}, we give a brief presentation of finite horizon setting.
+Similarly, we present classical settings for infinite horizon in Sections~\ref{ch:mdp:sec:discounted} and \ref{ch:mdp:sec:gain}.
+Finally, we introduce new notion of optimality for infinite horizon setting in Section~\ref{ch:mdp:sec:bell}.
+The reader who is familiar with MDP can go directly to Section~\ref{ch:mdp:sec:bell} which is a pillar of our contribution in Chapter~\ref{ch:index_computation}.
 
 %\let\clearpage\relax
 
@@ -83,6 +87,7 @@ In the next sections, we specify the objective function of the decision problem.
 %We talk more about this in the following sections.
 
 \section{Finite horizon problems}
+\label{ch:mdp:sec:finite}
 
 This section describes the \emph{finite horizon setting} and contains a brief presentation of optimality criterion in the setting.
 
@@ -152,6 +157,7 @@ where the ties are broken arbitrarily.
 %Similar the previous section, we describe two settings for infinite horizon and provide detail about the optimality criteria in this section.
 
 \section{Infinite horizon discounted Markov decision process}
+\label{ch:mdp:sec:discounted}
 
 In some problems, the immediate reward incurred by the MDP is more important then those rewards in the future time steps.
 To capture this aspect, one can introduce a discount factor denoted by $\gamma$ where $\gamma\in[0,1)$.
@@ -220,6 +226,7 @@ where the outer expectation of the third term integrates over the randomness of 
 
 %\subsection{Average reward model}
 \section{Infinite horizon average reward criterion}
+\label{ch:mdp:sec:gain}
 
 In some problems, the decision maker is more interested in the average reward per decision time than the expected cumulative discounted reward.
 We focus on such criterion in this section.
@@ -322,7 +329,7 @@ Figure~\ref{fig:mdp_class} summarizes this relation.
         \node[text width=2cm,align=center] at (3,1.9) {Ergodic};
         \draw[line width=0.7pt, dashed] (-1,2.5) -- (7,2.5);%  (-2,1) -- (6.5,1);
     \end{tikzpicture}
-    \caption{MDP space: the rectangles below the dashed line represents the set of unichain MDPs and the ones above the dashed line represents the set of multichain MDPs.
+    \caption{MDP space: the rectangles below the dashed line represent the set of unichain MDPs and the ones above the dashed line represent the set of multichain MDPs.
         The blue rectangle is the set of weakly communicating MDPs.
         The red rectangle on top of the blue one is the set of communicating MDPs.
         Finally, the green rectangle on top of the red one is the set of ergodic MDPs.
@@ -350,10 +357,87 @@ So, $\vg^*$ is uniquely defined by \eqref{eq:gain_opt} and \eqref{eq:bias_opt}.
 Any policies that achieve $\vg^*$ are said to be \emph{gain optimal} (or average optimal): for any $\pi\in\Pi$, $g^\pi(s)\le g^*(s)$ for all $s\in\gS$.
 By \cite[Theorem~8.3.2]{puterman2014markov}, if a MDP is weakly communicating, then the optimal gain is state independent: $g^*(s)=g^*(s')$ for any $s,s'\in\gS$.
 So, given weakly communicating MDPs, we just denote by $g^*$ the optimal gain.
-Note that the optimal gain is state independent does not imply that all optimal policies are unichain.
-%TOCONTINUE
+Note that the fact that the optimal gain is constant over states does not imply that all gain optimal policies are unichain.
+Table~\ref{tab:mdp_vs_gain} describes the gain of stationary policies in different classes of MDPs.
+\begin{table}[ht]
+    \begin{tabular}{lll}
+        \hline
+        Model class          & Optimal gain         & Gain of a stationary policy \\ \hline
+        Ergodic              & Constant             & Constant                    \\
+        Unichain             & Constant             & Constant                    \\
+        Communicating        & Constant             & Possibly nonconstant        \\
+        Weakly Communicating & Constant             & Possibly nonconstant        \\
+        Multichain           & Possibly nonconstant & Possibly nonconstant       \\ \hline
+    \end{tabular}
+    \caption{\cite[Table~8.3.1]{puterman2014markov}: Relationship between MDP class and gain}
+    \label{tab:mdp_vs_gain}
+\end{table}
+Finally, \eqref{eq:gain_opt} and \eqref{eq:bias_opt} do not uniquely defined $\vh$.
+The structure of solution space of $\vh$ given $\vg^*$ is well studied in \cite{schweitzer1978functional}.
+
+%Moreover, we have $\bar{\mP}^\pi\mP^\pi =\mP^\pi\bar{\mP}^\pi =\bar{\mP}^\pi$.
+%However, computing $\vg^\pi$ through $\bar{\mP}^\pi$ might be inefficient.
+
+\subsection{Characterization of gain optimal policies.}
+
+Given a policy $\pi$, we define the \emph{limiting matrix} $\bar{\mP}^\pi:=\Clim_{t\to+\infty}{(\mP^\pi)^t}$ (\cite[Appendix~A.4]{puterman2014markov}). % which describes the state transition in steady regime under policy $\pi$. That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
+Since the MDP has finite state space, $\bar{\mP}^\pi$ always exists and well-defined for any stationary policy $\pi$.
+It describes the state transition in steady regime under policy $\pi$.
+That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
+So, the gain of policy $\pi$ can be expressed by $g^\pi(s)=\sum_{s'\in\gS}\bar{P}^\pi(s,s')r^\pi(s')$ for any $s\in\gS$.
+In vector notation, $\vg^\pi=\bar{\mP}^\pi\vr^\pi$.
+We denote by $\Phi^\pi$ the set of recurrent states under policy $\pi$.
+From \cite[Section~A.4]{puterman2014markov}, we have
+\begin{itemize}
+    \item $\bar{\mP}^\pi\mP^\pi =\mP^\pi\bar{\mP}^\pi =\bar{\mP}^\pi$
+    \item If $s'\notin\Phi^\pi$, then $\bar{P}^\pi(s,s')=0$ for all $s\in\gS$
+    \item If $\pi$ is unichain, then the rows of $\bar{\mP}^\pi$ are identical.
+\end{itemize}
+
+Let $\vg$ and $\vh$ be a solution of Bellman evaluation equations \eqref{eq:gain_eval} and \eqref{eq:bias_eval}.
+We define the advantage of action\footnote{Note that it is in function of $\vh$.} $a\in\gA_s$ in state $s$ over policy $\pi$ by
+\begin{equation}
+    \label{eq:advan}
+    B^a_s(\vh) := r(s,a) +\sum_{s'\in\gS}p(s'\mid s,a)h(s') -g(s) -h(s).
+\end{equation}
+If $\pi$ is unichain, then $B^a_s(\vh)$ is uniquely defined for any $s\in\gS$, $a\in\gA_s$ and $\vh\in\R^{\abs{\gS}}$ that satisfies \eqref{eq:bias_eval}.
+
+The following lemma characterizes gain optimal policy by showing that the policy must satisfies \eqref{eq:bias_opt} on their recurrent states.
+\begin{lem}
+    \label{lem:opt_pol}
+    Let $\pi:\gS\mapsto\gA$ be a policy and $\Phi^\pi$ be the set of recurrent states under policy $\pi$.
+    The three properties below are equivalent.
+    \begin{enumerate}[label=(\roman*)]
+        \item \label{it:opt_pol1} $\mP^\pi\vg^*=\vg^*$ and for all $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vh)=0$ for all $s\in\Phi^\pi$
+        \item \label{it:opt_pol2} $\mP^\pi\vg^*=\vg^*$ and for some $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vh)=0$ for all $s\in\Phi^\pi$
+        \item \label{it:opt_pol3} $\pi$ is gain optimal.
+    \end{enumerate}
+\end{lem}
+\begin{proof}
+    \ref{it:opt_pol1} $\Rightarrow$ \ref{it:opt_pol2} is trivial.
+
+    \ref{it:opt_pol2} $\Rightarrow$ \ref{it:opt_pol3}: By definition of $B_s^a(\vh)$, we have $r^{\pi}(s)-g^*(s) = h(s)-\sum_{s'\in\gS} P^{\pi}(s,s')h(s')$ for any recurrent state $s$ of $\pi$.  Multiply this with $\bar{P}^\pi(j,s)$ and sum over $s\in\gS$ (if $s$ is not recurrent, then $\bar{P}^\pi(j,s)=0$) gives
+    \begin{align*}
+        \sum_{s\in\gS} \bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s)\Big) {=} \sum_{s\in\gS} \bar{P}^\pi(j,s)h(s) {-} \underbrace{\sum_{s\in\gS} \bar{P}^\pi(j,s)\sum_{s'\in\gS} P^{\pi}(s,s')h(s')}_{=\sum_{s'\in\gS} \bar{P}^\pi(j,s')h(s') \text{ since $\bar{\mP}^\pi\mP^\pi{=}\bar{\mP}^\pi$.}}
+        = \vzero.
+    \end{align*}
+    By Theorem~8.2.6 of \cite{puterman2014markov}, the gain of $\pi$ is $\bar{\mP}^\pi \vr^\pi$. The above equation shows that $\bar{\mP}^\pi\vr^\pi = \bar{\mP}^\pi\vg^*$. Moreover, the assumption  $\mP^\pi\vg^*=\vg^*$ implies that $\bar{\mP}^\pi\vg^*=\vg^*$ which in turn implies that $\bar{\mP}^\pi\vr^\pi=\vg^*$. This shows that the gain of $\pi$ is $\vg^*$ and therefore $\pi$ is gain optimal.
+    % So, we have $\mP^\pi\vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$.
+
+    \ref{it:opt_pol3} $\Rightarrow$ \ref{it:opt_pol1}: If $\pi$ is gain optimal, then $\mP^\pi \vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$.
+    The latter rewrites as $\sum_{s\in\gS}\bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s)\Big) =0$ for all state $j$. Let $\vh$ be a solution of \eqref{eq:bias_opt}.
+    For all state $j$, we have    
+    \begin{align*}
+        %\label{eq:apx_proof_H}
+        \sum_{s\in\gS}\bar{P}^\pi(j,s)B^{\pi(s)}_s(\vh) {=} \sum_{s\in\gS}\bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s) {+}\sum_{s'\in\gS}P^{\pi}(s,s')h(s') -h(s)\Big) {=}0.
+    \end{align*}
+    As $\vh$ satisfied \eqref{eq:bias_opt}, for all action $a\in\gA_s$, we have $B^{a}_s(\vh) \le0$ for all states $s\in\gS$ and in particular $B^{\pi(s)}_s(\vh) \le0$.
+    This shows that for any state $s$ such that $\bar{P}^\pi(j,s)>0$, one must have $B^{\pi(s)}_s(\vh) =0$. Such state $s$ are the recurrent states of $\pi$.
+    This shows that $B^{\pi(s)}_s(\vh) =0$ for all $s\in\Phi^\pi$.
+\end{proof}
 
 \section{Infinite horizon Bellman optimality}
+\label{ch:mdp:sec:bell}
 
 The gain optimal policies give more importance to the reward in steady regime. 
 That is, they act optimally in recurrent states and can possibly ignore transient states.
@@ -369,59 +453,11 @@ So, the notion of Bellman optimality is stronger than the notion of gain optimal
 A Bellman optimal policy can be obtained using \emph{Multichain Policy Iteration} algorithm.
 We refer to \cite[Section~9.2.1]{puterman2014markov} for more detail about this algorithm.
 
-We define the \emph{limiting matrix} $\bar{\mP}^\pi:=\Clim_{t\to+\infty}{(\mP^\pi)^t}$ (\cite[Appendix~A.4]{puterman2014markov}). % which describes the state transition in steady regime under policy $\pi$. That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
-Since the MDP has finite state space, $\bar{\mP}^\pi$ always exists and well-defined for any stationary policy $\pi$.
-It describes the state transition in steady regime under policy $\pi$. That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
-So, the gain of policy $\pi$ can be expressed by for any $s\in\gS$, $g^\pi(s)=\sum_{s'\in\gS}\bar{P}^\pi(s,s')r^\pi(s')$.
-In vector notation, $\vg^\pi=\bar{\mP}^\pi\vr^\pi$.
-However, computing $\vg^\pi$ through $\bar{\mP}^\pi$ might be inefficient.
 
-\paragraph{Characterization of gain optimal policies.}
-
-Given a deterministic stationary policy $\pi$, let $\vg$ and $\vh$ be a solution of \eqref{eq:gain_eval} and \eqref{eq:bias_eval}.
-We define the advantage of action\footnote{Note that it is in function of $\vh$} $a\in\gA_s$ in state $s$ over policy $\pi$ by
-\begin{equation}
-    \label{eq:advan}
-    B^a_s(\vh) := r(s,a) +\sum_{s'\in\gS}p(s'\mid s,a)h(s') -g(s) -h(s).
-\end{equation}
-The following lemma characterizes gain optimal policy by showing that the policy must satisfies \eqref{eq:bias_opt} on their recurrent states.
-\begin{lem}
-    \label{lem:opt_pol}
-    Let $\pi:\gS\mapsto\gA$ be a policy and $\Phi^\pi$ be the set of recurrent states of policy $\pi$.
-    The three properties below are equivalent.
-    \begin{enumerate}[label=(\roman*)]
-        \item \label{it:opt_pol1} $\mP^\pi\vg^*=\vg^*$ and for all $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vh)=0$ for all $s\in\Phi^\pi$
-        \item \label{it:opt_pol2} $\mP^\pi\vg^*=\vg^*$ and for some $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vh)=0$ for all $s\in\Phi^\pi$
-        \item \label{it:opt_pol3} $\pi$ is gain optimal.
-    \end{enumerate}
-\end{lem}
-\begin{proof}
-    \ref{it:opt_pol1} $\Rightarrow$ \ref{it:opt_pol2} is trivial.
-
-    \ref{it:opt_pol2} $\Rightarrow$ \ref{it:opt_pol3}: By definition of $B_s^a(\vh)$, we have $r^{\pi}(s)-g^*(s) = h(s)-\sum_{s'\in\gS} P^{\pi}(s,s')h(s')$ for any recurrent state $s$ of $\pi$.  Multiply this with $\bar{P}^\pi(j,s)$ and sum over $s\in\gS$ (if $s$ is not recurrent, then $\bar{P}^\pi(j,s)=0$) gives
-    \begin{align*}
-        \sum_{s\in\gS} \bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s)\Big) = \sum_{s\in\gS} \bar{P}^\pi(j,s)h(s) - \underbrace{\sum_{s\in\gS} \bar{P}^\pi(j,s)\sum_{s'\in\gS} P^{\pi}(s,s')h(s')}_{=\sum_{s'\in\gS} \bar{P}^\pi(j,s')h(s') \text{ since $\bar{\mP}^\pi\mP^\pi=\bar{\mP}^\pi$.}}
-        &= \vzero.
-    \end{align*}
-    By Theorem~8.2.6 of \cite{puterman2014markov}, the gain of $\pi$ is $\bar{\mP}^\pi \vr^\pi$. The above equation shows that $\bar{\mP}^\pi\vr^\pi = \bar{\mP}^\pi\vg^*$. Moreover, the assumption  $\mP^\pi\vg^*=\vg^*$ implies that $\bar{\mP}^\pi\vg^*=\vg^*$ which in turn implies that $\bar{\mP}^\pi\vr^\pi=\vg^*$. This shows that the gain of $\pi$ is $\vg^*$ and therefore $\pi$ is gain optimal.
-    % So, we have $\mP^\pi\vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$.
-
-    \ref{it:opt_pol3} $\Rightarrow$ \ref{it:opt_pol1}: If $\pi$ is gain optimal, then $\mP^\pi \vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$.
-    The latter rewrites as $\sum_{s\in\gS}\bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s)\Big) =0$ for all state $j$. Let $\vh$ be a solution of \eqref{eq:bias_opt}.
-    For all state $j$, we have    
-    \begin{align}
-        \label{eq:apx_proof_H}
-        \sum_{s\in\gS}\bar{P}^\pi(j,s)B^{\pi(s)}_s(\vh) {=} \sum_{s\in\gS}\bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s) {+}\sum_{s'\in\gS}P^{\pi}(s,s')h(s') -h(s)\Big) {=}0.
-    \end{align}
-    As $\vh$ satisfied \eqref{eq:bias_opt}, for all action $a\in\gA_s$, we have $B^{a}_s(\vh) \le0$ for all states $s\in\gS$ and in particular $B^{\pi(s)}_s(\vh) \le0$.
-    This shows that for any state $s$ such that $\bar{P}^\pi(j,s)>0$, one must have $B^{\pi(s)}_s(\vh) =0$. Such state $s$ are the recurrent states of $\pi$.
-    This shows that $B^{\pi(s)}_s(\vh) =0$ for all $s\in\Phi^\pi$.
-\end{proof}
-
-\paragraph{Characterization of Bellman optimal policies.}
+\subsection{Characterization of Bellman optimal policies.}
 
 The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_opt}.
-The following lemma shows the relationship between two policies that are unichain\footnote{a policy is unichain if the induced Markov chain has a single recurrent class.} and satisfy \eqref{eq:bias_opt} on all states.
+The following lemma shows the relationship between two Bellman optimal policies that are unichain and share at least one common recurrent state.
 
 \begin{lem}
     \label{lem:equi_bias}
@@ -451,18 +487,23 @@ The following lemma shows the relationship between two policies that are unichai
     Moreover, if there exists $s\in\Phi^\theta\cap\Phi^\pi$, we have $c^\pi_s=c^\theta_s = c$. In consequence,  $h^\pi(s)-h^\theta(s)=c$ for all state $s$. 
 \end{proof}
 
-
-\paragraph{Unicity of Bellman optimal policy.}
+\subsection{Unicity of Bellman optimal policy.}
 \label{ssec:unicity}
+
+In some problems, it is crucial to check if the MDP has a single Bellman optimal policy.
+This task is not trivial due to the multiplicity of the solution to \eqref{eq:bias_opt} given $\vg^*$.
+So, the following lemma shows a condition which can be used to verify if a given Bellman optimal and unichain policy is the unique one.
 
 \begin{lem}
     \label{lem:unicity_BO}
     Let $\pi$ be a Bellman optimal policy that is unichain. If $\pi$ is not the unique Bellman optimal policy, then there exists a state $s$ and an action $a\in\gA_s\setminus\{\pi(s)\}$ such that $B_s^a(\vh^\pi)=0$.
 \end{lem}
+
 \begin{proof}
-    Let $\theta\neq\pi$ be another Bellman optimal policy. Since $\theta$ is gain optimal and $\vh^\pi$ satisfies \eqref{eq:bias_opt}, Lemma~\ref{lem:opt_pol} implies that $B_s^{\theta(s)}(\vh^\pi) =0$ for all $s\in\Phi^\theta$. If there exists $s\in\Phi^\theta$ such that $\theta(s)\neq\pi(s)$, then the proof is concluded.  Otherwise, $\theta(s)=\pi(s)$ for all $s\in\Phi^\theta$. This show that $\pi$ and $\theta$ coincide for all recurrent states of $\theta$ and that $\Phi^\theta=\Phi^\pi$. Moreover, as $\pi$ is unichain, $\theta$ is also unichain. Hence, Lemma~\ref{lem:equi_bias} implies that $B_s^{\theta(s)}(\vh^\pi)=0$ for all $s$. Since $\theta\neq\pi$, there exists at least one state $s\in\gS$ such that $\theta(s)\neq\pi(s)$.
+    Let $\theta\neq\pi$ be another Bellman optimal policy. Since $\theta$ is gain optimal and $\vh^\pi$ satisfies \eqref{eq:bias_opt}, Lemma~\ref{lem:opt_pol} implies that $B_s^{\theta(s)}(\vh^\pi) =0$ for all $s\in\Phi^\theta$. If there exists $s\in\Phi^\theta$ such that $\theta(s)\neq\pi(s)$, then the proof is concluded.  Otherwise, $\theta(s)=\pi(s)$ for all $s\in\Phi^\theta$.
+    This show that $\theta$ and $\pi$ coincide for all recurrent states of $\theta$ and that $\Phi^\theta=\Phi^\pi$. Moreover, as $\pi$ is unichain, $\theta$ is also unichain. Hence, Lemma~\ref{lem:equi_bias} implies that $B_s^{\theta(s)}(\vh^\pi)=0$ for all $s$. Since $\theta\neq\pi$, there exists at least one state $s\in\gS$ such that $\theta(s)\neq\pi(s)$.
 \end{proof}
-Lemma~\ref{lem:unicity_BO} implies that a Bellman optimal and unichain policy $\pi$ is the unique Bellman optimal policy if and only if for all $s$, $B_s^a(\vh^\pi)<0$ for all $a\in\gA_s\setminus\{\pi(s)\}$.
-
-%TOCONTINUE
-
+Lemma~\ref{lem:unicity_BO} implies that a Bellman optimal and unichain policy $\pi$ is the unique one if and only if for all $s$, $B_s^a(\vh^\pi)<0$ for all $a\in\gA_s\setminus\{\pi(s)\}$.
+Note that if a MDP has a single Bellman optimal policy, that policy must be unichain.
+Indeed, if the Bellman optimal policy is multichain, we can construct unichain policies that act optimally in the recurrent classes of the multichain policy.
+These handmade unichain policies are Bellman optimal.
