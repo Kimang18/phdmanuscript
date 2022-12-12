@@ -109,7 +109,7 @@ In this section, we describe...
 
 We compare the exploration-exploitation performance of good learners by how fast their regret tends to zero.
 \cite{jaksch2010near} has proven that no learners can perform better than a certain baseline for all MDPs $M$.
-We will give this baseline below but first we need introduce the notion of diameter of a MDP.
+We will give this baseline below but first we need to introduce the notion of diameter of a MDP.
 \begin{defn}
     The diameter of a MDP is defined by
     \begin{equation}
@@ -118,8 +118,18 @@ We will give this baseline below but first we need introduce the notion of diame
     \end{equation}
     where $\tau(s'):=\inf\{t\ge1 : s_t=s'\}$ is the first time step in which $s'$ is reached.
 \end{defn}
+So, the diameter of a MDP is the length of the \textbf{longest shortest path} in the MDP where the distance between any pair of vertices is $1$.
+In other words, it is the expected number of vertices along the shortest path between two states that are the \textbf{most distant} from each other.
+From Definition~\ref{ch:mdp:defn:mdp_class} and \cite[Proposition~8.3.1]{puterman2014markov}, it is clear that the diameter $D$ is finite if and only if the MDP is communicating.
 
-
+\begin{prop}[{\cite[Theorem~5]{puterman2014markov}}]
+    \label{prop:minimax_rg_lb}
+    In infinite horizon setting, for any learner $\gL$, any integers $\abs{\gS}$, $\abs{\gA}\ge10$, $D\ge 20\log_{\abs{\gA}}(\abs{\gS})$, and $T\ge DSA$, there is a MDP $M=\langle\gS,\gA,r,p\rangle$ whose diameter is $D$ such that for any initial state $s_1$, the expected regret of $\gL$ after $T$ time steps is lower bounded as
+    \begin{equation}
+        \label{eq:minimax_rg_lb}
+        \ex{\Reg(\gL, M, T)} \ge 0.015\sqrt{DSAT}.
+    \end{equation}
+\end{prop}
 
 
 
