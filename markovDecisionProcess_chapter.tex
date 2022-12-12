@@ -340,11 +340,12 @@ Figure~\ref{fig:mdp_class} summarizes this relation.
 Verifying if a Markov chain is unichain can be done in $\landauO(\abs{\gS}^2)$ using Tarjan's strongly connected component algorithm.
 Verifying if a MDP is unichain is, however, NP-hard \cite{tsitsiklis2007np}.
 For the pattern of states that are accessible from each other, we can verify if a MDP is weakly communicating in $\landauO(\abs{\gS}^2)$:
-we construct a stochastic matrix $\mP^*$ such that for all $s,s'\in\gS$, $P^*(s,s'):=\displaystyle\frac1{\abs{\gA_s}}\sum_{a\in\gA_s}p(s'\mid s,a)$.
-If $\mP^*$ is unichain, then the MDP is weakly communicating.
+we construct a stochastic matrix $\mP^{\#}$ such that for all $s,s'\in\gS$, $P^{\#}(s,s'):=\displaystyle\frac1{\abs{\gA_s}}\sum_{a\in\gA_s}p(s'\mid s,a)$.
+If $\mP^{\#}$ is unichain, then the MDP is weakly communicating.
 This can be done by Tarjan's strongly connected component algorithm.
 
 \subsection{Gain optimality}
+\label{ch:mdp:sec:gain}
 
 Similarly to the discounted setting, in MDPs with finite state and action spaces, there always exists an optimal stationary policy $\pi^*$ that satisfies \Eqref{eq:avg_obj} for any initial distribution $\rho$ (see \cite[Theorem~9.1.8]{puterman2014markov}).
 Such an optimal policy $\pi^*$ induces the \emph{optimal gain} denoted by $\vg^*$ and the maximum value of \Eqref{eq:avg_obj} is given by $\sum_{s\in\gS} \rho(s)g^*(s)$.
