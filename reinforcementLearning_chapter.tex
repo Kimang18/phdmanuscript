@@ -9,19 +9,121 @@ In Section~\ref{ch:rl:sec:blabla}, we introduce...
 
 The reader can skip this chapter and go directly to Part~\ref{part:idx} and come back before starting Part~\ref{part:learning}.
 
-\section{The learning problem}
+\section{The learning problem and regret definition}
 
-We consider the learning problem in which the state and action spaces $\gS$ and $\gA$ are known and the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown}.
-A usual measure of the performance of a learning algorithm is its regret over any finite number of steps $T$ (i.e., the difference gap between the cumulative reward of the optimal policy and the one of the learning algorithm over $T$ steps)
+In this section...
 
-\subsection{Finite-Horizon}
+\subsection{Problem setting}
+
+We consider the learning problem in which the state and action spaces $\gS$ and $\gA$ of MDP $M$ are known but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown} to the learner\footnote{we use the term learner instead of decision maker}.
+So, the planning methods given previous in chapter such as value iteration or backward induction, which require $r$ and $p$, cannot be immediately used and the learner needs to collect observations about $r$ and $p$.
+To get enough information, the learner needs to \emph{explore} the dynamic of the MDP as much as possible.
+However, too much exploration equalizes the performance of the learner with one that blindly chooses action at random.
+So, a good learner should also \emph{exploit} the gathered information.
+Unfortunately, untimely exploitation leads to suboptimal policy, thus unsatisfied performance. This is the famous “exploration versus exploitation dilemma”.
+
+In such dilemma, two different points of view about the MDP $M$ are adopted: the frequentist point of view, in which $r$ and $p$ of the MDP $M$ are seen as unknown \textbf{deterministic parameters}, and the Bayesian point of view, in which $r$ and $p$ of $M$ are \textbf{random variables}, drawn from some prior distribution.
+To simplify the exposition, in Bayesian approach, we will say the unknown MDP $M$ is drawn from a probability distribution (prior or posterior) $\phi$ to mean that $r$ is drawn from a dedicated probability distribution (prior or posterior) and $p$ is drawn from another dedicated probability distribution (prior or posterior).
+%This leads to two different probabilistic approaches described in Table~\ref{tab:compare}.
+%
+%\begin{table}[ht]
+%    \center
+%    \begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}
+%        \hline
+%        \textbf{Frequentist model} & \textbf{Bayesian model} \\ \hline
+%        \begin{itemize}
+%            \item $r$ and $p$ are unknown parameters
+%        \end{itemize}
+%        &
+%        \begin{itemize}
+%            \item $r$ and $p$ are drawn from a prior distribution
+%        \end{itemize} \\ \hline
+%    \end{tabular}
+%    \caption{Comparison between frequentist and Bayesian modeling about the MDP ${M=\langle\gS,\gA,r,p\rangle}$}
+%    \label{tab:compare}
+%\end{table}
+
+\subsection{Regret definition}
+
+To measure the exploration-exploitation performance, we use the notion of \emph{regret} which compares the cumulative rewards of the optimal policy and the learner. 
+If the learner $\gL$ interacts with the unknown MDP $M$ over $T\in\N^+$ time steps, we denote by $\Reg(\gL, M, T)$ the regret incurred by the learner.
+
+In frequentist point of view about $M$, the learner $\gL$ that maximizes the expected cumulative rewards over $T$ time steps equivalently minimizes its expected regret $\E\bigg[\Reg(\gL, M, T)\bigg]$.
+
+For Bayesian point of view, we use similar notion of regret known as \emph{Bayesian regret} (or Bayes risk) defined by
+\begin{equation}
+    \label{eq:bayes_rg}
+    \BayReg(\gL, \phi, T):=\ex{\E\bigg[\Reg(\gL, M, T) \mid M\bigg]}
+\end{equation}
+where $\phi$ is the prior distribution of the unknown MDP $M$.
+So, the learner $\gL$ maximizes the expected cumulative rewards from $M$ over $T$ time steps by minimizing its Bayesian regret $\BayReg(\gL, \phi, T)$.
+
+In both approaches, a learner is \emph{good} if its expected regret is sublinear in the total number of time steps $T$, \ie, $\E\Big[\Reg(\gL, M, T)\Big]= \landauo(T)$ when $T\to+\infty$.
+The formal definition of regret depends on the setting of MDP.
+In this thesis, we recall the definition in two settings: finite horizon and infinite horizon average reward.
+%However, good learners are compared by how fast 
+
+%over any finite number of steps $T$ (i.e., the difference gap between the cumulative reward of the optimal policy and the one of the learning algorithm over $T$ steps)
+%(or the \emph{optimism in face Uncertainty})
+
+\paragraph{Finite horizon model.}
+With this model, the learner interacts with the unknown MDP $M$ over $K\in\N^+$ episodes, each episode lasts in $H\in\N^+$ time steps (so the total time steps is $T=KH$) and the state of $M$ is reset reset according to a distribution $\rho$.
+In such a setting, $H$ is called \emph{horizon} and it is bounded in $\N^+$.
+At the beginning of each episode $k\ge1$, the initial state of the MDP $s_1\sim\rho$ is revealed to the learner who computes a policy $\pi^k$ based on its collected observations and rollouts the policy $\pi^k$ during the episode.
+%After $H$ time steps, the state of the MDP is reset according to a distribution $\rho$ and revealed to the learner who computes a policy $\pi^k$ based on its collected observations and rollouts the policy $\pi^k$ during the episode.
+Following the definition in Section~\ref{ch:mdp:sec:finite}, we denote by $w^{\pi^k}_{1:H}(s):=\E^{\pi^k}[\sum_{t=1}^{H}r_t \mid s_1=s]$ the expected cumulative reward from state $s$ over time steps $1$ to $H$.
+The regret is defined by the following.
+\begin{defn}
+    \label{defn:rg_finite}
+    If a learner $\gL$ interacts with an unknown MDP $M$ over $K$ episodes, each episode ends in $H\in\N^+$, then its regret is
+    \begin{equation}
+        \label{eq:rg_finite}
+        \Reg(\gL, M, K):= \sum_{k=1}^K\sum_{s\in\gS}\rho(s)[w^*_{1:H}(s) -w^{\pi^k}_{1:H}(s)].
+    \end{equation}
+\end{defn}
+Since $H$ is bounded, we derive from the above that a \emph{good} learner has an expected regret sublinear in the number of episodes $K$, $\ex{\Reg(\gL, M, K)}=\landauo(K)$ when $K\to+\infty$.
 
 
-\subsection{Infinite-Horizon}
+\paragraph{Infinite horizon average reward model.}
+For this setting, there is no reset but the unknown MDP $M$ is assumed to be \emph{weakly communicating}.
+The learner interacts with $M$ over $T$ time steps and collects a sequence of rewards $\{r_t\}_{1\le t\le T}$.
+The regret is defined by the following.
+\begin{defn}
+    \label{defn:rg_infinite}
+    If a learner $\gL$ interacts with an unknown MDP $M$ which is weakly communicating, then its regret after $T$ time steps is
+    \begin{equation}
+        \label{eq:rg_finite}
+        \Reg(\gL, M, T):= Tg^* -\sum_{t=1}^Tr_t
+    \end{equation}
+    where $g^*$ is the optimal gain of $M$ (see its definition in Section~\ref{ch:mdp:sec:gain}).
+\end{defn}
+
+For both settings, the Bayesian regret is defined by \eqref{eq:bayes_rg}.
+
+\section{Regret benchmarks}
+\label{sec:rg_benchmark}
+
+In this section, we describe... 
+
+\subsection{Minimax regret lower bound}
+
+We compare the exploration-exploitation performance of good learners by how fast their regret tends to zero.
+\cite{jaksch2010near} has proven that no learners can perform better than a certain baseline for all MDPs $M$.
+We will give this baseline below but first we need introduce the notion of diameter of a MDP.
+\begin{defn}
+    The diameter of a MDP is defined by
+    \begin{equation}
+        \label{eq:diameter}
+        D := \max_{s,s'\in\gS}\min_{\pi:\gS\mapsto\gA} \E^\pi[\tau(s') \mid s_1=s]
+    \end{equation}
+    where $\tau(s'):=\inf\{t\ge1 : s_t=s'\}$ is the first time step in which $s'$ is reached.
+\end{defn}
 
 
-\section{Regret}
-\label{sec:regret}
+
+
+
+Given any learner $\gL$, there always exists an unknown MDP $M$ that slows down the learner $\gL$ as the following.
 
     In general, in MDP $M=\langle\mSpace,\aSpace,r,P,H\rangle$, the agent starts to play from state $x$ with a certain probability given by the distribution $\rho(x)$. When using the algorithm $\Algo$ to play for $T$ time steps, the incurring regret is given by
     \begin{align}
