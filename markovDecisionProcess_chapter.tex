@@ -284,7 +284,7 @@ The gain and bias can be computed using Bellman evaluation equations given in Pr
     %Finally, if $\bar{\mP}^\pi\vh=\vzero$, then $\vh^\pi=\vh$.
 \end{prop}
 Equations~\eqref{eq:gain_eval} and \eqref{eq:bias_eval} uniquely define $\vg$ and determine $\vh$ up to an element of the null space of $(\mI-\mP^\pi)$ where $\mI$ is the identity matrix of size $\abs{\gS}\times\abs{\gS}$.
-If $\mP^\pi$ is unichain\footnote{we provide more explanation about unichain in \ref{it:unichain} of Definition~\ref{defn:mdp_class}.}, then we say that policy $\pi$ is unichain and its gain is state independent: $g^\pi(s)=g^\pi(s')$ for any $s,s'\in\gS$.
+If $\mP^\pi$ is unichain\footnote{we provide more explanation about unichain in \ref{it:unichain} of Definition~\ref{ch:mdp:defn:mdp_class}.}, then we say that policy $\pi$ is unichain and its gain is state independent: $g^\pi(s)=g^\pi(s')$ for any $s,s'\in\gS$.
 So, for unichain policy $\pi$, we just denote its gain by $g^\pi$.
 Moreover, if $\pi$ is unichain, its bias $\vh^\pi$ is defined up to a constant vector.
 
@@ -296,7 +296,7 @@ A state is \emph{transient} if it is never visited in steady regime.
 For more formal definition, the reader can refer to \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov}.
 We classify the MDPs according to the following definition.
 \begin{defn}[Classification of MDPs]
-    \label{defn:mdp_class}
+    \label{ch:mdp:defn:mdp_class}
     We say that a MDP is
     \begin{enumerate}[label=(\roman*)]
         \item \textbf{ergodic} if the Markov chain induced by any stationary policy has a single recurrent class that equals the state space (\ie, all states are visited infinitely often with probability $1$ independently of initial state);
@@ -339,10 +339,13 @@ Figure~\ref{fig:mdp_class} summarizes this relation.
 
 Verifying if a Markov chain is unichain can be done in $\landauO(\abs{\gS}^2)$ using Tarjan's strongly connected component algorithm.
 Verifying if a MDP is unichain is, however, NP-hard \cite{tsitsiklis2007np}.
-For the pattern of states that are accessible from each other, we can verify if a MDP is weakly communicating in $\landauO(\abs{\gS}^2)$:
+For the pattern of states that are accessible from each other, we can check if a MDP is communicating or weakly communicating in $\landauO(\abs{\gS}^2)$ by leveraging \cite[Proposition~8.3.1]{puterman2014markov}:
 we construct a stochastic matrix $\mP^{\#}$ such that for all $s,s'\in\gS$, $P^{\#}(s,s'):=\displaystyle\frac1{\abs{\gA_s}}\sum_{a\in\gA_s}p(s'\mid s,a)$.
-If $\mP^{\#}$ is unichain, then the MDP is weakly communicating.
-This can be done by Tarjan's strongly connected component algorithm.
+We check the structure of Markov chain induced by $\mP^{\#}$ using Tarjan's strongly connected component algorithm and draw a conclusion as the following:
+\begin{itemize}
+    \item the MDP is communicating if and only if $\mP^{\#}$ is recurrent;
+    \item the MDP is weakly communicating if and only if $\mP^{\#}$ is unichain. 
+\end{itemize}
 
 \subsection{Gain optimality}
 \label{ch:mdp:sec:gain}
