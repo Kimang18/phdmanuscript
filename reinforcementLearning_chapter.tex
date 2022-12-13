@@ -1,5 +1,5 @@
 \chapter{Reinforcement Learning}
-\label{ch:rl_finite_horizon}
+\label{ch:rl}
 
 In the previous chapter, we used the formalism of MDPs to describe how a decision maker interacts with its environment.
 Depending on the chosen optimality criterion, we explained how an optimal policy can be obtained when the parameters of the MDP are fully known.
@@ -173,11 +173,13 @@ By Definition~\ref{defn:rg_finite}, the regret of an algorithm $\gL$ after $K$ e
 \end{align*}
 The term $w^{\pi^*}_M -w^{\pi^k}_M$ can be rewritten as $(w^{\pi^*}_M -w^{\pi^k}_{M^k}) +(w^{\pi^k}_{M^k} -w^{\pi^k}_M)$.
 The first term $w^{\pi^*}_M -w^{\pi^k}_{M^k}$ is the difference between the real but \textbf{unknown} optimal incentive and the \textbf{imagined} optimal incentive.
-Since $\pi^*$ and $M$ are unknown, this first term cannot be analyzed.
+It is also understood as the error due to model misspecification.
+Since $M$ and $\pi^*$ are unknown, this first term is hard to analyse.
 However, we will see in the following that the term is non-positive for \textbf{optimism} or zero in expectation for \textbf{posterior sampling}.
 
 The second term $w^{\pi^k}_{M^k} -w^{\pi^k}_M$ can be interpreted as the ``dissimilarity'' between the \textbf{unknown} MDP $M$ and the \textbf{imagined} MDP $M^k$ along the trajectory when following policy $\pi^k$.
-Since $\pi^k$ and $M^k$ are chosen by the learner, this second term can be analyzed and both approaches upper bound the term using concentration inequalities.
+In other words, it is the discordance between the incentive from $M^k$ and the one from $M$ when following policy $\pi^k$.
+Since $M^k$ and $\pi^k$ are chosen by the learner, this second term can be analyzed and both approaches upper bound the term using concentration inequalities.
 
 \paragraph{UCRL2 \texorpdfstring{\cite{jaksch2010near}}{[JAO10]}.}
 As mentionned above, UCRL2 is originally design for infinite horizon setting.
