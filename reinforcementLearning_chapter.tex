@@ -97,7 +97,7 @@ The regret is defined by the following.
     \end{equation}
     where $g^*$ is the optimal gain of $M$ (see its definition in Section~\ref{ch:mdp:sec:gain}).
 \end{defn}
-
+A notable difference between finite and infinite horizon settings is that in finite setting, the learner updates its policy right before the episode starts and never within the episode while in infinite setting, the learner decides by itself when to update its policy.
 For both settings, the Bayesian regret is defined by \eqref{eq:bayes_rg}.
 
 \section{Regret benchmarks}
@@ -150,15 +150,16 @@ So, the minimax bound can be immediately deduced from Proposition~\ref{prop:mini
 To achieve an efficient trade-off between exploration and exploitation, a common strategy in frequentist point of view is to apply \emph{optimism in face of uncertainty} (OFU) principle: the learner maintains a confidence set for the unknown MDP and execute an optimal policy of the
 “best” (in term of gain, value function, etc) MDP in the confidence set, \eg, \cite{ortner2020regret, bourel2020tightening, zhang2019regret, zanette2019tighter, fruit2018near, fruit2018efficient, jin2018q, fruit2017regret,azar2017minimax, bartlett2012regal, filippi2010optimism, jaksch2010near}.
 
-In Bayesian point of view, an efficient trade-off can be done by posterior sampling introduced by \cite{thompson1933likelihood}: the learner keeps a posterior distribution over possible MDPs and execute the optimal policy of a sampled MDP, see \eg, \cite{osband2013more, gopalan2015thompson, ouyang2017learning}.
+In Bayesian point of view, an efficient trade-off can be done by posterior sampling introduced by \cite{thompson1933likelihood}: the learner keeps a posterior distribution over possible MDPs (precisely, the support of the prior distribution) and execute the optimal policy of a sampled MDP, see \eg, \cite{osband2013more, gopalan2015thompson, ouyang2017learning}.
 
-The common procedure of both approaches is that they compute an optimal policy in an imagined MDP that they believe to be the unknown MDP $M=\langle\gS,\gA,r,p\rangle$.
-In both approaches, when the learner update its policy for the $k$th time, the learner compute a policy denote by $\pi^k$ that is optimal in an imaginary MDP denote by $M^k=\langle\gS,\gA,r^k,p^k\rangle$.
-Since an optimal policy can be computed in a deterministic manner given the MDP, the ``high-level'' difference between both approaches lies in how this imaginary MDP $M^k$ is constructed: chosen ``optimistically'' by OFU method or chosen randomly by posterior sampling according to its belief (or the posterior distribution).
+The common point between the two approaches is that they compute an optimal policy in an imagined MDP that they believe to be the unknown MDP $M=\langle\gS,\gA,r,p\rangle$.
+Indeed, in both approaches, when the learner update its policy for the $k$th time, the learner compute a policy denote by $\pi^k$ that is optimal in an imagined MDP denote by $M^k=\langle\gS,\gA,r^k,p^k\rangle$.
+Since an optimal policy can be computed in a deterministic manner given the MDP, the ``high-level'' difference between both approaches lies in how this imagined MDP $M^k$ is constructed: chosen ``optimistically'' by OFU method or chosen randomly by posterior sampling according to its belief (or the posterior distribution).
 
 From now on, a learner is an algorithm for the learning problem.
-To understand this thesis, we revisit three algorithms in this chapter: UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, which rely on OFU method, and PSRL \cite{osband2013more}, which is a posterior sampling algorithm.
+To understand this thesis, we revisit three algorithms for the end this chapter: UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, which rely on OFU method, and PSRL \cite{osband2013more}, which is a posterior sampling algorithm.
 We give the sketch of proof for their regret upper bound in finite horizon setting although UCRL2 is originally design for infinite horizon average reward.
+We will give a detail proof in Chapter~\ref{ch:learning_rested} when we derive the three algorithms for Markovian bandit problem.
 
 We extend the notation of incentive quantities such as gain and value function in Chapter~\ref{ch:mdp} as the following
 \begin{itemize}
@@ -171,27 +172,151 @@ By Definition~\ref{defn:rg_finite}, the regret of an algorithm $\gL$ after $K$ e
     \Reg(\gL, M, K) &= \sum_{k=1}^K\sum_{s\in\gS}\rho(s)[w^{\pi^*}_{M,1:H}(s) -w^{\pi^k}_{M,1:H}(s)].
                     %&= \sum_{k=1}^K \sum_{s\in\gS}\rho(s) [w^{\pi^*}_{M,1:H}(s) -w^{\pi^k}_{M^k,1:H}(s)] +\sum_{k=1}^K \sum_{s\in\gS}\rho(s) [w^{\pi^k}_{M^k,1:H}(s) -w^{\pi^k}_{M,1:H}(s)]
 \end{align*}
-The term $w^{\pi^*}_M -w^{\pi^k}_M$ can be rewritten as $(w^{\pi^*}_M -w^{\pi^k}_{M^k}) +(w^{\pi^k}_{M^k} -w^{\pi^k}_M)$.
-The first term $w^{\pi^*}_M -w^{\pi^k}_{M^k}$ is the difference between the real but \textbf{unknown} optimal incentive and the \textbf{imagined} optimal incentive.
+The term $\vw^{\pi^*}_M -\vw^{\pi^k}_M$ can be rewritten as
+\begin{equation}
+    \label{eq:rg_model_conc}
+    \vw^{\pi^*}_M -\vw^{\pi^k}_M = \underbrace{(\vw^{\pi^*}_M -\vw^{\pi^k}_{M^k})}_{=:\Delta_{model}^k} +\underbrace{(\vw^{\pi^k}_{M^k} -\vw^{\pi^k}_M)}_{=:\Delta_{conc}^k}
+\end{equation}
+The first term $\Delta_{model}^k$ is the difference between the real but \textbf{unknown} optimal incentive and the \textbf{imagined} optimal incentive.
 It is also understood as the error due to model misspecification.
 Since $M$ and $\pi^*$ are unknown, this first term is hard to analyse.
 However, we will see in the following that the term is non-positive for \textbf{optimism} or zero in expectation for \textbf{posterior sampling}.
 
-The second term $w^{\pi^k}_{M^k} -w^{\pi^k}_M$ can be interpreted as the ``dissimilarity'' between the \textbf{unknown} MDP $M$ and the \textbf{imagined} MDP $M^k$ along the trajectory when following policy $\pi^k$.
-In other words, it is the discordance between the incentive from $M^k$ and the one from $M$ when following policy $\pi^k$.
+The second term $\Delta_{conc}^k$ can be interpreted as the ``dissimilarity'' between the \textbf{unknown} MDP $M$ and the \textbf{imagined} MDP $M^k$ along the trajectory induced by policy $\pi^k$.
+In other words, it is the discordance between the incentive from $M^k$ and the one from $M$ for policy $\pi^k$.
 Since $M^k$ and $\pi^k$ are chosen by the learner, this second term can be analyzed and both approaches upper bound the term using concentration inequalities.
 
 \paragraph{UCRL2 \texorpdfstring{\cite{jaksch2010near}}{[JAO10]}.}
 As mentionned above, UCRL2 is originally design for infinite horizon setting.
-However, it still proceeds in episodic manner: the algorithm decides to update its policy when the number of visits to a state-action pair has doubled since the end of the previous episode and the new episode begins.
-The number of visits to state-action pair $(s,a)$ means how many time steps so far that the action $a$ has been executed when the unknown MDP is in state $s$.
+%However, it still proceeds in episodic manner: the algorithm decides to update its policy when the number of visits to a state-action pair has doubled since the end of the previous episode and the new episode begins.
+%The number of visits to state-action pair $(s,a)$ means how many time steps so far that the action $a$ has been executed when the unknown MDP is in state $s$.
+%When updating the policy, UCRL2 compute the maximum-likelihood estimates of $r$ and $p$ as well as confidence sets 
+Here, we adapt UCRL2 to finite horizon setting.
+When updating the policy, UCRL2 constructs confidence sets $\sB_r$ and $\sB_p$ for $r$ and $p$ respectively based on high probability confidence bounds.
+We denote by $\sM$ the set of plausible MDPs whose reward function lives in $\sB_r$ and state transition lives in $\sB_p$.
+UCRL2 chooses the MDP that incurs the highest optimal incentive among the MDPs in $\sM$ and computes an optimal policy of the chosen MDP.
+That is, at the start of episode $k$, UCRL2 computes $M^k$ and $\pi^k$ such that
+\begin{equation}
+    \label{ch:rl:eq:optim}
+    \vw_{M^k}^{\pi^k} \ge \max_{\pi\in\Pi}\max_{M'\in\sM^k} \vw_{M'}^\pi
+\end{equation}
+where
+\begin{align*}
+    \sM^k:=\{\langle\gS,\gA,r',p'\rangle : r'(s,a)\in\sB_r^k(s,a)\text{ and } \vp'(\cdot\mid s,a)\in\sB_p^k(s,a) \text{ for all }s\in\gS, a\in\gA_s\}
+\end{align*}
+is the set of plausible MDPs compatible with the confidence sets.
+The set of plausible MDPs is constructed to contains the unknown $M$ with probability.
+Hence, $\pi^k$ is optimistic in the sense that $\vw^{\pi^k}_{M^k}\ge \vw^{\pi^*}_M$ with high probability. 
+This means that with high probability, $\vw^{\pi^*}_M- \vw^{\pi^k}_{M^k}\le \vzero$.
 
-
+So, by \Eqref{eq:rg_model_conc}, with high probability the regret of UCRL2 is smaller than ${\sum_{k=1}^K\sum_{s\in\gS}\rho(s)[\Delta_{conc}^k(s)]}$.
+Using Bellman evaluation equations, the term $\Delta_{conc}^k(s)$ can be rewritten as
+\begin{align}
+    w^{\pi^k}_{M^k,1:H}(s_1) -w^{\pi^k}_{M,1:H}(s_1)
+    &= r^k(s_1,a_1)+\sum_{s'\in\gS}p^k(s'\mid s_1,a_1)w^{\pi^k}_{M^k,2:H}(s') \nonumber\\
+    &\qquad -r(s_1,a_1)-\sum_{s'\in\gS}p(s'\mid s_1,a_1)w^{\pi^k}_{M,2:H}(s'). \label{eq:decom}
+\end{align}
+The term $\vp^k\vw^{\pi^k}_{M^k}-\vp\vw^{\pi^k}_M$ equals $(\vp^k-\vp)\vw^{\pi^k}_{M^k} +\vp(\vw^{\pi^k}_{M^k}-\vw^{\pi^k}_M)$.
+Since $w^{\pi^k}_{M^k,h:H}(s)\in [0,H]$ for any $h\le H$ and $s\in\gS$ is not deterministic, the term $(\vp^k-\vp)\vw^{\pi^k}_{M^k}$ is bounded using Hölder's inequality.
+So, we get
+\begin{equation}
+    \label{ch:rl:eq:delta_conc}
+    \Delta_{conc}^k(s_1)\le\sum_{t=1}^{H} \abs{r^k(s_t,a_t)-r(s_t,a_t)}{+}H\norm{\vp^k(\cdot\mid s_t,a_t)-\vp(\cdot\mid s_t,a_t)}_{\ell_1} +d_t
+\end{equation}
+where $\{d_t\}_{1\le t\le H}$ is a martingale difference sequence, each term upper bounded by $H$.
+So, the sum $\sum_{k=1}^K\sum_{t=1}^Hd_t$ can be bounded using Azuma-Hoeffding's inequality.
+Moreover, if the unknown $M$ belongs to the plausible set $\sM$, then $\abs{r^k-r}$ and $\norm{\vp^k-\vp}_{\ell_1}$ can be bounded by the size of $\sB_r^k$ and $\sB_p^k$ respectively.
+So, the regret of UCRL2 is bounded.
+%If $M$ is communicating with diameter $D$, then any MDP in $\sM$ is communicating with a diameter bounded by $D$ (see \cite[Section~4.3.1]{jaksch2010near}).
+For the sake of completeness, we recall the result of \cite{jaksch2010near} for infinite horizon setting below.
+\begin{prop}[{\cite[Theorem~2]{puterman2014markov}}]
+    \label{ch:rl:prop:uclr2}
+    For any communicating MDP $M$ with $\abs{\gS}$ states, $\abs{\gA}$ actions and diameter $D$, with probability at least $1-\delta$, it holds that for any $T>1$, the regret of UCRL2 is bounded by
+    \begin{align*}
+        \Reg(\mathrm{UCRL2}, M, T) \le 34D\abs{\gS}\sqrt{\abs{\gA}T\ln\Bigl(\frac{T}{\delta}\Bigr)}.
+    \end{align*}
+\end{prop}
+Compare to Proposition~\ref{prop:minimax_rg_lb}, the upper bound in Proposition~\ref{ch:rl:prop:uclr2} is loose by a factor $\sqrt{D\abs{\gS}}$ ignoring the logarithmic term.
 
 \paragraph{UCBVI \texorpdfstring{\cite{azar2017minimax}}{[AOM17]}.}
+UCBVI is an optimistic algorithm designed for finite horizon setting.
+The algorithm keeps track of the maximum-likelihood estimate of $p$ and constructs only a confidence set $\sB_r$ for $r$ based on high probability confidence bounds.
+That is, at the start of episode $k$, UCBVI compute $M^k$ and $\pi^k$ such that \eqref{ch:rl:eq:optim} is satisfied where
+\begin{align*}
+    \sM^k:=\{\langle\gS,\gA,r',\hat{p}^k\rangle : r'(s,a)\in\sB_r^k(s,a) \text{ for all }s\in\gS, a\in\gA_s\}
+\end{align*}
+is the set of plausible MDPs compatible with the confidence set and the estimate.
+Hence, the policy $\pi^k$ is optimistic and with high probability $\vw^{\pi^*}_M- \vw^{\pi^k}_{M^k}\le \vzero$ holds.
+
+So, by \Eqref{eq:rg_model_conc}, with high probability, the regret of UCBVI is bounded by ${\sum_{k=1}^K\sum_{s\in\gS}\rho(s)[\Delta_{conc}^k(s)]}$.
+The theoretical novelty in UCBVI is to deal efficiently with the term $(\hat{\vp}^k-\vp)\vw^{\pi^k}_{M^k}$ when rewritting the right term of \eqref{eq:decom} as shown in UCRL2 technique.
+Indeed, $(\hat{\vp}^k-\vp)\vw^{\pi^k}_{M^k}$ is also rewritten as $(\hat{\vp}^k-\vp)(\vw^{\pi^k}_{M^k}-\vw^{\pi^*}_{M}) +\vw^{\pi^*}_{M}(\hat{\vp}^k-\vp)$.
+Since $\vw^{\pi^*}_M$ is deterministic, the term $\vw^{\pi^*}_{M}(\hat{\vp}^k-\vp)$ can be bounded using Chernoff-Hoeffding's inequality on individual component $w^{\pi^*}_{M}(s')\Bigl(\hat{p}^k(s')-p(s')\Bigr)$.
+Moreover, thank to the optimism, $w^{\pi^k}_{M^k}(s')-w^{\pi^*}_{M}(s')$ is non-negative for any $s'\in\gS$.
+So, the empirical Bernstein's inequality can be used to upper bound each individual component $\Bigl(\hat{p}^k(s'){-}p(s')\Bigr)\Bigl(w^{\pi^k}_{M^k}(s'){-}w^{\pi^*}_{M}(s')\Bigr)$.
+%The term $(\hat{p}^k-p)(w^{\pi^k}_{M^k}-w^{\pi^*}_{M})$ is upper bounded thank to the optimism and Bernstein's inequality.
+
+UCBVI enjoys the following minimax regret guarantee.
+\begin{prop}[{\cite[Theorem~1]{azar2017minimax}}]
+    \label{ch:rl:prop:ucbvi}
+    In finite horizon setting with horizon $H$, for any unknown MDP $M$ with $\abs{\gS}$ states and $\abs{\gA}$ actions,
+    with probability at least $1-\delta$, it holds that the regret of UCBVI is bounded by
+    \begin{align*}
+        \Reg(\mathrm{UCBVI}, M, K) \le 20H^{3/2}\sqrt{\abs{\gS}\abs{\gA}K}L +250H^2\abs{\gS}^2\abs{\gA}L^2
+    \end{align*}
+    where $L:=\ln\Bigl(\frac{5\abs{\gS}\abs{\gA}KH^2}{\delta}\Bigr)$.
+\end{prop}
+So, for $T\ge H\abs{\gS}^3\abs{\gA}$ and $\abs{\gS}\abs{\gA}\ge H$, this bound is of order $\tilde{\landauO}(H\sqrt{\abs{\gS}\abs{\gA}T})$ where $T=KH$ and $\tilde{\landauO}(\cdot)$ hides the logarithmic terms.
+Compare to the lower bound $\landauOmega(\sqrt{H\abs{\gS}\abs{\gA}T})$, the bound given in Proposition~\ref{ch:rl:prop:ucbvi} is loose by a factor $\sqrt{H}$ ignoring the logarithmic terms.
+Another advanced version of UCBVI that enjoys a regret bound $\tilde{\landauO}(\sqrt{H\abs{\gS}\abs{\gA}T})$ is also given in \cite{azar2017minimax} but it is not necessary to understand this thesis.
 
 \paragraph{PSRL \texorpdfstring{\cite{osband2013more}}{[ORV13]}.}
+PSRL designed for finite horizon setting is a posterior sampling algorithm which starts by choosing the prior distributions $\phi_r$ and $\phi_p$ such that the unknown $r$ is assumed to be drawn from $\phi_r$ and the unknown $p$ from $\phi_p$.
+To ease the exposition, we will say that a MDP $M'=\langle\gS,\gA,r',p'\rangle$ is sampled from $\phi$ when $r'$ is sampled from $\phi_r$ and $p'$ is sampled from $\phi_p$.
+When updating its policy, PSRL use the collected observations and Bayes' theorem to derive the posterior distribution of the unknown MDP.
+After that, a MDP is sampled from the posterior and PSRL computes an optimal policy in the sampled MDP.
+That is, at time step $t^k$, the start of episode $k$, PSRL has collected the observations denoted by $o_{t^k}:=\{s_1,a_1,r_1,\dots,s_{t^k-1},a_{t^k-1},r_{t^k-1}\}$ and updates the posterior $\phi\bigl(\cdot\mid o_{t^k}\bigr)$.
+Then, it samples a MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$ and computes an optimal policy $\pi^k$ in $M^k$.
+The policy $\pi^k$ is then used to rollout episode $k$ and collect more observations.
+The performance of PSRL is measured by the Bayesian regret given in \eqref{eq:bayes_rg}.
+In broad terms, we bound the Bayesian regret by bounding the regret with terms that are deterministic and the expected value of deterministic term is itself.
+To do so, we will first show that the expected value of $\Delta^k_{model}$ defined in \eqref{eq:rg_model_conc} is zero.
+Then, the term $\Delta^k_{conc}$ is bounded in exactly the same manner as what we did with UCRL2.
+\begin{lem}
+    \label{lem:expected_identity}
+    For any $k\ge1$, let $t^k$ be the time step that episode $k$ starts and $o_{t^k}$ be the observations collected right before $t^k$.
+    Assume that the unknown MDP $M$ is drawn according to the prior $\phi$ and that $M^k$ is sampled according to the posterior $\phi\bigl(\cdot\mid o_{t^k}\bigr)$. Then, for any $o_{t^k}$-measurable function $f$, one has
+    \begin{equation}
+        \label{eq:exp_iden}
+        \E[f(M)] =\E[f(M^k)].
+    \end{equation}
+\end{lem}
+\begin{proof}
+    At the start of each episode $k$, $M$ and $M^k$ are identically distributed conditioned on $o_{t^k}$.
+    In consequence, if $f$ is $o_{t^k}$-measurable function, one has:
+    \begin{align*}    
+        \E[f(M) \mid o_{t^k}] =\E[f(M^k) \mid o_{t^k}].
+    \end{align*}
+    \Eqref{eq:exp_iden} then follows from the tower rule.
+\end{proof}
+This lemma implies that $\ex{w^{\pi^k}_{M^k}}=\ex{w^{\pi^*}_M}$ because $M^k$ and $\pi^k$ are $o_{t^k}$-measurable.
+Consequently, $\ex{\Delta^k_{model}}=\vzero$ for PSRL.
+The term $\Delta^k_{conc}$ can be rewritten as in \eqref{ch:rl:eq:delta_conc}.
+Since $d_t$ is a martingale difference term, its expected value is zero.
+The term $\abs{r^k-r}$ and $\norm{\vp^k-\vp}_{\ell_1}$ can be bounded using Hoeffding's and Weissman's inequalities.
 
+PSRL enjoys the following Bayesian regret guarantee.
+\begin{prop}[{\cite[Theorem~1]{osband2013more}}]
+    \label{prop:brg_psrl}
+    In finite horizon setting with horizon $H$, if $\phi$ is the prior distribution of the unknown MDP $M$ with $\abs{\gS}$ states and $\abs{\gA}$ actions, then
+    \begin{equation}
+        \label{eq:brg_psrl}
+        \BayReg(\mathrm{PSRL}, \phi, K) = \landauO\left(H\abs{\gS}\sqrt{\abs{\gA}KH\ln\Bigl(\abs{\gS}\abs{\gA}KH\Bigr)}\right).
+    \end{equation}
+\end{prop}
+So, this bound is of order $\tilde{\landauO}(H\abs{\gS}\sqrt{\abs{\gA}T})$ where $T=KH$ and $\tilde{\landauO}(\cdot)$ hides the logarithmic terms.
+It is loose by a factor $\sqrt{H\abs{\gS}}$ compared to the lower bound $\landauOmega(\sqrt{H\abs{\gS}\abs{\gA}T})$.
+Note that this bound is for Bayesian regret which means that this bound is a weaker guarantee compared to the regret bound with high probability of UCRL2 and UCBVI.
 
 %    In general, in MDP $M=\langle\mSpace,\aSpace,r,P,H\rangle$, the agent starts to play from state $x$ with a certain probability given by the distribution $\rho(x)$. When using the algorithm $\Algo$ to play for $T$ time steps, the incurring regret is given by
 %    \begin{align}
