@@ -13,9 +13,10 @@ The reader can skip this chapter and go directly to Part~\ref{part:idx} and come
 
 In this section...
 
-\subsection{Problem setting}
+\subsection{Learning problem}
 
 We consider the learning problem in which the state and action spaces $\gS$ and $\gA$ of MDP $M$ are known but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown} to the learner\footnote{we use the term learner instead of decision maker}.
+Note that the expected value of reward is bounded as $r(s,a)\in[0,1]$ for all $s\in\gS, a\in\gA$.
 So, the planning methods given previous in chapter such as value iteration or backward induction, which require $r$ and $p$, cannot be immediately used and the learner needs to collect observations about $r$ and $p$.
 To get enough information, the learner needs to \emph{explore} the dynamic of the MDP as much as possible.
 However, too much exploration equalizes the performance of the learner with one that blindly chooses action at random.
