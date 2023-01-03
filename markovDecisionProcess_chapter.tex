@@ -393,7 +393,7 @@ Table~\ref{tab:mdp_vs_gain} describes the gain of stationary policies in differe
     \label{tab:mdp_vs_gain}
 \end{table}
 Finally, \eqref{eq:gain_opt} and \eqref{eq:bias_opt} do not uniquely defined $\vh$.
-The structure of solution space for $\vh$ given $\vg^*$ is well studied in \cite{schweitzer1978functional}.
+The properties of solution space for $\vh$ given $\vg^*$ is studied in \cite{schweitzer1978functional}.
 %Moreover, we have $\bar{\mP}^\pi\mP^\pi =\mP^\pi\bar{\mP}^\pi =\bar{\mP}^\pi$.
 %However, computing $\vg^\pi$ through $\bar{\mP}^\pi$ might be inefficient.
 
@@ -406,26 +406,31 @@ Hence, we introduce a new notion of optimality which is crucial for Chapter~\ref
 
 \subsection{Characterization of gain optimal policies.}
 
-To understand the our new notion of optimality, we first need to characterize the gain optimal policies.
+To understand our new notion of optimality, we first need to characterize the gain optimal policies.
 For this purpose, we define a notion of (dis-)advantage of an action with respect to a given policy.
+So, an optimal action has null advantage with respect to an optimal policy.
 
 %\KK{Put more context}
 Let $\vg$ and $\vh$ be a solution of Bellman evaluation equations \eqref{eq:gain_eval} and \eqref{eq:bias_eval} for policy $\pi$.
-We define the advantage of action\footnote{Note that it is in function of $\vh$.} $a\in\gA_s$ in state $s$ over policy $\pi$ by
+We define the (dis-)advantage of action\footnote{Note that it is also a function of $\vh$.} $a\in\gA_s$ in state $s$ over policy $\pi$ by
 \begin{equation}
     \label{eq:advan}
-    B^a_s(\vh) := r(s,a) +\sum_{s'\in\gS}p(s'\mid s,a)h(s') -g(s) -h(s).
+    B^a_s(\vg,\vh) := r(s,a) +\sum_{s'\in\gS}p(s'\mid s,a)h(s') -g(s) -h(s).
 \end{equation}
-If $\pi$ is unichain, then $\vh$ is determined up to a constant vector and $B^a_s(\vh)$ is then uniquely defined for any $s\in\gS$, $a\in\gA_s$ and $\vh\in\R^{\abs{\gS}}$ that satisfies \eqref{eq:bias_eval}.
+If $\pi$ is unichain, then $\vh$ is determined up to a constant vector and $B^a_s(\vg,\vh)$ is then uniquely defined for any $s\in\gS$, $a\in\gA_s$, and $(\vg,\vh)$ that satisfies \eqref{eq:gain_eval} and \eqref{eq:bias_eval}.
+%$\vh\in\R^{\abs{\gS}}$ that satisfies \eqref{eq:bias_eval}.
 
-The following lemma characterizes gain optimal policy by showing that the policy must satisfies \eqref{eq:bias_opt} on their recurrent states.
+For $\vg^*$ and $\vh$ a solution of Bellman optimality equations \eqref{eq:gain_opt} and \eqref{eq:bias_opt}, %an action $a$ in state $s$ that satisfies $B^{a^*}_s(\vg^*,\vh)=0$ is potentially optimal.
+an optimal action $a\in\gA_s$ for state $s$ satisfies both $B^a_s(\vg^*,\vh)=0$ and ${\sum_{s'\in\gS}p(s'\mid s,a)g^*(s')} =g^*(s)$ \cite{puterman2014markov, schweitzer1978functional}.
+%However, it is not 
+The following lemma characterizes gain optimal policy by showing that the policy satisfies \eqref{eq:bias_opt} on their recurrent states for any $\vh$ a solution of \eqref{eq:bias_opt}.
 \begin{lem}
     \label{lem:opt_pol}
     Let $\pi:\gS\mapsto\gA$ be a policy and $\Phi^\pi$ be the set of recurrent states under policy $\pi$.
     The three properties below are equivalent.
     \begin{enumerate}[label=(\roman*)]
-        \item \label{it:opt_pol1} $\mP^\pi\vg^*=\vg^*$ and for all $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vh)=0$ for all $s\in\Phi^\pi$
-        \item \label{it:opt_pol2} $\mP^\pi\vg^*=\vg^*$ and for some $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vh)=0$ for all $s\in\Phi^\pi$
+        \item \label{it:opt_pol1} $\mP^\pi\vg^*=\vg^*$ and for all $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vg^*,\vh)=0$ for all $s\in\Phi^\pi$
+        \item \label{it:opt_pol2} $\mP^\pi\vg^*=\vg^*$ and for some $\vh\in \R^{\abs{\gS}}$ satisfying \eqref{eq:bias_opt}, $B^{\pi(s)}_s(\vg^*,\vh)=0$ for all $s\in\Phi^\pi$
         \item \label{it:opt_pol3} $\pi$ is gain optimal.
     \end{enumerate}
 \end{lem}
@@ -447,7 +452,7 @@ The following lemma characterizes gain optimal policy by showing that the policy
 
     \ref{it:opt_pol1} $\Rightarrow$ \ref{it:opt_pol2} is trivial.
 
-    \ref{it:opt_pol2} $\Rightarrow$ \ref{it:opt_pol3}: By definition of $B_s^a(\vh)$, we have $r^{\pi}(s)-g^*(s) = h(s)-\sum_{s'\in\gS} P^{\pi}(s,s')h(s')$ for any recurrent state $s$ of $\pi$.  Multiply this with $\bar{P}^\pi(j,s)$ and sum over $s\in\gS$ (if $s$ is not recurrent, then $\bar{P}^\pi(j,s)=0$) gives
+    \ref{it:opt_pol2} $\Rightarrow$ \ref{it:opt_pol3}: By definition of $B_s^a(\vg^*,\vh)$, we have $r^{\pi}(s)-g^*(s) = h(s)-\sum_{s'\in\gS} P^{\pi}(s,s')h(s')$ for any recurrent state $s$ of $\pi$.  Multiply this with $\bar{P}^\pi(j,s)$ and sum over $s\in\gS$ (if $s$ is not recurrent, then $\bar{P}^\pi(j,s)=0$) gives
     \begin{align*}
         \sum_{s\in\gS} \bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s)\Big) {=} \sum_{s\in\gS} \bar{P}^\pi(j,s)h(s) {-} \underbrace{\sum_{s\in\gS} \bar{P}^\pi(j,s)\sum_{s'\in\gS} P^{\pi}(s,s')h(s')}_{=\sum_{s'\in\gS} \bar{P}^\pi(j,s')h(s') \text{ since $\bar{\mP}^\pi\mP^\pi{=}\bar{\mP}^\pi$.}}
         = \vzero.
@@ -461,17 +466,17 @@ The following lemma characterizes gain optimal policy by showing that the policy
     For all state $j$, we have    
     \begin{align*}
         %\label{eq:apx_proof_H}
-        \sum_{s\in\gS}\bar{P}^\pi(j,s)B^{\pi(s)}_s(\vh) {=} \sum_{s\in\gS}\bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s) {+}\sum_{s'\in\gS}P^{\pi}(s,s')h(s') -h(s)\Big) {=}0.
+        \sum_{s\in\gS}\bar{P}^\pi(j,s)B^{\pi(s)}_s(\vg^*,\vh) {=} \sum_{s\in\gS}\bar{P}^\pi(j,s)\Big(r^{\pi}(s)-g^*(s) {+}\sum_{s'\in\gS}P^{\pi}(s,s')h(s') -h(s)\Big) {=}0.
     \end{align*}
-    As $\vh$ satisfied \eqref{eq:bias_opt}, for all action $a\in\gA_s$, we have $B^{a}_s(\vh) \le0$ for all states $s\in\gS$ and in particular $B^{\pi(s)}_s(\vh) \le0$.
-    This shows that for any state $s$ such that $\bar{P}^\pi(j,s)>0$, one must have $B^{\pi(s)}_s(\vh) =0$. Such state $s$ are the recurrent states of $\pi$.
-    This shows that $B^{\pi(s)}_s(\vh) =0$ for all $s\in\Phi^\pi$.
+    As $\vh$ satisfied \eqref{eq:bias_opt}, for all action $a\in\gA_s$, we have $B^{a}_s(\vg^*,\vh) \le0$ for all states $s\in\gS$ and in particular $B^{\pi(s)}_s(\vg^*,\vh) \le0$.
+    This shows that for any state $s$ such that $\bar{P}^\pi(j,s)>0$, one must have $B^{\pi(s)}_s(\vg^*,\vh) =0$. Such state $s$ are the recurrent states of $\pi$.
+    This shows that $B^{\pi(s)}_s(\vg^*,\vh) =0$ for all $s\in\Phi^\pi$.
 \end{proof}
 
 Lemma~\ref{lem:opt_pol} shows that gain optimal policies achieve the maximum of \eqref{eq:bias_opt} on their recurrent states.
 So, we say that the gain optimal policies \emph{act optimally} in their recurrent states.
-With this characterization, in ergodic MDPs, a policy is gain optimal if and only it acts optimally in all states.
-However, for MDPs that admit transient states, a policy can be gain optimal without acting optimally in all states, \ie, it just acts optimally in its recurrent states.
+With this characterization, in ergodic MDPs, a policy is gain optimal if and only if it acts optimally in all states.
+However, for MDPs that admit transient states, a policy can be gain optimal without acting optimally in all states, \ie, it acts optimally in its recurrent states and possibly randomly in the transient states.
 We give an example in Figure~\ref{fig:gain_vs_bellman} in which there are two gain optimal policies.
 One of them achieves the maximum of $\eqref{eq:bias_opt}$ in all states.
 %TODO: continue here, should I mention about unicity
@@ -494,7 +499,7 @@ One of them achieves the maximum of $\eqref{eq:bias_opt}$ in all states.
             Both policies are gain optimal.
             By solving \eqref{eq:gain_opt} and \eqref{eq:bias_opt}, we have $g^*=1$ and $h^*(1){=}h^*(2){=}c$ where $c$ can be any real number.
             Consequently, policy $\pi^1$ does not satisfies the maximum of \eqref{eq:bias_opt} on state $1$ for any $c\in\R$ but $\pi^2$ does.
-            So, we want to characterize $\pi^2$.
+            So, we want to characterize policy $\pi^2$.
         \end{minipage}
     \end{tabular}
     \caption{An example where some gain optimal policies do not act optimally in all states of the MDP.
@@ -504,11 +509,14 @@ One of them achieves the maximum of $\eqref{eq:bias_opt}$ in all states.
     \label{fig:gain_vs_bellman}
 \end{figure}
 
+\paragraph{Remark.} The characterization of gain optimal policies was analysed in \cite{puterman2014markov, schweitzer1978functional}.
+However, it was expressed and proved differently from what we have done for Lemma~\ref{lem:opt_pol}.
+
 \subsection{Definition of Bellman optimality}
 
 The gain optimal policies give more importance to the reward in steady regime. 
-That is, they act optimally in recurrent states and can possibly ignore transient states.
-In this thesis, we distinguish gain optimal policies from the policies that attain the maximum in \eqref{eq:bias_opt} as the following
+That is, they act optimally in recurrent states and possibly randomly in transient states.
+In this thesis, we distinguish gain optimal policies from the policies that attain the maximum of \eqref{eq:bias_opt} in all states as the following.
 \begin{defn}[Bellman optimal policy]
     %Consider a MDP in which the space $\gS$ is finite and $\gA_s$ is finite for any $s\in\gS$.
     A policy $\pi$ is \emph{Bellman optimal} if there exists vector $\vh\in\R^{\abs{\gS}}$ that satisfies \eqref{eq:bias_opt} with $\vg^*$ such that $\pi(s)\in\argmax_{a\in\gA_s}\Big(r(s,a) +\sum_{s'\in\gS}p(s'\mid s,a)h(s')\Big)$ for all $s\in\gS$.
@@ -516,6 +524,9 @@ In this thesis, we distinguish gain optimal policies from the policies that atta
 By \cite[Theorem~9.1.7]{puterman2014markov}, Bellman optimal policy always exists in MDPs with finite state and action spaces and Bellman optimal implies gain optimal.
 However, the converse is not true in general.
 So, the notion of Bellman optimality is stronger than the notion of gain optimality.
+By this definition, policy $\pi^2$ in \figurename~\ref{fig:gain_vs_bellman} is Bellman optimal.
+
+Note that the distinction between Bellman and gain optimal disappears in discounted MDPs or ergodic MDPs for average reward criterion.
 
 A Bellman optimal policy can be obtained using \emph{Multichain Policy Iteration} algorithm.
 We refer to \cite[Section~9.2.1]{puterman2014markov} for more detail about this algorithm.
@@ -523,8 +534,14 @@ We refer to \cite[Section~9.2.1]{puterman2014markov} for more detail about this 
 
 \subsection{Characterization of Bellman optimal policies.}
 
-The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_opt}.
+%The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_opt}.
+The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_opt} for any $\vh$ a solution to this \eqref{eq:bias_opt}.
+However, some gain optimal policies induce bias vector that is not a solution of \eqref{eq:bias_opt}.
+That is, in \figurename~\ref{fig:gain_vs_bellman}, the bias of policy $\pi^1$ is $h^{\pi^1}(1)=c-0.5$ and $h^{\pi^1}(2)=c$ where $c$ is any real number.
 The following lemma shows the relationship between two Bellman optimal policies that are unichain and share at least one common recurrent state.
+%The previous lemma shows that a gain optimal policy satisfies \eqref{eq:bias_opt} on its recurrent states for any $\vh$ a solution of \eqref{eq:bias_opt}.
+%An interesting question to ask is whether a Bellman optimal policy satisfies \eqref{eq:bias_opt} on all states for any $\vh$ a solution of \eqref{eq:bias_opt}.
+%The following lemma clarifies this question for two Bellman optimal policies that are unichain and share at least one common recurrent state.
 
 \begin{lem}
     \label{lem:equi_bias}
