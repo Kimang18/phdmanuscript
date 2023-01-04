@@ -1,11 +1,12 @@
 \begingroup
+\let\clearpage\relax
+
 %\dominitoc
 \chapter{Learning Algorithms for Restless Markovian Bandits}
 \label{ch:learning_restless}
 
 %\minitoc
 
-%\let\clearpage\relax
 
 Restless multi-armed bandits (RMAB) are generalization of stochastic bandits in which each arm is represented by a Markov decision process. A RMAB can be seen as a Markov decision process with a state-space that is exponential in the number of arms. Hence, general-purpose learning algorithm are not efficient when applied to RMAB. Recently, a few learning algorithms have been specifically designed to work for restless bandits. Yet, they most often work only for very particular subclasses of restless bandits, or they hold under conditions that are very hard to verify.
     
@@ -28,14 +29,14 @@ We show that:
 \begin{tabular}{|l|l|l|l|}
 \hline
 Algorithm   & Regret & Structure assumption                                              & Policy computation            \\ \hline
-REGAL       & $\tilde{O}(sp(\vh^*)\sqrt{SAT})$ \cite{bartlett2012regal} & weakly communicating & No efficient implementation   \\ 
+REGAL       & $\tilde{O}(sp(\vh^*)S\sqrt{AT})$ \cite{bartlett2012regal} & weakly communicating & No efficient implementation   \\ 
 UCRL2       & $\tilde{O}(DS\sqrt{AT})$ \cite{jaksch2010near} & diameter is finite        & Extended value iteration(EVI) \\ 
 TSDE        & $\tilde{O}(sp(\vh^*)S\sqrt{AT})$ \cite{ouyang2017learning} & weakly communicating & Value iteration        \\ 
 OSP         & $\tilde{O}(\sqrt{t_{mix}SAT})$ \cite{ortner2020regret} & ergodic           & No efficient implementation   \\ 
 SCAL        & $\tilde{O}(sp(\vh^*)S\sqrt{AT})$ \cite{fruit2018efficient} & weakly communicating & modified EVI           \\
 %KL-UCRL     & $\tilde{O}$(\sqrt{S\sum_{x,a}\sV^*_{x,a}T}) & ergodic                     & modified EVI                  \\ \hline
 UCRL2B      & $\tilde{O}(S\sqrt{DAT})$ \cite{fruit2020improved}& diameter is finite      & EVI                           \\
-EBF         & $\tilde{O}(\sqrt{DSAT})$ \cite{zhang2019regret} & weakly communicating     & No efficient implementation   \\ \hline
+EBF         & $\tilde{O}(\sqrt{sp(\vh^*)SAT})$ \cite{zhang2019regret} & weakly communicating     & No efficient implementation   \\ \hline
 lower bound & $\Omega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
 \end{tabular}
 \caption{Regret comparison for model-based RL algorithms in long-term average reward MDPs with $S$ states, $A$ actions, and $T$ steps.
@@ -202,22 +203,22 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
             \node[state]  (H) [below = 1.6cm of A]    {$7$};
             \node[text width=5cm] (I) [left = 1.4cm of H] {Arm's structure};
             \path[->]
-                (A) edge[red, bend right=30] node{} (B)
-                edge[red, loop above] node{} (A)
-                (B) edge[red, bend right=30] node{} (C)
-                edge[red, bend right=30] node{} (D)
-                (C) edge[red, bend right=30] node{} (D)
-                edge[red, loop above] node{} (C)
-                (D) edge[red, bend right=30] node{} (E)
-                edge[red, bend right=30] node{} (F)
-                (E) edge[red, bend right=30] node{} (F)
-                edge[red, loop below] node{} (E)
-                (F) edge[red, bend right=30] node{} (G)
-                edge[red, bend right=30] node{} (H)
-                (G) edge[red, bend right=30] node{} (H)
-                edge[red, loop below] node{} (G)
-                (H) edge[red, bend right=30] node{} (A)
-                edge[red, bend right=30] node{} (B)
+                (A) edge[red, dashed, bend right=30] node{} (B)
+                edge[red, dashed, loop above] node{} (A)
+                (B) edge[red, dashed, bend right=30] node{} (C)
+                edge[red, dashed, bend right=30] node{} (D)
+                (C) edge[red, dashed, bend right=30] node{} (D)
+                edge[red, dashed, loop above] node{} (C)
+                (D) edge[red, dashed, bend right=30] node{} (E)
+                edge[red, dashed, bend right=30] node{} (F)
+                (E) edge[red, dashed, bend right=30] node{} (F)
+                edge[red, dashed, loop below] node{} (E)
+                (F) edge[red, dashed, bend right=30] node{} (G)
+                edge[red, dashed, bend right=30] node{} (H)
+                (G) edge[red, dashed, bend right=30] node{} (H)
+                edge[red, dashed, loop below] node{} (G)
+                (H) edge[red, dashed, bend right=30] node{} (A)
+                edge[red, dashed, bend right=30] node{} (B)
 
                 (A) edge[bend left=30]     node{}	(B)
                 edge[bend left=50]     node{}	(C)
@@ -320,17 +321,17 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
 
 \subsubsection{Minimax lower bound on the expected regret}
 
-\begin{thm}[incomplete]
-    There exists an ergodic RMAB in which any generic reinforcement learning algorithm suffers a regret that is at least linear in $T$, the total number of time steps.
+\begin{thm}
+    There exists an ergodic RMAB in which any (near-)optimal learning algorithm suffers a regret that is upper bounded linearly in $T$, the total number of time steps.
 \end{thm}
 \begin{proof}
-    We show this theorem by constructing a RMAB whose span of the optimal bias is as big as the total time $T$.
+    We show this theorem by constructing a RMAB whose span of the optimal bias equals $T$.
     Then, we use the existing result on the lower bound of general MDP to conclude the proof.
 
     Consider a RMAB with 2 arms whose transition is given in Figure~\ref{fig:lower_bound} and at each time step, we activate only one arm.
-    This RMAB is weakly communicating.
+    This RMAB is ergodic.
     The reward in local states $1$ and $a$ is $1$, and states $2$ and $b$ is $0$.
-    To maximize the average reward in this RMAB, we need Arm~$1$ to stay in state $1$ as frequent as possible.
+    To maximize the average reward in this RMAB, we need Arm~$1$ to stay in state $1$ as frequently as possible.
     So, one optimal policy is
     \begin{align*}
         \pi^*(1a)=1, \pi^*(1b)=1, \pi^*(2a)=2, \pi^*(2b)=2.
@@ -338,18 +339,21 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
     That is, when the RMAB is in state $1a$, it is optimal to activate Arm~$1$.
     Under policy $\pi^*$, the Markov chain $\mP^{\pi^*}$ is ergodic (see Figure~\ref{fig:lower_bound}(c)).
     The reward under this policy is $r^{\pi^*}(1a)=1, r^{\pi^*}(1b)=1, r^{\pi^*}(2a)=1, r^{\pi^*}(2b)=0$.
-    Using Bellman equations with a condition that $h^*(2b)=0$, we get
+    Using Bellman evaluation equations for $\pi^*$ with the condition that $h^*(2b)=0$, we get
     \begin{align*}
         g^*=h^*(1a)=\frac{3-\varepsilon}{4-2\varepsilon}, h^*(1b)=\frac1{\varepsilon(2-\varepsilon)},
         h^*(2a)=\frac{1+\varepsilon}{2\varepsilon}.
     \end{align*}
     Then, the span of $\vh^*$ is given by $sp(\vh^*)=\displaystyle\frac{1+\varepsilon}{2\varepsilon}$.
-    Following \cite{jaksch2010near, zhang2019regret}, the minimax lower bound on the expected regret in this RMAB is $\displaystyle\Omega\left(\sqrt{\frac{1+\varepsilon}{2\varepsilon}T}\right)$.
-    Then, for $\varepsilon=1/T$, any learning algorithm suffers a regret that is at least linear in $T$.
+    Following \cite{jaksch2010near, zhang2019regret}, the minimax lower bound in general MDPs is $\landauOmega(\sqrt{sp(\vh^*)SAT})$ and it is unimprovable.
+    This means that any (near-)optimal learning algorithm suffers a regret bounded by $\tilde{\landauO}(\sqrt{sp(\vh^*)SAT})$ in any communicating MDP.
+    In the RMAB above, which is an ergodic MDP, this upper bound becomes $\tilde{\landauO}\Bigl(\sqrt{SAT(1+\varepsilon)/(2\varepsilon)}\Bigr)$.
+    We conclude the proof by letting $\varepsilon=1/(2T-1)$ which results in $(1+\varepsilon)/(2\varepsilon)=T$.
+    %$\displaystyle\Omega\left(\sqrt{\frac{1+\varepsilon}{2\varepsilon}T}\right)$.
+    %Then, for $\varepsilon=1/T$, any learning algorithm suffers a regret that is at least linear in $T$.
     \KK{How to define the upper bound on span? $H=sp(\vh^*)$ or $H=\max_{\pi}sp(\vh^\pi)$?}
     \KK{Define $H=\max_{\pi}sp(\vh^\pi)$ requires that the MDP is unichain}
-    \KK{Define $H=sp(\vh^*)$ requires that the MDP is weakly communicating. This is what is used in \cite{bartlett2012regal,zhang2019regret}}
-    
+    \KK{Define $H=sp(\vh^*)$ requires that the MDP is weakly communicating because we need the optimal gain to be state independent. This is what is used in \cite{bartlett2012regal,zhang2019regret}}
     \begin{figure}[ht]
         \centering
         \begin{tabular}{ccc}
@@ -357,10 +361,10 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
             \node[state]  (A) {$1$};
             \node[state]  (B) [below = 2cm of A]   {$2$};
             \path[->]
-            (A) edge[bend left, color=red]     node{}	(B)
+            (A) edge[bend left, color=red, dashed]     node{}	(B)
             (A) edge[bend left=80]     node{$1-\varepsilon$}	(B)
             (A) edge[loop above]     node{$\varepsilon$}	(A)
-    	    (B) edge[bend left, color=red]     node{}	(A)
+    	    (B) edge[bend left, color=red, dashed]     node{}	(A)
     	    (B) edge[bend left=80]     node{}	(A);
         \end{tikzpicture}
         &
@@ -369,9 +373,9 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
             \node[state]  (B) [below = 2cm of A]   {$b$};
             \path[->]
             (A) edge[bend left=80]     node{}	(B)
-            (A) edge[bend left, color=red]     node{}	(B)
+            (A) edge[bend left, color=red, dashed]     node{}	(B)
     	    (B) edge[bend left=80]     node{}	(A)
-    	    (B) edge[bend left, color=red]     node{}	(A);
+    	    (B) edge[bend left, color=red, dashed]     node{}	(A);
         \end{tikzpicture}
         &
         \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
@@ -518,7 +522,7 @@ Under this assumption
 
 \paragraph{UCRL2 assumption}
 
-The assumption used in UCRL2 is that the unknown MDP $M$ is \emph{communicating} (if not, the diameter is infinite) and has bounded non-negative reward.
+The assumption used in UCRL2 is that the unknown MDP $M$ is \emph{communicating} (otherwise, the diameter is infinite) and has bounded non-negative reward.
 This assumption implies
 \begin{itemize}
     \item $g^*$ is state-independent and the regret is well defined;
@@ -529,7 +533,7 @@ The second item is true because the set of plausible MDPs $\gM^k$ can be conside
 If $M$ belongs to $\gM^k$, then $\gM^k$ is also \emph{communicating}.
 $g^k$ can be considered as the optimal gain of this finitely many actions MDP $\gM^k$.
 So, $g^k$ is state-independent.
-The third item is true because $M$ belongs to $\gM^k$ and $\gM^k$ is a MDP with finitely many actions imply that the diameter of $\gM^k$ is upper bounded by the diameter of $M$.
+The third item is true because $M$ belongs to $\gM^k$ together with $\gM^k$ is a MDP with finitely many actions imply that the diameter of $\gM^k$ is upper bounded by the diameter of $M$.
 Under the assumption, \cite[Theorem~4]{bartlett2012regal} implies that the span of the optimal bias (the bias that verifies Bellman optimality equation) is bounded by the diameter of the MDP times the optimal gain.
 
 %\KK{I cannot find any assumption about $sp(\vh^{\pi^k})\le H^k$ in UCRL2 paper}
