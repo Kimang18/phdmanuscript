@@ -433,7 +433,7 @@ in \figurename~\ref{fig:gain_vs_bellman}.
         \begin{minipage}{.7\linewidth}
             There are two policies $\pi^1$ where $\pi^1(1){=}\pi^1(2){=}0$ and $\pi^2$ where $\pi^2(1){=}1$ and $\pi^2(2){=}0$.
             Both policies are gain optimal.
-            By solving \eqref{eq:gain_opt} and \eqref{eq:bias_opt}, we have $\vg^*=\vone$ and $h^*(1){=}h^*(2){=}c$ where $c$ can be any real number.
+            By solving \eqref{eq:gain_opt} and \eqref{eq:bias_opt}, we have $\vg^*=\vone$ and $\vh^*{=}c\vone$ where $c$ can be any real number.
             Consequently, $\mP^{\pi^1}\vg^* =\vg^*$ and $\mP^{\pi^2}\vg^* =\vg^*$ but
             policy $\pi^1$ does not satisfies the maximum of \eqref{eq:bias_opt} on state $1$ for any $\vh^*$ while $\pi^2$ does.
             So, policy $\pi^2$ is more restrictive than $\pi^1$.
@@ -491,12 +491,11 @@ In the following section, we will see that $\pi$ is gain optimal if and only if 
 \subsection{Characterization of gain optimal policies}
 \label{ssec:gain_charac}
 %To understand our new notion of optimality, we first need to characterize the gain optimal policies.
-To highlight the difference between Bellman and gain optimalities, we prove lemma that characterizes the gain optimal policies.
+To highlight the difference between Bellman and gain optimalities, we prove a lemma that characterizes the gain optimal policies.
 %For this purpose, we define a notion of (dis-)advantage of an action with respect to a given policy.
 %So, an optimal action has null advantage with respect to an optimal policy.
 
 %The following lemma characterizes gain optimal policy by showing that the policy satisfies \eqref{eq:bias_opt} on their recurrent states for any $\vh^*$. % a solution of \eqref{eq:bias_opt}.
-%TODO:continue
 \begin{lem}
     \label{ch:mdp:lem:opt_pol}
     Let $\pi:\gS\mapsto\gA$ be a policy and $\Phi^\pi$ be the set of recurrent states under policy $\pi$.
@@ -546,7 +545,7 @@ To highlight the difference between Bellman and gain optimalities, we prove lemm
 \end{proof}
 
 Lemma~\ref{ch:mdp:lem:opt_pol} shows that gain optimal policies achieve the maximum of \eqref{eq:bias_opt} on their recurrent states.
-%So, we say that the gain optimal policies \emph{act optimally} in their recurrent states.
+We say that the gain optimal policies \emph{act optimally} in their recurrent states.
 %With this characterization, in ergodic MDPs, a policy is gain optimal if and only if it acts optimally in all states.
 %However, for MDPs that admit transient states, a policy can be gain optimal without acting optimally in all states, \ie, it acts optimally in its recurrent states and possibly randomly in the transient states.
 %We give an example in Figure~\ref{fig:gain_vs_bellman} in which there are two gain optimal policies.
@@ -603,15 +602,15 @@ However, it was expressed and proved differently from what we have done for Lemm
 %A Bellman optimal policy can be obtained using \emph{Multichain Policy Iteration} algorithm.
 %We refer to \cite[Section~9.2.1]{puterman2014markov} for more detail about this algorithm.
 
-\subsection{Unichain Bellman optimal policies.}
+\subsection{A shift between bias vectors of two unichain Bellman optimal policies}
 
 %The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_opt}.
 The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_opt} for any $\vh^*$. % a solution to this \eqref{eq:bias_opt}.
 However, some gain optimal policies induce bias vector that is not a solution of \eqref{eq:bias_opt}.
-That is, in \figurename~\ref{fig:gain_vs_bellman}, the bias of policy $\pi^1$ is $h^{\pi^1}(1)=c-0.5$ and $h^{\pi^1}(2)=c$ and the bias of policy $\pi^2$ is $h^{\pi^2}(1)=h^{\pi^2}(2)=c$ where $c$ is any real number.
+That is, in \figurename~\ref{fig:gain_vs_bellman}, the bias of policy $\pi^1$ is $h^{\pi^1}(1)=c-0.5$ and $h^{\pi^1}(2)=c$ and the bias of policy $\pi^2$ is $\vh^{\pi^2}(1)=c\vone$ where $c$ is any real number.
 Recall that $\vh^{\pi^1}$ is the solution of \eqref{eq:bias_eval} for $\pi^1$ and $\vh^{\pi^2}$ for $\pi^2$.
 So, $\vh^{\pi^1}$ does not satisfy \eqref{eq:bias_opt} but $\vh^{\pi^2}$ does.
-While $\pi^1$ and $\pi^2$ are both gain optimal policies, unichain, and share one common recurrent state, we still cannot generalize the relation between $h^{\pi^1}(s)$ and $h^{\pi^2}(s)$ for all states $s$.
+While $\pi^1$ and $\pi^2$ are both gain optimal policies, unichain, and share one common recurrent state, namely state $2$ (see \figurename~\ref{fig:gain_vs_bellman}), we still cannot generalize the relationship between $h^{\pi^1}(s)$ and $h^{\pi^2}(s)$ for all states $s$.
 In contrast, the following lemma clarifies this question for Bellman optimal policies that are unichain and share at least one common recurrent state.
 %In contrast, the following lemma shows the relationship between two Bellman optimal policies that are unichain and share at least one common recurrent state.
 %The previous lemma shows that a gain optimal policy satisfies \eqref{eq:bias_opt} on its recurrent states for any $\vh$ a solution of \eqref{eq:bias_opt}.
@@ -625,7 +624,7 @@ In contrast, the following lemma clarifies this question for Bellman optimal pol
 \end{lem}
 \begin{proof}
     We define $\bar{\mP}^\pi$ and $\bar{\mP}^\theta$ for policies $\pi$ and $\theta$ respectively as we did in the proof of Lemma~\ref{ch:mdp:lem:opt_pol}.
-    Since $\pi$ and $\theta$ are Bellman optimal, $\vh^\pi,\vh^\theta$ satisfy \eqref{eq:bias_opt} together with $\vg^*$.
+    Since $\pi$ and $\theta$ are Bellman optimal, $\vh^\pi$ and $\vh^\theta$ satisfy \eqref{eq:bias_opt} together with $\vg^*$.
     In consequence, we have
     \begin{align*}
         \vh^\pi \ge \vr^\theta -\vg^* +\mP^\theta\vh^\pi.
@@ -644,6 +643,7 @@ In contrast, the following lemma clarifies this question for Bellman optimal pol
     \end{align*}
     As both policies are unichain, $c^\pi_s$ and $c^\theta_s$ do not depend on $s$.
     Moreover, if there exists $s\in\Phi^\theta\cap\Phi^\pi$, then $c^\pi_s=c^\theta_s = c$. In consequence,  $h^\pi(s)-h^\theta(s)=c$ for all state $s$. 
+    Furthermore, by definition advantage function, $B_s^{\pi(s)}(\vg^*, \vh^\pi)=B_s^{\pi(s)}(\vg^*, \vh^\theta)=0$ and $B_s^{\theta(s)}(\vg^*, \vh^\theta)=B_s^{\theta(s)}(\vg^*, \vh^\pi)=0$ for all state $s$.
 \end{proof}
 
 \subsection{Unicity of Bellman optimal policy.}
@@ -655,17 +655,19 @@ So, the following lemma shows a condition which can be used to verify if a given
 
 \begin{lem}
     \label{ch:mdp:lem:unicity_BO}
-    Let $\pi$ be a Bellman optimal policy that is unichain. If $\pi$ is not the unique Bellman optimal policy, then there exists a state $s$ and an action $a\in\gA_s\setminus\{\pi(s)\}$ such that $B_s^a(\vh^\pi)=0$.
+    Let $\pi$ be a Bellman optimal policy that is unichain. If $\pi$ is not the unique Bellman optimal policy, then there exists a state $s$ and an action $a\in\gA_s\setminus\{\pi(s)\}$ such that $B_s^a(\vg^*,\vh^\pi)=0$.
 \end{lem}
 
 \begin{proof}
     Let $\theta\neq\pi$ be another Bellman optimal policy. Since $\theta$ is gain optimal and $\vh^\pi$ satisfies \eqref{eq:bias_opt}, Lemma~\ref{ch:mdp:lem:opt_pol}~\ref{it:opt_pol1} implies that $B_s^{\theta(s)}(\vg^*,\vh^\pi) =0$ for all $s\in\Phi^\theta$. If there exists $s\in\Phi^\theta$ such that $\theta(s)\neq\pi(s)$, then the proof is concluded.  Otherwise, $\theta(s)=\pi(s)$ for all $s\in\Phi^\theta$.
     This show that $\theta$ and $\pi$ coincide for all recurrent states of $\theta$ and that $\Phi^\theta=\Phi^\pi$. Moreover, as $\pi$ is unichain, $\theta$ is also unichain. Hence, Lemma~\ref{ch:mdp:lem:equi_bias} implies that $B_s^{\theta(s)}(\vg^*, \vh^\pi)=0$ for all $s$. Since $\theta\neq\pi$, there exists at least one state $s\in\gS$ such that $\theta(s)\neq\pi(s)$.
 \end{proof}
-Lemma~\ref{lem:unicity_BO} implies that a Bellman optimal and unichain policy $\pi$ is the unique one if and only if for all $s$, $B_s^a(\vh^\pi)<0$ for all $a\in\gA_s\setminus\{\pi(s)\}$.
+Lemma~\ref{ch:mdp:lem:unicity_BO} implies that a Bellman optimal and unichain policy $\pi$ is the unique one if and only if for all $s$, $B_s^a(\vg^*, \vh^\pi)<0$ for all $a\in\gA_s\setminus\{\pi(s)\}$.
 Note that if a weakly communicating MDP has a single Bellman optimal policy, the policy must be unichain.
 Indeed, suppose that in a given weakly communicating MDP there exists a Bellman optimal policy that is multichain with two recurrent classes $\Phi^1$ and $\Phi^2$.
-Then, we can construct two unichain policies, each satisfies \eqref{eq:bias_opt} for some possibly different $\vh$ a solution to \eqref{eq:bias_opt}: $\pi^1$ that ends up in $\Phi^1$ and $\pi^2$ that ends up in $\Phi^2$.
+Then, we can construct two unichain Bellman optimal policies:
+%, each satisfies \eqref{eq:bias_opt} for some possibly different $\vh$ a solution to \eqref{eq:bias_opt}
+$\pi^1$ that ends up in $\Phi^1$ and $\pi^2$ that ends up in $\Phi^2$.
 Since the MDP is weakly communicating, the optimal gain is state independent: the optimal gain of any state in $\Phi^1$ is the same as the optimal gain of any state in $\Phi^2$.
 So, both $\pi^1$ and $\pi^2$ are Bellman optimal.
 %These handmade unichain policies are Bellman optimal.
