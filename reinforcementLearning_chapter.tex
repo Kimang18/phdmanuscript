@@ -9,6 +9,7 @@ In the previous chapter, we used the formalism of MDPs to describe how a decisio
 Depending on the chosen optimality criterion, we explained how an optimal policy can be obtained when the parameters of the MDP are fully known.
 In this chapter, we consider the case when the MDP's parameters are \textbf{unknown} and need to be learned by the decision maker via trial and error.
 
+
 In Section~\ref{ch:rl:sec:blabla}, we introduce...
 
 The reader can skip this chapter and go directly to Part~\ref{part:idx} and come back before starting Part~\ref{part:learning}.
@@ -18,6 +19,9 @@ The reader can skip this chapter and go directly to Part~\ref{part:idx} and come
 \subsection{Learning problem and learning approaches}
 
 We consider the learning problem in which the learner\footnote{we use the term learner instead of decision maker} interacts with a MDP $M=\langle\gS,\gA,r,p\rangle$ where the state and action spaces $\gS$ and $\gA$ are known but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown} to the learner.
+At time step $t\ge1$, the MDP is in state $s_t$ and the decision maker executes an action $a_t$.
+The MDP incurs a (random) reward denoted by $r_t$ and transitions to next state denoted by $s_{t+1}$.
+This mechanism is repeated and one obtains a sequence of the form $\{s_1,a_1,r_1,s_2,\dots,s_t,a_t,r_t,s_{t+1},\dots\}$ that is called \emph{observations} (also known as a ``trajectory'')
 Note that the expected value of reward is bounded as $r(s,a)\in[0,1]$ for all $s\in\gS, a\in\gA$.
 The planning methods given previous in chapter such as value iteration or backward induction, which require $r$ and $p$, cannot be immediately used and the learner needs to collect observations about $r$ and $p$.
 To get enough information, the learner needs to \emph{explore} the dynamic of the MDP as much as possible.
