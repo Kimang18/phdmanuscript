@@ -1,3 +1,7 @@
+\begingroup
+
+\let\clearpage\relax
+
 \chapter{Testing Indexability and Computing Whittle and Gittins Index in Subcubic Time}
 \label{ch:index_computation}
 
@@ -85,61 +89,61 @@ Such a problem is notoriously difficult to solve, as its complexity grows expone
 
 In his seminar paper \cite{whittle1988restless}, Whittle proposes the following approach: \textit{if all arms verify a technical condition known as \emph{indexability}, then each state $i$ of each arm is associated with a real number $\lambda_{i}$, that is now known as the \emph{Whittle index} of state $i$. At each time, the decision maker activates the $m$ arms whose Whittle index of their current states are the $m$ greatest indices}.  As mentioned earlier, this heuristic performs extremely well in practice, see \emph{e.g.}, \cite{glazebrook2006some, ansell2003whittle, glazebrook2002index}.  This shows that if the $M$ arms are all indexable, then one can derive a very efficient allocation rule for RMAB problems by computing the Whittle indices of all arms. The Whittle indices of an arm do not depend on the other arms. This shows that the computational cost of Whittle index policy is linear in the number of arms multiplied by the time to compute the indices for a single arm. Hence, in the remaining of the paper, we focus on a single arm and present a new algorithm to test indexability and compute the index of a given arm.
 
-\subsection{Indexability and Whittle index}
-
-%We consider that a decision maker seeks to maximize the average gain over an infinite horizon (the discounted case will be discussed in Section~\ref{sec:discounted}). To avoid the dependence on initial states, we assume that the arm is unichain\footnote{a MDP is unichain if all policies induce a Markov chain with a unique stationary distribution (see \cite{puterman2014markov})}.
-
-For the remaining of the paper, we consider a single arm $(r, P)$ that has $n$ states and that is assumed to be \emph{weakly communicating} (see definition below). In this section, we introduce the notion of indexability and discuss some ambiguities that we have found when using the definition of indexability defined in previous works.
-
-\subsubsection{Policy and arm structure}
-
-An arm is a two-action MDP. Hence, a policy $\pi$ is a subset of the state space, $\pi\subseteq[n]$, such that the policy chooses to activate the arm in state $i$ if $i\in\pi$. We say that $\pi$ is the set of \emph{active} states and we say that state $i$ is \emph{passive} if $i\not\in\pi$. By abuse of notation, we will write $\pi_i=1$ if $i\in\pi$ and $\pi_i=0$ if $i\not\in\pi$, and we denote by $\mP^\pi$ the transition matrix corresponding to the policy $\pi$, \emph{i.e.}, $P^\pi_{ij}=P^{\pi_i}_{ij}$.
-
-Following classical definitions in the literature \cite{puterman2014markov}, we say that:
-\begin{itemize}
-    \item A policy $\pi$ is \emph{unichain} if the transition matrix $\mP^\pi$ induced by $\pi$ has a unique recurrent class. A policy that is not unichain is called \emph{multichain}.
-    \item An arm is unichain if all policies $\pi\subseteq[n]$ are unichain. An arm is multichain if it is not unichain, \emph{i.e.}, if there exists a policy $\pi\subseteq[n]$ that is multichain.
-    \item An arm is \emph{weakly communicating} if there exists a set of states $\gS\subseteq[n]$ with each state in $\gS$ accessible from every other state of $\gS$ and each state in $[n]\setminus\gS$ is transient under every policy.
-\end{itemize}
-These definitions are important when working with average reward MDPs. In particular, the notion of weakly communicating guarantees that the average reward of the optimal policy, that we will define in the following section, does not dependent on the initial state \cite{puterman2014markov}. This notion is strictly weaker than the notion of unichain. 
-Indeed, weakly communicating characterizes patterns of states that are accessible from each other under some policy and not the chain structure induced by the policy.
-So, a weakly communicating MDP can be unichain or multichain.
-
-Testing if a policy is unichain is computationally feasible and can be solved in $O(n^2)$ by using Tarjan's strongly connected component algorithm. Testing if an arm is unichain is, however, NP-hard \cite{tsitsiklis2007np}. Testing if an arm is weakly communicating can also be done in $O(n^2)$: Indeed, an arm is weakly communicating if and only if\footnote{This comes from two facts. First, a state is accessible from another state if it is accessible in a Markov chain whose transition matrix is $(\mP^0 +\mP^1)/2$. Second, a state is transient for any policy if it is transient in a Markov chain whose transition matrix is $(\mP^0 +\mP^1)/2$.} the transition matrix $(\mP^0 +\mP^1)/2$ is unichain.
-
-\subsubsection{Gain optimality and Bellman optimality}
-\label{ssec:bellman_optimal}
-
-Following a policy $\pi$, we denote by $g^\pi_i$ the long-term average reward that a decision maker would obtain when starting in state $i$. In the remainder of the paper, we use the term ``gain'' to denote the long-term average reward. Let $g^*_i=\max_\pi g^\pi_i$ be the maximal gain starting from state $i$.  As we assume that the arm is weakly communicating, it is shown in \cite[Chapter 8]{puterman2014markov} that the quantity $g^*_i$ does not depend on $i$ and we simply denote it by $g^*$.  We say that a policy is gain optimal if $g^\pi_i=g^*$ for all state $i$.
-
-It is shown in \cite[Chapter 8]{puterman2014markov} that $g^*$ is the optimal gain if and only if there exists a vector $\vh^*$, called the bias vector that satisfies the Bellman optimality equation:  for all $i\in[n]$,
-\begin{equation}
-    g^* + h^*_i = \max_{a\in\{0,1\}} \Big( r^{a}_i + \sum_{j=1}^n P^{a}_{ij}h^*_j \Big).  \label{eq:bias_eval_opt}
-\end{equation}
-We say that a policy  $\pi$ is \emph{Bellman optimal} if there exists\footnote{If the MDP is unichain, then the bias vector $\vh^*$ is unique up to an additive constant.  This is in general not the case for multichain MDPs (even if the MDP is weakly communicating).
-} a bias vector $\vh^*$ that is a solution of \eqref{eq:bias_eval_opt} and such that $\pi$ attains the maximum in \eqref{eq:bias_eval_opt}, \emph{i.e.}: for all $i$, ${\pi_i=\argmax_{a\in\{0,1\}} \big(r^{a}_i + \sum_{j=1}^n P^{a}_{ij}h^*_j\big)}$.
-%\begin{align}
-%    \label{eq:pi_argmax}
-%    \pi^*_i=\argmax_{a\in\{0,1\}} \Big\{r^{a}_i + \sum_{j=1}^n P^{a}_{ij}h^*_j(\lambda)\Big\}.
-%\end{align}
-
-The notion of Bellman optimality is stronger than the notion of gain optimality: A Bellman optimal policy is gain optimal but the converse is not true in general. Note that the distinction between gain optimal and Bellman optimal policies is only important for the average reward criterion. This distinction disappears for the discounted case that we discuss in Section~\ref{sec:discounted}.
-
-\subsubsection{\texorpdfstring{$\lambda$-p}{P}enalized MDP and definition of indexability}
-\label{sssec:penal_mdp}
-
-For each $\lambda\in\real$, we define a $\lambda$-penalized MDP\footnote{not to be confused with $\beta$-discounted MDPs, where the discount is on rewards  and not on actions.} whose transition matrices are the same as in the original MDP and whose reward at time $t\ge0$ when taking action $a_t$ in state $s_t$ is $r^{a_t}_{s_t} - \lambda a_t$. The quantity $\lambda$ is a penalty for taking action ``activate''. For $\lambda$-penalized MDPs, we define the gain and bias functions as in Section~\ref{ssec:bellman_optimal}, but these quantities now depend on $\lambda$. Hence, we will write them as functions of $\lambda$: For instance, the optimal gain is $g^*(\lambda)$, and we will use the notation $\vh^*(\lambda)$ to denote an optimal bias, and $\pi^*(\lambda)$ to denote an optimal policy.
-
-The classical definition of indexability use in the literature \cite{akbarzadeh2020conditions,nino2020fast,gibson2021novel,nakhleh2021neurwin} says that an arm is indexable if and only if the optimal policy $\pi^*(\lambda)$ is non-increasing in $\lambda$ (for the inclusion order). If an arm is indexable, these papers define the Whittle index of a state $i$ as a real number $\lambda_i$ such that ${\pi^*(\lambda)=\{i\in[n]: \lambda_i\ > \lambda\}}$.  This definition is ambiguous for two reasons: First, optimal policies are in general not unique. Hence, the notion of $\pi^*(\lambda)$ being non-increasing is unclear: should all optimal policies be non-increasing or at least one? Second, the notion of optimality for a policy  is also unclear: should it mean ``gain optimal'', ``bias optimal'' or another notion of optimality? 
-
-To solve these ambiguities, in this paper, we use the following definition of indexability.  
-\begin{defn}
-    \label{defn:indexability}
-    Given a finite-state weakly communicating arm, let $\Pi^*(\lambda)$ be the set of Bellman optimal policies for a penalty $\lambda$.
-    %Let $(r,P)$ be a weakly communicating arm and let $\Pi^*(\lambda)$ be the set of Bellman optimal policies for a penalty $\lambda$.
-    We say that the arm is indexable if for all $\lambda<\lambda'$, and all policies $\pi\in\Pi^*(\lambda)$ and $\pi'\in\Pi^*(\lambda')$, then $\pi\supseteq\pi'$.
-\end{defn}
-This definition says that the function $\pi^*(\lambda)\supseteq\pi^*(\lambda')$ regardless of the choice of Bellman optimal policies. As we show next, it guarantees that the Whittle indices are uniquely defined when they exist. As we detail in Appendix~\ref{apx:discussion_index}, this is not necessarily the case when we consider other interpretations of the classical definition.
+%\subsection{Indexability and Whittle index}
+%
+%%We consider that a decision maker seeks to maximize the average gain over an infinite horizon (the discounted case will be discussed in Section~\ref{sec:discounted}). To avoid the dependence on initial states, we assume that the arm is unichain\footnote{a MDP is unichain if all policies induce a Markov chain with a unique stationary distribution (see \cite{puterman2014markov})}.
+%
+%For the remaining of the paper, we consider a single arm $(r, P)$ that has $n$ states and that is assumed to be \emph{weakly communicating} (see definition below). In this section, we introduce the notion of indexability and discuss some ambiguities that we have found when using the definition of indexability defined in previous works.
+%
+%\subsubsection{Policy and arm structure}
+%
+%An arm is a two-action MDP. Hence, a policy $\pi$ is a subset of the state space, $\pi\subseteq[n]$, such that the policy chooses to activate the arm in state $i$ if $i\in\pi$. We say that $\pi$ is the set of \emph{active} states and we say that state $i$ is \emph{passive} if $i\not\in\pi$. By abuse of notation, we will write $\pi_i=1$ if $i\in\pi$ and $\pi_i=0$ if $i\not\in\pi$, and we denote by $\mP^\pi$ the transition matrix corresponding to the policy $\pi$, \emph{i.e.}, $P^\pi_{ij}=P^{\pi_i}_{ij}$.
+%
+%Following classical definitions in the literature \cite{puterman2014markov}, we say that:
+%\begin{itemize}
+%    \item A policy $\pi$ is \emph{unichain} if the transition matrix $\mP^\pi$ induced by $\pi$ has a unique recurrent class. A policy that is not unichain is called \emph{multichain}.
+%    \item An arm is unichain if all policies $\pi\subseteq[n]$ are unichain. An arm is multichain if it is not unichain, \emph{i.e.}, if there exists a policy $\pi\subseteq[n]$ that is multichain.
+%    \item An arm is \emph{weakly communicating} if there exists a set of states $\gS\subseteq[n]$ with each state in $\gS$ accessible from every other state of $\gS$ and each state in $[n]\setminus\gS$ is transient under every policy.
+%\end{itemize}
+%These definitions are important when working with average reward MDPs. In particular, the notion of weakly communicating guarantees that the average reward of the optimal policy, that we will define in the following section, does not dependent on the initial state \cite{puterman2014markov}. This notion is strictly weaker than the notion of unichain. 
+%Indeed, weakly communicating characterizes patterns of states that are accessible from each other under some policy and not the chain structure induced by the policy.
+%So, a weakly communicating MDP can be unichain or multichain.
+%
+%Testing if a policy is unichain is computationally feasible and can be solved in $O(n^2)$ by using Tarjan's strongly connected component algorithm. Testing if an arm is unichain is, however, NP-hard \cite{tsitsiklis2007np}. Testing if an arm is weakly communicating can also be done in $O(n^2)$: Indeed, an arm is weakly communicating if and only if\footnote{This comes from two facts. First, a state is accessible from another state if it is accessible in a Markov chain whose transition matrix is $(\mP^0 +\mP^1)/2$. Second, a state is transient for any policy if it is transient in a Markov chain whose transition matrix is $(\mP^0 +\mP^1)/2$.} the transition matrix $(\mP^0 +\mP^1)/2$ is unichain.
+%
+%\subsubsection{Gain optimality and Bellman optimality}
+%\label{ssec:bellman_optimal}
+%
+%Following a policy $\pi$, we denote by $g^\pi_i$ the long-term average reward that a decision maker would obtain when starting in state $i$. In the remainder of the paper, we use the term ``gain'' to denote the long-term average reward. Let $g^*_i=\max_\pi g^\pi_i$ be the maximal gain starting from state $i$.  As we assume that the arm is weakly communicating, it is shown in \cite[Chapter 8]{puterman2014markov} that the quantity $g^*_i$ does not depend on $i$ and we simply denote it by $g^*$.  We say that a policy is gain optimal if $g^\pi_i=g^*$ for all state $i$.
+%
+%It is shown in \cite[Chapter 8]{puterman2014markov} that $g^*$ is the optimal gain if and only if there exists a vector $\vh^*$, called the bias vector that satisfies the Bellman optimality equation:  for all $i\in[n]$,
+%\begin{equation}
+%    g^* + h^*_i = \max_{a\in\{0,1\}} \Big( r^{a}_i + \sum_{j=1}^n P^{a}_{ij}h^*_j \Big).  \label{eq:bias_eval_opt}
+%\end{equation}
+%We say that a policy  $\pi$ is \emph{Bellman optimal} if there exists\footnote{If the MDP is unichain, then the bias vector $\vh^*$ is unique up to an additive constant.  This is in general not the case for multichain MDPs (even if the MDP is weakly communicating).
+%} a bias vector $\vh^*$ that is a solution of \eqref{eq:bias_eval_opt} and such that $\pi$ attains the maximum in \eqref{eq:bias_eval_opt}, \emph{i.e.}: for all $i$, ${\pi_i=\argmax_{a\in\{0,1\}} \big(r^{a}_i + \sum_{j=1}^n P^{a}_{ij}h^*_j\big)}$.
+%%\begin{align}
+%%    \label{eq:pi_argmax}
+%%    \pi^*_i=\argmax_{a\in\{0,1\}} \Big\{r^{a}_i + \sum_{j=1}^n P^{a}_{ij}h^*_j(\lambda)\Big\}.
+%%\end{align}
+%
+%The notion of Bellman optimality is stronger than the notion of gain optimality: A Bellman optimal policy is gain optimal but the converse is not true in general. Note that the distinction between gain optimal and Bellman optimal policies is only important for the average reward criterion. This distinction disappears for the discounted case that we discuss in Section~\ref{sec:discounted}.
+%
+%\subsubsection{\texorpdfstring{$\lambda$-p}{P}enalized MDP and definition of indexability}
+%\label{sssec:penal_mdp}
+%
+%For each $\lambda\in\real$, we define a $\lambda$-penalized MDP\footnote{not to be confused with $\beta$-discounted MDPs, where the discount is on rewards  and not on actions.} whose transition matrices are the same as in the original MDP and whose reward at time $t\ge0$ when taking action $a_t$ in state $s_t$ is $r^{a_t}_{s_t} - \lambda a_t$. The quantity $\lambda$ is a penalty for taking action ``activate''. For $\lambda$-penalized MDPs, we define the gain and bias functions as in Section~\ref{ssec:bellman_optimal}, but these quantities now depend on $\lambda$. Hence, we will write them as functions of $\lambda$: For instance, the optimal gain is $g^*(\lambda)$, and we will use the notation $\vh^*(\lambda)$ to denote an optimal bias, and $\pi^*(\lambda)$ to denote an optimal policy.
+%
+%The classical definition of indexability use in the literature \cite{akbarzadeh2020conditions,nino2020fast,gibson2021novel,nakhleh2021neurwin} says that an arm is indexable if and only if the optimal policy $\pi^*(\lambda)$ is non-increasing in $\lambda$ (for the inclusion order). If an arm is indexable, these papers define the Whittle index of a state $i$ as a real number $\lambda_i$ such that ${\pi^*(\lambda)=\{i\in[n]: \lambda_i\ > \lambda\}}$.  This definition is ambiguous for two reasons: First, optimal policies are in general not unique. Hence, the notion of $\pi^*(\lambda)$ being non-increasing is unclear: should all optimal policies be non-increasing or at least one? Second, the notion of optimality for a policy  is also unclear: should it mean ``gain optimal'', ``bias optimal'' or another notion of optimality? 
+%
+%To solve these ambiguities, in this paper, we use the following definition of indexability.  
+%\begin{defn}
+%    \label{defn:indexability}
+%    Given a finite-state weakly communicating arm, let $\Pi^*(\lambda)$ be the set of Bellman optimal policies for a penalty $\lambda$.
+%    %Let $(r,P)$ be a weakly communicating arm and let $\Pi^*(\lambda)$ be the set of Bellman optimal policies for a penalty $\lambda$.
+%    We say that the arm is indexable if for all $\lambda<\lambda'$, and all policies $\pi\in\Pi^*(\lambda)$ and $\pi'\in\Pi^*(\lambda')$, then $\pi\supseteq\pi'$.
+%\end{defn}
+%This definition says that the function $\pi^*(\lambda)\supseteq\pi^*(\lambda')$ regardless of the choice of Bellman optimal policies. As we show next, it guarantees that the Whittle indices are uniquely defined when they exist. As we detail in Appendix~\ref{apx:discussion_index}, this is not necessarily the case when we consider other interpretations of the classical definition.
 
 \subsection{Definition of Whittle index and characterization of indexability}
 
@@ -1006,4 +1010,4 @@ This shows that our cubic algorithm can compute the Gittins index also in $(2/3)
 In this paper, we propose a univocal definition of indexability and present an algorithm that is efficient for detecting the non-indexability and computing the Whittle index of all indexable finite-state restless bandits whose arms are all unichain. For weaker assumption where the arms are just weakly communicating, this algorithm can still test the indexability and compute the Whittle index of some arms that are multichain and remains efficient if it is able to do so.
 Our algorithm is based on the efficient application of the Sherman-Morrison formula. This is a unified algorithm that works for both discounted and non-discounted restless bandits, and can be used for Gittins index computation.  We present a first version of our algorithm that runs in $n^3+o(n^3)$ arithmetic operations (or in $(2/3)n^3+o(n^3)$ if we do not test the indexability). So, we conclude that Whittle index is not harder to compute than Gittins index. The second version of our algorithm uses the fastest matrix multiplication method and has a complexity of $O(n^{2.5286})$. This makes it the first subcubic algorithm to compute Whittle index or Gittins index. We provide numerical simulations that show that our algorithm is very efficient in practice: it can test indexability and compute the index of a $n$-state restless bandit arm in less than one second for $n=1000$, and in a few minutes for $n=15000$. These numbers are provided for dense matrices. One might expect to have more efficient algorithms if the arm has a sparse structure. We leave this question for future work. 
 
-
+\endgroup
