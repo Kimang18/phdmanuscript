@@ -4,116 +4,116 @@
 \chapter{Indexability}
 \label{chp:apx_indexability}
 
-\section{Examples and counterexamples}
-
-In this section, we provide a few examples to illustrate the ambiguities in the classical definition of indexability, and to illustrate what can happen for some multichain arms. We also provide the parameters of arms presented in Figure~\ref{fig:illustrate_indexability}.
-
-\subsection{Discussion on the definition of indexability}
-\label{apx:discussion_index}
-
-The classical notion of indexability used in the literature is to say that the optimal policy $\pi^*(\lambda)$ should be non-increasing in $\lambda$. Yet, we argue that this definition has two problems:
-\begin{enumerate}
-    \item What does ``increasing'' mean when $\pi^*(\lambda)$ is not unique? Two possibilities are: for all penalties $\lambda<\lambda'$:
-    \begin{enumerate}
-        \item[($\exists$)] there exist policies $\pi,\pi'$ with $\pi$ optimal for $\lambda$ and $\pi'$ optimal for $\lambda'$ such that $\pi\supseteq\pi'$;
-        \item[($\forall$)] for all policies $\pi,\pi'$ such that  $\pi$ is optimal for $\lambda$ and $\pi'$ is optimal for $\lambda'$, we have $\pi\supseteq\pi'$.
-    \end{enumerate}
-    \item What notion of ``optimality'' should be used? Two possibilities are: 
-    \begin{enumerate}
-       \item[(GO)] ``optimal'' means gain optimal.
-       \item[(BO)] ``optimal'' means Bellman optimal.
-   \end{enumerate}
-\end{enumerate}
-The most problematic choice is the notion of increasingness: Interpretation $(\exists)$ is more permissive: For instance, consider an arm with two states and assume that the optimal policy is $\{1,2\}$ for $\lambda<0$ and is either $\{1\}$ or $\emptyset$ for $\lambda>0$. Interpretation $(\exists)$ says that the arm is indexable while interpretation ($\forall$) says that this arm is not indexable. If the arm is indexable, what should the index of state $1$ be? Any choice $\lambda_1\in[0,+\infty]$ seems reasonable. Saying that the arm is not indexable clarifies the situation. This is why we choose interpretation ($\forall$) in our paper.
-
-In our paper, we choose the combination ($\forall$-BO) because we believe that, for a problem that has transient state, the notion of Bellman optimality is more meaningful than the notion of gain optimality. Also, our combination ($\forall$-BO) allows for more problems to be indexable compared to ($\forall$-GO) and is easier to characterize.
-
-\begin{figure}[ht]
-    \centering
-    \begin{tabular}{ccc}
-        \begin{minipage}{.25\linewidth}
-            \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-                \node[state,color=blue]  (A) {$2$};
-                \node[state,color=blue]  (B) [left =1.5cm of A]   {$1$};
-                \path[->]
-                    (A) edge[loop above,color=black]  node{$1{-}\lambda$} (A)
-                    (A) edge[loop right, color=red, dashed]     node{$1$} (A)
-                    (B) edge[bend left, color=black]     node{$1{-}\lambda$} (A)
-                    (B) edge[bend right, color=red, dashed]     node[below]{$1$} (A);
-            \end{tikzpicture}
-        \end{minipage}
-        &
-        \begin{minipage}{.25\linewidth}
-            \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state,color=blue]  (A) {$2$};
-            \node[state,color=blue]  (B) [left =1.5cm of A]   {$1$};
-            \path[->]
-                (A) edge[loop above,color=black]  node{$1{-}\lambda$} (A)
-                (A) edge[loop right, color=red, dashed]     node{$1$} (A)
-                (B) edge[color=black]     node{$1{-}\lambda$} (A)
-	            (B) edge[loop left, color=red, dashed]     node[left]{$1$} (B);
-            \end{tikzpicture}
-        \end{minipage}\\
-        (a) & (b)
-    \end{tabular}
-    
-    \caption{Ambiguous examples: All transitions are deterministic and labels on transitions indicate rewards. Solid black arrows correspond to the action ``activate'' and dashed red arrows to the action ``rest''.
-}
-    \label{fig:ambiguous_example}
-\end{figure}
-
-We illustrate these different definitions in Figure~\ref{fig:ambiguous_example}. For example (a):
-\begin{itemize}
-    \item The gain optimal policies are $\{1,2\}$ and $\{2\}$ for $\lambda<0$, and $\{1\}$ and $\emptyset$ for $\lambda>0$: According to the interpretation~$(\exists)$, the problem should be indexable but the index for state $1$ is unclear. According to the interpretation~$(\forall)$, the problem should not be indexable.
-    \item The Bellman optimal policy is $\{1,2\}$ for $\lambda<0$, and $\emptyset$ for $\lambda>0$. According to our definition, ($\forall$-BO), the problem is indexable and the indices are $\lambda_1=\lambda_2=0$.
-\end{itemize}
-For example (b), the Bellman optimal and gain optimal policies are identical and equal to the gain optimal policies of example (a). Hence, example (b) is not indexable according to our definition. The output of our algorithm for this problem is "multi-chain". 
-%However, the intuition would suggest that the index for this problem should be $\lambda_1=\lambda_2=0$. This is what would have happened if we had used the notion of \emph{bias optimal} policy that is stronger than the notion of Bellman optimal policy. Yet, this would not solve the ambiguity of example (c) for which the index of state $1$ is not clear unless one would use an even  stronger notion of optimality (such as the notion of \emph{Blackwell optimality} discussed in \cite[Chapter~10]{putermanMarkovDecisionProcesses1994}). In this paper, we keep the notion of Bellman optimal and we do not use these stronger definition because computing a Blackwell-optimal policy is, to the best of our knowledge, not computable in $O(n^3)$ (the complexity of computing Blackwell-optimal policies is unknown to this date). Hence, in this paper we use the notion of Bellman optimality that we think is the best tradeoff between expressiveness and calculability.
-
-Note that if the distinction between (BO) and (GO) disappears for discounted problems, the distinction between ($\forall$) and ($\exists$) remains.
-
-\subsection{Multichain arms and infinite indices}
-\label{apx:multichain}
-
-\begin{figure}[ht]
-    \centering
-    \begin{minipage}{.35\linewidth}
-        \centering
-        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state,color=blue]  (A) {$2$};
-            \node[state,color=blue]  (B) [left =1.5cm of A]   {$1$};
-            \path[->]
-            (A) edge[loop right,color=black]  node{$1-\lambda$} (A)
-            (A) edge[loop above, color=red, dashed]     node{$1$} (A)
-            (B) edge[color=black]     node{$1-\lambda$} (A)
-            (B) edge[loop above, color=red, dashed]     node{$0$} (B);
-        \end{tikzpicture}\\
-        (a) Our algorithm returns ``indexable''.
-    \end{minipage}\qquad 
-    \begin{minipage}{.35\linewidth}
-        \centering
-        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state,color=blue]  (A) {$2$};
-            \node[state,color=blue]  (B) [left =1.5cm of A]   {$1$};
-            \path[->]
-            (A) edge[loop right,color=red, dashed]  node{$0$} (A)
-            (A) edge[loop above, color=black]     node{$1-\lambda$} (A)
-            (B) edge[color=red, dashed]     node{$0$} (A)
-            (B) edge[loop above, color=black]     node{$-\lambda$} (B);
-        \end{tikzpicture}\\
-        (b) Our algorithm returns ``multichain''.
-    \end{minipage}
-    
-    \caption{Example of an indexable multichain problem with infinite Whittle index. Transitions are deterministic and labels on edges indicate rewards (for the $\lambda$-penalized arm). Solid black transitions correspond to action ``activate''  and dashed red to the action ``rest''.}
-    \label{fig:example_multichain}
-\end{figure} 
-
-Consider the two examples of Figure~\ref{fig:example_multichain}. The examples are multichain because policy $\emptyset$ has two irreducible classes for example (a) and policy $\{1,2\}$ has two irreducible classes for example (b). These two problems are indexable:
-\begin{itemize}
-    \item For (a), the Bellman optimal policy for $\lambda<0$ is $\{1,2\}$ and $\{1\}$ for $\lambda>0$. The indices are $\lambda_2=0$ and $\lambda_1=+\infty$.
-    \item For (b), the  Bellman optimal policy is $\{2\}$ for $\lambda<0$  and $\{1,2\}$ for $\lambda>0$. The indices are $\lambda_1=0$ and $\lambda_2=-\infty$.
-\end{itemize}
-For the first example, our algorithm returns the correct indices because the constructed policies are $\pi^1:=\{1,2\}\supsetneq\pi_2:=\{1\}$ and they are both unichain.  For the second example, our algorithm will start with the policy $\{1,2\}$ and will stop by saying that this example is multichain.
+%\section{Examples and counterexamples}
+%
+%In this section, we provide a few examples to illustrate the ambiguities in the classical definition of indexability, and to illustrate what can happen for some multichain arms. We also provide the parameters of arms presented in Figure~\ref{fig:illustrate_indexability}.
+%
+%\subsection{Discussion on the definition of indexability}
+%\label{apx:discussion_index}
+%
+%The classical notion of indexability used in the literature is to say that the optimal policy $\pi^*(\lambda)$ should be non-increasing in $\lambda$. Yet, we argue that this definition has two problems:
+%\begin{enumerate}
+%    \item What does ``increasing'' mean when $\pi^*(\lambda)$ is not unique? Two possibilities are: for all penalties $\lambda<\lambda'$:
+%    \begin{enumerate}
+%        \item[($\exists$)] there exist policies $\pi,\pi'$ with $\pi$ optimal for $\lambda$ and $\pi'$ optimal for $\lambda'$ such that $\pi\supseteq\pi'$;
+%        \item[($\forall$)] for all policies $\pi,\pi'$ such that  $\pi$ is optimal for $\lambda$ and $\pi'$ is optimal for $\lambda'$, we have $\pi\supseteq\pi'$.
+%    \end{enumerate}
+%    \item What notion of ``optimality'' should be used? Two possibilities are: 
+%    \begin{enumerate}
+%       \item[(GO)] ``optimal'' means gain optimal.
+%       \item[(BO)] ``optimal'' means Bellman optimal.
+%   \end{enumerate}
+%\end{enumerate}
+%The most problematic choice is the notion of increasingness: Interpretation $(\exists)$ is more permissive: For instance, consider an arm with two states and assume that the optimal policy is $\{1,2\}$ for $\lambda<0$ and is either $\{1\}$ or $\emptyset$ for $\lambda>0$. Interpretation $(\exists)$ says that the arm is indexable while interpretation ($\forall$) says that this arm is not indexable. If the arm is indexable, what should the index of state $1$ be? Any choice $\lambda_1\in[0,+\infty]$ seems reasonable. Saying that the arm is not indexable clarifies the situation. This is why we choose interpretation ($\forall$) in our paper.
+%
+%In our paper, we choose the combination ($\forall$-BO) because we believe that, for a problem that has transient state, the notion of Bellman optimality is more meaningful than the notion of gain optimality. Also, our combination ($\forall$-BO) allows for more problems to be indexable compared to ($\forall$-GO) and is easier to characterize.
+%
+%\begin{figure}[ht]
+%    \centering
+%    \begin{tabular}{ccc}
+%        \begin{minipage}{.25\linewidth}
+%            \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+%                \node[state,color=blue]  (A) {$2$};
+%                \node[state,color=blue]  (B) [left =1.5cm of A]   {$1$};
+%                \path[->]
+%                    (A) edge[loop above,color=black]  node{$1{-}\lambda$} (A)
+%                    (A) edge[loop right, color=red, dashed]     node{$1$} (A)
+%                    (B) edge[bend left, color=black]     node{$1{-}\lambda$} (A)
+%                    (B) edge[bend right, color=red, dashed]     node[below]{$1$} (A);
+%            \end{tikzpicture}
+%        \end{minipage}
+%        &
+%        \begin{minipage}{.25\linewidth}
+%            \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+%            \node[state,color=blue]  (A) {$2$};
+%            \node[state,color=blue]  (B) [left =1.5cm of A]   {$1$};
+%            \path[->]
+%                (A) edge[loop above,color=black]  node{$1{-}\lambda$} (A)
+%                (A) edge[loop right, color=red, dashed]     node{$1$} (A)
+%                (B) edge[color=black]     node{$1{-}\lambda$} (A)
+%	            (B) edge[loop left, color=red, dashed]     node[left]{$1$} (B);
+%            \end{tikzpicture}
+%        \end{minipage}\\
+%        (a) & (b)
+%    \end{tabular}
+%    
+%    \caption{Ambiguous examples: All transitions are deterministic and labels on transitions indicate rewards. Solid black arrows correspond to the action ``activate'' and dashed red arrows to the action ``rest''.
+%}
+%    \label{fig:ambiguous_example}
+%\end{figure}
+%
+%We illustrate these different definitions in Figure~\ref{fig:ambiguous_example}. For example (a):
+%\begin{itemize}
+%    \item The gain optimal policies are $\{1,2\}$ and $\{2\}$ for $\lambda<0$, and $\{1\}$ and $\emptyset$ for $\lambda>0$: According to the interpretation~$(\exists)$, the problem should be indexable but the index for state $1$ is unclear. According to the interpretation~$(\forall)$, the problem should not be indexable.
+%    \item The Bellman optimal policy is $\{1,2\}$ for $\lambda<0$, and $\emptyset$ for $\lambda>0$. According to our definition, ($\forall$-BO), the problem is indexable and the indices are $\lambda_1=\lambda_2=0$.
+%\end{itemize}
+%For example (b), the Bellman optimal and gain optimal policies are identical and equal to the gain optimal policies of example (a). Hence, example (b) is not indexable according to our definition. The output of our algorithm for this problem is "multi-chain". 
+%%However, the intuition would suggest that the index for this problem should be $\lambda_1=\lambda_2=0$. This is what would have happened if we had used the notion of \emph{bias optimal} policy that is stronger than the notion of Bellman optimal policy. Yet, this would not solve the ambiguity of example (c) for which the index of state $1$ is not clear unless one would use an even  stronger notion of optimality (such as the notion of \emph{Blackwell optimality} discussed in \cite[Chapter~10]{putermanMarkovDecisionProcesses1994}). In this paper, we keep the notion of Bellman optimal and we do not use these stronger definition because computing a Blackwell-optimal policy is, to the best of our knowledge, not computable in $O(n^3)$ (the complexity of computing Blackwell-optimal policies is unknown to this date). Hence, in this paper we use the notion of Bellman optimality that we think is the best tradeoff between expressiveness and calculability.
+%
+%Note that if the distinction between (BO) and (GO) disappears for discounted problems, the distinction between ($\forall$) and ($\exists$) remains.
+%
+%\subsection{Multichain arms and infinite indices}
+%\label{apx:multichain}
+%
+%\begin{figure}[ht]
+%    \centering
+%    \begin{minipage}{.35\linewidth}
+%        \centering
+%        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+%            \node[state,color=blue]  (A) {$2$};
+%            \node[state,color=blue]  (B) [left =1.5cm of A]   {$1$};
+%            \path[->]
+%            (A) edge[loop right,color=black]  node{$1-\lambda$} (A)
+%            (A) edge[loop above, color=red, dashed]     node{$1$} (A)
+%            (B) edge[color=black]     node{$1-\lambda$} (A)
+%            (B) edge[loop above, color=red, dashed]     node{$0$} (B);
+%        \end{tikzpicture}\\
+%        (a) Our algorithm returns ``indexable''.
+%    \end{minipage}\qquad 
+%    \begin{minipage}{.35\linewidth}
+%        \centering
+%        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+%            \node[state,color=blue]  (A) {$2$};
+%            \node[state,color=blue]  (B) [left =1.5cm of A]   {$1$};
+%            \path[->]
+%            (A) edge[loop right,color=red, dashed]  node{$0$} (A)
+%            (A) edge[loop above, color=black]     node{$1-\lambda$} (A)
+%            (B) edge[color=red, dashed]     node{$0$} (A)
+%            (B) edge[loop above, color=black]     node{$-\lambda$} (B);
+%        \end{tikzpicture}\\
+%        (b) Our algorithm returns ``multichain''.
+%    \end{minipage}
+%    
+%    \caption{Example of an indexable multichain problem with infinite Whittle index. Transitions are deterministic and labels on edges indicate rewards (for the $\lambda$-penalized arm). Solid black transitions correspond to action ``activate''  and dashed red to the action ``rest''.}
+%    \label{fig:example_multichain}
+%\end{figure} 
+%
+%Consider the two examples of Figure~\ref{fig:example_multichain}. The examples are multichain because policy $\emptyset$ has two irreducible classes for example (a) and policy $\{1,2\}$ has two irreducible classes for example (b). These two problems are indexable:
+%\begin{itemize}
+%    \item For (a), the Bellman optimal policy for $\lambda<0$ is $\{1,2\}$ and $\{1\}$ for $\lambda>0$. The indices are $\lambda_2=0$ and $\lambda_1=+\infty$.
+%    \item For (b), the  Bellman optimal policy is $\{2\}$ for $\lambda<0$  and $\{1,2\}$ for $\lambda>0$. The indices are $\lambda_1=0$ and $\lambda_2=-\infty$.
+%\end{itemize}
+%For the first example, our algorithm returns the correct indices because the constructed policies are $\pi^1:=\{1,2\}\supsetneq\pi_2:=\{1\}$ and they are both unichain.  For the second example, our algorithm will start with the policy $\{1,2\}$ and will stop by saying that this example is multichain.
 
 \subsection{Parameters for the example of Figure~\ref{fig:illustrate_indexability}}
 \label{apx:non_indexable_example}
@@ -159,141 +159,141 @@ The numerical data of the non-indexable arm presented in Figure~\ref{fig:illustr
     \end{bmatrix} \vr^0{=}\vzero
 \end{equation*}
 
-\section{Technical lemmas}
-
-\subsection{Unicity of Bellman optimal policy}
-\label{apx:unicity_BO}
-
-\subsubsection{Definition and notation}
-
-We are given a MDP $\langle\gS,\gA,r,P\rangle$ with finite state and action spaces.
-As shown in \cite[Chapter~9]{puterman2014markov}, for such a MDP, the optimal gain $\vg^*$ is a vector that satisfies the \emph{multichain optimality equations}: for each $i\in\gS$:
-\begin{align}
-    \max_{a\in\gA}{\Big(\sum_{j\in\gS}P^a_{ij}g^*_j-g^*_i\Big)} =0 \label{eq:gain_max}\\
-    \max_{a\in\gA}{\Big(r^a_i -g^*_i +\sum_{j\in\gS}P^a_{ij}h_j-h_i\Big)} =0. \label{eq:bias_max}
-\end{align}
-%where $\gA_i\subseteq\gA$ is the set of actions that are available at state $i$, and $\vh$ is a bias vector.
-This system uniquely determines the optimal gain that we denote by $\vg^*$.
-However, vector $\vh$ is not uniquely determined by the system.
-In the following, we denote by $H$ the set of bias vector $\vh$ such that $(\vg^*,\vh)$ is a solution of the optimality equations \eqref{eq:gain_max}--\eqref{eq:bias_max}. A policy $\pi$ is Bellman optimal if there exists a bias $\vh\in H$ such that policy $\pi$ attains the maximum \eqref{eq:bias_max}, \emph{i.e.}, for all $i\in\gS$:
-\begin{align*}
-    \pi_i \in \argmax_{a\in\gA}{\Big(r^a_i -g_i +\sum_{j\in\gS}P^a_{ij}h_j-h_i\Big)} = \argmax_{a\in\gA}{\Big(r^a_i +\sum_{j\in\gS}P^a_{ij}h_j\Big)}.
-\end{align*}
-
-For a given policy $\pi:\gS\mapsto\gA$, we denote by $\vr^\pi$ and $\mP^\pi$ the reward vector and state transition matrix under policy $\pi$: $r^\pi_i=r^{\pi_i}_{i}$ and $P^\pi_{ij} = P^{\pi_i}_{ij}$. Let $\vg^\pi,\vh^\pi\in\real^{\vert \gS\vert}$ be a solution of the following system:
-\begin{align}
-    \vg^\pi - \mP^{\pi}\vg^\pi &=\vzero \label{eq:gain_eval}\\
-    \vr^{\pi}  - \vg^\pi+\mP^{\pi}\vh^\pi  -\vh^\pi &= \vzero \label{eq:bias_eval1}.
-\end{align}
-The vector $\vg^\pi$ is uniquely determined by this system of equations and is called the long-term average reward or gain of policy $\pi$. The vector $\vh^\pi$ is unique up to an element of the null space of $(\mI-\mP^\pi)$. Such a vector $\vh^\pi$ is called a bias of policy $\pi$.
-
-If $(\vg^\pi, \vh^\pi)$ is a solution of \eqref{eq:gain_eval} and \eqref{eq:bias_eval1}, then the advantage of action $a$ over the action $\pi_i$ when the MDP is in state $i$ is given by:
-\begin{align*}
-    B^a_i(\vh^\pi) &:=r^a_i +\sum_{j\in\gS}P^a_{ij}h^\pi_j -g^{\pi}_i -h^\pi_i\\
-    &= r^a_i - r^{\pi_i}_i +\sum_{j\in\gS}(P^a_{ij}-P^{\pi_i}_{ij})h^\pi_j
-\end{align*}
-%This advantage function is well-defined when the policy $\pi$ is unichain. 
-% Hence, for $\vg^*$ and any $\vh\in H$, $B^a_i(\vh) =r^a_i -g^*_i +\sum_{j\in\gS}P^a_{ij}h_j-h_i$ is the advantage of action $a$ over the best action when the MDP is in state $i$. This quantity is always negative and null if the action $a$ is optimal, $B^a_i(\vh)\le0$ for all $\vh\in H$.
-
-We recall the two notions of optimality:
-\begin{itemize}
-    \item A policy $\pi$ is gain optimal if its gain $\vg^\pi$ equals $\vg^*$.
-    \item A policy $\pi$ is Bellman optimal if $\vg^*=\mP^\pi \vg^*$ and if there exists a bias $\vh^\pi$ that is a solution of \eqref{eq:bias_eval1} and also \eqref{eq:bias_max}.
-\end{itemize}
-Recall that a Bellman optimal policy is also gain optimal.
-
-Note that by the definition the advantage $B(\cdot)$, a policy is Bellman optimal if $\vg^*=\mP^\pi \vg^*$ and if there exists $\vh\in H$ such that $B^{\pi_i}_i(\vh)=0$.
-
-\paragraph*{Useful notations}
-
-Let $\pi:\gS\to\gA$ be a policy. We say that a state is recurrent for $\pi$ if it is recurrent for the Markov chain whose transition matrix is $\mP^\pi$. In other words, a state $i\in\gS$ is recurrent if when the chain starts in $i$ at time $0$, it almost surely visits the state $i$ at some time $t\ge1$.  We denote by $\gR^\pi$ the set of recurrent states of policy $\pi$. 
-
-We also define $\bar{\mP}^\pi$ as the Cesaro limit of the sequence $\{(\mP^\pi)^t\}_{t=1}$:
-\begin{align*}
-    \bar{\mP}^\pi:=\lim_{T\to\infty}\frac1T\sum_{t=1}^T(\mP^\pi)^{t-1}.
-\end{align*}
-From \cite[Section~A.4 of Appendix~A]{puterman2014markov}, the matrix  $\bar{\mP}^\pi$ exists and has the following properties:
-\begin{itemize}
-    \item $\bar{\mP}^\pi$ is a stochastic matrix, and satisfies $\mP^\pi \bar{\mP}^\pi = \bar{\mP}^\pi\mP^\pi =\bar{\mP}^\pi$.
-    \item For all state $i,j$, if $j\not\in\gR^\pi$, then $\bar{P}^\pi_{ij}=0$.
-    \item If $\pi$ is unichain, then the rows of $\bar{\mP}^\pi$ are identical. 
-\end{itemize}
-
-\subsubsection{Characterization of gain optimal policies}
-
-The following lemma characterizes gain optimal policy by showing that the policy must satisfies \eqref{eq:bias_max} on their recurrent states.
-\begin{lem}
-    \label{lem:opt_pol}
-    Let $\pi:\gS\mapsto\gA$ be a policy and recall that $\gR^\pi$ is the set of recurrent states of policy $\pi$.
-    The three properties below are equivalent.
-    \begin{enumerate}[label=(\roman*)]
-        \item \label{it:opt_pol1} $\mP^\pi\vg^*=\vg^*$ and for all $\vh\in H$, $B^{\pi_i}_i(\vh)=0$ for all $i\in\gR^\pi$
-        \item \label{it:opt_pol2} $\mP^\pi\vg^*=\vg^*$ and for some $\vh\in H$, $B^{\pi_i}_i(\vh)=0$ for all $i\in\gR^\pi$
-        \item \label{it:opt_pol3} $\pi$ is gain optimal.
-    \end{enumerate}
-\end{lem}
-\begin{proof}
-    \ref{it:opt_pol1} $\Rightarrow$ \ref{it:opt_pol2} is trivial.
-
-    \ref{it:opt_pol2} $\Rightarrow$ \ref{it:opt_pol3}: By definition of $B_i^a(\vh)$, we have $r^{\pi}_i-g^*_i = h_i-\sum_{j\in\gS} P^{\pi}_{ij}h_j$ for any recurrent state $i$ of $\pi$.  Multiply this with $\bar{P}^\pi_{ki}$ and sum over $i\in\gS$ (if $i$ is not recurrent, then $\bar{P}^\pi_{ki}=0$) gives
-    \begin{align*}
-        \sum_{i\in\gS} \bar{P}^\pi_{ki}(r^{\pi}_i-g^*_i) = \sum_{i\in\gS} \bar{P}^\pi_{ki}h_i - \underbrace{\sum_{i\in\gS} \bar{P}^\pi_{ki}\sum_{j\in\gS} P^{\pi}_{ij}h_j}_{=\sum_{j\in\gS} \bar{P}^\pi_{kj}h_j \text{ since $\bar{\mP}^\pi\mP^\pi=\bar{\mP}^\pi$.}}
-        &= \vzero.
-    \end{align*}
-    By Theorem~8.2.6 of \cite{puterman2014markov}, the average reward of $\pi$ is $\bar{\mP}^\pi r^\pi$. The above equation shows that $\bar{\mP}^\pi\vr^\pi = \bar{\mP}^\pi\vg^*$. Moreover, the assumption  $\mP^\pi\vg^*=\vg^*$ implies that $\bar{\mP}^\pi\vg^*=\vg^*$ which in turn implies that $\bar{\mP}^\pi\vr^\pi=\vg^*$. This shows that the average reward of $\pi$ is $\vg^*$ and therefore $\pi$ is gain optimal.
-    % So, we have $\mP^\pi\vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$.
-
-    \ref{it:opt_pol3} $\Rightarrow$ \ref{it:opt_pol1}: If $\pi$ is gain optimal, then $\mP^\pi \vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$. The latter rewrites as $\sum_{i\in\gS}\bar{P}^\pi_{ki}(r^{\pi}_i-g^*_i) =0$ for all state $k$. Let $\vh\in H$ be an optimal bias.  For all state $k$, we have    
-    \begin{align}
-        \label{eq:apx_proof_H}
-        \sum_{i\in\gS}\bar{P}^\pi_{ki}B^{\pi_i}_i(\vh) = \sum_{i\in\gS}\bar{P}^\pi_{ki}(r^{\pi}_i-g^*_i +\sum_{j\in\gS}P^{\pi}_{ij}h_j -h_i) &=0.
-    \end{align}
-    As $\vh$ satisfied \eqref{eq:bias_max}, for all action $a$, we have $B^{a}_i(\vh) \le0$ for all states $i\in\gS$ and in particular $B^{\pi_i}_i(\vh) \le0$. This shows that for any state $i$ such that $\bar{P}^\pi_{ki}>0$, one must have $B^{\pi_i}_i(\vh) =0$. Such state $i$ are the recurrent states of $\pi$. This shows that $B^{\pi_i}_i(\vh) =0$ for all $i\in\gR^\pi$.
-\end{proof}
-
-\subsubsection{Characterization of Bellman optimal policies}
-
-The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_max}.
-The following lemma shows the relationship between two policies that are unichain and satisfy \eqref{eq:bias_max} on all states.
-
-\begin{lem}
-    \label{lem:equi_bias}
-    Suppose that two policies $\pi$ and $\theta$ are Bellman optimal, unichain and have at least one common recurrent state: $\gR^\pi\cap\gR^\theta\neq\emptyset$.
-    
-    Then for any $\vh^\pi$ and $\vh^\theta$ solutions of \eqref{eq:bias_eval1} for $\pi$ and $\theta$ respectively, there exists a constant $c$ such that for all state $i$: $h^\pi_i -h^\theta_i =c$. Moreover, in this case, ${B_i^{\theta_i}(\vh^\pi)=B_i^{\pi_i}(\vh^\theta)=0}$ for all $i$.
-\end{lem}
-\begin{proof}
-    Since $\pi$ and $\theta$ are Bellman optimal, $\vh^\pi,\vh^\theta\in H$.
-    In consequence, we have
-    \begin{align*}
-        \vh^\pi \ge \vr^\theta -\vg^* +\mP^\theta\vh^\pi.
-    \end{align*}
-    By Lemma~\ref{lem:opt_pol}~\ref{it:opt_pol1}, the above inequality is an equality for all $i\in\gR^\theta$ because $\theta$ is gain optimal.
-
-    As $\vh^\theta$ satisfies \eqref{eq:bias_eval1}, we have
-    \begin{align*}
-        \vh^\theta -\vh^\pi &\le \vr^\theta -\vg^* +\mP^\theta\vh^\theta -(\vr^\theta -\vg^* +\mP^\theta\vh^\pi) = \mP^\theta(\vh^\theta -\vh^\pi),
-    \end{align*}
-    with equality for all state $i\in\gR^\theta$. This shows that for all $t$, $\vh^\theta -\vh^\pi\le (\mP^\theta)^t(\vh^\theta -\vh^\pi)$ which implies that $\vh^\theta -\vh^\pi\le \bar{\mP}^\theta(\vh^\theta -\vh^\pi)$ with equality for all states $i\in\gR^\theta$. Similarly, $\vh^\pi -\vh^\theta \le \bar{\mP}^\pi(\vh^\pi -\vh^\theta)$ with equality for any state $i\in\gR^\pi$.
-
-    Let $c^\pi_i=\sum_{j\in\gS}\bar{P}^\pi_{ij}(h_j^\pi-h_j^\theta)$ and $c^\theta_i=\sum_{j\in\gS}\bar{P}^\theta_{ij}(h_j^\pi-h_j^\theta)$. By what we have just shown, for all state $i$, we have
-    \begin{align*}
-        c^\theta_i \underbrace{\le}_{\text{equality if $i\in\gR^\theta$}} h_i^\pi-h_i^\theta \underbrace{\le}_{\text{equality if $i\in\gR^\pi$}} c^\pi
-    \end{align*}
-    As both policies are unichain, $c^\pi_i$ and $c^\theta_i$ do not depend on $i$.  Moreover, if there exists $i\in\gR^\theta\cap\gR^\pi$, we have $c^\pi_i=c^\theta_i =: c$. In consequence,  $h_i^\pi-h_i^\theta=c$ for all state $i$. 
-\end{proof}
-
-
-\subsubsection{Unicity of Bellman optimal policy}
-\label{ssec:unicity}
-
-\begin{lem}
-    \label{lem:unicity_BO}
-    Let $\pi$ be a Bellman optimal policy that is unichain. If $\pi$ is not the unique Bellman optimal policy, then there exists a state $i$ and an action $a\neq\pi_i$ such that $B_i^a(\vh^\pi)=0$.
-\end{lem}
-\begin{proof}
-    Let $\theta\neq\pi$ be another Bellman optimal policy. Since $\theta$ is gain optimal and $\vh^\pi\in H$, Lemma~\ref{lem:opt_pol} implies that $B_i^{\theta_i}(\vh^\pi) =0$ for all $i\in\gR^\theta$. If there exists $i\in\gR^\theta$ such that $\theta_i\neq\pi_i$, then the proof is concluded.  Otherwise, $\theta_i=\pi_i$ for all $i\in\gR^\theta$. This show that $\pi$ and $\theta$ coincide for all recurrent states of $\theta$ and that $\gR^\theta=\gR^\pi$. Moreover, as $\pi$ is unichain, $\theta$ is also unichain. Hence, Lemma~\ref{lem:equi_bias} implies that $B_i^{\theta_i}(\vh^\pi)=0$ for all $i$. Since $\theta\neq\pi$, there exists at least one state $i\in\gS$ such that $\theta_i\neq\pi_i$.
-\end{proof}
+%\section{Technical lemmas}
+%
+%\subsection{Unicity of Bellman optimal policy}
+%\label{apx:unicity_BO}
+%
+%\subsubsection{Definition and notation}
+%
+%We are given a MDP $\langle\gS,\gA,r,P\rangle$ with finite state and action spaces.
+%As shown in \cite[Chapter~9]{puterman2014markov}, for such a MDP, the optimal gain $\vg^*$ is a vector that satisfies the \emph{multichain optimality equations}: for each $i\in\gS$:
+%\begin{align}
+%    \max_{a\in\gA}{\Big(\sum_{j\in\gS}P^a_{ij}g^*_j-g^*_i\Big)} =0 \label{eq:gain_max}\\
+%    \max_{a\in\gA}{\Big(r^a_i -g^*_i +\sum_{j\in\gS}P^a_{ij}h_j-h_i\Big)} =0. \label{eq:bias_max}
+%\end{align}
+%%where $\gA_i\subseteq\gA$ is the set of actions that are available at state $i$, and $\vh$ is a bias vector.
+%This system uniquely determines the optimal gain that we denote by $\vg^*$.
+%However, vector $\vh$ is not uniquely determined by the system.
+%In the following, we denote by $H$ the set of bias vector $\vh$ such that $(\vg^*,\vh)$ is a solution of the optimality equations \eqref{eq:gain_max}--\eqref{eq:bias_max}. A policy $\pi$ is Bellman optimal if there exists a bias $\vh\in H$ such that policy $\pi$ attains the maximum \eqref{eq:bias_max}, \emph{i.e.}, for all $i\in\gS$:
+%\begin{align*}
+%    \pi_i \in \argmax_{a\in\gA}{\Big(r^a_i -g_i +\sum_{j\in\gS}P^a_{ij}h_j-h_i\Big)} = \argmax_{a\in\gA}{\Big(r^a_i +\sum_{j\in\gS}P^a_{ij}h_j\Big)}.
+%\end{align*}
+%
+%For a given policy $\pi:\gS\mapsto\gA$, we denote by $\vr^\pi$ and $\mP^\pi$ the reward vector and state transition matrix under policy $\pi$: $r^\pi_i=r^{\pi_i}_{i}$ and $P^\pi_{ij} = P^{\pi_i}_{ij}$. Let $\vg^\pi,\vh^\pi\in\real^{\vert \gS\vert}$ be a solution of the following system:
+%\begin{align}
+%    \vg^\pi - \mP^{\pi}\vg^\pi &=\vzero \label{eq:gain_eval}\\
+%    \vr^{\pi}  - \vg^\pi+\mP^{\pi}\vh^\pi  -\vh^\pi &= \vzero \label{eq:bias_eval1}.
+%\end{align}
+%The vector $\vg^\pi$ is uniquely determined by this system of equations and is called the long-term average reward or gain of policy $\pi$. The vector $\vh^\pi$ is unique up to an element of the null space of $(\mI-\mP^\pi)$. Such a vector $\vh^\pi$ is called a bias of policy $\pi$.
+%
+%If $(\vg^\pi, \vh^\pi)$ is a solution of \eqref{eq:gain_eval} and \eqref{eq:bias_eval1}, then the advantage of action $a$ over the action $\pi_i$ when the MDP is in state $i$ is given by:
+%\begin{align*}
+%    B^a_i(\vh^\pi) &:=r^a_i +\sum_{j\in\gS}P^a_{ij}h^\pi_j -g^{\pi}_i -h^\pi_i\\
+%    &= r^a_i - r^{\pi_i}_i +\sum_{j\in\gS}(P^a_{ij}-P^{\pi_i}_{ij})h^\pi_j
+%\end{align*}
+%%This advantage function is well-defined when the policy $\pi$ is unichain. 
+%% Hence, for $\vg^*$ and any $\vh\in H$, $B^a_i(\vh) =r^a_i -g^*_i +\sum_{j\in\gS}P^a_{ij}h_j-h_i$ is the advantage of action $a$ over the best action when the MDP is in state $i$. This quantity is always negative and null if the action $a$ is optimal, $B^a_i(\vh)\le0$ for all $\vh\in H$.
+%
+%We recall the two notions of optimality:
+%\begin{itemize}
+%    \item A policy $\pi$ is gain optimal if its gain $\vg^\pi$ equals $\vg^*$.
+%    \item A policy $\pi$ is Bellman optimal if $\vg^*=\mP^\pi \vg^*$ and if there exists a bias $\vh^\pi$ that is a solution of \eqref{eq:bias_eval1} and also \eqref{eq:bias_max}.
+%\end{itemize}
+%Recall that a Bellman optimal policy is also gain optimal.
+%
+%Note that by the definition the advantage $B(\cdot)$, a policy is Bellman optimal if $\vg^*=\mP^\pi \vg^*$ and if there exists $\vh\in H$ such that $B^{\pi_i}_i(\vh)=0$.
+%
+%\paragraph*{Useful notations}
+%
+%Let $\pi:\gS\to\gA$ be a policy. We say that a state is recurrent for $\pi$ if it is recurrent for the Markov chain whose transition matrix is $\mP^\pi$. In other words, a state $i\in\gS$ is recurrent if when the chain starts in $i$ at time $0$, it almost surely visits the state $i$ at some time $t\ge1$.  We denote by $\gR^\pi$ the set of recurrent states of policy $\pi$. 
+%
+%We also define $\bar{\mP}^\pi$ as the Cesaro limit of the sequence $\{(\mP^\pi)^t\}_{t=1}$:
+%\begin{align*}
+%    \bar{\mP}^\pi:=\lim_{T\to\infty}\frac1T\sum_{t=1}^T(\mP^\pi)^{t-1}.
+%\end{align*}
+%From \cite[Section~A.4 of Appendix~A]{puterman2014markov}, the matrix  $\bar{\mP}^\pi$ exists and has the following properties:
+%\begin{itemize}
+%    \item $\bar{\mP}^\pi$ is a stochastic matrix, and satisfies $\mP^\pi \bar{\mP}^\pi = \bar{\mP}^\pi\mP^\pi =\bar{\mP}^\pi$.
+%    \item For all state $i,j$, if $j\not\in\gR^\pi$, then $\bar{P}^\pi_{ij}=0$.
+%    \item If $\pi$ is unichain, then the rows of $\bar{\mP}^\pi$ are identical. 
+%\end{itemize}
+%
+%\subsubsection{Characterization of gain optimal policies}
+%
+%The following lemma characterizes gain optimal policy by showing that the policy must satisfies \eqref{eq:bias_max} on their recurrent states.
+%\begin{lem}
+%    \label{lem:opt_pol}
+%    Let $\pi:\gS\mapsto\gA$ be a policy and recall that $\gR^\pi$ is the set of recurrent states of policy $\pi$.
+%    The three properties below are equivalent.
+%    \begin{enumerate}[label=(\roman*)]
+%        \item \label{it:opt_pol1} $\mP^\pi\vg^*=\vg^*$ and for all $\vh\in H$, $B^{\pi_i}_i(\vh)=0$ for all $i\in\gR^\pi$
+%        \item \label{it:opt_pol2} $\mP^\pi\vg^*=\vg^*$ and for some $\vh\in H$, $B^{\pi_i}_i(\vh)=0$ for all $i\in\gR^\pi$
+%        \item \label{it:opt_pol3} $\pi$ is gain optimal.
+%    \end{enumerate}
+%\end{lem}
+%\begin{proof}
+%    \ref{it:opt_pol1} $\Rightarrow$ \ref{it:opt_pol2} is trivial.
+%
+%    \ref{it:opt_pol2} $\Rightarrow$ \ref{it:opt_pol3}: By definition of $B_i^a(\vh)$, we have $r^{\pi}_i-g^*_i = h_i-\sum_{j\in\gS} P^{\pi}_{ij}h_j$ for any recurrent state $i$ of $\pi$.  Multiply this with $\bar{P}^\pi_{ki}$ and sum over $i\in\gS$ (if $i$ is not recurrent, then $\bar{P}^\pi_{ki}=0$) gives
+%    \begin{align*}
+%        \sum_{i\in\gS} \bar{P}^\pi_{ki}(r^{\pi}_i-g^*_i) = \sum_{i\in\gS} \bar{P}^\pi_{ki}h_i - \underbrace{\sum_{i\in\gS} \bar{P}^\pi_{ki}\sum_{j\in\gS} P^{\pi}_{ij}h_j}_{=\sum_{j\in\gS} \bar{P}^\pi_{kj}h_j \text{ since $\bar{\mP}^\pi\mP^\pi=\bar{\mP}^\pi$.}}
+%        &= \vzero.
+%    \end{align*}
+%    By Theorem~8.2.6 of \cite{puterman2014markov}, the average reward of $\pi$ is $\bar{\mP}^\pi r^\pi$. The above equation shows that $\bar{\mP}^\pi\vr^\pi = \bar{\mP}^\pi\vg^*$. Moreover, the assumption  $\mP^\pi\vg^*=\vg^*$ implies that $\bar{\mP}^\pi\vg^*=\vg^*$ which in turn implies that $\bar{\mP}^\pi\vr^\pi=\vg^*$. This shows that the average reward of $\pi$ is $\vg^*$ and therefore $\pi$ is gain optimal.
+%    % So, we have $\mP^\pi\vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$.
+%
+%    \ref{it:opt_pol3} $\Rightarrow$ \ref{it:opt_pol1}: If $\pi$ is gain optimal, then $\mP^\pi \vg^*=\vg^*$ and $\bar{\mP}^\pi(\vr^\pi-\vg^*)=\vzero$. The latter rewrites as $\sum_{i\in\gS}\bar{P}^\pi_{ki}(r^{\pi}_i-g^*_i) =0$ for all state $k$. Let $\vh\in H$ be an optimal bias.  For all state $k$, we have    
+%    \begin{align}
+%        \label{eq:apx_proof_H}
+%        \sum_{i\in\gS}\bar{P}^\pi_{ki}B^{\pi_i}_i(\vh) = \sum_{i\in\gS}\bar{P}^\pi_{ki}(r^{\pi}_i-g^*_i +\sum_{j\in\gS}P^{\pi}_{ij}h_j -h_i) &=0.
+%    \end{align}
+%    As $\vh$ satisfied \eqref{eq:bias_max}, for all action $a$, we have $B^{a}_i(\vh) \le0$ for all states $i\in\gS$ and in particular $B^{\pi_i}_i(\vh) \le0$. This shows that for any state $i$ such that $\bar{P}^\pi_{ki}>0$, one must have $B^{\pi_i}_i(\vh) =0$. Such state $i$ are the recurrent states of $\pi$. This shows that $B^{\pi_i}_i(\vh) =0$ for all $i\in\gR^\pi$.
+%\end{proof}
+%
+%\subsubsection{Characterization of Bellman optimal policies}
+%
+%The previous lemma shows that a policy is gain optimal if and only if the actions for the recurrent states of the policy satisfy \eqref{eq:bias_max}.
+%The following lemma shows the relationship between two policies that are unichain and satisfy \eqref{eq:bias_max} on all states.
+%
+%\begin{lem}
+%    \label{lem:equi_bias}
+%    Suppose that two policies $\pi$ and $\theta$ are Bellman optimal, unichain and have at least one common recurrent state: $\gR^\pi\cap\gR^\theta\neq\emptyset$.
+%    
+%    Then for any $\vh^\pi$ and $\vh^\theta$ solutions of \eqref{eq:bias_eval1} for $\pi$ and $\theta$ respectively, there exists a constant $c$ such that for all state $i$: $h^\pi_i -h^\theta_i =c$. Moreover, in this case, ${B_i^{\theta_i}(\vh^\pi)=B_i^{\pi_i}(\vh^\theta)=0}$ for all $i$.
+%\end{lem}
+%\begin{proof}
+%    Since $\pi$ and $\theta$ are Bellman optimal, $\vh^\pi,\vh^\theta\in H$.
+%    In consequence, we have
+%    \begin{align*}
+%        \vh^\pi \ge \vr^\theta -\vg^* +\mP^\theta\vh^\pi.
+%    \end{align*}
+%    By Lemma~\ref{lem:opt_pol}~\ref{it:opt_pol1}, the above inequality is an equality for all $i\in\gR^\theta$ because $\theta$ is gain optimal.
+%
+%    As $\vh^\theta$ satisfies \eqref{eq:bias_eval1}, we have
+%    \begin{align*}
+%        \vh^\theta -\vh^\pi &\le \vr^\theta -\vg^* +\mP^\theta\vh^\theta -(\vr^\theta -\vg^* +\mP^\theta\vh^\pi) = \mP^\theta(\vh^\theta -\vh^\pi),
+%    \end{align*}
+%    with equality for all state $i\in\gR^\theta$. This shows that for all $t$, $\vh^\theta -\vh^\pi\le (\mP^\theta)^t(\vh^\theta -\vh^\pi)$ which implies that $\vh^\theta -\vh^\pi\le \bar{\mP}^\theta(\vh^\theta -\vh^\pi)$ with equality for all states $i\in\gR^\theta$. Similarly, $\vh^\pi -\vh^\theta \le \bar{\mP}^\pi(\vh^\pi -\vh^\theta)$ with equality for any state $i\in\gR^\pi$.
+%
+%    Let $c^\pi_i=\sum_{j\in\gS}\bar{P}^\pi_{ij}(h_j^\pi-h_j^\theta)$ and $c^\theta_i=\sum_{j\in\gS}\bar{P}^\theta_{ij}(h_j^\pi-h_j^\theta)$. By what we have just shown, for all state $i$, we have
+%    \begin{align*}
+%        c^\theta_i \underbrace{\le}_{\text{equality if $i\in\gR^\theta$}} h_i^\pi-h_i^\theta \underbrace{\le}_{\text{equality if $i\in\gR^\pi$}} c^\pi
+%    \end{align*}
+%    As both policies are unichain, $c^\pi_i$ and $c^\theta_i$ do not depend on $i$.  Moreover, if there exists $i\in\gR^\theta\cap\gR^\pi$, we have $c^\pi_i=c^\theta_i =: c$. In consequence,  $h_i^\pi-h_i^\theta=c$ for all state $i$. 
+%\end{proof}
+%
+%
+%\subsubsection{Unicity of Bellman optimal policy}
+%\label{ssec:unicity}
+%
+%\begin{lem}
+%    \label{lem:unicity_BO}
+%    Let $\pi$ be a Bellman optimal policy that is unichain. If $\pi$ is not the unique Bellman optimal policy, then there exists a state $i$ and an action $a\neq\pi_i$ such that $B_i^a(\vh^\pi)=0$.
+%\end{lem}
+%\begin{proof}
+%    Let $\theta\neq\pi$ be another Bellman optimal policy. Since $\theta$ is gain optimal and $\vh^\pi\in H$, Lemma~\ref{lem:opt_pol} implies that $B_i^{\theta_i}(\vh^\pi) =0$ for all $i\in\gR^\theta$. If there exists $i\in\gR^\theta$ such that $\theta_i\neq\pi_i$, then the proof is concluded.  Otherwise, $\theta_i=\pi_i$ for all $i\in\gR^\theta$. This show that $\pi$ and $\theta$ coincide for all recurrent states of $\theta$ and that $\gR^\theta=\gR^\pi$. Moreover, as $\pi$ is unichain, $\theta$ is also unichain. Hence, Lemma~\ref{lem:equi_bias} implies that $B_i^{\theta_i}(\vh^\pi)=0$ for all $i$. Since $\theta\neq\pi$, there exists at least one state $i\in\gS$ such that $\theta_i\neq\pi_i$.
+%\end{proof}
 
 
 \subsection{Unichain property}
