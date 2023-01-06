@@ -331,6 +331,8 @@
 \pretocmd{\section}{\addtocontents{toc}{\protect\addvspace{5\p@}}}{}{}
 \makeatother
 
+\KK{Do not add citation in page 3, nor the résumé in French, nor the acknowledgments when sending to reviewers.}
+
 \tableofcontents %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 \fi
@@ -342,7 +344,6 @@
 \addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
 
 
-\KK{Do not add citation in page 3, nor the résumé in French, nor the acknowledgments when sending to reviewers.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -360,13 +361,15 @@
 
 \inputchapter{\includereinforcementlearningchapter}{reinforcementLearning_chapter.tex}
 
+\inputchapter{\includemarkovianbanditchapter}{markovianBandit_chapter.tex}
+
 \iftotalcompilation
 \part{Indexability}
 \label{part:idx}
 \KK{In this part, we present two markovian bandit models and our contribution...}
 \fi
 
-\inputchapter{\includemarkovianbanditchapter}{markovianBandit_chapter.tex}
+\inputchapter{\includeindexDefinitionchapter}{indexDefinition_chapter.tex}
 
 \inputchapter{\includeindexComputationchapter}{indexComputation_chapter.tex}
 
