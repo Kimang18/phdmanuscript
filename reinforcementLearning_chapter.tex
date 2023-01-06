@@ -1,3 +1,7 @@
+\begingroup
+
+\let\clearpage\relax
+
 \chapter{Reinforcement Learning}
 \label{ch:rl}
 
@@ -11,20 +15,16 @@ The reader can skip this chapter and go directly to Part~\ref{part:idx} and come
 
 \section{The learning problem and regret definition}
 
-In this section...
+\subsection{Learning problem and learning approaches}
 
-\subsection{Learning problem}
-
-We consider the learning problem in which the state and action spaces $\gS$ and $\gA$ of MDP $M$ are known but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown} to the learner\footnote{we use the term learner instead of decision maker}.
+We consider the learning problem in which the learner\footnote{we use the term learner instead of decision maker} interacts with a MDP $M=\langle\gS,\gA,r,p\rangle$ where the state and action spaces $\gS$ and $\gA$ are known but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown} to the learner.
 Note that the expected value of reward is bounded as $r(s,a)\in[0,1]$ for all $s\in\gS, a\in\gA$.
-So, the planning methods given previous in chapter such as value iteration or backward induction, which require $r$ and $p$, cannot be immediately used and the learner needs to collect observations about $r$ and $p$.
+The planning methods given previous in chapter such as value iteration or backward induction, which require $r$ and $p$, cannot be immediately used and the learner needs to collect observations about $r$ and $p$.
 To get enough information, the learner needs to \emph{explore} the dynamic of the MDP as much as possible.
 However, too much exploration equalizes the performance of the learner with one that blindly chooses action at random.
 So, a good learner should also \emph{exploit} the gathered information.
 Unfortunately, untimely exploitation leads to suboptimal policy, thus unsatisfied performance. This is the famous “exploration versus exploitation dilemma”.
 
-In such dilemma, two different points of view about the MDP $M$ are adopted: the frequentist point of view, in which $r$ and $p$ of the MDP $M$ are seen as unknown \textbf{deterministic parameters}, and the Bayesian point of view, in which $r$ and $p$ of $M$ are \textbf{random variables}, drawn from some prior distribution.
-To simplify the exposition, in Bayesian approach, we will say the unknown MDP $M$ is drawn from a probability distribution (prior or posterior) $\phi$ to mean that $r$ is drawn from a dedicated probability distribution (prior or posterior) and $p$ is drawn from another dedicated probability distribution (prior or posterior).
 %This leads to two different probabilistic approaches described in Table~\ref{tab:compare}.
 %
 %\begin{table}[ht]
@@ -49,17 +49,6 @@ To simplify the exposition, in Bayesian approach, we will say the unknown MDP $M
 To measure the exploration-exploitation performance, we use the notion of \emph{regret} which compares the cumulative rewards of the optimal policy and the learner. 
 If the learner $\gL$ interacts with the unknown MDP $M$ over $T\in\N^+$ time steps, we denote by $\Reg(\gL, M, T)$ the regret incurred by the learner.
 
-In frequentist point of view about $M$, the learner $\gL$ that maximizes the expected cumulative rewards over $T$ time steps equivalently minimizes its expected regret $\E\bigg[\Reg(\gL, M, T)\bigg]$.
-
-For Bayesian point of view, we use similar notion of regret known as \emph{Bayesian regret} (or Bayes risk) defined by
-\begin{equation}
-    \label{eq:bayes_rg}
-    \BayReg(\gL, \phi, T):=\ex{\E\bigg[\Reg(\gL, M, T) \mid M\bigg]}
-\end{equation}
-where $\phi$ is the prior distribution of the unknown MDP $M$.
-So, the learner $\gL$ maximizes the expected cumulative rewards from $M$ over $T$ time steps by minimizing its Bayesian regret $\BayReg(\gL, \phi, T)$.
-
-In both approaches, a learner is \emph{good} if its expected regret is sublinear in the total number of time steps $T$, \ie, $\E\Big[\Reg(\gL, M, T)\Big]= \landauo(T)$ when $T\to+\infty$.
 The formal definition of regret depends on the setting of MDP.
 In this thesis, we recall the definition in two settings: finite horizon and infinite horizon average reward.
 %However, good learners are compared by how fast 
@@ -68,7 +57,7 @@ In this thesis, we recall the definition in two settings: finite horizon and inf
 %(or the \emph{optimism in face Uncertainty})
 
 \paragraph{Finite horizon model.}
-With this model, the learner interacts with the unknown MDP $M$ over $K\in\N^+$ episodes, each episode lasts in $H\in\N^+$ time steps (so the total time steps is $T=KH$) and the state of $M$ is reset reset according to a distribution $\rho$.
+With this model, the learner interacts with the unknown MDP $M$ over $K\in\N^+$ episodes, each episode lasts in $H\in\N^+$ time steps (so the total time steps is $T=KH$) and the state of $M$ is reset according to a distribution $\rho$.
 In such a setting, $H$ is called \emph{horizon} and it is bounded in $\N^+$.
 At the beginning of each episode $k\ge1$, the initial state of the MDP $s_1\sim\rho$ is revealed to the learner who computes a policy $\pi^k$ based on its collected observations and rollouts the policy $\pi^k$ during the episode.
 %After $H$ time steps, the state of the MDP is reset according to a distribution $\rho$ and revealed to the learner who computes a policy $\pi^k$ based on its collected observations and rollouts the policy $\pi^k$ during the episode.
@@ -84,7 +73,6 @@ The regret is defined by the following.
 \end{defn}
 Since $H$ is bounded, we derive from the above that a \emph{good} learner has an expected regret sublinear in the number of episodes $K$, $\ex{\Reg(\gL, M, K)}=\landauo(K)$ when $K\to+\infty$.
 
-
 \paragraph{Infinite horizon average reward model.}
 For this setting, there is no reset but the unknown MDP $M$ is assumed to be \emph{weakly communicating}.
 The learner interacts with $M$ over $T$ time steps and collects a sequence of rewards $\{r_t\}_{1\le t\le T}$.
@@ -99,14 +87,37 @@ The regret is defined by the following.
     where $g^*$ is the optimal gain of $M$ (see its definition in Section~\ref{ch:mdp:sec:gain}).
 \end{defn}
 A notable difference between finite and infinite horizon settings is that in finite setting, the learner updates its policy right before the episode starts and never within the episode while in infinite setting, the learner decides by itself when to update its policy.
+
+%TODO:continue
+In such dilemma, two different points of view about the MDP $M$ are adopted: the frequentist point of view, in which $r$ and $p$ of the MDP $M$ are seen as unknown \textbf{deterministic parameters}, and the Bayesian point of view, in which $r$ and $p$ of $M$ are \textbf{random variables}, drawn from some prior distribution.
+To simplify the exposition, in Bayesian approach, we will say the unknown MDP $M$ is drawn from a probability distribution (prior or posterior) $\phi$ to mean that $r$ is drawn from a dedicated probability distribution (prior or posterior) and $p$ is drawn from another dedicated probability distribution (prior or posterior).
+
+In frequentist point of view about $M$, the learner $\gL$ that maximizes the expected cumulative rewards over $T$ time steps equivalently minimizes its expected regret $\E\bigg[\Reg(\gL, M, T)\bigg]$.
+
+For Bayesian point of view, we use similar notion of regret known as \emph{Bayesian regret} (or Bayes risk) defined by
+\begin{equation}
+    \label{eq:bayes_rg}
+    \BayReg(\gL, \phi, T):=\ex{\E\bigg[\Reg(\gL, M, T) \mid M\bigg]}
+\end{equation}
+where $\phi$ is the prior distribution of the unknown MDP $M$.
+So, the learner $\gL$ maximizes the expected cumulative rewards from $M$ over $T$ time steps by minimizing its Bayesian regret $\BayReg(\gL, \phi, T)$.
+
+In both approaches, a learner is \emph{good} if its expected regret is sublinear in the total number of time steps $T$, \ie, $\E\Big[\Reg(\gL, M, T)\Big]= \landauo(T)$ when $T\to+\infty$.
+
+
 For both settings, the Bayesian regret is defined by \eqref{eq:bayes_rg}.
 
-\section{Regret benchmarks}
-\label{sec:rg_benchmark}
 
-In this section, we describe... 
 
-\subsection{Minimax regret lower bound}
+
+
+
+%\section{Regret benchmarks}
+%\label{sec:rg_benchmark}
+
+%In this section, we describe... 
+
+\section{Minimax regret lower bound}
 
 We compare the exploration-exploitation performance of good learners by how fast their regret tends to zero.
 \cite{jaksch2010near} has proven that no learners can perform better than a certain baseline for all MDPs $M$.
@@ -124,7 +135,7 @@ In other words, it is the expected number of vertices along the shortest path be
 From Definition~\ref{ch:mdp:defn:mdp_class} and \cite[Proposition~8.3.1]{puterman2014markov}, it is clear that the diameter $D$ is finite if and only if the MDP is communicating.
 
 Given any learner $\gL$, there always exists an unknown MDP $M$ that slows down the learner $\gL$ as the following.
-\begin{prop}[{\cite[Theorem~5]{puterman2014markov}}]
+\begin{prop}[{\cite[Theorem~5]{jaksch2010near}}]
     \label{prop:minimax_rg_lb}
     In infinite horizon setting, for any learner $\gL$, any integers $\abs{\gS}$, $\abs{\gA}\ge10$, $D\ge 20\log_{\abs{\gA}}(\abs{\gS})$, and $T\ge DSA$, there is a MDP $M=\langle\gS,\gA,r,p\rangle$ whose diameter is $D$ such that for any initial state $s_1$, the expected regret of $\gL$ after $T$ time steps is lower bounded as
     \begin{equation}
@@ -136,7 +147,7 @@ This proposition means that no matter how ``good'' a learner is, it is always po
 This bound on worst case regret is often referred as ``minimax'' bound.
 
 The minimax bound is different from the bounds given in \cite{ok2018exploration, burnetas1997optimal} which are problem-dependent and asymptotic bounds.
-Maximax bounds usually scale as $\sqrt{T}$ while problem-dependent bounds scale logarithmically with $T$\footnote{In the bandit literature, “problem-dependent” bounds are said to be distribution-dependent, as opposed to minimax bounds which are said to be distribution-free \cite{garivier2019explore}}.
+Minimax bounds usually scale as $\sqrt{T}$ while problem-dependent bounds scale logarithmically\footnote{In the bandit literature, “problem-dependent” bounds are said to be distribution-dependent, as opposed to minimax bounds which are said to be distribution-free \cite{garivier2019explore}} with $T$.
 We do not recall those problem-dependent bounds because they are not necessary to understand the thesis.
 
 Recent work of \cite{zhang2019regret} suggests that the minimax bound in Proposition~\ref{prop:minimax_rg_lb} cannot be improved.
@@ -144,9 +155,9 @@ Minimax bound is often expressed in term of span (or range) of the optimal bias 
 In fact, the specific worst-case MDP constructed by \cite{jaksch2010near} to prove the lower bound in Proposition~\ref{prop:minimax_rg_lb} satisfies $D=2sp(\vh^*)$ where $\vh^*$ is the optimal bias function (see Section~\ref{ch:mdp:sec:gain} for its definition).
 
 For finite horizon setting, the diameter of the MDP is replaced with the horizon of an episode.
-So, the minimax bound can be immediately deduced from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst case MDP with $\abs{\gS}$ states and $\abs{\gA}$ actions such that after $K$ episodes, each of horizon $H$\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}}, the learner suffers a regret $\landauOmega(\sqrt{HSAK})$.
+So, the minimax bound can be immediately deduced from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst case MDP with $\abs{\gS}$ states and $\abs{\gA}$ actions such that after $K$ episodes, each of horizon\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}} $H$, the learner suffers a regret $\landauOmega(\sqrt{HSAK})$.
 
-\subsection{(Near) Optimal algorithms}
+\section{(Near) Optimal algorithms}
 
 To achieve an efficient trade-off between exploration and exploitation, a common strategy in frequentist point of view is to apply \emph{optimism in face of uncertainty} (OFU) principle: the learner maintains a confidence set for the unknown MDP and execute an optimal policy of the
 “best” (in term of gain, value function, etc) MDP in the confidence set, \eg, \cite{ortner2020regret, bourel2020tightening, zhang2019regret, zanette2019tighter, fruit2018near, fruit2018efficient, jin2018q, fruit2017regret,azar2017minimax, bartlett2012regal, filippi2010optimism, jaksch2010near}.
@@ -188,7 +199,7 @@ In other words, it is the discordance between the incentive from $M^k$ and the o
 Since $M^k$ and $\pi^k$ are chosen by the learner, this second term can be analyzed and both approaches upper bound the term using concentration inequalities.
 
 \paragraph{UCRL2 \texorpdfstring{\cite{jaksch2010near}}{[JAO10]}.}
-As mentionned above, UCRL2 is originally design for infinite horizon setting.
+As mentionned above, UCRL2 was originally design for infinite horizon setting.
 %However, it still proceeds in episodic manner: the algorithm decides to update its policy when the number of visits to a state-action pair has doubled since the end of the previous episode and the new episode begins.
 %The number of visits to state-action pair $(s,a)$ means how many time steps so far that the action $a$ has been executed when the unknown MDP is in state $s$.
 %When updating the policy, UCRL2 compute the maximum-likelihood estimates of $r$ and $p$ as well as confidence sets 
@@ -782,3 +793,4 @@ Note that this bound is for Bayesian regret which means that this bound is a wea
 %\end{align*}
 %Following the same approach in the prove of UCRL2, we get the upper bound of Bayesian regret of PSRL as $O(HE\sqrt{AT})$.
 %    
+\endgroup
