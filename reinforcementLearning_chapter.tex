@@ -14,20 +14,55 @@ In Section~\ref{ch:rl:sec:blabla}, we introduce...
 
 The reader can skip this chapter and go directly to Part~\ref{part:idx} and come back before starting Part~\ref{part:learning}.
 
-\section{The learning problem and regret definition}
+\section{The learning problem}
 
-\subsection{Learning problem and learning approaches}
+We consider the learning problem in which the learner\footnote{we use the term ``learner'' instead of ``decision maker''} interacts with a MDP $M=\langle\gS,\gA,r,p\rangle$ where the state and action spaces $\gS$ and $\gA$ are known but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown} to the learner.
+So, we say the MDP $M$ is unknown to the learner.
+The fundamental goal of the learner is to identify an optimal policy $\pi^*$ by interacting with the unknown MDP.
 
-We consider the learning problem in which the learner\footnote{we use the term learner instead of decision maker} interacts with a MDP $M=\langle\gS,\gA,r,p\rangle$ where the state and action spaces $\gS$ and $\gA$ are known but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown} to the learner.
-At time step $t\ge1$, the MDP is in state $s_t$ and the decision maker executes an action $a_t$.
-The MDP incurs a (random) reward denoted by $r_t$ and transitions to next state denoted by $s_{t+1}$.
-This mechanism is repeated and one obtains a sequence of the form $\{s_1,a_1,r_1,s_2,\dots,s_t,a_t,r_t,s_{t+1},\dots\}$ that is called \emph{observations} (also known as a ``trajectory'')
-Note that the expected value of reward is bounded as $r(s,a)\in[0,1]$ for all $s\in\gS, a\in\gA$.
-The planning methods given previous in chapter such as value iteration or backward induction, which require $r$ and $p$, cannot be immediately used and the learner needs to collect observations about $r$ and $p$.
-To get enough information, the learner needs to \emph{explore} the dynamic of the MDP as much as possible.
-However, too much exploration equalizes the performance of the learner with one that blindly chooses action at random.
-So, a good learner should also \emph{exploit} the gathered information.
-Unfortunately, untimely exploitation leads to suboptimal policy, thus unsatisfied performance. This is the famous “exploration versus exploitation dilemma”.
+\subsection{Overall description of learning}
+%From the previous chapter, an optimal policy $\pi^*$ can be computed using the planning methods such as policy iteration, value iteration or backward induction. However, these methods require the knowledge about $r$ and $p$.
+%So, $\pi^*$ cannot be immediately obtained and the learner needs to interacts with the MDP in order to collect observations that are used to make inference about $\pi^*$.
+
+While $\pi^*$ is ultimately identified, two learning mechanisms are defined:
+\begin{enumerate}[label=(\roman*)]
+    \item \label{it:mecha1} \textbf{Generative model}: the learner can restart at desire and in any state of $M$
+    \item \label{it:mecha2} \textbf{Navigating model}: the learner cannot control the restart.
+\end{enumerate}
+For Mechanism~\ref{it:mecha1}, the learner chooses any state-action pair $(s,a)$ and the MDP $M$ incurs a random reward $u$ whose expected value is $r(s,a)$ and the next state $s'\in\gS$ with probability $p(s'\mid s,a)$.
+The learner collects the sample $\{u,s'\}$ related to the pair $(s,a)$ and the process is repeated.
+This mechanism is used in \textbf{offline learning paradigm} in which the learner keeps collecting samples until a budget resource fixed by the setting is exhausted (it can be a time resource, sample resource or approximation error). Then, the learner follows a policy and no more policy update is made thereafter.
+
+For Mechanism~\ref{it:mecha2}, the learner observes the current state $s$ of the MDP $M$ and executes an action $a$ and the MDP $M$ incurs a random reward with expected value $r(s,a)$ and transitions to state $s'$ with probability $p(s'\mid s,a)$.
+The learner cannot force the MDP to restart in any state.
+If the learner wants the MDP to be in a certain state, it has to go along the trajectory that brings the MDP from its current state to the desired state.
+In some settings like finite horizon or infinite horizon with discount, the MDP $M$ can restart but the learner has no control over the restart such as when and which state to restart.
+This mechanism is used in \textbf{online learning paradigm} in which the learner keeps updating its policy based on the observations it collects via the interaction with the MDP $M$.
+The policy update can be done in every decision time --known as real-time update--, periodically or when some conditions are met --known as episodic update.
+
+For both paradigms, an optimal policy $\pi^*$ is computed via two different ways
+\begin{enumerate}
+    \item \textbf{model-free}: the learner tries to infer the value functions
+    \item \textbf{model-based}: the learner tries to infer the unknown parameters $r$ and $p$ of the MDP $M$.
+\end{enumerate}
+The typical algorithm for model-free methods is \textbf{Q-learning} that tries to infer the optimal state-action value function via stochastic approximation. 
+Model-free method is very appealing when the MDP has a large or even continuous state and action spaces.
+However, only the convergence guarantee is proposed in the literature of reinforcement learning and in general model-free methods are slower than model-based ones in learning an optimal policy.
+
+Model-based algorithms input the estimates of $r$ and $p$ to a planning method described in the previous chapter such as backward induction, policy or value iterations and follows the policy output by the planning method.
+Model-based algorithms are costly for MDPs with large or continuous state and action spaces.
+
+\subsection{Learning framework in this thesis}
+
+This thesis focuses on \emph{model-based algorithms in online learning with navigating model}.
+%That is, the parameters $r$ and $p$ are unknown to the learner.
+At time step $t\ge1$, the MDP is in state $s_t$ and the learner executes an action $a_t$.
+The MDP incurs a random reward denoted by $r_t$ and transitions to next state denoted by $s_{t+1}$.
+This mechanism is repeated and the learner observes a sequence of the form $\{s_1,a_1,r_1,s_2,\dots,s_t,a_t,r_t,s_{t+1},\dots\}$ that is called \emph{observations} (also known as a ``trajectory'').
+At time step $t$, the learner has in disposition the observations up to time $t$ denoted by $o_t:=\{s_1,a_1,r_1,s_2,\dots,s_{t-1},a_{t-1},r_{t-1},s_{t}\}$.
+The objective of the learner is to maximize the expected cumulative reward $\ex{\sum_{t\ge1}r_t}$ incurred by the MDP by identifying an optimal policy $\pi^*$ as early as possible.
+
+%Note that the expected value of reward is bounded as $r(s,a)\in[0,1]$ for all $s\in\gS, a\in\gA$.
 
 %This leads to two different probabilistic approaches described in Table~\ref{tab:compare}.
 %
@@ -48,22 +83,19 @@ Unfortunately, untimely exploitation leads to suboptimal policy, thus unsatisfie
 %    \label{tab:compare}
 %\end{table}
 
-\subsection{Regret definition}
+\section{Regret definition}
+%TODO:continue
 
-To measure the exploration-exploitation performance, we use the notion of \emph{regret} which compares the cumulative rewards of the optimal policy and the learner. 
-If the learner $\gL$ interacts with the unknown MDP $M$ over $T\in\N^+$ time steps, we denote by $\Reg(\gL, M, T)$ the regret incurred by the learner.
+To measure the performance of the learner, we use the notion of \emph{regret} that compares the cumulative rewards of an optimal policy $\pi^*$ and the learner. 
+If the learner $\gL$ interacts with the unknown MDP $M$ over $T\in\N^+$ time steps, we denote by $\Reg(\gL, M, T)$ the regret suffered by the learner.
 
 The formal definition of regret depends on the setting of MDP.
-In this thesis, we recall the definition in two settings: finite horizon and infinite horizon average reward.
-%However, good learners are compared by how fast 
+In this section, we recall the definition in two settings: finite horizon and infinite horizon average reward.
 
-%over any finite number of steps $T$ (i.e., the difference gap between the cumulative reward of the optimal policy and the one of the learning algorithm over $T$ steps)
-%(or the \emph{optimism in face Uncertainty})
-
-\paragraph{Finite horizon model.}
-With this model, the learner interacts with the unknown MDP $M$ over $K\in\N^+$ episodes, each episode lasts in $H\in\N^+$ time steps (so the total time steps is $T=KH$) and the state of $M$ is reset according to a distribution $\rho$.
+\paragraph{Finite horizon setting.}
+In this setting, the learner interacts with the unknown MDP $M$ over $K\in\N^+$ episodes, each episode lasts in $H\in\N^+$ time steps (so the total time steps is $T=KH$) and the state of $M$ is reset according to a distribution $\rho$.
 In such a setting, $H$ is called \emph{horizon} and it is bounded in $\N^+$.
-At the beginning of each episode $k\ge1$, the initial state of the MDP $s_1\sim\rho$ is revealed to the learner who computes a policy $\pi^k$ based on its collected observations and rollouts the policy $\pi^k$ during the episode.
+At the beginning of each episode $k\ge1$, the initial state of the MDP $s_1\sim\rho$ is revealed to the learner who computes a policy $\pi^k$ based on its collected observations and follows the policy $\pi^k$ during the episode.
 %After $H$ time steps, the state of the MDP is reset according to a distribution $\rho$ and revealed to the learner who computes a policy $\pi^k$ based on its collected observations and rollouts the policy $\pi^k$ during the episode.
 Following the definition in Section~\ref{ch:mdp:sec:finite}, we denote by $w^{\pi^k}_{1:H}(s):=\E^{\pi^k}[\sum_{t=1}^{H}r_t \mid s_1=s]$ the expected cumulative reward from state $s$ over time steps $1$ to $H$.
 The regret is defined by the following.
@@ -75,7 +107,7 @@ The regret is defined by the following.
         \Reg(\gL, M, K):= \sum_{k=1}^K\sum_{s\in\gS}\rho(s)[w^*_{1:H}(s) -w^{\pi^k}_{1:H}(s)].
     \end{equation}
 \end{defn}
-Since $H$ is bounded, we derive from the above that a \emph{good} learner has an expected regret sublinear in the number of episodes $K$, $\ex{\Reg(\gL, M, K)}=\landauo(K)$ when $K\to+\infty$.
+Since $H$ is bounded, we derive from Definition~\ref{defn:rg_finite} that a ``good'' learner has an expected regret sublinear in the number of episodes $K$, $\ex{\Reg(\gL, M, K)}=\landauo(K)$ when $K\to+\infty$.
 
 \paragraph{Infinite horizon average reward model.}
 For this setting, there is no reset but the unknown MDP $M$ is assumed to be \emph{weakly communicating}.
@@ -90,7 +122,16 @@ The regret is defined by the following.
     \end{equation}
     where $g^*$ is the optimal gain of $M$ (see its definition in Section~\ref{ch:mdp:sec:gain}).
 \end{defn}
+
+So, a learner is ``good'' if its expected regret is sublinear in the total number of time steps $T$, \ie, $\E\Big[\Reg(\gL, M, T)\Big]= \landauo(T)$ when $T\to+\infty$.
+
 A notable difference between finite and infinite horizon settings is that in finite setting, the learner updates its policy right before the episode starts and never within the episode while in infinite setting, the learner decides by itself when to update its policy.
+
+To get enough information for deriving $\pi^*$, the learner needs to \emph{explore} the dynamic of the MDP as much as possible.
+However, too much exploration equalizes the performance of the learner with one that blindly chooses action at random.
+So, the regret is linear in the total number of time steps $T$.
+A good learner should then \emph{exploit} the gathered information as soon as possible.
+Unfortunately, untimely exploitation leads to suboptimal policy, thus a regret that is linear in $T$. This is the famous “exploration versus exploitation dilemma”.
 
 %TODO:continue
 In such dilemma, two different points of view about the MDP $M$ are adopted: the frequentist point of view, in which $r$ and $p$ of the MDP $M$ are seen as unknown \textbf{deterministic parameters}, and the Bayesian point of view, in which $r$ and $p$ of $M$ are \textbf{random variables}, drawn from some prior distribution.
@@ -105,8 +146,6 @@ For Bayesian point of view, we use similar notion of regret known as \emph{Bayes
 \end{equation}
 where $\phi$ is the prior distribution of the unknown MDP $M$.
 So, the learner $\gL$ maximizes the expected cumulative rewards from $M$ over $T$ time steps by minimizing its Bayesian regret $\BayReg(\gL, \phi, T)$.
-
-In both approaches, a learner is \emph{good} if its expected regret is sublinear in the total number of time steps $T$, \ie, $\E\Big[\Reg(\gL, M, T)\Big]= \landauo(T)$ when $T\to+\infty$.
 
 
 For both settings, the Bayesian regret is defined by \eqref{eq:bayes_rg}.
@@ -161,7 +200,7 @@ In fact, the specific worst-case MDP constructed by \cite{jaksch2010near} to pro
 For finite horizon setting, the diameter of the MDP is replaced with the horizon of an episode.
 So, the minimax bound can be immediately deduced from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst case MDP with $\abs{\gS}$ states and $\abs{\gA}$ actions such that after $K$ episodes, each of horizon\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}} $H$, the learner suffers a regret $\landauOmega(\sqrt{HSAK})$.
 
-\section{(Near) Optimal algorithms}
+\section{Algorithms with regret guarantee}
 
 To achieve an efficient trade-off between exploration and exploitation, a common strategy in frequentist point of view is to apply \emph{optimism in face of uncertainty} (OFU) principle: the learner maintains a confidence set for the unknown MDP and execute an optimal policy of the
 “best” (in term of gain, value function, etc) MDP in the confidence set, \eg, \cite{ortner2020regret, bourel2020tightening, zhang2019regret, zanette2019tighter, fruit2018near, fruit2018efficient, jin2018q, fruit2017regret,azar2017minimax, bartlett2012regal, filippi2010optimism, jaksch2010near}.
