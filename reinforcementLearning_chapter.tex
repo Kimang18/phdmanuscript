@@ -10,11 +10,16 @@ Depending on the chosen optimality criterion, we explained how an optimal policy
 In this chapter, we consider the case when the MDP's parameters are \textbf{unknown} and need to be learned by the decision maker via trial and error.
 
 
-In Section~\ref{ch:rl:sec:blabla}, we introduce...
+In Section~\ref{ch:rl:sec:overal}, we describe the existing settings in reinforcement learning framework.
+Then, we present the learning setting considered in this thesis and performance measure, namely the regret. 
+In Section~\ref{ch:rl:sec:baseline}, we give the regret lower bound for any learning algorithms.
+We finish the chapter by presenting two learning approahces known as optimism in face of uncertainty principle and posterior sampling in Section~\ref{ch:rl:ssec:opt_post}.
+We discuss several algorithms with regret guarantee at the end of this chapter.
 
-The reader can skip this chapter and go directly to Part~\ref{part:idx} and come back before starting Part~\ref{part:learning}.
+The reader can skip this chapter and go directly to Chapter~\ref{ch:mb} and Part~\ref{part:idx} and come back to this chapter before diving into Part~\ref{part:learning}.
 
 \section{Overall description of learning problem}
+\label{ch:rl:sec:overal}
 
 Fundamentally, a reinforcement learning problem consists of a learner\footnote{we use the term ``learner'' instead of ``decision maker''} interacting with an environment modeled by a MDP $M=\langle\gS,\gA,r,p\rangle$.
 The state and action spaces $\gS$ and $\gA$ are known to the learner but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown}.
@@ -132,14 +137,13 @@ So, a learner is ``good'' if its expected regret is sublinear in the total numbe
 
 A notable difference between finite and infinite horizon settings is that in finite setting, the learner updates its policy right before the episode starts and never within the episode while in infinite setting, the learner decides by itself when to update its policy.
 
-%TODO:continue
-
 %\section{Regret benchmarks}
 %\label{sec:rg_benchmark}
 
 %In this section, we describe... 
 
 \section{Minimax regret lower bound}
+\label{ch:rl:sec:baseline}
 
 %We compare the exploration-exploitation performance of good learners by how fast their regret tends to zero.
 We compare the performance of good learners by how fast their regret tends to zero.
@@ -197,6 +201,7 @@ As mentioned in Section~\ref{sec:intro_learning}, we consider model-based algori
 In the following, we describe two popular families of such algorithms. 
 
 \subsection{Optimism and posterior sampling}
+\label{ch:rl:ssec:opt_post}
 
 To manage exploration-exploitation dilemma, two different points of view about the MDP $M$ are adopted:
 \begin{enumerate}
@@ -244,6 +249,8 @@ The learning process is summarized in Algorithm~\ref{algo:generics}.
 
 Since an optimal policy can be computed in a deterministic manner given the MDP, the ``high-level'' difference between both approaches lies in Line~\ref{line:new_mdp} of Algorithm~\ref{algo:generics} at which an imagined MDP $M^k$ is constructed: chosen ``optimistically'' by OFU method or chosen randomly by posterior sampling according to its belief (or the posterior distribution).
 
+% No need to add table of summary because finite horizon is not the real setting of our learning problem
+% Only infinite horizon is really related
 From now on, a learner is an algorithm for the learning problem.
 We revisit three algorithms for the end this chapter: UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, which rely on OFU method, and PSRL \cite{osband2013more}, which is a posterior sampling algorithm.
 We give the sketch of proof for their regret upper bound in finite horizon setting although UCRL2 is originally design for infinite horizon average reward model.
