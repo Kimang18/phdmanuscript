@@ -14,13 +14,13 @@ In Section~\ref{ch:rl:sec:blabla}, we introduce...
 
 The reader can skip this chapter and go directly to Part~\ref{part:idx} and come back before starting Part~\ref{part:learning}.
 
-\section{The learning problem}
+\section{Overall description of learning problem}
 
-We consider the learning problem in which the learner\footnote{we use the term ``learner'' instead of ``decision maker''} interacts with a MDP $M=\langle\gS,\gA,r,p\rangle$ where the state and action spaces $\gS$ and $\gA$ are known but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown} to the learner.
-So, we say the MDP $M$ is unknown to the learner.
-The fundamental goal of the learner is to identify an optimal policy $\pi^*$ by interacting with the unknown MDP.
+Fundamentally, a reinforcement learning problem consists of a learner\footnote{we use the term ``learner'' instead of ``decision maker''} interacting with an environment modeled by a MDP $M=\langle\gS,\gA,r,p\rangle$.
+The state and action spaces $\gS$ and $\gA$ are known to the learner but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown}.
+So, we say that the MDP $M$ is unknown to the learner.
+The goal of the learner is to identify an optimal policy $\pi^*$ by interacting with the unknown MDP.
 
-\subsection{Overall description of learning}
 %From the previous chapter, an optimal policy $\pi^*$ can be computed using the planning methods such as policy iteration, value iteration or backward induction. However, these methods require the knowledge about $r$ and $p$.
 %So, $\pi^*$ cannot be immediately obtained and the learner needs to interacts with the MDP in order to collect observations that are used to make inference about $\pi^*$.
 
@@ -31,7 +31,8 @@ While $\pi^*$ is ultimately identified, two learning mechanisms are defined:
 \end{enumerate}
 For Mechanism~\ref{it:mecha1}, the learner chooses any state-action pair $(s,a)$ and the MDP $M$ incurs a random reward $u$ whose expected value is $r(s,a)$ and the next state $s'\in\gS$ with probability $p(s'\mid s,a)$.
 The learner collects the sample $\{u,s'\}$ related to the pair $(s,a)$ and the process is repeated.
-This mechanism is used in \textbf{offline learning paradigm} in which the learner keeps collecting samples until a budget resource fixed by the setting is exhausted (it can be a time resource, sample resource or approximation error). Then, the learner follows a policy and no more policy update is made thereafter.
+This mechanism is used in \textbf{offline learning paradigm} in which the learner starts by collecting samples until a budget resource fixed by the setting is exhausted (it can be a time resource, sample resource or approximation error). Then, the learner plans a policy based on the collected samples and follows the policy.
+No more policy update is made thereafter.
 
 For Mechanism~\ref{it:mecha2}, the learner observes the current state $s$ of the MDP $M$ and executes an action $a$ and the MDP $M$ incurs a random reward with expected value $r(s,a)$ and transitions to state $s'$ with probability $p(s'\mid s,a)$.
 The learner cannot force the MDP to restart in any state.
@@ -41,20 +42,24 @@ This mechanism is used in \textbf{online learning paradigm} in which the learner
 The policy update can be done in every decision time --known as real-time update--, periodically or when some conditions are met --known as episodic update.
 
 For both paradigms, an optimal policy $\pi^*$ is computed via two different ways
-\begin{enumerate}
-    \item \textbf{model-free}: the learner tries to infer the value functions
-    \item \textbf{model-based}: the learner tries to infer the unknown parameters $r$ and $p$ of the MDP $M$.
-\end{enumerate}
+\begin{itemize}
+    \item \textbf{model-free}: the learner tries to infer the value functions in the MDP
+    \item \textbf{model-based}: the learner tries to infer the unknown parameters $r$ and $p$ of the MDP.
+\end{itemize}
 The typical algorithm for model-free methods is \textbf{Q-learning} that tries to infer the optimal state-action value function via stochastic approximation. 
 Model-free method is very appealing when the MDP has a large or even continuous state and action spaces.
 However, only the convergence guarantee is proposed in the literature of reinforcement learning and in general model-free methods are slower than model-based ones in learning an optimal policy.
 
 Model-based algorithms input the estimates of $r$ and $p$ to a planning method described in the previous chapter such as backward induction, policy or value iterations and follows the policy output by the planning method.
+The main difference between model-based algorithms is the way $r$ and $p$ are estimated at each planning phase.
+We will discuss about two families of model-based algorithms in the below sections.
 Model-based algorithms are costly for MDPs with large or continuous state and action spaces.
 
-\subsection{Learning framework in this thesis}
+\section{Learning problem in this thesis}
+\label{sec:intro_learning}
 
-This thesis focuses on \emph{model-based algorithms in online learning with navigating model}.
+We focus on \emph{model-based algorithms in online learning with navigating model and episodic policy update}.
+The learner interacts with a MDP $M=\langle\gS,\gA,r,p\rangle$ where the state and action spaces $\gS$ and $\gA$ are known but the expected value of reward $r$ and state transition probabilities $p$ are unknown.
 %That is, the parameters $r$ and $p$ are unknown to the learner.
 At time step $t\ge1$, the MDP is in state $s_t$ and the learner executes an action $a_t$.
 The MDP incurs a random reward denoted by $r_t$ and transitions to next state denoted by $s_{t+1}$.
@@ -84,15 +89,15 @@ The objective of the learner is to maximize the expected cumulative reward $\ex{
 %\end{table}
 
 \section{Regret definition}
-%TODO:continue
 
-To measure the performance of the learner, we use the notion of \emph{regret} that compares the cumulative rewards of an optimal policy $\pi^*$ and the learner. 
+To measure the performance of the learner, we use the notion of \emph{regret} that compares the expected cumulative reward of an optimal policy $\pi^*$ to the cumulative reward of the learner. 
 If the learner $\gL$ interacts with the unknown MDP $M$ over $T\in\N^+$ time steps, we denote by $\Reg(\gL, M, T)$ the regret suffered by the learner.
+So, maximizing the expected cumulative reward is equivalent to minimizing the expected regret, $\ex{\Reg(\gL, M, T)}$.
 
-The formal definition of regret depends on the setting of MDP.
+The formal definition of regret depends on the setting of learning problem.
 In this section, we recall the definition in two settings: finite horizon and infinite horizon average reward.
 
-\paragraph{Finite horizon setting.}
+\subsection{Finite horizon setting}
 In this setting, the learner interacts with the unknown MDP $M$ over $K\in\N^+$ episodes, each episode lasts in $H\in\N^+$ time steps (so the total time steps is $T=KH$) and the state of $M$ is reset according to a distribution $\rho$.
 In such a setting, $H$ is called \emph{horizon} and it is bounded in $\N^+$.
 At the beginning of each episode $k\ge1$, the initial state of the MDP $s_1\sim\rho$ is revealed to the learner who computes a policy $\pi^k$ based on its collected observations and follows the policy $\pi^k$ during the episode.
@@ -100,60 +105,34 @@ At the beginning of each episode $k\ge1$, the initial state of the MDP $s_1\sim\
 Following the definition in Section~\ref{ch:mdp:sec:finite}, we denote by $w^{\pi^k}_{1:H}(s):=\E^{\pi^k}[\sum_{t=1}^{H}r_t \mid s_1=s]$ the expected cumulative reward from state $s$ over time steps $1$ to $H$.
 The regret is defined by the following.
 \begin{defn}
-    \label{defn:rg_finite}
-    If a learner $\gL$ interacts with an unknown MDP $M$ over $K$ episodes, each episode ends in $H\in\N^+$, then its regret is
+    If a learner $\gL$ interacts with an unknown MDP $M$ over $K$ episodes, each episode ends in $H\in\N^+$ time steps, then its regret is
     \begin{equation}
         \label{eq:rg_finite}
         \Reg(\gL, M, K):= \sum_{k=1}^K\sum_{s\in\gS}\rho(s)[w^*_{1:H}(s) -w^{\pi^k}_{1:H}(s)].
     \end{equation}
+    \label{ch:rl:defn:rg_finite}
 \end{defn}
-Since $H$ is bounded, we derive from Definition~\ref{defn:rg_finite} that a ``good'' learner has an expected regret sublinear in the number of episodes $K$, $\ex{\Reg(\gL, M, K)}=\landauo(K)$ when $K\to+\infty$.
+Since $H$ is bounded, we derive from Definition~\ref{ch:rl:defn:rg_finite} that a ``good'' learner has an expected regret sublinear in the number of episodes $K$, $\ex{\Reg(\gL, M, K)}=\landauo(K)$ when $K\to+\infty$.
 
-\paragraph{Infinite horizon average reward model.}
-For this setting, there is no reset but the unknown MDP $M$ is assumed to be \emph{weakly communicating}.
+\subsection{Infinite horizon average reward model}
+For this setting, there is no reset on MDP state but the unknown MDP $M$ is assumed to be \emph{weakly communicating}.
+This assumption is required so that the optimal gain in $M$ is state independent.
 The learner interacts with $M$ over $T$ time steps and collects a sequence of rewards $\{r_t\}_{1\le t\le T}$.
 The regret is defined by the following.
 \begin{defn}
-    \label{defn:rg_infinite}
     If a learner $\gL$ interacts with an unknown MDP $M$ which is weakly communicating, then its regret after $T$ time steps is
     \begin{equation}
-        \label{eq:rg_finite}
+        \label{eq:rg_infinite}
         \Reg(\gL, M, T):= Tg^* -\sum_{t=1}^Tr_t
     \end{equation}
     where $g^*$ is the optimal gain of $M$ (see its definition in Section~\ref{ch:mdp:sec:gain}).
+    \label{ch:rl:defn:rg_infinite}
 \end{defn}
-
 So, a learner is ``good'' if its expected regret is sublinear in the total number of time steps $T$, \ie, $\E\Big[\Reg(\gL, M, T)\Big]= \landauo(T)$ when $T\to+\infty$.
 
 A notable difference between finite and infinite horizon settings is that in finite setting, the learner updates its policy right before the episode starts and never within the episode while in infinite setting, the learner decides by itself when to update its policy.
 
-To get enough information for deriving $\pi^*$, the learner needs to \emph{explore} the dynamic of the MDP as much as possible.
-However, too much exploration equalizes the performance of the learner with one that blindly chooses action at random.
-So, the regret is linear in the total number of time steps $T$.
-A good learner should then \emph{exploit} the gathered information as soon as possible.
-Unfortunately, untimely exploitation leads to suboptimal policy, thus a regret that is linear in $T$. This is the famous “exploration versus exploitation dilemma”.
-
 %TODO:continue
-In such dilemma, two different points of view about the MDP $M$ are adopted: the frequentist point of view, in which $r$ and $p$ of the MDP $M$ are seen as unknown \textbf{deterministic parameters}, and the Bayesian point of view, in which $r$ and $p$ of $M$ are \textbf{random variables}, drawn from some prior distribution.
-To simplify the exposition, in Bayesian approach, we will say the unknown MDP $M$ is drawn from a probability distribution (prior or posterior) $\phi$ to mean that $r$ is drawn from a dedicated probability distribution (prior or posterior) and $p$ is drawn from another dedicated probability distribution (prior or posterior).
-
-In frequentist point of view about $M$, the learner $\gL$ that maximizes the expected cumulative rewards over $T$ time steps equivalently minimizes its expected regret $\E\bigg[\Reg(\gL, M, T)\bigg]$.
-
-For Bayesian point of view, we use similar notion of regret known as \emph{Bayesian regret} (or Bayes risk) defined by
-\begin{equation}
-    \label{eq:bayes_rg}
-    \BayReg(\gL, \phi, T):=\ex{\E\bigg[\Reg(\gL, M, T) \mid M\bigg]}
-\end{equation}
-where $\phi$ is the prior distribution of the unknown MDP $M$.
-So, the learner $\gL$ maximizes the expected cumulative rewards from $M$ over $T$ time steps by minimizing its Bayesian regret $\BayReg(\gL, \phi, T)$.
-
-
-For both settings, the Bayesian regret is defined by \eqref{eq:bayes_rg}.
-
-
-
-
-
 
 %\section{Regret benchmarks}
 %\label{sec:rg_benchmark}
@@ -162,7 +141,8 @@ For both settings, the Bayesian regret is defined by \eqref{eq:bayes_rg}.
 
 \section{Minimax regret lower bound}
 
-We compare the exploration-exploitation performance of good learners by how fast their regret tends to zero.
+%We compare the exploration-exploitation performance of good learners by how fast their regret tends to zero.
+We compare the performance of good learners by how fast their regret tends to zero.
 \cite{jaksch2010near} has proven that no learners can perform better than a certain baseline for all MDPs $M$.
 We will give this baseline below but first we need to introduce the notion of diameter of a MDP.
 \begin{defn}
@@ -172,6 +152,7 @@ We will give this baseline below but first we need to introduce the notion of di
         D := \max_{s,s'\in\gS}\min_{\pi:\gS\mapsto\gA} \E^\pi[\tau(s') \mid s_1=s] -1
     \end{equation}
     where $\tau(s'):=\inf\{t\ge2 : s_t=s'\}$ is the first time step when $s'$ is reached.
+    \label{ch:rl:defn:diameter}
 \end{defn}
 So, the diameter of a MDP is the length of the \textbf{longest shortest path} in the MDP where the distance between any pair of vertices is $1$.
 In other words, it is the expected number of vertices along the shortest path between two states that are the \textbf{most distant} from each other.
@@ -186,43 +167,99 @@ Given any learner $\gL$, there always exists an unknown MDP $M$ that slows down 
         \ex{\Reg(\gL, M, T)} \ge 0.015\sqrt{D\abs{\gS}\abs{\gA}T}.
     \end{equation}
 \end{prop}
-This proposition means that no matter how ``good'' a learner is, it is always possible to construct a worst case MDP $M$ having $\abs{\gS}$ states, $\abs{\gA}$ actions and diameter $D$ such that the learner suffers a regret $\landauOmega(\sqrt{D\abs{\gS}\abs{\gA}T})$ after $T$ time steps in $M$.
+This proposition means that no matter how ``good'' a learner is, it is always possible to construct a worst-case MDP $M$ having $\abs{\gS}$ states, $\abs{\gA}$ actions and diameter $D$ such that the learner suffers a regret $\landauOmega(\sqrt{D\abs{\gS}\abs{\gA}T})$ after $T$ time steps in $M$.
 This bound on worst case regret is often referred as ``minimax'' bound.
 
 The minimax bound is different from the bounds given in \cite{ok2018exploration, burnetas1997optimal} which are problem-dependent and asymptotic bounds.
 Minimax bounds usually scale as $\sqrt{T}$ while problem-dependent bounds scale logarithmically\footnote{In the bandit literature, “problem-dependent” bounds are said to be distribution-dependent, as opposed to minimax bounds which are said to be distribution-free \cite{garivier2019explore}} with $T$.
-We do not recall those problem-dependent bounds because they are not necessary to understand the thesis.
+We refer to \cite{ok2018exploration, burnetas1997optimal} for more detail about these problem-dependent bounds.
+%We do not recall those problem-dependent bounds because they are not necessary to understand the thesis.
 
-Recent work of \cite{zhang2019regret} suggests that the minimax bound in Proposition~\ref{prop:minimax_rg_lb} cannot be improved.
 Minimax bound is often expressed in term of span (or range) of the optimal bias function as well.
 In fact, the specific worst-case MDP constructed by \cite{jaksch2010near} to prove the lower bound in Proposition~\ref{prop:minimax_rg_lb} satisfies $D=2sp(\vh^*)$ where $\vh^*$ is the optimal bias function (see Section~\ref{ch:mdp:sec:gain} for its definition).
+If $H\in\real$ is an upper bound on $sp(\vh^*)$, then the minimax bound is also expressed as $\landauOmega(\sqrt{H\abs{\gS}\abs{\gA}T})$.
+In recent work of \cite{zhang2019regret}, the proposed algorithm, albeit intractable,  achieves a regret upper bounded by $\tilde{\landauO}(\sqrt{H\abs{\gS}\abs{\gA}T})$ (see \cite[Theorem~1]{zhang2019regret}).
+This result suggests that the minimax bound in Proposition~\ref{prop:minimax_rg_lb} cannot be improved.
 
-For finite horizon setting, the diameter of the MDP is replaced with the horizon of an episode.
-So, the minimax bound can be immediately deduced from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst case MDP with $\abs{\gS}$ states and $\abs{\gA}$ actions such that after $K$ episodes, each of horizon\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}} $H$, the learner suffers a regret $\landauOmega(\sqrt{HSAK})$.
+For finite horizon setting, the diameter of the MDP or the upper bound on span of optimal bias is replaced with the horizon of an episode.
+So, the minimax bound can be immediately deduced from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst-case MDP with $\abs{\gS}$ states and $\abs{\gA}$ actions such that after $K$ episodes, each of horizon\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}} $H$, the learner suffers a regret\footnote{In time-inhomogeneous finite horizon setting, the minimax bound is $\landauOmega(H\sqrt{HSAK})$.} $\landauOmega(H\sqrt{SAK})$.
+
 
 \section{Algorithms with regret guarantee}
 
-To achieve an efficient trade-off between exploration and exploitation, a common strategy in frequentist point of view is to apply \emph{optimism in face of uncertainty} (OFU) principle: the learner maintains a confidence set for the unknown MDP and execute an optimal policy of the
-“best” (in term of gain, value function, etc) MDP in the confidence set, \eg, \cite{ortner2020regret, bourel2020tightening, zhang2019regret, zanette2019tighter, fruit2018near, fruit2018efficient, jin2018q, fruit2017regret,azar2017minimax, bartlett2012regal, filippi2010optimism, jaksch2010near}.
+To get enough information for deriving $\pi^*$, the learner needs to \emph{explore} the dynamic of the MDP as much as possible.
+However, too much exploration equalizes the performance of the learner with one that blindly chooses action at random.
+So, the regret is linear in the total number of time steps.
+A good learner should then \emph{exploit} the gathered information as soon as possible.
+Unfortunately, untimely exploitation leads to suboptimal policy, thus a regret that is linear in $T$. This is the famous “exploration versus exploitation dilemma”.
 
-In Bayesian point of view, an efficient trade-off can be done by posterior sampling introduced by \cite{thompson1933likelihood}: the learner keeps a posterior distribution over possible MDPs (precisely, the support of the prior distribution) and execute the optimal policy of a sampled MDP, see \eg, \cite{osband2013more, gopalan2015thompson, ouyang2017learning}.
+As mentioned in Section~\ref{sec:intro_learning}, we consider model-based algorithms with \textbf{episodic policy update}.
+In the following, we describe two popular families of such algorithms. 
 
-The common point between the two approaches is that they compute an optimal policy in an imagined MDP that they believe to be the unknown MDP $M=\langle\gS,\gA,r,p\rangle$.
-Indeed, in both approaches, when the learner update its policy for the $k$th time, the learner compute a policy denote by $\pi^k$ that is optimal in an imagined MDP denote by $M^k=\langle\gS,\gA,r^k,p^k\rangle$.
-Since an optimal policy can be computed in a deterministic manner given the MDP, the ``high-level'' difference between both approaches lies in how this imagined MDP $M^k$ is constructed: chosen ``optimistically'' by OFU method or chosen randomly by posterior sampling according to its belief (or the posterior distribution).
+\subsection{Optimism and posterior sampling}
+
+To manage exploration-exploitation dilemma, two different points of view about the MDP $M$ are adopted:
+\begin{enumerate}
+    \item \textbf{frequentist} point of view, in which $r$ and $p$ are seen as unknown \textbf{deterministic parameters} of the MDP $M$,
+    \item \textbf{Bayesian} point of view, in which $r$ and $p$ of $M$ are \textbf{random variables}, drawn from some prior distribution.
+\end{enumerate}
+To simplify the exposition, in Bayesian approach, we will say the unknown MDP $M$ is drawn from a probability distribution (prior or posterior) $\phi$ to mean that $r$ is drawn from a dedicated probability distribution (prior or posterior) and $p$ is drawn from another dedicated probability distribution (prior or posterior).
+
+In frequentist point of view, the learner $\gL$ that maximizes the expected cumulative reward over $T$ time steps equivalently minimizes its expected regret $\E\bigg[\Reg(\gL, M, T)\bigg]$.
+To achieve this goal, a common strategy in frequentist view point is to apply \emph{optimism in face of uncertainty} (OFU) principle: the learner maintains a confidence set for the unknown MDP $M$ and executes an optimal policy of the
+“best” MDP (it is the best in term of gain, or value function, etc) in the confidence set, \eg, \cite{ortner2020regret, bourel2020tightening, zhang2019regret, zanette2019tighter, fruit2018near, fruit2018efficient, jin2018q, fruit2017regret,azar2017minimax, bartlett2012regal, filippi2010optimism, jaksch2010near}.
+
+For Bayesian point of view, the learner minimizes a similar notion of regret known as \emph{Bayesian regret} (or Bayes risk) defined by
+\begin{equation}
+    \label{eq:bayes_rg}
+    \BayReg(\gL, \phi, T):=\ex{\E\bigg[\Reg(\gL, M, T) \mid M\bigg]}
+\end{equation}
+where $\phi$ is the prior distribution of the unknown MDP $M$.
+%So, the learner $\gL$ maximizes the expected cumulative rewards from $M$ over $T$ time steps by minimizing its Bayesian regret $\BayReg(\gL, \phi, T)$.
+In Bayesian view point, an efficient exploration-exploitation trade-off can be done by posterior sampling introduced by \cite{thompson1933likelihood}: the learner keeps a posterior distribution over possible MDPs (precisely, the support of the prior distribution) and executes an optimal policy of a sampled MDP, see \eg, \cite{osband2013more, gopalan2015thompson, ouyang2017learning}.
+
+A common process between the two approaches is that they compute an optimal policy of an ``imagined MDP'' that they believe to be the unknown MDP $M=\langle\gS,\gA,r,p\rangle$.
+Precisely, in both approaches, at the beginning of episode $k\ge1$, the learner computes a policy denote by $\pi^k$ that is optimal in an imagined MDP denote by $M^k=\langle\gS,\gA,r^k,p^k\rangle$.
+The learning process is summarized in Algorithm~\ref{algo:generics}.
+
+\begin{algorithm}[ht]
+    \DontPrintSemicolon
+    \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+    \Input{The unknown MDP $M=\langle\gS,\gA,r,p\rangle$}
+    %\Init{$t^1=1, o_{t^1}=\{s_1\}$}
+    \BlankLine
+    \For{episodes $k=1,2,\dots$}{
+        %Based on observation $o_{t^k}$, compute the imagined MDP $M^k$ (using posterior sampling or optimism). \;\label{line:new_mdp}
+        Compute the imagined MDP $M^k=\langle\gS,\gA,r^k,p^k\rangle$ \;\label{line:new_mdp}
+        Compute an optimal policy $\pi^k$ of $M^k$ \;\label{line:new_policy}
+        \While{episode $k$ continues}{
+            Execute action $a_t=\pi^k(s_t)$ \;
+            %Observe $o_t=o_t\cup\{s_t,a_t,r_t,s_{t+1}\}$. \;
+            Observe $r_t$ and next state $s_{t+1}$. \;
+        }
+    }
+    \caption{Common process of episodic learning algorithms}
+    \label{algo:generics}
+\end{algorithm}
+
+Since an optimal policy can be computed in a deterministic manner given the MDP, the ``high-level'' difference between both approaches lies in Line~\ref{line:new_mdp} of Algorithm~\ref{algo:generics} at which an imagined MDP $M^k$ is constructed: chosen ``optimistically'' by OFU method or chosen randomly by posterior sampling according to its belief (or the posterior distribution).
 
 From now on, a learner is an algorithm for the learning problem.
-To understand this thesis, we revisit three algorithms for the end this chapter: UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, which rely on OFU method, and PSRL \cite{osband2013more}, which is a posterior sampling algorithm.
-We give the sketch of proof for their regret upper bound in finite horizon setting although UCRL2 is originally design for infinite horizon average reward.
+We revisit three algorithms for the end this chapter: UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, which rely on OFU method, and PSRL \cite{osband2013more}, which is a posterior sampling algorithm.
+We give the sketch of proof for their regret upper bound in finite horizon setting although UCRL2 is originally design for infinite horizon average reward model.
 We will give a detail proof in Chapter~\ref{ch:learning_rested} when we derive the three algorithms for Markovian bandit problem.
 
-We extend the notation of incentive quantities such as gain and value function in Chapter~\ref{ch:mdp} as the following
+\subsection{Upper bound on regret: general idea}
+
+In the following, we provide a soft analysis of regret in finite horizon setting. 
+The analysis will involve value function associated to different MDPs.
+So, we extend the notation in Chapter~\ref{ch:mdp} as the following
 \begin{itemize}
-    \item the optimal gain, discounted value function and expected cumulative reward from the unknown MDP $M$ is denoted by $g^{\pi^*}_M$, $v^{\pi^*}_M$ and $w^{\pi^*}_{M,h:H}$ respectively where $\pi^*$ is an optimal policy in $M$;
-    \item the optimal gain, discounted value function and expected cumulative reward from the imagined MDP $M^k$ is denoted by $g^{\pi^k}_{M^k}$, $v^{\pi^k}_{M^k}$ and $w^{\pi^k}_{M^k,h:H}$ respectively where $\pi^k$ is an optimal policy in $M^k$.
+    \item the expected cumulative reward from the unknown MDP $M$ between time steps $h$ and $H$ is denoted by $w^{\pi^*}_{M,h:H}$ respectively where $\pi^*$ is an optimal policy in $M$;
+    \item the expected cumulative reward from the imagined MDP $M^k$ between time steps $h$ and $H$ is denoted by $w^{\pi^k}_{M^k,h:H}$ respectively where $\pi^k$ is an optimal policy in $M^k$.
 \end{itemize}
 
-By Definition~\ref{defn:rg_finite}, the regret of an algorithm $\gL$ after $K$ episodes in an unknown MDP $M$ can be written
+By Definition~\ref{ch:rl:defn:rg_finite}, the regret of an algorithm $\gL$ after $K$ episodes in an unknown MDP $M$ can be written
 \begin{align*}
     \Reg(\gL, M, K) &= \sum_{k=1}^K\sum_{s\in\gS}\rho(s)[w^{\pi^*}_{M,1:H}(s) -w^{\pi^k}_{M,1:H}(s)].
                     %&= \sum_{k=1}^K \sum_{s\in\gS}\rho(s) [w^{\pi^*}_{M,1:H}(s) -w^{\pi^k}_{M^k,1:H}(s)] +\sum_{k=1}^K \sum_{s\in\gS}\rho(s) [w^{\pi^k}_{M^k,1:H}(s) -w^{\pi^k}_{M,1:H}(s)]
@@ -232,24 +269,26 @@ The term $\vw^{\pi^*}_M -\vw^{\pi^k}_M$ can be rewritten as
     \label{eq:rg_model_conc}
     \vw^{\pi^*}_M -\vw^{\pi^k}_M = \underbrace{(\vw^{\pi^*}_M -\vw^{\pi^k}_{M^k})}_{=:\Delta_{model}^k} +\underbrace{(\vw^{\pi^k}_{M^k} -\vw^{\pi^k}_M)}_{=:\Delta_{conc}^k}
 \end{equation}
-The first term $\Delta_{model}^k$ is the difference between the real but \textbf{unknown} optimal incentive and the \textbf{imagined} optimal incentive.
+The first term $\Delta_{model}^k$ is the difference between the real but \textbf{unknown} optimal value function and the \textbf{imagined} optimal value function.
 It is also understood as the error due to model misspecification.
-Since $M$ and $\pi^*$ are unknown, this first term is hard to analyse.
+Since $M$ and $\pi^*$ are unknown, this first term is hard to be analyzed.
 However, we will see in the following that the term is non-positive for \textbf{optimism} or zero in expectation for \textbf{posterior sampling}.
 
-The second term $\Delta_{conc}^k$ can be interpreted as the ``dissimilarity'' between the \textbf{unknown} MDP $M$ and the \textbf{imagined} MDP $M^k$ along the trajectory induced by policy $\pi^k$.
-In other words, it is the discordance between the incentive from $M^k$ and the one from $M$ for policy $\pi^k$.
-Since $M^k$ and $\pi^k$ are chosen by the learner, this second term can be analyzed and both approaches upper bound the term using concentration inequalities.
+The second term $\Delta_{conc}^k$ can be interpreted as the ``dissimilarity'' between the \textbf{unknown} MDP $M$ and the \textbf{imagined} MDP $M^k$ along the trajectory induced by the policy $\pi^k$.
+In other words, it is the discordance between the value from $M^k$ and the value from $M$ for policy $\pi^k$.
+Since $M^k$ and $\pi^k$ are chosen by the learner, this second term can be analyzed and both approaches upper bound this term using concentration inequalities.
 
-\paragraph{UCRL2 \texorpdfstring{\cite{jaksch2010near}}{[JAO10]}.}
-As mentionned above, UCRL2 was originally design for infinite horizon setting.
+\subsection{Sketch of proof on regret bound of three algorithms}
+
+\subsubsection{Upper Confidence bound reinforcement learning (UCRL2) \texorpdfstring{\cite{jaksch2010near}}{[JAO10]}.}
+As mentioned above, UCRL2 was originally design for infinite horizon setting.
 %However, it still proceeds in episodic manner: the algorithm decides to update its policy when the number of visits to a state-action pair has doubled since the end of the previous episode and the new episode begins.
 %The number of visits to state-action pair $(s,a)$ means how many time steps so far that the action $a$ has been executed when the unknown MDP is in state $s$.
 %When updating the policy, UCRL2 compute the maximum-likelihood estimates of $r$ and $p$ as well as confidence sets 
 Here, we adapt UCRL2 to finite horizon setting.
 When updating the policy, UCRL2 constructs confidence sets $\sB_r$ and $\sB_p$ for $r$ and $p$ respectively based on high probability confidence bounds.
 We denote by $\sM$ the set of plausible MDPs whose reward function lives in $\sB_r$ and state transition lives in $\sB_p$.
-UCRL2 chooses the MDP that incurs the highest optimal incentive among the MDPs in $\sM$ and computes an optimal policy of the chosen MDP.
+UCRL2 chooses the MDP that incurs the highest optimal value among the MDPs in $\sM$ and computes an optimal policy of the chosen MDP.
 That is, at the start of episode $k$, UCRL2 computes $M^k$ and $\pi^k$ such that
 \begin{equation}
     \label{ch:rl:eq:optim}
@@ -257,14 +296,30 @@ That is, at the start of episode $k$, UCRL2 computes $M^k$ and $\pi^k$ such that
 \end{equation}
 where
 \begin{align*}
-    \sM^k:=\{\langle\gS,\gA,r',p'\rangle : r'(s,a)\in\sB_r^k(s,a)\text{ and } \vp'(\cdot\mid s,a)\in\sB_p^k(s,a) \text{ for all }s\in\gS, a\in\gA_s\}
+    \sM^k:=\Big\{\langle\gS,\gA,r',p'\rangle :
+    \text{ for all }(s,a), r'(s,a)\in\sB_r^k(s,a) \text{ and } \vp'(\cdot\mid s,a)\in\sB_p^k(s,a)\Big\}
 \end{align*}
 is the set of plausible MDPs compatible with the confidence sets.
-The set of plausible MDPs is constructed to contains the unknown $M$ with probability.
-Hence, $\pi^k$ is optimistic in the sense that $\vw^{\pi^k}_{M^k}\ge \vw^{\pi^*}_M$ with high probability. 
-This means that with high probability, $\vw^{\pi^*}_M- \vw^{\pi^k}_{M^k}\le \vzero$.
+So, UCRL2 executes Lines~\ref{line:new_mdp} and \ref{line:new_policy} of Algorithm~\ref{algo:generics} simultaneously using Extended Value Iteration (EVI).
+EVI is designed such that \eqref{ch:rl:eq:optim} holds.
+We refer to \cite{jaksch2010near} for detail algorithm and its convergence proof.
 
-So, by \Eqref{eq:rg_model_conc}, with high probability the regret of UCRL2 is smaller than ${\sum_{k=1}^K\sum_{s\in\gS}\rho(s)[\Delta_{conc}^k(s)]}$.
+Let $t^k$ be the time step when the episode $k$ begins with the convention that $t^1=1$.
+The observations up to time $t^k$ is denoted by $o_{t^k}{:=}\{s_1,a_1,r_1,\dots,s_{t^k-1},a_{t^k-1},r_{t^k-1},s_{t^k}\}$.
+For all state-action pair $(s,a)$, let $n^k(s,a)$ be the number of times up to $t^k$ that the algorithm executes action $a$ when the MDP is in state $s$.
+At time step $t^k$, UCRL2 uses the observations $o_{t^k}$ to compute $\hat{r}^k$ and $\hat{p}^k$, the empirical means of $r$ and $p$ respectively.
+The confidence sets for reward and transition are computed: for all state-action pair $(s,a)$,
+\begin{align*}
+    \sB_r^k(s,a)&:=\Bigl\{u\in[0,1] : \abs{u-\hat{r}^k(s,a)}\le\beta^k_r(s,a)\Bigr\}, \\
+    \sB_p^k(s,a)&:=\Bigl\{\vq\in[0,1]^{\abs{\gS}}: \norm{\vq-\hat{\vp}^k(\cdot\mid s,a)}_{\ell_1}\le \beta^k_p(s,a)
+    \text{ and }\norm{\vq}_{\ell_1}=1\Bigr\}
+\end{align*}
+where $\beta_r^k(s,a)=\displaystyle\sqrt{\frac{c_r\ln(\abs{\gS}\abs{\gA}t^k)}{2\max\Bigl(1,n^k(s,a)\Bigr)}}$ and $\beta_p^k(s,a)=\displaystyle\sqrt{\frac{c_p\abs{\gS}\ln(\abs{\gA}t^k)}{\max\Bigl(1,n^k(s,a)\Bigr)}}$ are the confidence bonuses, and $c_r$ and $c_p$ are constants to be chosen accordingly before time step $t^1$.
+
+The set of plausible MDPs $\sM^k$ is constructed to contain the unknown $M$ with high probability.
+Hence, by \eqref{ch:rl:eq:optim}, $\vw^{\pi^k}_{M^k}\ge \vw^{\pi^*}_M$ with high probability. 
+%This means that with high probability, $\vw^{\pi^*}_M- \vw^{\pi^k}_{M^k}\le \vzero$.
+In consequence, \Eqref{eq:rg_model_conc} implies that the regret of UCRL2 is smaller than ${\sum_{k=1}^K\sum_{s\in\gS}\rho(s)[\Delta_{conc}^k(s)]}$ with high probability.
 Using Bellman evaluation equations, the term $\Delta_{conc}^k(s)$ can be rewritten as
 \begin{align}
     w^{\pi^k}_{M^k,1:H}(s_1) -w^{\pi^k}_{M,1:H}(s_1)
@@ -274,13 +329,16 @@ Using Bellman evaluation equations, the term $\Delta_{conc}^k(s)$ can be rewritt
 The term $\vp^k\vw^{\pi^k}_{M^k}-\vp\vw^{\pi^k}_M$ equals $(\vp^k-\vp)\vw^{\pi^k}_{M^k} +\vp(\vw^{\pi^k}_{M^k}-\vw^{\pi^k}_M)$.
 Since $w^{\pi^k}_{M^k,h:H}(s)\in [0,H]$ for any $h\le H$ and $s\in\gS$ is not deterministic, the term $(\vp^k-\vp)\vw^{\pi^k}_{M^k}$ is bounded using Hölder's inequality.
 So, we get
+
 \begin{equation}
     \label{ch:rl:eq:delta_conc}
     \Delta_{conc}^k(s_1)\le\sum_{t=1}^{H} \abs{r^k(s_t,a_t)-r(s_t,a_t)}{+}H\norm{\vp^k(\cdot\mid s_t,a_t)-\vp(\cdot\mid s_t,a_t)}_{\ell_1} +d_t
 \end{equation}
-where $\{d_t\}_{1\le t\le H}$ is a martingale difference sequence, each term upper bounded by $H$.
-So, the sum $\sum_{k=1}^K\sum_{t=1}^Hd_t$ can be bounded using Azuma-Hoeffding's inequality.
+where $d_{t-1}=\vp(\cdot\mid s_{t{-}1},a_{t{-}1})\Bigl(\vw^{\pi^k}_{M^k,t:H} {-}\vw^{\pi^k}_{M,t:H}\Bigr) {-}\Bigl(w^{\pi^k}_{M^k,t:H}(s_{t}) -w^{\pi^k}_{M,t:H}(s_{t})\Bigr)$.
+So, $\{d_t\}_{1\le t\le H}$ is a martingale difference sequence, each term upper bounded by $H$.
+The sum $\sum_{k=1}^K\sum_{t=1}^Hd_t$ can be bounded using Azuma-Hoeffding's inequality.
 Moreover, if the unknown $M$ belongs to the plausible set $\sM$, then $\abs{r^k-r}$ and $\norm{\vp^k-\vp}_{\ell_1}$ can be bounded by the size of $\sB_r^k$ and $\sB_p^k$ respectively.
+
 So, the regret of UCRL2 is bounded.
 %If $M$ is communicating with diameter $D$, then any MDP in $\sM$ is communicating with a diameter bounded by $D$ (see \cite[Section~4.3.1]{jaksch2010near}).
 For the sake of completeness, we recall the result of \cite{jaksch2010near} for infinite horizon setting below.
@@ -293,18 +351,19 @@ For the sake of completeness, we recall the result of \cite{jaksch2010near} for 
 \end{prop}
 Compare to Proposition~\ref{prop:minimax_rg_lb}, the upper bound in Proposition~\ref{ch:rl:prop:uclr2} is loose by a factor $\sqrt{D\abs{\gS}}$ ignoring the logarithmic term.
 
-\paragraph{UCBVI \texorpdfstring{\cite{azar2017minimax}}{[AOM17]}.}
+\subsubsection{Upper confidence bound value iteration (UCBVI) \texorpdfstring{\cite{azar2017minimax}}{[AOM17]}.}
 UCBVI is an optimistic algorithm designed for finite horizon setting.
-The algorithm keeps track of the maximum-likelihood estimate of $p$ and constructs only a confidence set $\sB_r$ for $r$ based on high probability confidence bounds.
-That is, at the start of episode $k$, UCBVI compute $M^k$ and $\pi^k$ such that \eqref{ch:rl:eq:optim} is satisfied where
+The algorithm keeps track of the emprical mean $\hat{p}$ of $p$ and constructs only a confidence set $\sB_r$ for $r$ based on high probability confidence bound.
+That is, at the start of episode $k$, UCBVI compute $M^k$ and $\pi^k$ such that \eqref{ch:rl:eq:optim} holds where
 \begin{align*}
     \sM^k:=\{\langle\gS,\gA,r',\hat{p}^k\rangle : r'(s,a)\in\sB_r^k(s,a) \text{ for all }s\in\gS, a\in\gA_s\}
 \end{align*}
-is the set of plausible MDPs compatible with the confidence set and the estimate.
-Hence, the policy $\pi^k$ is optimistic and with high probability $\vw^{\pi^*}_M- \vw^{\pi^k}_{M^k}\le \vzero$ holds.
+is the set of plausible MDPs compatible with the confidence set.
+The confidence bonus for reward is computed by $\beta_r^k(s,a)=\displaystyle H\sqrt{\frac{c_r\ln(\abs{\gS}\abs{\gA}t^k)}{2\max\Bigl(1,n^k(s,a)\Bigr)}}$ where $c_r$ is a constant to be chosen accordingly before the learning.
 
-So, by \Eqref{eq:rg_model_conc}, with high probability, the regret of UCBVI is bounded by ${\sum_{k=1}^K\sum_{s\in\gS}\rho(s)[\Delta_{conc}^k(s)]}$.
-The theoretical novelty in UCBVI is to deal efficiently with the term $(\hat{\vp}^k-\vp)\vw^{\pi^k}_{M^k}$ when rewritting the right term of \eqref{eq:decom} as shown in UCRL2 technique.
+The set $\sM^k$ contains the unknown $M$ with high probability. So, $\vw^{\pi^*}_M- \vw^{\pi^k}_{M^k}\le \vzero$ holds with high probability.
+By \Eqref{eq:rg_model_conc}, the regret of UCBVI is bounded by ${\sum_{k=1}^K\sum_{s\in\gS}\rho(s)[\Delta_{conc}^k(s)]}$ with high probability.
+The theoretical novelty in UCBVI is to efficiently deal with the term $(\hat{\vp}^k-\vp)\vw^{\pi^k}_{M^k}$ when rewriting the right term of \eqref{eq:decom} as shown in UCRL2 technique.
 Indeed, $(\hat{\vp}^k-\vp)\vw^{\pi^k}_{M^k}$ is also rewritten as $(\hat{\vp}^k-\vp)(\vw^{\pi^k}_{M^k}-\vw^{\pi^*}_{M}) +\vw^{\pi^*}_{M}(\hat{\vp}^k-\vp)$.
 Since $\vw^{\pi^*}_M$ is deterministic, the term $\vw^{\pi^*}_{M}(\hat{\vp}^k-\vp)$ can be bounded using Chernoff-Hoeffding's inequality on individual component $w^{\pi^*}_{M}(s')\Bigl(\hat{p}^k(s')-p(s')\Bigr)$.
 Moreover, thank to the optimism, $w^{\pi^k}_{M^k}(s')-w^{\pi^*}_{M}(s')$ is non-negative for any $s'\in\gS$.
@@ -323,16 +382,18 @@ UCBVI enjoys the following minimax regret guarantee.
 \end{prop}
 So, for $T\ge H\abs{\gS}^3\abs{\gA}$ and $\abs{\gS}\abs{\gA}\ge H$, this bound is of order $\tilde{\landauO}(H\sqrt{\abs{\gS}\abs{\gA}T})$ where $T=KH$ and $\tilde{\landauO}(\cdot)$ hides the logarithmic terms.
 Compare to the lower bound $\landauOmega(\sqrt{H\abs{\gS}\abs{\gA}T})$, the bound given in Proposition~\ref{ch:rl:prop:ucbvi} is loose by a factor $\sqrt{H}$ ignoring the logarithmic terms.
-Another advanced version of UCBVI that enjoys a regret bound $\tilde{\landauO}(\sqrt{H\abs{\gS}\abs{\gA}T})$ is also given in \cite{azar2017minimax} but it is not necessary to understand this thesis.
+Another advanced version of UCBVI that enjoys a regret bound $\tilde{\landauO}(\sqrt{H\abs{\gS}\abs{\gA}T})$ is also given in \cite{azar2017minimax}.% but it is not necessary to understand this thesis.
 
-\paragraph{PSRL \texorpdfstring{\cite{osband2013more}}{[ORV13]}.}
-PSRL designed for finite horizon setting is a posterior sampling algorithm which starts by choosing the prior distributions $\phi_r$ and $\phi_p$ such that the unknown $r$ is assumed to be drawn from $\phi_r$ and the unknown $p$ from $\phi_p$.
+\subsubsection{Posterior sampling for reinforcement learning (PSRL) \texorpdfstring{\cite{osband2013more}}{[ORV13]}.}
+
+PSRL designed for finite horizon setting is a posterior sampling algorithm which starts by choosing prior distributions $\phi_r$ and $\phi_p$ such that the unknown $r$ is assumed to be drawn from $\phi_r$ and the unknown $p$ from $\phi_p$.
 To ease the exposition, we will say that a MDP $M'=\langle\gS,\gA,r',p'\rangle$ is sampled from $\phi$ when $r'$ is sampled from $\phi_r$ and $p'$ is sampled from $\phi_p$.
 When updating its policy, PSRL use the collected observations and Bayes' theorem to derive the posterior distribution of the unknown MDP.
 After that, a MDP is sampled from the posterior and PSRL computes an optimal policy in the sampled MDP.
-That is, at time step $t^k$, the start of episode $k$, PSRL has collected the observations denoted by $o_{t^k}:=\{s_1,a_1,r_1,\dots,s_{t^k-1},a_{t^k-1},r_{t^k-1}\}$ and updates the posterior $\phi\bigl(\cdot\mid o_{t^k}\bigr)$.
-Then, it samples a MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$ and computes an optimal policy $\pi^k$ in $M^k$.
-The policy $\pi^k$ is then used to rollout episode $k$ and collect more observations.
+That is, at time step $t^k$, PSRL uses the observations $o_{t^k}$ to update the posterior $\phi\bigl(\cdot\mid o_{t^k}\bigr)$.
+Then, Line~\ref{line:new_mdp} of Algorithm~\ref{algo:generics} is performed by sampling a MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$. Then, PSRL computes an optimal policy $\pi^k$ in $M^k$.
+The policy $\pi^k$ is then used during the episode $k$ to collect more observations.
+
 The performance of PSRL is measured by the Bayesian regret given in \eqref{eq:bayes_rg}.
 In broad terms, we bound the Bayesian regret by bounding the regret with terms that are deterministic and the expected value of deterministic term is itself.
 To do so, we will first show that the expected value of $\Delta^k_{model}$ defined in \eqref{eq:rg_model_conc} is zero.
