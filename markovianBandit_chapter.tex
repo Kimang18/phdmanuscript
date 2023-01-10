@@ -2,13 +2,13 @@
 \let\clearpage\relax
 
 \chapter{Markovian Bandit Problem}
-\label{ch:mb_problem}
+\label{ch:mb}
 
 In this chapter, we present two settings of markovian bandit problem: rested and restless.
 In each setting, we explain the objective function and...
 
 \section{Rested Markovian bandit}
-\label{sec:rested_mab_pb}
+\label{sec:rested_mab}
 
 Rested markovian bandit is a model for dynamic allocation problem in which the decision maker wants to efficiently share its limited resource between various activities which are being pursued.
 
@@ -19,32 +19,40 @@ Rested markovian bandit is a model for dynamic allocation problem in which the d
 %\end{itemize}
 
 \subsection{Problem formulation}
-\label{subsec:rested_pb_formul}
+\label{subsec:rested_formul}
 
 We consider the rested markovian bandit having $n\in\N^+$ arms.
 Each arm $\langle\gS_i, \vr_i, \mP_i\rangle$ for $i\in\{1,\dots,n\}=:[n]$ is a Markov reward process with a finite state space $\gS_i$, a mean reward vector $\vr_i\in[0,1]^{\abs{\gS_i}}$ and a stochastic matrix $\mP_i$.
 In state $s_i\in\gS_i$, the arm $i$ incurs a random reward with expected value $r_i(s_i)$ and transitions to next state $s'_i$ with probability $P_i(s_i,s'_i)$.
 Without loss of generality, we assume that the state space of the arms are pairwise distinct: $\gS_i\cap\gS_j=\emptyset$ for any $i\neq j$.
-The state of arm $i$ will always be denoted with an index $i$: we will denote such a state by $s_i$ or $s'_i$.
-As state spaces are disjoint, this allows us to simplify the notation by dropping the index $i$ from reward vector and transition matrix: when convenient, we will denote them by $r(s_i)$ instead of $r_i(s_i)$ and by $P(s_i,s'_i)$ instead of $P_i(s_i,s'_i)$ since no confusion is possible.
+The state of arm $i$ will be denoted with an index $i$: we will denote such a state by $s_i$ or $s'_i$.
+As state spaces are disjoint, this allows us to simplify the notation by dropping the index $i$ from expected reward and transition probability: when convenient, we will denote them by $r(s_i)$ instead of $r_i(s_i)$ and by $P(s_i,s'_i)$ instead of $P_i(s_i,s'_i)$ since no confusion is possible.
 
-We consider the following sequential problem: At time step $1$, the state of all arms denoted by $\vs_1:=(s_{1,1},\dots,s_{1,n})$ is sampled according to some initial distribution $\rho$ over the state space $\gS:=\gS_1\times\dots\times\gS_n$.
-At time step $t$, the decision maker observes the current of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates one arm $a_t$.
-The activated arm incurs a random reward discounted as $\gamma^{t-1}r_t$ where $\gamma\in(0,1)$ is the discount factor.
+We consider the following sequential problem: At time step $1$, the state of all arms denoted by $\vs_1:=(s_{1,1},\dots,s_{1,n})$ is sampled according to some initial distribution $\rho$ over the state space $\gX:=\gS_1\times\dots\times\gS_n$.
+At time step $t$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates one arm $a_t\in\{1,\dots,n\}=:[n]$.
+The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1)$ is the discount factor.
 %and $r_t$ is drawn from some distribution on $[0,1]$ with expected value $r(x_{t,a_t})$.
 After that, the activated arm transitions to new state. %$s_{t+1,a_t}$ with probability $P(s_{t,a_t}, s_{t,a_t})$.
-The other arms make no state transitions and incur no rewards.
-The goal of the decision maker is to identify a policy $\pi$ that maximizes the expected cumulative discounted reward as defined in Section~\ref{ch:mdp:sec:discounted}
+The other arms incur no rewards and make no state transitions.
+The goal of the decision maker is to identify a policy $\pi:\gS\mapsto[n]$ that maximizes the expected cumulative discounted reward as defined in Section~\ref{ch:mdp:sec:discounted}:
+\begin{equation}
+    \label{ch:mb:value}
+    v_\gamma^\pi(\vs):=\E^\pi\Bigl[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid \vs_1=\vs\Bigr]
+\end{equation}
+This is an infinite horizon discounted problem in which the rested markovian bandit is a specific instance of MDP -- that we denote by $M$ -- whose state space is $\gS$ and action space is $\gA:=[n]$.
+If the decision maker activates an arm $a\in[n]$ when $M$ is in state $\vs=(s_1,\dots,s_n)$, then $M$ incurs a random reward with expected value $r(s_a)$ and transitions to new state $\vs'=(s'_1,\dots,s'_n)$ with probability $p(\vs'\mid \vs, a)$ that satisfies
+\begin{equation}
+    \label{ch:mb:defP}
+    p(\vs'\mid \vs, a)
+    = 
+    \left\{
+        \begin{array}{ll}
+            P(s_a,s'_a) & \text{ if $s_b=s'_b$ for all $b\ne a$;}\\
+            0 &\text{ otherwise}.
+        \end{array}
+    \right.
+\end{equation}
 %TODO:continue
-Rested markovian is a specific instance of MDP -- that we denote by $M$ -- whose state space is $\gS$ and action space is $\gA:=[n]$.
-
-\begin{itemize}
-    \item explain a Markovian bandit: $n$ arms denote by $M$, Arm $i$ is $\langle\gS_i, \vr_i,\mP_i\rangle$
-    \item state $\vx=(x_1\ \dots\ x_n)$ and $\vx_t=(x_{1,t}\ \dots\ x_{n,t})$
-    \item reward $r(\vx, a)=r_a(x_a)=r(x_a)$
-    \item transition $P(\vy \mid\vx,a)=P_a(x_a,y_a)=P(x_a,y_a)$
-    \item objective function: maximize the value function $\max_{\pi}V^\pi_M$ 
-\end{itemize}
 
 \subsection{Gittins Index Policy}
 \label{subsec:gittins_idx}
