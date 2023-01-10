@@ -9,7 +9,6 @@ In the previous chapter, we used the formalism of MDPs to describe how a decisio
 Depending on the chosen optimality criterion, we explained how an optimal policy can be obtained when the parameters of the MDP are fully known.
 In this chapter, we consider the case when the MDP's parameters are \textbf{unknown} and need to be learned by the decision maker via trial and error.
 
-
 In Section~\ref{ch:rl:sec:overal}, we describe the existing settings in reinforcement learning framework.
 Then, we present the learning setting considered in this thesis and performance measure, namely the regret. 
 In Section~\ref{ch:rl:sec:baseline}, we give the regret lower bound for any learning algorithms.
@@ -64,7 +63,7 @@ Model-based algorithms are costly for MDPs with large or continuous state and ac
 \label{sec:intro_learning}
 
 We focus on \emph{model-based algorithms in online learning with navigating model and episodic policy update}.
-The learner interacts with a MDP $M=\langle\gS,\gA,r,p\rangle$ where the state and action spaces $\gS$ and $\gA$ are known but the expected value of reward $r$ and state transition probabilities $p$ are unknown.
+The learner interacts with a MDP $M=\langle\gS,\gA,r,p\rangle$ where the state space $\gS$ of size $\abs{\gS}=S$ and action space $\gA$ of size $\abs{\gA}=A$ are known but the expected value of reward $r$ and state transition probabilities $p$ are unknown.
 %That is, the parameters $r$ and $p$ are unknown to the learner.
 At time step $t\ge1$, the MDP is in state $s_t$ and the learner executes an action $a_t$.
 The MDP incurs a random reward denoted by $r_t$ and transitions to next state denoted by $s_{t+1}$.
@@ -165,13 +164,13 @@ From Definition~\ref{ch:mdp:defn:mdp_class} and \cite[Proposition~8.3.1]{puterma
 Given any learner $\gL$, there always exists an unknown MDP $M$ that slows down the learner $\gL$ as the following.
 \begin{prop}[{\cite[Theorem~5]{jaksch2010near}}]
     \label{prop:minimax_rg_lb}
-    In infinite horizon setting, for any learner $\gL$, any integers $\abs{\gS}$, $\abs{\gA}\ge10$, $D\ge 20\log_{\abs{\gA}}(\abs{\gS})$, and $T\ge DSA$, there is a MDP $M=\langle\gS,\gA,r,p\rangle$ whose diameter is $D$ such that for any initial state $s_1$, the expected regret of $\gL$ after $T$ time steps is lower bounded as
+    In infinite horizon setting, for any learner $\gL$, any integers $S$, $A\ge10$, $D\ge 20\log_{A}(S)$, and $T\ge DSA$, there is a MDP $M=\langle\gS,\gA,r,p\rangle$ whose diameter is $D$ such that for any initial state $s_1$, the expected regret of $\gL$ after $T$ time steps is lower bounded as
     \begin{equation}
         \label{eq:minimax_rg_lb}
-        \ex{\Reg(\gL, M, T)} \ge 0.015\sqrt{D\abs{\gS}\abs{\gA}T}.
+        \ex{\Reg(\gL, M, T)} \ge 0.015\sqrt{DSAT}.
     \end{equation}
 \end{prop}
-This proposition means that no matter how ``good'' a learner is, it is always possible to construct a worst-case MDP $M$ having $\abs{\gS}$ states, $\abs{\gA}$ actions and diameter $D$ such that the learner suffers a regret $\landauOmega(\sqrt{D\abs{\gS}\abs{\gA}T})$ after $T$ time steps in $M$.
+This proposition means that no matter how ``good'' a learner is, it is always possible to construct a worst-case MDP $M$ having $S$ states, $A$ actions and diameter $D$ such that the learner suffers a regret $\landauOmega(\sqrt{DSAT})$ after $T$ time steps in $M$.
 This bound on worst-case regret is often referred as ``minimax'' bound.
 
 The minimax bound is different from the bounds given in \cite{ok2018exploration, burnetas1997optimal} which are problem-dependent and asymptotic bounds.
@@ -181,12 +180,12 @@ We refer to \cite{ok2018exploration, burnetas1997optimal} for more detail about 
 
 Minimax bound is often expressed in term of span (or range) of the optimal bias function as well.
 In fact, the specific worst-case MDP constructed by \cite{jaksch2010near} to prove the lower bound in Proposition~\ref{prop:minimax_rg_lb} satisfies $D=2sp(\vh^*)$ where $\vh^*$ is the optimal bias function (see Section~\ref{ch:mdp:sec:gain} for its definition).
-If $H\in\real$ is an upper bound on $sp(\vh^*)$, then the minimax bound is also expressed as $\landauOmega(\sqrt{H\abs{\gS}\abs{\gA}T})$.
-In recent work of \cite{zhang2019regret}, the proposed algorithm, albeit intractable,  achieves a regret upper bounded by $\tilde{\landauO}(\sqrt{H\abs{\gS}\abs{\gA}T})$ (see \cite[Theorem~1]{zhang2019regret}).
+If $H\in\real$ is an upper bound on $sp(\vh^*)$, then the minimax bound is also expressed as $\landauOmega(\sqrt{HSAT})$.
+In recent work of \cite{zhang2019regret}, the proposed algorithm, albeit intractable,  achieves a regret upper bounded by $\tilde{\landauO}(\sqrt{HSAT})$ (see \cite[Theorem~1]{zhang2019regret}).
 This result suggests that the minimax bound in Proposition~\ref{prop:minimax_rg_lb} cannot be improved.
 
 For finite horizon setting, the diameter of the MDP or the upper bound on span of optimal bias is replaced with the horizon of an episode.
-So, the minimax bound can be immediately deduced from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst-case MDP with $\abs{\gS}$ states and $\abs{\gA}$ actions such that after $K$ episodes, each of horizon\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}} $H$, the learner suffers a regret\footnote{In time-inhomogeneous finite horizon setting, the minimax bound is $\landauOmega(H\sqrt{HSAK})$ (see, \eg, \cite{jin2018q}).} $\landauOmega(H\sqrt{SAK})$.
+So, the minimax bound can be immediately deduced from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst-case MDP with $S$ states and $A$ actions such that after $K$ episodes, each of horizon\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}} $H$, the learner suffers a regret\footnote{In time-inhomogeneous finite horizon setting, the minimax bound is $\landauOmega(H\sqrt{HSAK})$ (see, \eg, \cite{jin2018q}).} $\landauOmega(H\sqrt{SAK})$.
 
 
 \section{Algorithms with regret guarantee}
@@ -258,12 +257,12 @@ We summarize several existing results about minimizing the regret in Table~\ref{
 \begin{tabular}{|l|l|}
 \hline
 Algorithm & Regret \\ \hline
-PSRL \cite{osband2013more}  & $\tilde{\landauO}(H\abs{\gS}\sqrt{\abs{\gA}T})$ \\ 
-UCBVI-BF \cite{azar2017minimax}  & $\tilde{\landauO}(\sqrt{H\abs{\gS}\abs{\gA}T})$ \\ 
-EULER \cite{zanette2019tighter}        & $\tilde{\landauO}(\sqrt{H\abs{\gS}\abs{\gA}T})$ \\ \hline
-Lower bound & $\landauOmega(\sqrt{H\abs{\gS}\abs{\gA}T})$ \cite{jaksch2010near} \\ \hline
+PSRL \cite{osband2013more}  & $\tilde{\landauO}(HS\sqrt{AT})$ \\ 
+UCBVI-BF \cite{azar2017minimax}  & $\tilde{\landauO}(\sqrt{HSAT})$ \\ 
+EULER \cite{zanette2019tighter}        & $\tilde{\landauO}(\sqrt{HSAT})$ \\ \hline
+Lower bound & $\landauOmega(\sqrt{HSAT})$ \cite{jaksch2010near} \\ \hline
 \end{tabular}
-\caption{Short regret summary for model-based RL algorithms in finite horizon setting with $\abs{\gS}$ states, $\abs{\gA}$ actions, and $T=KH$ steps.
+\caption{Short regret summary for model-based RL algorithms in finite horizon setting with $S$ states, $A$ actions, and $T=KH$ steps.
 $K$ is the total number of episodes and $H$ is horizon of each episode.
 }
 \label{ch:rl:tab:finite}
@@ -273,17 +272,17 @@ $K$ is the total number of episodes and $H$ is horizon of each episode.
 \begin{tabular}{|l|l|l|l|}
 \hline
 Algorithm & Regret & Assump. on $M$ & Policy comp.            \\ \hline
-REGAL \cite{bartlett2012regal}      & $\tilde{\landauO}(H\abs{\gS}\sqrt{\abs{\gA}T})$  & weakly comm. & Intractable   \\ 
-UCRL2 \cite{jaksch2010near}       & $\tilde{\landauO}(D\abs{\gS}\sqrt{\abs{\gA}T})$ & diameter is finite        & EVI \\ 
-TSDE \cite{ouyang2017learning}        & $\tilde{\landauO}(H\abs{\gS}\sqrt{\abs{\gA}T})$ & weakly comm. & VI       \\ 
-OSP \cite{ortner2020regret}         & $\tilde{\landauO}(\sqrt{t_{mix}\abs{\gS}\abs{\gA}T})$ & ergodic           & Intractable   \\ 
-SCAL \cite{fruit2018efficient}        & $\tilde{\landauO}(H\abs{\gS}\sqrt{\abs{\gA}T})$ & weakly comm. & modified EVI           \\
+REGAL \cite{bartlett2012regal}      & $\tilde{\landauO}(HS\sqrt{AT})$  & weakly comm. & Intractable   \\ 
+UCRL2 \cite{jaksch2010near}       & $\tilde{\landauO}(DS\sqrt{AT})$ & diameter is finite        & EVI \\ 
+TSDE \cite{ouyang2017learning}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & VI       \\ 
+OSP \cite{ortner2020regret}         & $\tilde{\landauO}(\sqrt{t_{mix}SAT})$ & ergodic           & Intractable   \\ 
+SCAL \cite{fruit2018efficient}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & modified EVI           \\
 %KL-UCRL     & $\tilde{O}$(\sqrt{S\sum_{x,a}\sV^*_{x,a}T}) & ergodic                     & modified EVI                  \\ \hline
-UCRL2B \cite{fruit2020improved}      & $\tilde{\landauO}(\abs{\gS}\sqrt{D\abs{\gA}T})$ & diameter is finite      & EVI                           \\
-EBF \cite{zhang2019regret}         & $\tilde{\landauO}(\sqrt{H\abs{\gS}\abs{\gA}T})$ & weakly comm.     & Intractable   \\ \hline
-Lower bound & $\landauOmega(\sqrt{D\abs{\gS}\abs{\gA}T})$ \cite{jaksch2010near} &                              &                               \\ \hline
+UCRL2B \cite{fruit2020improved}      & $\tilde{\landauO}(S\sqrt{DAT})$ & diameter is finite      & EVI                           \\
+EBF \cite{zhang2019regret}         & $\tilde{\landauO}(\sqrt{HSAT})$ & weakly comm.     & Intractable   \\ \hline
+Lower bound & $\landauOmega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
 \end{tabular}
-\caption{Short regret summary for model-based RL algorithms in infinite horizon average reward model with $\abs{\gS}$ states, $\abs{\gA}$ actions, and $T$ steps.
+\caption{Short regret summary for model-based RL algorithms in infinite horizon average reward model with $S$ states, $A$ actions, and $T$ steps.
 $D$ is the diameter of the MDP, $H\ge sp(\vh^*)$ is upper bound on the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP.
 EVI stands for Extended value iteration \cite{jaksch2010near}, VI for value iteration, assump for assumption, comm. for communicating, and comp. for computation.
 }
@@ -359,7 +358,7 @@ The confidence sets for reward and transition are then computed: for all state-a
     \sB_p^k(s,a)&:=\Bigl\{\vq\in[0,1]^{\abs{\gS}}: \norm{\vq-\hat{\vp}^k(\cdot\mid s,a)}_{\ell_1}\le \beta^k_p(s,a)
     \text{ and }\norm{\vq}_{\ell_1}=1\Bigr\}
 \end{align*}
-where $\beta_r^k(s,a)=\displaystyle\sqrt{\frac{c_r\ln(\abs{\gS}\abs{\gA}t^k)}{2\max\Bigl(1,n^k(s,a)\Bigr)}}$ and $\beta_p^k(s,a)=\displaystyle\sqrt{\frac{c_p\abs{\gS}\ln(\abs{\gA}t^k)}{\max\Bigl(1,n^k(s,a)\Bigr)}}$ are the confidence bonuses, and $c_r$ and $c_p$ are constants to be chosen accordingly before the learning.
+where $\beta_r^k(s,a)=\displaystyle\sqrt{\frac{c_r\ln(SAt^k)}{2\max\Bigl(1,n^k(s,a)\Bigr)}}$ and $\beta_p^k(s,a)=\displaystyle\sqrt{\frac{c_pS\ln(At^k)}{\max\Bigl(1,n^k(s,a)\Bigr)}}$ are the confidence bonuses, and $c_r$ and $c_p$ are constants to be chosen accordingly before the learning.
 
 The set of plausible MDPs $\sM^k$ is constructed to contain the unknown $M$ with high probability.
 Hence, by \eqref{ch:rl:eq:optim}, $\vw^{\pi^k}_{M^k}\ge \vw^{\pi^*}_M$ with high probability. 
@@ -389,12 +388,12 @@ So, the regret of UCRL2 is bounded.
 For the sake of completeness, we recall the result of \cite{jaksch2010near} for infinite horizon setting below.
 \begin{prop}[{\cite[Theorem~2]{puterman2014markov}}]
     \label{ch:rl:prop:uclr2}
-    For any communicating MDP $M$ with $\abs{\gS}$ states, $\abs{\gA}$ actions and diameter $D$, with probability at least $1-\delta$, it holds that for any $T>1$, the regret of UCRL2 is bounded by
+    For any communicating MDP $M$ with $S$ states, $A$ actions and diameter $D$, with probability at least $1-\delta$, it holds that for any $T>1$, the regret of UCRL2 is bounded by
     \begin{align*}
-        \Reg(\mathrm{UCRL2}, M, T) \le 34D\abs{\gS}\sqrt{\abs{\gA}T\ln\Bigl(\frac{T}{\delta}\Bigr)}.
+        \Reg(\mathrm{UCRL2}, M, T) \le 34DS\sqrt{AT\ln\Bigl(\frac{T}{\delta}\Bigr)}.
     \end{align*}
 \end{prop}
-Compare to Proposition~\ref{prop:minimax_rg_lb}, the upper bound in Proposition~\ref{ch:rl:prop:uclr2} is loose by a factor $\sqrt{D\abs{\gS}}$ ignoring the logarithmic term.
+Compare to Proposition~\ref{prop:minimax_rg_lb}, the upper bound in Proposition~\ref{ch:rl:prop:uclr2} is loose by a factor $\sqrt{DS}$ ignoring the logarithmic term.
 
 \subsubsection{Upper confidence bound value iteration (UCBVI) \texorpdfstring{\cite{azar2017minimax}}{[AOM17]}.}
 UCBVI is an optimistic algorithm designed for finite horizon setting.
@@ -416,7 +415,7 @@ The confidence sets for reward are defined by: for all state-action pair $(s,a)$
 \begin{align*}
     \sB_r^k(s,a,h)&:=\Bigl\{u\in[0,h] : \abs{u-\hat{r}^k(s,a)}\le\beta^k_r(s,a,h)\Bigr\}
 \end{align*}
-where $\beta_r^k(s,a,h)=\displaystyle h\sqrt{\frac{c_r\ln(\abs{\gS}\abs{\gA}t^k)}{2\max\Bigl(1,n^k(s,a)\Bigr)}}$ is the confidence bonus, and $c_r$ is a constant to be chosen accordingly before the learning.
+where $\beta_r^k(s,a,h)=\displaystyle h\sqrt{\frac{c_r\ln(SAt^k)}{2\max\Bigl(1,n^k(s,a)\Bigr)}}$ is the confidence bonus, and $c_r$ is a constant to be chosen accordingly before the learning.
 
 %That is, at the start of episode $k$, UCBVI compute $M^k$ and $\pi^k$ such that \eqref{ch:rl:eq:optim} holds where
 %\begin{align*}
@@ -437,16 +436,16 @@ So, the empirical Bernstein's inequality can be used to upper bound each individ
 UCBVI enjoys the following worst-case regret guarantee.
 \begin{prop}[{\cite[Theorem~1]{azar2017minimax}}]
     \label{ch:rl:prop:ucbvi}
-    In finite horizon setting with horizon $H$, for any unknown MDP $M$ with $\abs{\gS}$ states and $\abs{\gA}$ actions,
+    In finite horizon setting with horizon $H$, for any unknown MDP $M$ with $S$ states and $A$ actions,
     with probability at least $1-\delta$, it holds that the regret of UCBVI is bounded by
     \begin{align*}
-        \Reg(\mathrm{UCBVI}, M, K) \le 20H^{3/2}\sqrt{\abs{\gS}\abs{\gA}K}L +250H^2\abs{\gS}^2\abs{\gA}L^2
+        \Reg(\mathrm{UCBVI}, M, K) \le 20H^{3/2}\sqrt{SAK}L +250H^2S^2AL^2
     \end{align*}
-    where $L:=\ln\Bigl(\frac{5\abs{\gS}\abs{\gA}KH^2}{\delta}\Bigr)$.
+    where $L:=\ln\Bigl(\frac{5SAKH^2}{\delta}\Bigr)$.
 \end{prop}
-So, for $T\ge H\abs{\gS}^3\abs{\gA}$ and $\abs{\gS}\abs{\gA}\ge H$, this bound is of order $\tilde{\landauO}(H\sqrt{\abs{\gS}\abs{\gA}T})$ where $T=KH$ and $\tilde{\landauO}(\cdot)$ hides the logarithmic terms.
-Compare to the lower bound $\landauOmega(\sqrt{H\abs{\gS}\abs{\gA}T})$, the bound given in Proposition~\ref{ch:rl:prop:ucbvi} is loose by a factor $\sqrt{H}$ ignoring the logarithmic terms.
-Another advanced version of UCBVI that enjoys a regret bound $\tilde{\landauO}(\sqrt{H\abs{\gS}\abs{\gA}T})$ is also given in \cite{azar2017minimax}.% but it is not necessary to understand this thesis.
+So, for $T\ge HS^3A$ and $SA\ge H$, this bound is of order $\tilde{\landauO}(H\sqrt{SAT})$ where $T=KH$ and $\tilde{\landauO}(\cdot)$ hides the logarithmic terms.
+Compare to the lower bound $\landauOmega(\sqrt{HSAT})$, the bound given in Proposition~\ref{ch:rl:prop:ucbvi} is loose by a factor $\sqrt{H}$ ignoring the logarithmic terms.
+Another advanced version of UCBVI that enjoys a regret bound $\tilde{\landauO}(\sqrt{HSAT})$ is also given in \cite{azar2017minimax}.% but it is not necessary to understand this thesis.
 
 \subsubsection{Posterior sampling for reinforcement learning (PSRL) \texorpdfstring{\cite{osband2013more}}{[ORV13]}.}
 
@@ -488,14 +487,14 @@ The term $\abs{r^k-r}$ and $\norm{\vp^k-\vp}_{\ell_1}$ can be bounded using Hoef
 PSRL enjoys the following Bayesian regret guarantee.
 \begin{prop}[{\cite[Theorem~1]{osband2013more}}]
     \label{prop:brg_psrl}
-    In finite horizon setting with horizon $H$, if $\phi$ is the prior distribution of the unknown MDP $M$ with $\abs{\gS}$ states and $\abs{\gA}$ actions, then
+    In finite horizon setting with horizon $H$, if $\phi$ is the prior distribution of the unknown MDP $M$ with $S$ states and $A$ actions, then
     \begin{equation}
         \label{eq:brg_psrl}
-        \BayReg(\mathrm{PSRL}, \phi, K) = \landauO\left(H\abs{\gS}\sqrt{\abs{\gA}KH\ln\Bigl(\abs{\gS}\abs{\gA}KH\Bigr)}\right).
+        \BayReg(\mathrm{PSRL}, \phi, K) = \landauO\left(HS\sqrt{AKH\ln\Bigl(SAKH\Bigr)}\right).
     \end{equation}
 \end{prop}
-So, this bound is of order $\tilde{\landauO}(H\abs{\gS}\sqrt{\abs{\gA}T})$ where $T=KH$ and $\tilde{\landauO}(\cdot)$ hides the logarithmic terms.
-It is loose by a factor $\sqrt{H\abs{\gS}}$ compared to the lower bound $\landauOmega(\sqrt{H\abs{\gS}\abs{\gA}T})$.
+So, this bound is of order $\tilde{\landauO}(HS\sqrt{AT})$ where $T=KH$ and $\tilde{\landauO}(\cdot)$ hides the logarithmic terms.
+It is loose by a factor $\sqrt{HS}$ compared to the lower bound $\landauOmega(\sqrt{HSAT})$.
 Note that this bound is for Bayesian regret which means that this bound is a weaker guarantee compared to the regret bound with high probability of UCRL2 and UCBVI.
 
 %    In general, in MDP $M=\langle\mSpace,\aSpace,r,P,H\rangle$, the agent starts to play from state $x$ with a certain probability given by the distribution $\rho(x)$. When using the algorithm $\Algo$ to play for $T$ time steps, the incurring regret is given by
