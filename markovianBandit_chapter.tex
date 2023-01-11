@@ -96,6 +96,7 @@ Thus, the computational complexity of Gittins index policy is linear in the numb
 Several numerical methods to compute Gittins index are presented in \cite{chakravorty2014multi} such as state elimination, and fast-pivoting algorithms.
 Given an arm with $S$ states, the current best methods compute Gittins index of all states in $(2/3)S^3+\landauO(S^2)$ arithmetic operations \cite{chakravorty2014multi}.
 In \cite[Page~4]{nino2020fast}, the author claims that it is unlikely that this complexity can be improved.
+We will discuss about Gittins index computation again in Part~\ref{part:idx}.
 
 \section{Restless Markovian bandit}
 \label{sec:restless_mab_pb}
@@ -146,10 +147,33 @@ At each time step, the decision maker activates $m$ arms whose Whittle index of 
 This heuristic performs extremely well in practice, see \eg, \cite{glazebrook2006some, ansell2003whittle, glazebrook2002index}.
 In fact, Whittle index policy has been shown to be asymptotically optimal as the number of arms grows to infinity under certain technical assumptions \cite{verloop2016asymptotically, lott2000optimality, weber1990index}.
 
+Following Whittle's development \cite{whittle1988restless}, the constraint
+\begin{align*}
+    \text{for any time }t\ge1, \sum_{i=1}^{n}a_{t,i}=m \text{ is relaxed to } \lim_{T\to+\infty}\frac1T \E^\pi\left[\sum_{i=1}^n \sum_{t=1}^{T} a_{t,i} \mid \vs_1=\vs\right]=m.
+\end{align*}
+The constraint can then be added to \eqref{ch:mb:eq:gain_defn}:
+\begin{align}
+    \lim_{T\to+\infty}\frac1T \E^\pi\left[\sum_{i=1}^n \sum_{t=1}^{T} (r_{t,i} -\lambda a_{t,i}) \mid \vs_1=\vs\right] +\lambda m \label{ch:mb:eq:relax_defn}
+\end{align}
+where $\lambda$ is a Lagrangian multiplier associated to the constraint.
+Finding a policy $\pi$ that maximizes \eqref{ch:mb:eq:relax_defn} can be done by working on $n$ independent local problems:
+for arm $i$, the optimal actions for state $s_i$ must solve the Bellman optimality equation
+\begin{align}
+    g^*(s_i) +h^*(s_i) =\max_{a_i\in\{0,1\}} \Bigl(r(s_i,a_i)-a_i\lambda +\sum_{s'_i\in\gS_i}p(s'_i\mid s_i,a_i)h^*(s'_i)\Bigr) \label{ch:mb:eq:bellman}
+\end{align}
+where $g^*(s_i)$ and $h^*(s_i)$ are the optimal gain and bias of state $s_i$ of arm $i$ respectively (see Section~\ref{ch:mdp:sec:gain} for their formal definitions).
+From \cite{whittle1988restless}, if arm $i$ is indexable, then the Whittle index of state $s_i$ is the critical value $\widx(s_i)$ such that action rest and activate are equivalent in \eqref{ch:mb:eq:bellman}:
+\begin{align}
+    r(s_i,0) +\sum_{s'_i\in\gS_i}p(s'_i\mid s_i,0)h^*(s'_i)
+    =r(s_i,1)-\lambda(s_i) +\sum_{s'_i\in\gS_i}p(s'_i\mid s_i,1)h^*(s'_i)
+\end{align}
+%TODO:continue
 This shows that if the $n$ arms are all indexable, then we can efficiently derive an optimal policy by computing the Whittle indices of all arms.
 Just like Gittins indices, Whittle indices of an arm do not depend on the other arms.
 In fact, Whittle index is a generalization of Gittins index to restless bandit problem.
 This shows that the computational cost of Whittle index policy is linear in the number of arms.
+
+
 
 We will give the existing definitions of indexability and Whittle index along with our discuss about them in the next chapter.
 
