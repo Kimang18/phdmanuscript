@@ -197,7 +197,30 @@ A good learner should then \emph{exploit} the gathered information as soon as po
 Unfortunately, untimely exploitation leads to suboptimal policy, thus a regret that is linear in $T$. This is the famous “exploration versus exploitation dilemma”.
 
 As mentioned in Section~\ref{sec:intro_learning}, we consider model-based algorithms with \textbf{episodic policy update}.
+Algorithm~\ref{algo:generics} shows how episodic algorithms work during the learning.
 In the following, we describe two popular families of such algorithms. 
+
+\begin{algorithm}[ht]
+    \DontPrintSemicolon
+    \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+    \Input{The unknown MDP $M=\langle\gS,\gA,r,p\rangle$}
+    \Init{}{Observe initial state $s_1$}
+    \BlankLine
+    \For{episodes $k=1,2,\dots$}{
+        %Based on observation $o_{t^k}$, compute the imagined MDP $M^k$ (using posterior sampling or optimism). \;\label{line:new_mdp}
+        %Compute the imagined MDP $M^k=\langle\gS,\gA,r^k,p^k\rangle$ \;\label{line:new_mdp}
+        Compute a new policy $\pi^k$ (using optimism or posterior sampling) \;\label{line:new_policy}
+        \While{episode $k$ continues}{
+            Execute action $a_t=\pi^k(s_t)$ \;
+            %Observe $o_t=o_t\cup\{s_t,a_t,r_t,s_{t+1}\}$. \;
+            Observe $r_t$ and next state $s_{t+1}$. \;
+        }
+    }
+    \caption{Episodic learning algorithms}
+    \label{algo:generics}
+\end{algorithm}
+
+
 
 \subsection{Optimism and posterior sampling}
 \label{ch:rl:ssec:opt_post}
@@ -222,36 +245,26 @@ where $\phi$ is the prior distribution of the unknown MDP $M$.
 %So, the learner $\gL$ maximizes the expected cumulative rewards from $M$ over $T$ time steps by minimizing its Bayesian regret $\BayReg(\gL, \phi, T)$.
 In Bayesian view point, an efficient exploration-exploitation trade-off can be done by posterior sampling introduced by \cite{thompson1933likelihood}: the learner keeps a posterior distribution over possible MDPs (precisely, the support of the prior distribution) and executes an optimal policy of a sampled MDP, see \eg, \cite{osband2013more, gopalan2015thompson, ouyang2017learning}.
 
-A common process between the two approaches is that they compute an optimal policy of an ``imagined MDP'' that they believe to be the unknown MDP $M=\langle\gS,\gA,r,p\rangle$.
-Precisely, in both approaches, at the beginning of episode $k\ge1$, the learner computes a policy denote by $\pi^k$ that is optimal in an imagined MDP denote by $M^k=\langle\gS,\gA,r^k,p^k\rangle$.
-The learning process is summarized in Algorithm~\ref{algo:generics}.
+The two approaches compute an optimal policy of an ``imagined MDP'' that they believe to be the unknown MDP $M=\langle\gS,\gA,r,p\rangle$.
+Precisely, for both approaches, Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics} can be broken down into two steps
+\begin{enumerate}[label=(\roman*)]
+    \item \label{it:new_mdp} compute an estimate $M^k=\langle\gS,\gA,r^k,p^k\rangle$ of the unknown MDP $M$;
+    \item compute an optimal policy $\pi^k$ of $M^k$.
+\end{enumerate}
+We will say that $M^k$ is the imagined version of the unknown $M$ in episode $k$.
+%at the beginning of episode $k\ge1$, the learner computes a new policy denote by $\pi^k$ that is optimal in an imagined MDP denote by $M^k=\langle\gS,\gA,r^k,p^k\rangle$.
+%The learning process is summarized in Algorithm~\ref{algo:generics}.
 
-\begin{algorithm}[ht]
-    \DontPrintSemicolon
-    \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
-    \Input{The unknown MDP $M=\langle\gS,\gA,r,p\rangle$}
-    %\Init{$t^1=1, o_{t^1}=\{s_1\}$}
-    \BlankLine
-    \For{episodes $k=1,2,\dots$}{
-        %Based on observation $o_{t^k}$, compute the imagined MDP $M^k$ (using posterior sampling or optimism). \;\label{line:new_mdp}
-        Compute the imagined MDP $M^k=\langle\gS,\gA,r^k,p^k\rangle$ \;\label{line:new_mdp}
-        Compute an optimal policy $\pi^k$ of $M^k$ \;\label{line:new_policy}
-        \While{episode $k$ continues}{
-            Execute action $a_t=\pi^k(s_t)$ \;
-            %Observe $o_t=o_t\cup\{s_t,a_t,r_t,s_{t+1}\}$. \;
-            Observe $r_t$ and next state $s_{t+1}$. \;
-        }
-    }
-    \caption{Common process of episodic learning algorithms}
-    \label{algo:generics}
-\end{algorithm}
-
-Since an optimal policy can be computed in a deterministic manner given the MDP, the ``high-level'' difference between both approaches lies in Line~\ref{line:new_mdp} of Algorithm~\ref{algo:generics} at which an imagined MDP $M^k$ is constructed: chosen ``optimistically'' by OFU method or chosen randomly by posterior sampling according to its belief (or the posterior distribution).
+Since an optimal policy can be computed in a deterministic manner given the MDP, the ``high-level'' difference between both approaches lies in Step~\ref{it:new_mdp} at which the imagined MDP $M^k$ is constructed: chosen ``optimistically'' by OFU method or chosen randomly by posterior sampling according to its belief (or the posterior distribution).
 
 % No need to add table of summary because finite horizon is not the real setting of our learning problem
 % Only infinite horizon is really related
 From now on, a learner is an algorithm for the learning problem.
 We summarize several existing results about minimizing the regret in Table~\ref{ch:rl:tab:finite} for finite horizon setting and Table~\ref{ch:rl:tab:infinite} for infinite horizon average reward model.
+We revisit three algorithms for the end this chapter: UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, which rely on OFU method, and PSRL \cite{osband2013more}, which is a posterior sampling algorithm.
+We give the sketch of proof for their regret upper bound in finite horizon setting although UCRL2 is originally design for infinite horizon average reward model.
+We will give a detail proof in Chapter~\ref{ch:learning_rested} when we derive the three algorithms for Markovian bandit problem.
+
 \begin{table}[ht]
     \centering
 \begin{tabular}{|l|l|}
@@ -283,15 +296,12 @@ EBF \cite{zhang2019regret}         & $\tilde{\landauO}(\sqrt{HSAT})$ & weakly co
 Lower bound & $\landauOmega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
 \end{tabular}
 \caption{Short regret summary for model-based RL algorithms in infinite horizon average reward model with $S$ states, $A$ actions, and $T$ steps.
-$D$ is the diameter of the MDP, $H\ge sp(\vh^*)$ is upper bound on the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP.
+$D$ is the diameter of the MDP, $H\ge sp(\vh^*)$ is the upper bound on the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP.
 EVI stands for Extended value iteration \cite{jaksch2010near}, VI for value iteration, assump for assumption, comm. for communicating, and comp. for computation.
 }
 \label{ch:rl:tab:infinite}
 \end{table}
 
-We revisit three algorithms for the end this chapter: UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, which rely on OFU method, and PSRL \cite{osband2013more}, which is a posterior sampling algorithm.
-We give the sketch of proof for their regret upper bound in finite horizon setting although UCRL2 is originally design for infinite horizon average reward model.
-We will give a detail proof in Chapter~\ref{ch:learning_rested} when we derive the three algorithms for Markovian bandit problem.
 
 \subsection{Upper bound on regret : general idea}
 
@@ -324,7 +334,7 @@ Since $M^k$ and $\pi^k$ are chosen by the algorithm, this second term can be ana
 
 \subsection{Sketch of proof on regret bound of three algorithms}
 
-\subsubsection{Upper Confidence bound reinforcement learning (UCRL2) \texorpdfstring{\cite{jaksch2010near}}{[JAO10]}.}
+\subsubsection{Upper confidence bound reinforcement learning (UCRL2) \texorpdfstring{\cite{jaksch2010near}}{[JOA10]}.}
 As mentioned above, UCRL2 was originally design for infinite horizon setting.
 %However, it still proceeds in episodic manner: the algorithm decides to update its policy when the number of visits to a state-action pair has doubled since the end of the previous episode and the new episode begins.
 %The number of visits to state-action pair $(s,a)$ means how many time steps so far that the action $a$ has been executed when the unknown MDP is in state $s$.
@@ -333,7 +343,7 @@ Here, we adapt UCRL2 to finite horizon setting.
 When updating the policy, UCRL2 constructs confidence sets $\sB_r$ and $\sB_p$ for $r$ and $p$ respectively based on high probability confidence bounds.
 We denote by $\sM$ the set of plausible MDPs whose reward function lives in $\sB_r$ and state transition lives in $\sB_p$.
 UCRL2 chooses the MDP that incurs the highest optimal value among the MDPs in $\sM$ and computes an optimal policy of the chosen MDP.
-That is, at the start of episode $k$, UCRL2 computes $M^k$ and $\pi^k$ such that
+That is, at Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics}, UCRL2 computes a new policy $\pi^k$ such that
 \begin{equation}
     \label{ch:rl:eq:optim}
     \vw_{M^k}^{\pi^k} \ge \max_{\pi\in\Pi}\max_{M'\in\sM^k} \vw_{M'}^\pi
@@ -343,10 +353,10 @@ where
     \sM^k:=\Big\{\langle\gS,\gA,r',p'\rangle :
     \text{ for all }(s,a), r'(s,a)\in\sB_r^k(s,a) \text{ and } \vp'(\cdot\mid s,a)\in\sB_p^k(s,a)\Big\}
 \end{align*}
-is the set of plausible MDPs compatible with the confidence sets.
-So, UCRL2 executes Lines~\ref{line:new_mdp} and \ref{line:new_policy} of Algorithm~\ref{algo:generics} simultaneously using Extended Value Iteration (EVI).
-EVI is designed such that \eqref{ch:rl:eq:optim} holds.
-We refer to \cite{jaksch2010near} for detail algorithm and its convergence proof.
+is the set of plausible MDPs compatible with the confidence sets for episode $k$.
+To do so, UCRL2 uses extended value iteration (EVI).
+This is because EVI is designed such that \eqref{ch:rl:eq:optim} holds.
+We refer to \cite{jaksch2010near} for the detail about EVI and its convergence proof.
 
 Let $t^k$ be the time step when the episode $k$ begins with the convention that $t^1=1$.
 The observations up to time $t^k$ is denoted by $o_{t^k}{:=}\{s_1,a_1,r_1,\dots,s_{t^k-1},a_{t^k-1},r_{t^k-1},s_{t^k}\}$.
@@ -386,7 +396,7 @@ So, the regret of UCRL2 is bounded.
 
 %If $M$ is communicating with diameter $D$, then any MDP in $\sM$ is communicating with a diameter bounded by $D$ (see \cite[Section~4.3.1]{jaksch2010near}).
 For the sake of completeness, we recall the result of \cite{jaksch2010near} for infinite horizon setting below.
-\begin{prop}[{\cite[Theorem~2]{puterman2014markov}}]
+\begin{prop}[{\cite[Theorem~2]{jaksch2010near}}]
     \label{ch:rl:prop:uclr2}
     For any communicating MDP $M$ with $S$ states, $A$ actions and diameter $D$, with probability at least $1-\delta$, it holds that for any $T>1$, the regret of UCRL2 is bounded by
     \begin{align*}
@@ -398,7 +408,7 @@ Compare to Proposition~\ref{prop:minimax_rg_lb}, the upper bound in Proposition~
 \subsubsection{Upper confidence bound value iteration (UCBVI) \texorpdfstring{\cite{azar2017minimax}}{[AOM17]}.}
 UCBVI is an optimistic algorithm designed for finite horizon setting.
 The algorithm keeps track of the emprical mean $\hat{p}$ of $p$ and only constructs confidence set $\sB_r$ for $r$ based on high probability confidence bound.
-Differently from UCRL2 that chooses only one copy of expected reward, UCBVI chooses $H$ copies in the following manner: when planning for episode $k$,
+Differently from UCRL2 that chooses only one copy of expected reward, UCBVI executes Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics} by choosing $H$ copies in the following manner:
 \begin{itemize}
     \item set $w^{\pi^k}_{H+1:H,M^k}(s)=0$ for all $s$,
     \item for $h$ from $H$ to $1$
@@ -454,11 +464,11 @@ To ease the exposition, we will say that a MDP $M'=\langle\gS,\gA,r',p'\rangle$ 
 When updating its policy, PSRL use the collected observations and Bayes' theorem to derive the posterior distribution of the unknown MDP.
 After that, a MDP is sampled from the posterior and PSRL computes an optimal policy in the sampled MDP.
 That is, at time step $t^k$, PSRL uses the observations $o_{t^k}$ to update the posterior $\phi\bigl(\cdot\mid o_{t^k}\bigr)$.
-Then, Line~\ref{line:new_mdp} of Algorithm~\ref{algo:generics} is performed by sampling a MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$. Then, PSRL computes an optimal policy $\pi^k$ in $M^k$.
+Then, Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics} is performed by sampling a MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$ and computing an optimal policy $\pi^k$ in $M^k$.
 The policy $\pi^k$ is then used during the episode $k$ to collect more observations.
 
 The performance of PSRL is measured by the Bayesian regret given in \eqref{eq:bayes_rg}.
-Broadly speaking, we bound the Bayesian regret by bounding the regret with terms that are deterministic and the expected value of those terms are themselves.
+Broadly speaking, we bound the Bayesian regret by bounding the regret with terms that are deterministic and the expected value of those terms are then themselves.
 To do so, we will first show that the expected value of $\Delta^k_{model}$ defined in \eqref{eq:rg_model_conc} is zero.
 Then, the term $\Delta^k_{conc}$ is bounded in exactly the same manner as UCRL2 does.
 \begin{lem}
@@ -490,8 +500,9 @@ PSRL enjoys the following Bayesian regret guarantee.
     In finite horizon setting with horizon $H$, if $\phi$ is the prior distribution of the unknown MDP $M$ with $S$ states and $A$ actions, then
     \begin{equation}
         \label{eq:brg_psrl}
-        \BayReg(\mathrm{PSRL}, \phi, K) = \landauO\left(HS\sqrt{AKH\ln\Bigl(SAKH\Bigr)}\right).
+        \BayReg(\mathrm{PSRL}, \phi, T) = \landauO\left(HS\sqrt{AT\ln\Bigl(SAT\Bigr)}\right)
     \end{equation}
+    where $T=KH$.
 \end{prop}
 So, this bound is of order $\tilde{\landauO}(HS\sqrt{AT})$ where $T=KH$ and $\tilde{\landauO}(\cdot)$ hides the logarithmic terms.
 It is loose by a factor $\sqrt{HS}$ compared to the lower bound $\landauOmega(\sqrt{HSAT})$.
