@@ -1,4 +1,5 @@
 macros.include.tex
+thesis.fdb_latexmk
 *.synctex.gz
 *.aux
 *.bbl
