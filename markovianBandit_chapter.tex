@@ -8,14 +8,50 @@ In this chapter, we present two settings of Markovian bandit problem: rested and
 In each setting, we explain the objective function and...
 
 A multi-armed bandit problem is a sequential decision problem in which, at each time step, the decision maker chooses one among a set of available actions and obtains some payoff.
-The goal of the decision maker is to maximize the total payoff by a sequence of action choices.
+The goal of the decision maker is to maximize the total payoff by a sequence of actions.
+Fundamentally, there are at least three types of bandit problem depending on the nature of payoff: stochastic, adversarial, and Markovian.
+In this thesis, we focus on on Markovian bandits.
+We refer to \cite{bubeck2012regret} for more detail discussion about stochastic and adversarial bandits.
+
+\section{A brief summary of Markovian bandit formulizations}
 
 Markovian bandits form a subclass of multi-armed bandit problems in which each arm has an internal state that evolves over time in a Markovian manner, as a function of the decision maker’s actions.
+There are two possible settings depending on whether the random random obtained by the decision maker is discounted over time or not.
+The decision maker aims at maximizing the expected cumulative discounted reward in discounted setting and the long-term average reward in undiscounted setting.
 %In such a problem, at each time step, the decision maker observes the state of all arms and chooses which one to activate.
 
-Describe stochastic bandit, adversarial bandit, rested bandit, restless bandit with observable states, non-observable states, restless multi-armed multi-action bandit
+In Rested Markovian bandit, each arm is modeled by a finite Markovian reward process. At each time step, the decision maker observes the current state of each arm and activates one arm.
+The activated arm incurs a random reward and transitions to new state in a Markovian fashion.
+Meanwhile, the unchosen arms remain in the same state.
+The name ``rested'' is adopted because the unchosen arms make no state transitions and incur no rewards.
+%The objective of this problem is to find a policy, mapping from problem state to an arm, that maximizes .
 
-\section{Rested Markovian bandit}
+Restless Markovian bandit is more general than rested one because
+the unchosen arms also make state transition and incur some reward (possibly always zero).
+Two divisions are made for restless bandit: (1) \textbf{partially observable} setup and (2) \textbf{fully observable} setup.
+
+In partially observable restless bandit, each arm is a finite Markovian reward process.
+At each time step, the decision maker activates one arm and observes its current state.
+The chosen arm incurs a random reward in function of its current state.
+After that, all arms make a state transition.
+The decision maker observes only the current state of activated arm.
+That is why the term ``partially observable'' is used.
+
+In fully observable restless bandit, each arm is a finite MDP with binary action space.
+At each time step, the decision maker observes the current state of all arms and activates multiple arms.
+The activated arms incur random reward and change state according to their active Markov reward process.
+The unchosen arms also incur random reward (possibly always zero) and change state according to their passive Markov reward process.
+
+Last but not least, an even more general model of fully observable restless bandit is the case where each arm is a finite MDP with multiple actions.
+The decision maker has to decide which action to be executed on each arm without violating the resource constraint.
+This kind of model is also known in the literature as restless multi-armed multi-action bandit too.
+
+\section{Markovian bandit models in this thesis}
+
+We consider only \textbf{rested} and \textbf{fully observable restless} Markovian bandits.
+For fully observable restless bandit, we will simply say restless bandit.
+
+\subsection{Rested Markovian bandit}
 \label{sec:rested_mab}
 
 Rested Markovian bandit is a model for dynamic allocation problem in which the decision maker wants to efficiently share its limited resource between various activities which are being pursued.
@@ -27,7 +63,7 @@ Rested bandit is also known by \textbf{restful} bandit or a \textbf{family of al
 %    \item give examples
 %\end{itemize}
 
-\subsection{Notations and problem formulation}
+\subsubsection{Notations and problem formulation}
 \label{ssec:rested_formul}
 
 We consider the rested Markovian bandit having $n\in\N^+$ arms.
@@ -65,7 +101,7 @@ If the decision maker activates an arm $a\in[n]$ when $M$ is in state $\vs=(s_1,
 We will use the term ``global'' to refer to the MDP $M$ and ``local'' to refer to the arm.
 That is, $\vs, \vs'\in\gX$ are global states and for any $a\in[n]$, $s_a,s'_a$ are local states or precisely the states of arm $a$.
 
-\subsection{Gittins index policy}
+\subsubsection{Gittins index policy}
 \label{ssec:gittins_idx}
 
 If the local parameters $\{\vr_a,\mP_a\}$ of arm $a$ are known for all $a\in[n]$, then the global parameters $r$ and $p$ of the corresponding MDP $M$ are also known.
@@ -96,14 +132,14 @@ Thus, the computational complexity of Gittins index policy is linear in the numb
 %\subsubsection{Definition}
 %\subsubsection{Optimality}
 
-\subsection{Gittins index computation}
+\subsubsection{Gittins index computation}
 
 Several numerical methods to compute Gittins index are presented in \cite{chakravorty2014multi} such as state elimination, and fast-pivoting algorithms.
 Given an arm with $S$ states, the current best methods compute Gittins index of all states in $(2/3)S^3+\landauO(S^2)$ arithmetic operations \cite{chakravorty2014multi}.
 In \cite[Page~4]{nino2020fast}, the author claims that it is unlikely that this complexity can be improved.
 We will discuss about Gittins index computation again in Part~\ref{part:idx}.
 
-\section{Restless Markovian bandit}
+\subsection{Restless Markovian bandit}
 \label{sec:restless_mab_pb}
 
 Restless Markovian bandit is also a model dynamic allocation problem.
@@ -116,7 +152,7 @@ So, restless bandit has a wide range of applications such as wireless communicat
 %    \item give examples
 %\end{itemize}
 
-\subsection{Notations and problem formulation}
+\subsubsection{Notations and problem formulation}
 \label{ssec:restless_formul}
 
 We consider the restless Markovian bandit having $n\in\N^+$ arms.
@@ -141,7 +177,7 @@ Moreover, $M$ transitions to next state $\vs'\in\gX$ with probability $p(\vs'\mi
 
 %The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1)$ is the discount factor.
 
-\subsection{Whittle index policy}
+\subsubsection{Whittle index policy}
 \label{subsec:whittle_idx}
 
 As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ such that for all $\vs\in\gX, g^{\pi^*}(\vs)=\max_{\pi}g^{\pi}(\vs)$ exists and is deterministic.
@@ -184,7 +220,7 @@ We will give the existing definitions of indexability and Whittle index along wi
 %Lagrangian multipliers
 %\subsubsection{Optimality}
 
-\subsection{Whittle index computation}
+\subsubsection{Whittle index computation}
 
 For restless bandits with discount factor $\gamma\in(0,1)$, fast-pivoting algorithm of \cite{nino2020fast} is the current best method to compute Whittle index.
 For an arm with $S$ states, the algorithm performs $(2/3)S^3+\landauO(S^2)$ arithmetic operations\footnote{multiplications and additions of real numbers, regardless of their values} if the initialization phase is excluded from the count.
