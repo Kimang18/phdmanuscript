@@ -1,3 +1,4 @@
+macros.include.tex
 *.synctex.gz
 *.aux
 *.bbl
