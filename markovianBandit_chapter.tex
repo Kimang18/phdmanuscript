@@ -190,7 +190,7 @@ This is done by using the parametric simplex method and exploiting the special s
 
 \section{Studied questions in this thesis}
 
-\subsection{Indexability}
+\subsection{Indexability and index computation}
 
 While the computational complexity of Whittle index policy is very appealing, the index is defined only if the arm is indexable.
 To the best of our knowledge, there is no efficient general purpose algorithm to test indexability.
@@ -207,6 +207,35 @@ These raise a few essential questions that we study in Part~\ref{part:idx}:
 %TODO:continue
 %Moreover,
 
-\subsection{Learning in Markovian bandit}
+\subsection{Learning in rested Markovian bandit}
+
+Thanks to Gittins index policy, rested Markovian bandit escapes from the \textbf{curse of dimensionality} in term of computational complexity.
+That is, although the state size of rested Markovian bandit is exponential in the number of arms $n$, Gittins index policy is an optimal policy computable linearly in $n$.
+It is then interesting to understand how the curse of dimensionality manifests in RL problems in which the environment is an unknown rested Markovian bandit.
+By Tables~\ref{ch:rl:tab:finite} and \ref{ch:rl:tab:infinite}, directly apply existing RL algorithms to such RL problems incurs a regret that is exponential in $n$.
+However, if the $n$ arms all have $S$ states, there are only $nS$ real values to be estimated for expected reward and $nS^2$ for state transition probability.
+So, the minimax regret bound in both tables should be smaller for rested Markovian bandit.
+This raises the following questions.
+\begin{itemize}
+    \item can RL algorithms escape from the curse of dimensionality in learning rested Markovian bandits?
+    \item what is the regret baseline for RL algorithms in rested Markovian bandit?
+    \item Gittins index policy has a very appealing computational complexity. Can OFU and Bayesian methods leverage this index policy to escape from the curse?
+\end{itemize}
+These questions will be answered in Chapter~\ref{ch:learning_rested} in Part~\ref{part:learning}.
+
+\subsection{Learning in restless Markovian bandit}
+
+In restless Markovian bandit having $n$ arms and $S$ states per arm, there are only $2nS$ real values to be estimated for expected reward and $2nS^2$ for transition probability.
+It is equally interesting to analyse the performance of RL algorithms when the environment is an unknown restless bandit.
+However, restless bandit problem is an infinite horizon average reward model.
+So, the structure of the global MDP must be taken into account in learning.
+Since the global state space is exponential in the number of arms $n$, analysing the structure of the global MDP is hard.
+In consequence, we are interested in the following questions:
+\begin{itemize}
+    \item how does the structure of local arm translate in the structure of global MDP?
+    \item is there any RL algorithms that achieve a regret upper bounded linearly in $n$ in learning restless Markovian bandit?
+    \item although Whittle index policy has a complexity linear in $n$, this index policy is not optimal in general. So, how can Whittle index policy be utilized for learning purpose?
+\end{itemize}
+These questions will be addressed in Chapter~\ref{ch:learning_restless} in Part~\ref{part:learning}.
 
 \endgroup
