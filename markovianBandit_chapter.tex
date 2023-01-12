@@ -147,11 +147,12 @@ At each time step, the decision maker activates $m$ arms whose Whittle index of 
 This heuristic performs extremely well in practice, see \eg, \cite{glazebrook2006some, ansell2003whittle, glazebrook2002index}.
 In fact, Whittle index policy has been shown to be asymptotically optimal as the number of arms grows to infinity under certain technical assumptions \cite{verloop2016asymptotically, lott2000optimality, weber1990index}.
 
-Following Whittle's development \cite{whittle1988restless}, the constraint
+Following Whittle's development \cite{whittle1988restless}, the hard constraint ``for any time $t\ge1$, $\sum_{i=1}^{n}a_{t,i}=m$'' is relaxed to
 \begin{align*}
-    \text{for any time }t\ge1, \sum_{i=1}^{n}a_{t,i}=m \text{ is relaxed to } \lim_{T\to+\infty}\frac1T \E^\pi\left[\sum_{i=1}^n \sum_{t=1}^{T} a_{t,i} \mid \vs_1=\vs\right]=m.
+    \lim_{T\to+\infty}\frac1T \E^\pi\left[\sum_{i=1}^n \sum_{t=1}^{T} a_{t,i} \mid \vs_1=\vs\right]=m.
 \end{align*}
-The constraint can then be added to \eqref{ch:mb:eq:gain_defn}:
+%The constraint can then be added to \eqref{ch:mb:eq:gain_defn}:
+The Lagrangian relaxation of maximizing \eqref{ch:mb:eq:gain_defn} under hard constraint is then written:
 \begin{align}
     \lim_{T\to+\infty}\frac1T \E^\pi\left[\sum_{i=1}^n \sum_{t=1}^{T} (r_{t,i} -\lambda a_{t,i}) \mid \vs_1=\vs\right] +\lambda m \label{ch:mb:eq:relax_defn}
 \end{align}
@@ -162,20 +163,17 @@ for arm $i$, the optimal actions for state $s_i$ must solve the Bellman optimali
     g^*(s_i) +h^*(s_i) =\max_{a_i\in\{0,1\}} \Bigl(r(s_i,a_i)-a_i\lambda +\sum_{s'_i\in\gS_i}p(s'_i\mid s_i,a_i)h^*(s'_i)\Bigr) \label{ch:mb:eq:bellman}
 \end{align}
 where $g^*(s_i)$ and $h^*(s_i)$ are the optimal gain and bias of state $s_i$ of arm $i$ respectively (see Section~\ref{ch:mdp:sec:gain} for their formal definitions).
-From \cite{whittle1988restless}, if arm $i$ is indexable, then the Whittle index of state $s_i$ is the critical value $\widx(s_i)$ such that action rest and activate are equivalent in \eqref{ch:mb:eq:bellman}:
+From \cite{whittle1988restless,whittle1996optimal}, if arm $i$ is indexable, then the Whittle index of state $s_i$ is the critical value $\widx(s_i)$ such that action rest and activate are equivalent in \eqref{ch:mb:eq:bellman}:
 \begin{align}
     r(s_i,0) +\sum_{s'_i\in\gS_i}p(s'_i\mid s_i,0)h^*(s'_i)
-    =r(s_i,1)-\lambda(s_i) +\sum_{s'_i\in\gS_i}p(s'_i\mid s_i,1)h^*(s'_i)
+    =r(s_i,1)-\lambda(s_i) +\sum_{s'_i\in\gS_i}p(s'_i\mid s_i,1)h^*(s'_i) \label{ch:mb:eq:widx}
 \end{align}
-%TODO:continue
 This shows that if the $n$ arms are all indexable, then we can efficiently derive an optimal policy by computing the Whittle indices of all arms.
 Just like Gittins indices, Whittle indices of an arm do not depend on the other arms.
 In fact, Whittle index is a generalization of Gittins index to restless bandit problem.
 This shows that the computational cost of Whittle index policy is linear in the number of arms.
 
-
-
-We will give the existing definitions of indexability and Whittle index along with our discuss about them in the next chapter.
+We will give the existing definitions of indexability and Whittle index along with our discussion about them in the next chapter.
 
 %\subsubsection{Definition}
 %Lagrangian multipliers
@@ -190,16 +188,18 @@ This is done by using the parametric simplex method and exploiting the special s
 %\subsubsection{Conditions for indexability...}
 %\subsubsection{Fast-pivoting algorithm}
 
-\section{Open questions}
+\section{Studied questions in this thesis}
 
 \subsection{Indexability}
 
 While the computational complexity of Whittle index policy is very appealing, the index is defined only if the arm is indexable.
 To the best of our knowledge, there is no efficient general purpose algorithm to test indexability.
 Also, there is no explicit algorithm for computing Whittle index in undiscounted restless bandit.
+Moreover, if arm $i$ is indexable, then the Whittle index of state $s_i$ can be computed by \eqref{ch:mb:eq:widx}. % once the optimal bias $h^*(s'_i)$ is determined for all state $s'_i\in\gS_i$.
+But as we mentioned in Section~\ref{ch:mdp:sec:gain}, vector $\vh^*\in\R^{S_i}$ that satisfies Bellman optimality equation with the optimal gain $\vg^*$ is not uniquely determined in general.
 These raise a few essential questions that we study in Part~\ref{part:idx}:
 \begin{itemize}
-    \item Is testing indexability computationally hard? Or more importantly, is indexability well defined?
+    \item Is testing indexability computationally hard? Or more importantly, what is indexability?
     \item Is there an efficient unified algorithm to compute Whittle index in discounted and undiscounted restless bandit?
     \item Is Whittle index harder to compute than Gittins index?
 \end{itemize}
