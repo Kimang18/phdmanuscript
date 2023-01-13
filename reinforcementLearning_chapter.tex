@@ -19,7 +19,7 @@ We discuss several algorithms with regret guarantee at the end of this chapter.
 
 The reader can skip this chapter and go directly to Chapter~\ref{ch:mb} and Part~\ref{part:idx} and come back to this chapter before diving into Part~\ref{part:learning}.
 
-\section{A brief summary of existing learning patterns}
+\section{A brief summary of existing learning setups}
 \label{ch:rl:sec:overal}
 
 \subsection{Models and paradigms of learning}
@@ -35,20 +35,20 @@ The goal of the learner is to identify an optimal policy $\pi^*$ by interacting 
 %While $\pi^*$ is ultimately identified, two learning mechanisms are defined:
 In the literature of RL, there are mainly two distinguishable learning models:
 \begin{enumerate}[label=(\roman*)]
-    \item \textbf{Generative model}: the learner can restart at desire and in any state of $M$
-    \item \textbf{Navigating model}: the learner cannot control the restart.
+    \item \textbf{Generative model}: the learner chooses the state of $M$ at desire
+    \item \textbf{Navigating model}: the learner has no control over the state of $M$.
 \end{enumerate}
 With the generative model, the learner chooses any state-action pair $(s,a)$ and the MDP $M$ incurs a random reward $u$ whose expected value is $r(s,a)$ and the next state $s'\in\gS$ with probability $p(s'\mid s,a)$.
 The learner collects the sample $\{u,s'\}$ related to the pair $(s,a)$ and the process is repeated.
 This mechanism is used in \textbf{offline learning paradigm} in which the learner starts by collecting samples until a budget resource fixed by the setting is exhausted (it can be a time resource, sample resource or approximation error). Then, the learner plans a policy based on the collected samples and follows the policy.
-No more policy update is made thereafter.
+No more policy update is made thereafter. See for example \cite{lange2012batch, levine2020offline}.
 
 With the navigating model, the learner observes the current state $s$ of the MDP $M$ and executes an action $a$ and the MDP $M$ incurs a random reward with expected value $r(s,a)$ and transitions to state $s'$ with probability $p(s'\mid s,a)$.
 The learner cannot force the MDP to restart in any state.
 If the learner wants the MDP to be in a certain state, it has to go along the trajectory that brings the MDP from its current state to the desired state.
 In some settings like finite horizon or infinite horizon with discount, the MDP $M$ can restart but the learner has no control over the restart such as when and in which state to restart.
 This mechanism is used in \textbf{online learning paradigm} in which the learner keeps updating its policy based on the observations it collects via the interaction with the MDP $M$.
-The policy update can be done in every decision time --known as real-time update--, periodically or when some conditions are met --known as \emph{episodic update}.
+The policy update can be done in every decision time --known as real-time update--, periodically or when some conditions are met --known as \emph{episodic update}. See for example \cite{jaksch2010near, osband2013more, azar2017minimax, ouyang2017learning,zanette2019tighter}.
 
 \subsection{Classification of learning algorithms}
 \label{ch:rl:ssec:class_algo}
@@ -59,11 +59,11 @@ For both paradigms described above, there are two types of learning
     \item \textbf{model-free}: the learner tries to infer the value functions in the MDP;
     \item \textbf{model-based}: the learner tries to infer the unknown parameters $r$ and $p$ of the MDP.
 \end{itemize}
-The typical algorithm for model-free methods is \textbf{Q-learning} that tries to infer the optimal state-action value function via stochastic approximation. 
-Model-free method is very appealing when the MDP has a large or even continuous state and action spaces.
+The typical algorithm for model-free methods is \textbf{Q-learning} \cite{watkins1989learning} that tries to infer the optimal state-action value function via stochastic approximation. 
+Model-free method is very appealing when the MDP has a large or even continuous state and action spaces (see \eg, \cite{mnih2015human, bellemare2017distributional, dabney2018distributional})
 However, model-free methods are generally slower than model-based ones in learning an optimal policy.
 
-Model-based algorithms input the estimates of $r$ and $p$ to a planning method described in the previous chapter such as backward induction, policy or value iterations and follows the policy output by the planning method.
+Model-based algorithms input the estimates of $r$ and $p$ to a planning method described in the previous chapter such as backward induction, policy or value iterations and follows the policy output by the planning method (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax}).
 The main difference within model-based algorithms is the way $r$ and $p$ are estimated at each planning phase.
 Model-based algorithms are costly for MDPs with large or continuous state and action spaces but when applicable, they are usually faster than model-free algorithms.
 
@@ -72,13 +72,13 @@ Last but not least, for both model-free and model-based methods, statistical inf
     \item \textbf{frequentist perspective}, in which all quantities related to the unknown MDP such as $r$, $p$, value function, etc, are seen as \textbf{unknown deterministic} quantities,
     \item \textbf{Bayesian perspective}, in which all quantities related to the unknown MDP such as $r$, $p$, value function, etc, are seen as realization of \textbf{random variables}.
 \end{itemize}
-In frequentist school, the planning is decided before the learning begins and the observations collected during the learning are used to controlled \textbf{the probability that the plan is correct}.
+In frequentist school, the planning is decided before the learning begins and the observations collected during the learning are used to controlled \textbf{the probability that the plan is correct} (see \eg, \cite{jaksch2010near, azar2017minimax, jin2018q, shi2022pessimistic}).
 In Bayesian school, the observations collected during the learning are used to \textbf{update the posterior of the random variables}.
-The planning is then done based on the posterior belief.
+The planning is then done based on the posterior belief (see \eg, \cite{osband2013more, ouyang2017learning, bellemare2017distributional, dabney2018distributional}).
 
 %We will discuss about two families of model-based algorithms in the below sections.
 
-\section{Learning paradigm studied in this thesis}
+\section{Learning setup studied in this thesis}
 \label{sec:intro_learning}
 
 We focus on \textbf{model-based} algorithms in online learning with \textbf{episodic policy update}.
