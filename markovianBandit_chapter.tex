@@ -9,53 +9,56 @@ In each setting, we explain the objective function and...
 
 A multi-armed bandit problem is a sequential decision problem in which, at each time step, the decision maker chooses one among a set of available actions and obtains some payoff.
 The goal of the decision maker is to maximize the total payoff by a sequence of actions.
-Fundamentally, there are at least three types of bandit problem depending on the nature of payoff: stochastic, adversarial, and Markovian.
+Fundamentally, there are at least \textbf{three types} of bandit problem depending on the nature of payoff: stochastic, adversarial, and Markovian.
 In this thesis, we focus on on Markovian bandits.
 We refer to \cite{bubeck2012regret} for more detail discussion about stochastic and adversarial bandits.
 
 \section{A brief summary of Markovian bandit formulizations}
 
 Markovian bandits form a subclass of multi-armed bandit problems in which each arm has an internal state that evolves over time in a Markovian manner, as a function of the decision maker’s actions.
-There are two possible settings depending on whether the random random obtained by the decision maker is discounted over time or not.
+There are \textbf{two setups} depending on whether the random random obtained by the decision maker is discounted over time or not.
 The decision maker aims at maximizing the expected cumulative discounted reward in discounted setting and the long-term average reward in undiscounted setting.
 %In such a problem, at each time step, the decision maker observes the state of all arms and chooses which one to activate.
 
-In Rested Markovian bandit, each arm is modeled by a finite Markovian reward process. At each time step, the decision maker observes the current state of each arm and activates one arm.
+In \textbf{rested} Markovian bandit, each arm is modeled by a finite Markov reward process. At each time step, the decision maker observes the current state of each arm and activates one arm.
 The activated arm incurs a random reward and transitions to new state in a Markovian fashion.
 Meanwhile, the unchosen arms remain in the same state.
 The name ``rested'' is adopted because the unchosen arms make no state transitions and incur no rewards.
+Rested bandit is also known as \textbf{restful} bandit or a \textbf{family of alternative bandit processes}.
 %The objective of this problem is to find a policy, mapping from problem state to an arm, that maximizes .
 
 Restless Markovian bandit is more general than rested one because
 the unchosen arms also make state transition and incur some reward (possibly always zero).
-Two divisions are made for restless bandit: (1) \textbf{partially observable} setup and (2) \textbf{fully observable} setup.
+Two divisions are made for restless bandit: (1) \textbf{partially observed} setup and (2) \textbf{fully observed} setup.
 
-In partially observable restless bandit, each arm is a finite Markovian reward process.
+In partially observed restless bandit, each arm is a finite Markov reward process.
 At each time step, the decision maker activates one arm and observes its current state.
 The chosen arm incurs a random reward in function of its current state.
 After that, all arms make a state transition.
-The decision maker observes only the current state of activated arm.
-That is why the term ``partially observable'' is used.
+The decision maker only observes the current state of activated arm.
+That is why the term ``partially observed'' is used.
 
-In fully observable restless bandit, each arm is a finite MDP with binary action space.
+In fully observed restless bandit, each arm is a finite MDP with binary action space.
 At each time step, the decision maker observes the current state of all arms and activates multiple arms.
 The activated arms incur random reward and change state according to their active Markov reward process.
 The unchosen arms also incur random reward (possibly always zero) and change state according to their passive Markov reward process.
 
-Last but not least, an even more general model of fully observable restless bandit is the case where each arm is a finite MDP with multiple actions.
-The decision maker has to decide which action to be executed on each arm without violating the resource constraint.
+Last but not least, an even more general model of fully observed restless bandit is the case where each arm is a finite MDP with multiple actions.
+At each time step, the decision maker has to decide which action to be executed on each arm without violating the resource constraint.
 This kind of model is also known in the literature as restless multi-armed multi-action bandit too.
 
 \section{Markovian bandit models in this thesis}
 
-We consider only \textbf{rested} and \textbf{fully observable restless} Markovian bandits.
-For fully observable restless bandit, we will simply say restless bandit.
+We consider only \textbf{rested} and \textbf{fully observed restless} Markovian bandits.
+For fully observed restless bandit, we consider the setup with binary action space and will simply call it ``restless bandit''.
+In each formulation, the bandit has $n\in\N^+$ arms.
+We denote the set of discrete numbers $\{1,\dots,n\}$ by $[n]$.
 
-\subsection{Rested Markovian bandit}
+\section{Rested Markovian bandit}
 \label{sec:rested_mab}
 
-Rested Markovian bandit is a model for dynamic allocation problem in which the decision maker wants to efficiently share its limited resource between various activities which are being pursued.
-Rested bandit is also known by \textbf{restful} bandit or a \textbf{family of alternative bandit processes}.
+%Rested Markovian bandit is a model for dynamic allocation problem in which the decision maker wants to efficiently share its limited resource between various activities which are being pursued.
+%Rested bandit is also known by \textbf{restful} bandit or a \textbf{family of alternative bandit processes}.
 
 %Motivating the problem:
 %\begin{itemize}
@@ -63,48 +66,48 @@ Rested bandit is also known by \textbf{restful} bandit or a \textbf{family of al
 %    \item give examples
 %\end{itemize}
 
-\subsubsection{Notations and problem formulation}
+\subsection{Notations and problem formulation}
 \label{ssec:rested_formul}
 
-We consider the rested Markovian bandit having $n\in\N^+$ arms.
-Each arm $\langle\gS_a, \vr_a, \mP_a\rangle$ for $a\in\{1,\dots,n\}=:[n]$ is a Markov reward process with a finite state space $\gS_a$ of size $S_a$, a mean reward vector $\vr_a\in[0,1]^{S_a}$ and a stochastic matrix $\mP_a$.
-In state $s_a\in\gS_a$, the arm $a$ incurs a random reward with expected value $r_a(s_a)$ and transitions to next state $s'_a$ with probability $P_a(s_a,s'_a)$.
+A rested Markovian bandit is a multi-armed bandit having $n$ arms.
+Each arm $\langle\gS_i, \vr_i, \mP_i\rangle$ for $i\in[n]$ is a Markov reward process with a finite state space $\gS_i$ of size $S_i$, a mean reward vector $\vr_i\in[0,1]^{S_i}$ and a stochastic matrix $\mP_i$.
+In state $s_i\in\gS_i$, the arm $i$ incurs a random reward with expected value $r_i(s_i)$ and transitions to next state $s'_i$ with probability $P_i(s_i,s'_i)$.
 
 We consider the following sequential problem: At time step $1$, the state of all arms denoted by $\vs_1:=(s_{1,1},\dots,s_{1,n})$ is sampled according to some initial distribution $\rho$ over the state space $\gX:=\gS_1\times\dots\times\gS_n$.
-At time step $t\ge1$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates one arm $a_t\in[n]$.
-The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1)$ is the discount factor.
+At time step $t\ge1$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates one arm $i_t\in[n]$.
+The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1]$ is the discount factor.
 %and $r_t$ is drawn from some distribution on $[0,1]$ with expected value $r(x_{t,a_t})$.
 After that, the activated arm transitions to new state. %$s_{t+1,a_t}$ with probability $P(s_{t,a_t}, s_{t,a_t})$.
-The other arms incur no rewards and make no state transitions, hence the name rested.
+The other arms incur no rewards and make no state transitions. %, hence the name rested.
 %The goal of the decision maker is to identify a policy $\pi$ that maximizes the expected cumulative discounted reward as defined in Section~\ref{ch:mdp:sec:discounted}: for any $\vs\in\gX$,
-The question of rested Markovian bandit problem is to identify a policy $\pi$ that maximizes the expected cumulative discounted reward as defined in Section~\ref{ch:mdp:sec:discounted}: for any $\vs\in\gX$,
+The goal of rested Markovian bandit problem is to identify a policy $\pi$ that maximizes the expected cumulative discounted reward as defined in Section~\ref{ch:mdp:sec:discounted}: for any $\vs\in\gX$,
 \begin{equation}
     \label{ch:mb:value}
     v_\gamma^\pi(\vs):=\E^\pi\Bigl[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid \vs_1=\vs\Bigr]
 \end{equation}
 This is an infinite horizon discounted problem in which the rested Markovian bandit is a specific MDP -- that we denote by $M$ -- whose state space is $\gX$ and action space is $\gA:=[n]$.
-Without loss of generality, we assume that the state space of the arms are pairwise distinct: $\gS_a\cap\gS_b=\emptyset$ for any $a\neq b$.
-The state of arm $a$ will be denoted with an index $a$: we will denote such a state by $s_a$ or $s'_a$.
-As state spaces are disjoint, this allows us to simplify the notation by dropping the index $a$ from expected reward and transition probability: when convenient, we will denote them by $r(s_a)$ instead of $r_a(s_a)$ and by $P(s_a,s'_a)$ instead of $P_a(s_a,s'_a)$ since no confusion is possible.
-If the decision maker activates an arm $a\in[n]$ when $M$ is in state $\vs=(s_1,\dots,s_n)$, then $M$ incurs a random reward with expected value $r(\vs,a)=r(s_a)$ and transitions to new state $\vs'=(s'_1,\dots,s'_n)$ with probability $p(\vs'\mid \vs, a)$ that satisfies
+Without loss of generality, we assume that the state space of the arms are pairwise distinct: $\gS_i\cap\gS_j=\emptyset$ for any $i\neq j$.
+The state of arm $i$ will be denoted with an index $i$: we will denote such a state by $s_i$ or $s'_i$.
+As state spaces are disjoint, this allows us to simplify the notation by dropping the index $i$ from expected reward and transition probability: when convenient, we will denote them by $r(s_i)$ instead of $r_i(s_i)$ and by $P(s_i,s'_i)$ instead of $P_i(s_i,s'_i)$ since no confusion is possible.
+If the decision maker activates an arm $i\in[n]$ when $M$ is in state $\vs=(s_1,\dots,s_n)$, then $M$ incurs a random reward with expected value $r(\vs,i)=r(s_i)$ and transitions to new state $\vs'=(s'_1,\dots,s'_n)$ with probability $p(\vs'\mid \vs, i)$ that satisfies
 \begin{equation}
     \label{ch:mb:P_defn}
-    p(\vs'\mid \vs, a)
+    p(\vs'\mid \vs, i)
     = 
     \left\{
         \begin{array}{ll}
-            P(s_a,s'_a) & \text{ if $s_b=s'_b$ for all $b\ne a$;}\\
+            P(s_i,s'_i) & \text{ if $s_j=s'_j$ for all $j\ne j$;}\\
             0 &\text{ otherwise}.
         \end{array}
     \right.
 \end{equation}
 We will use the term ``global'' to refer to the MDP $M$ and ``local'' to refer to the arm.
-That is, $\vs, \vs'\in\gX$ are global states and for any $a\in[n]$, $s_a,s'_a$ are local states or precisely the states of arm $a$.
+That is, $\vs, \vs'\in\gX$ are global states and for any $i\in[n]$, $s_i,s'_i$ are local states or precisely the states of arm $i$.
 
-\subsubsection{Gittins index policy}
+\subsection{Gittins index policy}
 \label{ssec:gittins_idx}
 
-If the local parameters $\{\vr_a,\mP_a\}$ of arm $a$ are known for all $a\in[n]$, then the global parameters $r$ and $p$ of the corresponding MDP $M$ are also known.
+If the local parameters $\{\vr_i,\mP_i\}$ of arm $i$ are known for all $i\in[n]$, then the global parameters $r$ and $p$ of the corresponding MDP $M$ are also known.
 Since each arm has finite state space, the MDP $M$ also has finite state space.
 Consequently, an optimal policy $\pi^*$ such that for all $\vs\in\gX, v_\gamma^{\pi^*}(\vs)=\max_{\pi}v_\gamma^\pi(\vs)$ exists and is deterministic (see Section~\ref{ch:mdp:sec:discounted}).
 One can attempt to compute an optimal policy $\pi^*:\gS\mapsto[n]$ using iterative algorithms such as value iteration or policy iteration.
@@ -116,30 +119,30 @@ So, efficiently compute an optimal policy $\pi^*$ was an open-problem from 1940s
 However, \cite{gittins1979bandit} had solved the problem in about 1970 by proposing an index policy.
 \begin{prop}[{\cite[Theorem~14.3.3]{whittle1996optimal}}]
     \label{ch:mb:prop:gidx_defn}
-    In any rested Markovian bandit $M$ with state space $\gX:=\gS_1\times\dots\times\gS_n$ and action space $[n]$, there exists an index function that associates each state $s_a\in\gS_a$ of each arm $a\in[n]$ with a real number $\gidx(s_a)$ where
+    In any rested Markovian bandit $M$ with state space $\gX:=\gS_1\times\dots\times\gS_n$ and action space $[n]$, there exists an index function that associates each state $s_i\in\gS_i$ of each arm $i\in[n]$ with a real number $\gidx(s_i)$ where
     \begin{equation}
         \label{ch:mb:eq:gidx}
-        \gidx(s_a):=\sup_{\tau>0}\frac{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}r_t \mid s_{1,a}=s_a}}{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}\mid s_{1,a}=s_a}}, 
+        \gidx(s_i):=\sup_{\tau>0}\frac{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}r_t \mid s_{1,i}=s_i}}{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}\mid s_{1,i}=s_i}}, 
     \end{equation}
-    and $\{r_t\}_{1\le t\le\tau}$ is the sequence of rewards incurred uniquely from arm $a$ when it makes state transitions over time steps $1$ to $\tau$.
+    and $\{r_t\}_{1\le t\le\tau}$ is the sequence of rewards incurred uniquely from arm $i$ when it makes state transitions over time steps $1$ to $\tau$.
 
-    The policy $\pi:\gX\mapsto[n]$ such that for all $\vs\in\gX, \pi(\vs)\in\argmax_{a\in[n]}\gidx(s_a)$ is an optimal policy of $M$.
+    The policy $\pi:\gX\mapsto[n]$ such that for all $\vs\in\gX, \pi(\vs)\in\argmax_{i\in[n]}\gidx(s_i)$ is an optimal policy of $M$.
 \end{prop}
-The index of state $s_a$ is now called Gittins index and the policy in Proposition~\ref{ch:mb:prop:gidx_defn} is called Gittins index policy.
-Gittins index policy from \cite{gittins1979bandit} is a breakthrough because the index value of state $s_a\in\gS_a$ given in \eqref{ch:mb:eq:gidx} depends only on the local parameters $\{\vr_a,\mP_a\}$ of arm $a$.
+The index of state $s_i$ is now called Gittins index and the policy in Proposition~\ref{ch:mb:prop:gidx_defn} is called Gittins index policy.
+Gittins index policy from \cite{gittins1979bandit} is a breakthrough because the index value of state $s_i\in\gS_i$ given in \eqref{ch:mb:eq:gidx} depends only on the local parameters $\{\vr_i,\mP_i\}$ of arm $i$.
 Thus, the computational complexity of Gittins index policy is linear in the number of arms and solving rested Markovian bandit problem is broken down to computing Gittins index of each state of each arm.
 
 %\subsubsection{Definition}
 %\subsubsection{Optimality}
 
-\subsubsection{Gittins index computation}
+\subsection{Gittins index computation}
 
 Several numerical methods to compute Gittins index are presented in \cite{chakravorty2014multi} such as state elimination, and fast-pivoting algorithms.
 Given an arm with $S$ states, the current best methods compute Gittins index of all states in $(2/3)S^3+\landauO(S^2)$ arithmetic operations \cite{chakravorty2014multi}.
 In \cite[Page~4]{nino2020fast}, the author claims that it is unlikely that this complexity can be improved.
 We will discuss about Gittins index computation again in Part~\ref{part:idx}.
 
-\subsection{Restless Markovian bandit}
+\section{Restless Markovian bandit}
 \label{sec:restless_mab_pb}
 
 Restless Markovian bandit is also a model dynamic allocation problem.
@@ -152,7 +155,7 @@ So, restless bandit has a wide range of applications such as wireless communicat
 %    \item give examples
 %\end{itemize}
 
-\subsubsection{Notations and problem formulation}
+\subsection{Notations and problem formulation}
 \label{ssec:restless_formul}
 
 We consider the restless Markovian bandit having $n\in\N^+$ arms.
@@ -177,7 +180,7 @@ Moreover, $M$ transitions to next state $\vs'\in\gX$ with probability $p(\vs'\mi
 
 %The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1)$ is the discount factor.
 
-\subsubsection{Whittle index policy}
+\subsection{Whittle index policy}
 \label{subsec:whittle_idx}
 
 As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ such that for all $\vs\in\gX, g^{\pi^*}(\vs)=\max_{\pi}g^{\pi}(\vs)$ exists and is deterministic.
@@ -220,7 +223,7 @@ We will give the existing definitions of indexability and Whittle index along wi
 %Lagrangian multipliers
 %\subsubsection{Optimality}
 
-\subsubsection{Whittle index computation}
+\subsection{Whittle index computation}
 
 For restless bandits with discount factor $\gamma\in(0,1)$, fast-pivoting algorithm of \cite{nino2020fast} is the current best method to compute Whittle index.
 For an arm with $S$ states, the algorithm performs $(2/3)S^3+\landauO(S^2)$ arithmetic operations\footnote{multiplications and additions of real numbers, regardless of their values} if the initialization phase is excluded from the count.
