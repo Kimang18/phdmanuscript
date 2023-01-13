@@ -35,32 +35,32 @@ The goal of the learner is to identify an optimal policy $\pi^*$ by interacting 
 %While $\pi^*$ is ultimately identified, two learning mechanisms are defined:
 In the literature of RL, there are mainly two distinguishable learning models:
 \begin{enumerate}[label=(\roman*)]
-    \item \textbf{Generative model}: the learner chooses the state of $M$ at desire
+    \item \textbf{Generative model}: the learner chooses the state of the unknown MDP $M$ at desire
     \item \textbf{Navigating model}: the learner has no control over the state of $M$.
 \end{enumerate}
-With the generative model, the learner chooses any state-action pair $(s,a)$ and the MDP $M$ incurs a random reward $u$ whose expected value is $r(s,a)$ and the next state $s'\in\gS$ with probability $p(s'\mid s,a)$.
+With the generative model, the learner picks any state-action pair $(s,a)$ and the MDP $M$ incurs a random reward $u$ whose expected value is $r(s,a)$ and the next state $s'\in\gS$ with probability $p(s'\mid s,a)$.
 The learner collects the sample $\{u,s'\}$ related to the pair $(s,a)$ and the process is repeated.
-This mechanism is used in \textbf{offline learning paradigm} in which the learner starts by collecting samples until a budget resource fixed by the setting is exhausted (it can be a time resource, sample resource or approximation error). Then, the learner plans a policy based on the collected samples and follows the policy.
-No more policy update is made thereafter. See for example \cite{lange2012batch, levine2020offline}.
+This mechanism is used in \textbf{offline learning paradigm} (see  \eg, \cite{lange2012batch, levine2020offline}) in which the learner starts by collecting samples until a budget resource fixed by the setting is exhausted (it can be a time resource, sample resource or approximation error). Then, the learner plans a policy based on the collected samples and follows the policy.
+No more policy update is made thereafter.
 
 With the navigating model, the learner observes the current state $s$ of the MDP $M$ and executes an action $a$ and the MDP $M$ incurs a random reward with expected value $r(s,a)$ and transitions to state $s'$ with probability $p(s'\mid s,a)$.
 The learner cannot force the MDP to restart in any state.
 If the learner wants the MDP to be in a certain state, it has to go along the trajectory that brings the MDP from its current state to the desired state.
 In some settings like finite horizon or infinite horizon with discount, the MDP $M$ can restart but the learner has no control over the restart such as when and in which state to restart.
-This mechanism is used in \textbf{online learning paradigm} in which the learner keeps updating its policy based on the observations it collects via the interaction with the MDP $M$.
-The policy update can be done in every decision time --known as real-time update--, periodically or when some conditions are met --known as \emph{episodic update}. See for example \cite{jaksch2010near, osband2013more, azar2017minimax, ouyang2017learning,zanette2019tighter}.
+This mechanism is used in \textbf{online learning paradigm} in which the learner keeps updating its policy based on the observations it collects via the interaction with the MDP $M$ (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax, ouyang2017learning,zanette2019tighter}).
+The policy update can be done in every decision time --known as real-time update--, periodically or when some conditions are met --known as \emph{episodic update}.
 
 \subsection{Classification of learning algorithms}
 \label{ch:rl:ssec:class_algo}
 
 %For both paradigms, an optimal policy $\pi^*$ is computed via two different ways
-For both paradigms described above, there are two types of learning
+In either paradigm described above, there are two types of learning
 \begin{itemize}
     \item \textbf{model-free}: the learner tries to infer the value functions in the MDP;
     \item \textbf{model-based}: the learner tries to infer the unknown parameters $r$ and $p$ of the MDP.
 \end{itemize}
 The typical algorithm for model-free methods is \textbf{Q-learning} \cite{watkins1989learning} that tries to infer the optimal state-action value function via stochastic approximation. 
-Model-free method is very appealing when the MDP has a large or even continuous state and action spaces (see \eg, \cite{mnih2015human, bellemare2017distributional, dabney2018distributional})
+Model-free method is very appealing when the MDP has a large or even continuous state and action spaces (see \eg, \cite{mnih2015human, bellemare2017distributional, dabney2018distributional}).
 However, model-free methods are generally slower than model-based ones in learning an optimal policy.
 
 Model-based algorithms input the estimates of $r$ and $p$ to a planning method described in the previous chapter such as backward induction, policy or value iterations and follows the policy output by the planning method (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax}).
@@ -113,7 +113,12 @@ The objective of the learner is to maximize the expected cumulative reward $\ex{
 
 \section{Regret definition}
 
-To measure the performance of the learner, we use the notion of \emph{regret} that compares the expected cumulative reward of an optimal policy $\pi^*$ to the cumulative reward of the learner. 
+In online RL, there are at least two performance metrics: (1) probably approximately correct (PAC) bounds on the sample complexity (see \eg, \cite{brafman2002r, kearns2002near, kakade2003sample, dann2015sample, jiang2018open, wang2020long}) and (2) regret (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax, jin2018q, zanette2019tighter, zhang2019regret}).
+However, it is shown that both metrics are ``equivalent'': PAC bounds imply regret bounds and regret bounds imply PAC bounds \cite{osband2016deep}.
+Hence, the recent works often discuss both metrics (see \eg, \cite{he2021nearly, zhang2021reinforcement}).
+
+In this thesis, we measure the performance of the learner using a notion of \emph{regret} that compares the expected cumulative reward of an optimal policy $\pi^*$ to the cumulative reward of the learner. 
+
 If the learner $\gL$ interacts with the unknown MDP $M$ over $T\in\N^+$ time steps, we denote by $\Reg(\gL, M, T)$ the regret suffered by the learner.
 So, maximizing the expected cumulative reward is equivalent to minimizing the expected regret, $\ex{\Reg(\gL, M, T)}$.
 
@@ -207,8 +212,8 @@ For finite horizon setting, the diameter of the MDP or the upper bound on span o
 So, the minimax bound can be immediately deduced from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst-case MDP with $S$ states and $A$ actions such that after $K$ episodes, each of horizon\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}} $H$, the learner suffers a regret\footnote{In time-inhomogeneous finite horizon setting, the minimax bound is $\landauOmega(H\sqrt{HSAK})$ (see, \eg, \cite{jin2018q}).} $\landauOmega(H\sqrt{SAK})$.
 
 
-%\section{Algorithms with regret guarantee}
-\section{Optimism and posterior sampling}
+\section{Algorithms with regret guarantee}
+%\section{Optimism and posterior sampling}
 \label{ch:rl:sec:opt_post}
 
 To get enough information for deriving $\pi^*$, the learner needs to \emph{explore} the dynamic of the MDP as much as possible.
@@ -286,7 +291,7 @@ As mentioned in Section~\ref{sec:intro_learning}, we consider \textbf{model-base
 Algorithm~\ref{algo:generics} shows how episodic algorithms work during the learning.
 %The two approaches compute an optimal policy of an ``imagined MDP'' that they believe to be the unknown MDP $M=\langle\gS,\gA,r,p\rangle$.
 %Precisely, for both approaches, Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics} can be broken down into two steps
-For both approaches, Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics} can be broken down into two steps
+For both approaches, Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{algo:generics} can be broken down into two steps
 \begin{enumerate}[label=(\roman*)]
     \item \label{it:new_mdp} compute an estimate $M^k=\langle\gS,\gA,r^k,p^k\rangle$ of the unknown MDP $M$;
     \item compute an optimal policy $\pi^k$ of $M^k$.
@@ -301,13 +306,11 @@ Since an optimal policy can be computed in a deterministic manner given the MDP,
     \DontPrintSemicolon
     \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
     \Input{The unknown MDP $M=\langle\gS,\gA,r,p\rangle$}
-    \Init{}{Observe initial state $s_1$}
     \BlankLine
+    Observe initial state $s_1$ \;
     \For{episodes $k=1,2,\dots$}{
-        %Based on observation $o_{t^k}$, compute the imagined MDP $M^k$ (using posterior sampling or optimism). \;\label{line:new_mdp}
-        %Compute the imagined MDP $M^k=\langle\gS,\gA,r^k,p^k\rangle$ \;\label{line:new_mdp}
-        Compute a new policy $\pi^k$ (using optimism or posterior sampling) \;\label{line:new_policy}
-        \While{episode $k$ continues}{
+        Compute a new policy $\pi^k$ (using optimism or posterior sampling) \;\label{ch:rl:line:new_policy}
+        \While{terminal condition is not met}{
             Execute action $a_t=\pi^k(s_t)$ \;
             %Observe $o_t=o_t\cup\{s_t,a_t,r_t,s_{t+1}\}$. \;
             Observe $r_t$ and next state $s_{t+1}$. \;
@@ -360,7 +363,7 @@ Here, we adapt UCRL2 to finite horizon setting.
 When updating the policy, UCRL2 constructs confidence sets $\sB_r$ and $\sB_p$ for $r$ and $p$ respectively based on high probability confidence bounds.
 We denote by $\sM$ the set of plausible MDPs whose reward function lives in $\sB_r$ and state transition lives in $\sB_p$.
 UCRL2 chooses the MDP that incurs the highest optimal value among the MDPs in $\sM$ and computes an optimal policy of the chosen MDP.
-That is, at Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics}, UCRL2 computes a new policy $\pi^k$ such that
+That is, at Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{algo:generics}, UCRL2 computes a new policy $\pi^k$ such that
 \begin{equation}
     \label{ch:rl:eq:optim}
     \vw_{M^k}^{\pi^k} \ge \max_{\pi\in\Pi}\max_{M'\in\sM^k} \vw_{M'}^\pi
@@ -425,7 +428,7 @@ Compare to Proposition~\ref{prop:minimax_rg_lb}, the upper bound in Proposition~
 \subsection{Upper confidence bound value iteration (UCBVI) \texorpdfstring{\cite{azar2017minimax}}{[AOM17]}.}
 UCBVI is an optimistic algorithm designed for finite horizon setting.
 The algorithm keeps track of the emprical mean $\hat{p}$ of $p$ and only constructs confidence set $\sB_r$ for $r$ based on high probability confidence bound.
-Differently from UCRL2 that chooses only one copy of expected reward, UCBVI executes Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics} by choosing $H$ copies in the following manner:
+Differently from UCRL2 that chooses only one copy of expected reward, UCBVI executes Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{algo:generics} by choosing $H$ copies in the following manner:
 \begin{itemize}
     \item set $w^{\pi^k}_{H+1:H,M^k}(s)=0$ for all $s$,
     \item for $h$ from $H$ to $1$
@@ -481,7 +484,7 @@ To ease the exposition, we will say that a MDP $M'=\langle\gS,\gA,r',p'\rangle$ 
 When updating its policy, PSRL use the collected observations and Bayes' theorem to derive the posterior distribution of the unknown MDP.
 After that, a MDP is sampled from the posterior and PSRL computes an optimal policy in the sampled MDP.
 That is, at time step $t^k$, PSRL uses the observations $o_{t^k}$ to update the posterior $\phi\bigl(\cdot\mid o_{t^k}\bigr)$.
-Then, Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics} is performed by sampling a MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$ and computing an optimal policy $\pi^k$ in $M^k$.
+Then, Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{algo:generics} is performed by sampling a MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$ and computing an optimal policy $\pi^k$ in $M^k$.
 The policy $\pi^k$ is then used during the episode $k$ to collect more observations.
 
 The performance of PSRL is measured by the Bayesian regret given in \eqref{eq:bayes_rg}.
