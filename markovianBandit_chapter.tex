@@ -217,7 +217,7 @@ In undiscounted restless bandit, the average reward or gain of policy $\pi$ is d
 %As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ such that for all $\vs\in\gX, g^{\pi^*}(\vs)=\max_{\pi}g^{\pi}(\vs)$ exists and is deterministic.
 As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ that maximizes \eqref{ch:mb:eq:gain_defn} for any $\vs\in\gX$ exists and is deterministic.
 However, due to the curse of dimensionality, computing such an optimal policy is notoriously difficult as its complexity grows exponentially with the number of arms.
-In fact, it is shown in \cite{papadimitriou1994complexity} that computing an optimal policy in undiscounted restless bandit is PSPACE-hard.
+In fact, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that computing an optimal policy in undiscounted restless bandit is PSPACE-hard.
 In about 1980, Peter Whittle proposed a heuristic in the form of largest index rule, later known as \textbf{Whittle index policy}, for undiscounted restless bandit problem.
 The computational complexity of this heuristic is linear in the number of arms which makes it scalable for problems with large number of arms.  
 We discuss more about this index policy in the following section.
