@@ -16,7 +16,8 @@ In discounted rested bandit problem, it is well-known that Gittins index policy 
 So, we recall its definition in Section~\ref{ch:mb:ssec:gittins_idx}.
 We present restless Markovian bandit problem in Section~\ref{ch:mb:sec:restless}.
 There are two possible criteria for restless bandit depending on whether the reward is discounted or not.
-For both criteria, Whittle index policy is a well-known heuristic. So, we recall its definition in Section~\ref{ch:mb:ssec:whittle_idx}.
+For both criteria, Whittle index policy is a popular heuristic thanks to its simplicity and strong empirical performance.
+So, we recall its definition in Section~\ref{ch:mb:ssec:whittle_idx}.
 In Section~\ref{ch:mb:sec:studied}, we point out the questions that arise in rested and restless bandit problems and that will be treated in Part~\ref{part:idx}.
 We also outline the questions that we are passionated about when learning with rested and restless bandit model.
 These questions will be treated in Part~\ref{part:learning}.
@@ -216,7 +217,7 @@ In undiscounted restless bandit, the average reward or gain of policy $\pi$ is d
 %As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ such that for all $\vs\in\gX, g^{\pi^*}(\vs)=\max_{\pi}g^{\pi}(\vs)$ exists and is deterministic.
 As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ that maximizes \eqref{ch:mb:eq:gain_defn} for any $\vs\in\gX$ exists and is deterministic.
 However, due to the curse of dimensionality, computing such an optimal policy is notoriously difficult as its complexity grows exponentially with the number of arms.
-In fact, it is shown in \cite{papadimitriou1994complexity} that computing an optimal policy in undiscounted restless bandit is NP-hard.
+In fact, it is shown in \cite{papadimitriou1994complexity} that computing an optimal policy in undiscounted restless bandit is PSPACE-hard.
 In about 1980, Peter Whittle proposed a heuristic in the form of largest index rule, later known as \textbf{Whittle index policy}, for undiscounted restless bandit problem.
 The computational complexity of this heuristic is linear in the number of arms which makes it scalable for problems with large number of arms.  
 We discuss more about this index policy in the following section.
