@@ -1,21 +1,26 @@
 \chapter{Introduction}
 \label{chapter:introduction}
 
-\begin{itemize}
-    \item context introduction
-    \item gentle problem presentation
-    \item results: discounted problem, non-discounted problem
-\end{itemize}
+Markovian bandits form a subclass of multi-armed bandit problems in which each arm has an internal state that evolves over time in a Markovian manner, as a function of the decision maker’s actions.
+In such a problem, at each decision time, the decision maker observes the state of all arms and chooses which one to activate.
+When the state of an arm evolves only when this arm is chosen, one falls into the category of rested Markovian bandits.
+When the state of an arm can also evolve when the arm is not chosen, the problem is called a restless bandit problem.
+Markovian bandits have been applied to many resource allocations and scheduling problems such as wireless communication \cite{raghunathan2008index, liu2010indexability, aalto2019whittle}, web crawling \cite{nino2014dynamic, avrachenkov2022whittle}, congestion control \cite{avrachenkov2013congestion, avrachenkov2018impulsive}, queueing systems \cite{glazebrook2009index, aalto2009gittins, archibald2009indexability, aalto2011properties, larranaga2015asymptotically, borkar2017whittle, scully2018soap}, and clinical trials \cite{villar2015multi}.
+
+Markovian bandit can be viewed as a classical Markov decision process (MDP) embedded with a special structure.
+Such MDPs suffer, however, from what is called ``the curse of dimensionality'', which basically says that the state size of the Markov process is exponential in the number of arms.
+This implies that the complexity of computing an optimal policy based on classical iterative algorithms such as value iteration or dynamic programming is exponential in the number of arms.
+Outstandingly, an optimal policy for rested Markovian bandit with discount was found by Gittins \cite{gittins1979bandit} in about 1970.
+The proposed policy is an index policy that demands a computation on each arm individually.
+So, Gittins index policy provides an exponential improvement.
+In consequence, most of the later studied solutions for restless Markovian bandits resort to divide-and-conquer approach: decompose the original multi-dimensional problem into multiple one-dimensional problems.
+Yet, it is shown that the restless bandit with no discount is PSPACE-hard \cite[Theorem~4]{papadimitriou1994complexity}.
+
+In about 1980, <++>
+
+
 
 \section{Topic of the thesis}
-
-\section{Motivation for Markovian bandit}
-
-\begin{itemize}
-    \item recent applications: queuing systems,...
-    \item efficient index policy computation
-    \item curse of dimensionality in reinforcement learning algorithms
-\end{itemize}
 
 \section{Outline of the thesis}
 
