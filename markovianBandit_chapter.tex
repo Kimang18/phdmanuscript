@@ -10,10 +10,19 @@ Fundamentally, there are at least \textbf{three types} of bandit problem dependi
 In this thesis, we focus on on Markovian bandits.
 We refer to \cite{bubeck2012regret} for more detail discussion about stochastic and adversarial bandits.
 
-In this chapter, we present two settings of Markovian bandit problem: rested and restless.
-In each setting, we explain the objective function and...
+In this chapter, we recall the existing formulizations of Markovian bandit in Section~\ref{ch:mb:sec:summary}.
+We present rested Markovian bandit problem in Section~\ref{ch:mb:sec:rested}.
+In discounted rested bandit problem, it is well-known that Gittins index policy is optimal.
+So, we recall its definition in Section~\ref{ch:mb:ssec:gittins_idx}.
+We present restless Markovian bandit problem in Section~\ref{ch:mb:sec:restless}.
+There are two possible criteria for restless bandit depending on whether the reward is discounted or not.
+For both criteria, Whittle index policy is a well-known heuristic. So, we recall its definition in Section~\ref{ch:mb:ssec:whittle_idx}.
+In Section~\ref{ch:mb:sec:studied}, we point out the questions that arise in rested and restless bandit problems and that will be treated in Part~\ref{part:idx}.
+We also outline the questions that we are passionated about when learning with rested and restless bandit model.
+These questions will be treated in Part~\ref{part:learning}.
 
 \section{A brief summary of Markovian bandit formulizations}
+\label{ch:mb:sec:summary}
 
 Markovian bandits form a subclass of multi-armed bandit problems in which each arm has an internal state that evolves over time in a Markovian manner, as a function of the decision maker’s actions.
 %There are \textbf{two setups} depending on whether the random random obtained by the decision maker is discounted over time or not.
@@ -58,7 +67,7 @@ For both bandits, we consider the \textbf{infinite horizon} model: the decision 
 %We denote the set of discrete numbers $\{1,\dots,n\}$ by $[n]$.
 
 \section{Rested Markovian bandit}
-\label{sec:rested_mab}
+\label{ch:mb:sec:rested}
 
 %Rested Markovian bandit is a model for dynamic allocation problem in which the decision maker wants to efficiently share its limited resource between various activities which are being pursued.
 %Rested bandit is also known by \textbf{restful} bandit or a \textbf{family of alternative bandit processes}.
@@ -119,7 +128,7 @@ We discuss more about this setting in the following section.
 %That is, $\vs, \vs'\in\gX$ are global states and for any $i\in[n]$, $s_i,s'_i$ are local states or precisely the states of arm $i$.
 
 \subsection{Discounted rested bandit: Gittins index policy}
-\label{ssec:gittins_idx}
+\label{ch:mb:ssec:gittins_idx}
 
 Since a rested bandit can be cast as a MDP, it is then possible to find an optimal policy using iterative algorithms such as value iteration in the MDP.
 However, those algorithms have a computational complexity that is exponential in the number of arms.
@@ -159,7 +168,7 @@ This index policy is suboptimal when the decision maker activates more than one 
 %We will discuss about Gittins index computation again in Part~\ref{part:idx}.
 
 \section{Restless Markovian bandit}
-\label{sec:restless_mab_pb}
+\label{ch:mb:sec:restless}
 
 %Restless Markovian bandit is also a model dynamic allocation problem.
 %As mentioned above, restless Markovian bandit is a generalized version of rested bandit.
@@ -219,7 +228,7 @@ We discuss more about this index policy in the following section.
 %The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1)$ is the discount factor.
 
 \subsection{Undiscounted restless bandit: Whittle index policy}
-\label{subsec:whittle_idx}
+\label{ch:mb:ssec:whittle_idx}
 
 
 In his seminar paper \cite{whittle1988restless}, Whittle proposes the following heuristic: \textit{if all arms verify a technical condition known as indexability, then each state $s_i$ of each arm $i$ is associated with a real number $\widx(s_i)$, that is now known as the Whittle index of state $s_i$.
@@ -272,6 +281,7 @@ For instance, there exists a definition of Gittins index for finite-horizon rest
 %\subsubsection{Fast-pivoting algorithm}
 
 \section{Studied questions in this thesis}
+\label{ch:mb:sec:studied}
 
 \subsection{Indexability}
 
