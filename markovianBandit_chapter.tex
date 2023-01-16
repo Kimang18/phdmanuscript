@@ -37,9 +37,9 @@ The name ``rested'' is adopted because the unchosen arms make no state transitio
 Rested bandit is also known as \textbf{restful} bandit or a \textbf{family of alternative bandit processes} (see \eg, \cite{gittins1979bandit,katehakis1987multi,duff1995q,tekin2010online,gittins2011multi}).
 %The objective of this problem is to find a policy, mapping from problem state to an arm, that maximizes .
 
-Restless Markovian bandit is more general than rested one because
+In \cite{whittle1988restless}, Whittle extended the rested Markovian bandit to a \textbf{restless} case in which
 the unchosen arms also make state transition and incur some reward (possibly always zero).
-Two divisions are made for restless bandit: (1) \textbf{partially observed} setup and (2) \textbf{fully observed} setup.
+Up to the current literature, two setups are made for restless bandit: (1) \textbf{partially observed} setup and (2) \textbf{fully observed} setup.
 
 In partially observed restless bandit, each arm is a finite Markov reward process.
 At each time step, the decision maker activates one arm and observes its current state.
@@ -291,7 +291,7 @@ This means that all arms are indexable in rested bandit.
 However, the definition of indexability in restless bandit would seem unsettled:
 In \cite[Chapter~14]{whittle1996optimal}, the undiscounted restless bandit is considered.
 An arm is said to be indexable if the set of states for which the arm is rested increases from empty set to the set of all states as $\lambda$ increases \cite[Page~280]{whittle1996optimal}.
-Yet, the criterion of optimality to rest an arm is not explicitly specified: the arm is rested just if the gain is maximized?
+Yet, the criterion of optimality to rest an arm is not explicitly specified: the arm is rested simply if the gain is maximized?
 This question is important because from \cite{puterman2014markov}, there are multiple optimality criteria in average reward model.
 In addition, what could we say in the case where there are multiple sets of states that increase from empty set to the set of all states as $\lambda$ increases?
 Last but not least, if arm $i$ is indexable, then the Whittle index of state $s_i$ can be computed by \eqref{ch:mb:eq:widx_defn}.
