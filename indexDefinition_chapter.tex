@@ -2,10 +2,26 @@
 
 \let\clearpage\relax
 
-\chapter{Bellman optimality and indexability}
+\chapter{Indexability and Bellman optimality }
 \label{ch:indexability}
 
-In this chapter, we present two structured MDPs known as rested and restless markovian bandit.
+In the previous chapter, we gave the formalism of Markovian bandits and recalled two index policies: Gittins and Whittle index policies.
+In this chapter, we discuss the existence of the Whittle index in undiscounted restless bandit arm and provide a technical lemma to characterize such an existence.
+To do so, we first discuss the ambiguities that exist in the classical definition of indexability...
+
+Since index policies require computation on each arm individually,  in the remaining of the chapter, we focus only on a single arm and drop the index from the expected reward and state transition.
+To ease the exposition, we redefine a few notations: $i$ and $j$ are for states of the arm, $P^a_{ij}$ is the probability that the arm changes state from $i$ to $j$ under action $a\in\{0,1\}$, etc.
+These notations are used uniquely for this part.
+
+\section{\texorpdfstring{$\lambda$-p}{P}enalized MDP and classical definition of indexability}
+\label{sec:penal_mdp}
+
+We consider a restless Markovian arm $\langle\gS,\{0,1\},r,p\rangle$.
+Following the Lagrangian relaxation in \eqref{ch:mb:eq:relax_defn},we define a $\lambda$-penalized MDP\footnote{not to be confused with $\gamma$-discounted MDPs, where the discount is on rewards and not on actions.} for each $\lambda\in\R$ as the following.
+The state and action spaces, and transition are the same as in the arm.
+
+whose transition matrices are the same as in the original MDP and whose reward at time $t\ge0$ when taking action $a_t$ in state $s_t$ is $r^{a_t}_{s_t} - \lambda a_t$. The quantity $\lambda$ is a penalty for taking action ``activate''. For $\lambda$-penalized MDPs, we define the gain and bias functions as in Section~\ref{ssec:bellman_optimal}, but these quantities now depend on $\lambda$. Hence, we will write them as functions of $\lambda$: For instance, the optimal gain is $\vg^*(\lambda)$, and we will use the notation $\vh^*(\lambda)$ to denote an optimal bias, and $\pi^*(\lambda)$ to denote an optimal policy.
+
 
 \section{A new notion of optimality: Bellman optimal}
 \label{ch:mbp:sec:bell}
