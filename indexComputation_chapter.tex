@@ -192,7 +192,7 @@ They provide conditions to verify when a given unichain policy is Bellman optima
 
 Let $\pi\subseteq[n]$ be a unichain policy and fix a penalty $\lambda$. By \cite[Chapter~8]{puterman2014markov}, there exists a gain $g^\pi$ and a bias vector $\vh^\pi$ such that
 \begin{equation}
-    g^\pi(\lambda) + h^\pi_i(\lambda) = r^{\pi_i}_i -\lambda \pi_i + \sum_{j=1}^n P^{\pi_i}_{ij}h^\pi_j(\lambda).  \label{eq:bias_eval}
+    g^\pi(\lambda) + h^\pi_i(\lambda) = r^{\pi_i}_i -\lambda \pi_i + \sum_{j=1}^n P^{\pi_i}_{ij}h^\pi_j(\lambda).  \label{eq:bias_eval1}
 \end{equation}
 %For this policy $\pi$, we denote by $\alpha^{\pi}_i$ the \emph{Bellman advantage} of the action activate over the action \emph{rest}. It equals:
 We denote by  $\alpha^{\pi}_i$  the \emph{active advantage} in state $i$ under policy $\pi$, which is the difference between the value in state $i$ of action activate and the one of action rest.
@@ -202,7 +202,7 @@ It is defined by:
     \label{eq:advantage}
     \alpha^\pi_i(\lambda):=r^1_i -r^0_i -\lambda +\sum_{j=1}^n (P^1_{ij} -P^0_{ij})h^\pi_j(\lambda).
 \end{equation}
-For a unichain policy, Equation \eqref{eq:bias_eval} uniquely determines the vector $\vh^\pi(\lambda)$ up to an additive constant $c\mathbf{1}$ (see \cite[Chapter 8]{puterman2014markov}). Hence the active advantage vector $\valpha^\pi(\lambda)$ is uniquely determined for a unichain policy $\pi$. As we will see later, the function $\valpha^\pi(\lambda)$ is affine in $\lambda$.
+For a unichain policy, Equation \eqref{eq:bias_eval1} uniquely determines the vector $\vh^\pi(\lambda)$ up to an additive constant $c\mathbf{1}$ (see \cite[Chapter 8]{puterman2014markov}). Hence the active advantage vector $\valpha^\pi(\lambda)$ is uniquely determined for a unichain policy $\pi$. As we will see later, the function $\valpha^\pi(\lambda)$ is affine in $\lambda$.
 
 Our algorithm computes the Whittle index by increasing order, by trying to eliminate states one by one.
 The following lemma shows that to compute the next Bellman optimal policy, one should look at when the active advantage of a state is equal to $0$.
@@ -440,9 +440,9 @@ This is not necessarily true for multichain arms (see the discussion in Appendix
 \subsection{Naive implementation of Algorithm~\ref{algo:whittle_informal} \texorpdfstring{(in $O(n^4)$)}{}}
 \label{ssec:implem}
 
-For a given penalty $\lambda$, we consider a policy $\pi$ that is Bellman optimal and unichain. Recall that $g^{*}(\lambda)$ is the maximal gain, and $\vh^{\pi}(\lambda)\in\real^n$ is a solution \eqref{eq:bias_eval}.
+For a given penalty $\lambda$, we consider a policy $\pi$ that is Bellman optimal and unichain. Recall that $g^{*}(\lambda)$ is the maximal gain, and $\vh^{\pi}(\lambda)\in\real^n$ is a solution \eqref{eq:bias_eval1}.
 We consider $\vh^{\pi}(\lambda)$ such that $h^\pi_1(\lambda)=0$.
-Recall from \eqref{eq:bias_eval} that for all $i\in[n]:$
+Recall from \eqref{eq:bias_eval1} that for all $i\in[n]:$
 \begin{align}
     \label{eq:bellman}
     g^*(\widx) + h^{\pi}_i(\widx) = r_i^{\pi_i} -\widx\pi_i + \sum_{j=1}^nP^{\pi_i}_{ij}h^{\pi}_j(\widx).
