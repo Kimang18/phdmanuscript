@@ -112,13 +112,13 @@ The new definition and all the technical lemmas in this section are valid for ge
 \subsection{Definition of Bellman optimality}
 
 Given a policy $\pi$, we denote by $\mP^\pi$ the transition matrix corresponding to the policy $\pi$, \ie, $P^\pi_{ij}=P^{\pi_i}_{ij}$ and by $\vr^\pi$ the corresponding reward vector, \ie, $r^\pi_i{=}r^{\pi_i}_i$.
-By \cite[Theorem~9.1.7]{puterman2014markov}, a gain optimal policy can be identified by any solution $(\vg^*, \vh^*)$ of \eqref{eq:gain_opt} and \eqref{eq:bias_opt} (recall that $\vg^*$ is the optimal gain and uniquely defined).
+By \cite[Theorem~9.1.7]{puterman2014markov}, a gain optimal policy can be identified by any solution $(\vg^*, \vh^*)$ of the Bellman optimality equations \eqref{eq:gain_opt} and \eqref{eq:bias_opt} (recall that $\vg^*$ is the optimal gain and uniquely defined).
 Indeed, any policy $\pi$ that satisfies $\sum_{j\in[n]}P^{\pi}_{ij}g^*_j=g^*_i$ and $\pi_i\in\argmax_{a\in\{0,1\}}\Big(r^a_i +\sum_{j\in[n]}P^a_{ij}h^*_j\Big)$ for all state $i$ is gain optimal.
 In vector notation, if $\mP^{\pi}\vg^*=\vg^*$ and $\pi\in\argmax_{\pi'}\Bigl(\vr^{\pi'}+\mP^{\pi'}\vh^*\Bigr)$, then $\pi$ is gain optimal.
 However, this way of identification is restrictive for gain optimal policies in a sense that is shown
 in \figurename~\ref{fig:gain_vs_bellman}.
 In the example of \figurename~\ref{fig:gain_vs_bellman}, there are two gain optimal policies $\pi^1$ and $\pi^2$.
-Yet, $\pi^1\notin\argmax_{\pi'}\Bigl(\vr^{\pi'}+\mP^{\pi'}\vh^*\Bigr)$ for any $\vh^*$ that satisfies \eqref{eq:bias_opt} while $\pi^2$ does.
+Yet, $\pi^1\notin\argmax_{\pi'}\Bigl(\vr^{\pi'}+\mP^{\pi'}\vh^*\Bigr)$ for any $\vh^*$ that satisfies the optimality equation \eqref{eq:bias_opt} while $\pi^2$ does.
 
 \begin{figure}[ht]
     \centering
@@ -137,13 +137,13 @@ Yet, $\pi^1\notin\argmax_{\pi'}\Bigl(\vr^{\pi'}+\mP^{\pi'}\vh^*\Bigr)$ for any $
         \begin{minipage}{.7\linewidth}
             There are two policies $\pi^1:=\emptyset$ and $\pi^2:=\{1\}$.
             Both policies are gain optimal.
-            By solving \eqref{eq:gain_opt} and \eqref{eq:bias_opt}, we have $\vg^*=\vone$ and $\vh^*{=}c\vone$ where $c$ can be any real number.
+            By solving the Bellman optimality equations \eqref{eq:gain_opt} and \eqref{eq:bias_opt}, we have $\vg^*=\vone$ and $\vh^*{=}c\vone$ where $c$ can be any real number.
             Consequently, $\mP^{\pi^1}\vg^* =\vg^*$ and $\mP^{\pi^2}\vg^* =\vg^*$ but
             policy $\pi^1$ does not satisfies the maximum of \eqref{eq:bias_opt} on state $1$ for any $\vh^*$ while $\pi^2$ does.
             So, policy $\pi^2$ is more restrictive than $\pi^1$.
         \end{minipage}
     \end{tabular}
-    \caption{An example where some gain optimal policies do not satisfy the maximum of \eqref{eq:bias_opt} in all states of the MDP.
+    \caption{An example where some gain optimal policies do not satisfy the Bellman optimality equation \eqref{eq:bias_opt} in all states of the MDP.
         The black arrow shows state transition of action activate and the red ones for action rest.
         The numbers along the arrows show the reward when executing the actions.
 }
