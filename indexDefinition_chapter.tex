@@ -153,7 +153,11 @@ Yet, $\pi^1\notin\argmax_{\pi'}\Bigl(\vr^{\pi'}+\mP^{\pi'}\vh^*\Bigr)$ for any $
 Thus, we define a new notion of optimality as the following.
 \begin{defn}[Bellman optimal policy]
     \label{ch:idx:defn:bell}
-    A policy $\pi$ is \emph{Bellman optimal} if there exists a vector $\vh^*\in\R^n$ that satisfies Bellman optimality equation \eqref{eq:bias_opt} with the optimal gain $\vg^*$ such that $\mP^\pi\vg^*=\vg^*$ and $\pi\in\argmax_{\pi'}\Bigl(\vr^{\pi'}{+}\mP^{\pi'}\vh^*\Bigr)$.
+    A policy $\pi$ is \emph{Bellman optimal} if there exists a vector $\vh^*\in\R^n$ that satisfies Bellman optimality equation \eqref{eq:bias_opt} with the optimal gain $\vg^*$ such that
+    \begin{equation}
+        \label{ch:idx:eq:bell}
+        \mP^\pi\vg^*=\vg^* \text{ and } \pi\in\argmax_{\pi'}\Bigl(\vr^{\pi'}{+}\mP^{\pi'}\vh^*\Bigr).
+    \end{equation}
 \end{defn}
 By \cite[Theorem~9.1.7]{puterman2014markov}, Bellman optimal policy always exists in MDPs with finite state and action spaces and Bellman optimal implies gain optimal.
 However, we will see in Section~\ref{ssec:gain_charac} that the converse is not true in general.
