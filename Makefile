@@ -123,9 +123,9 @@ check_uncited_references:
 # cleaning #
 ############
 clean:
-	rm -f *.aux *.bbl *.bcf *.blg *.lof *.log *.lot *.out *.run.xml *.toc *.upa *-blx.bib *.snm *.nav *.vrb
+	rm -f *.aux *.bbl *.bcf *.blg *.lof *.log *.lot *.out *.run.xml *.toc *.upa *-blx.bib *.snm *.nav *.vrb *.synctex.gz
 	rm -f macros.include.tex
-	rm -rf svg-inkscape
+	#rm -rf svg-inkscape
 
 distclean: clean
 	rm -f thesis.pdf

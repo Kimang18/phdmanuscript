@@ -353,8 +353,17 @@
 %TODO: should we put number for introduction and conclusion chapters?
 
 \iftotalcompilation
-\part{Background on Markov decision process and reinforcement learning}
-\KK{Motivate why this part should be read, what are essential to understand in this part}
+\part{Background on Markov decision process, reinforcement learning, and Markovian bandits}
+\label{part:background}
+In this part, we recall the existing problem setups and results in the literature.
+This part serves as the basis to understand the whole thesis.
+In Chapter~\ref{ch:mdp}, we present the formalism of Markov decision process.
+In Chapter~\ref{ch:rl}, we recapitulate the basics and results in reinforcement learing literature.
+In Chapter~\ref{ch:mb}, we present the formalism of Markovian bandits and existing theoretical results.
+
+\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+\clearpage
+%\KK{Motivate why this part should be read, what are essential to understand in this part}
 \fi
 
 \inputchapter{\includemdpchapter}{markovDecisionProcess_chapter.tex}
@@ -366,7 +375,11 @@
 \iftotalcompilation
 \part{Indexability}
 \label{part:idx}
-\KK{In this part, we present two markovian bandit models and our contribution...}
+\KK{In part, we present...}
+
+\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+\clearpage
+%\KK{Motivate why this part should be read, what are essential to understand in this part}
 \fi
 
 \inputchapter{\includeindexDefinitionchapter}{indexDefinition_chapter.tex}
