@@ -298,29 +298,29 @@
 % --- FRONT MATTER ---------------------
 
 \iftotalcompilation
-\pdfbookmark[-1]{Front Matter}{Front Matter}
-
-\pagenumbering{gobble}  % do not count title page
-\pagestyle{empty}  % no header nor footer
-
-\input{titlepage.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-
-\pagenumbering{roman}  % roman page numbering (e.g., i ii iii), reset counter
-
-%\input{dedication.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%\pdfbookmark[-1]{Front Matter}{Front Matter}
+%
+%\pagenumbering{gobble}  % do not count title page
+%\pagestyle{empty}  % no header nor footer
+%
+%\input{titlepage.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 %\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 %
-\input{epigraph.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-
-\pagestyle{plain}  % display page number only
-
-\input{acknowledgments.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-
-\input{abstract-front.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%\pagenumbering{roman}  % roman page numbering (e.g., i ii iii), reset counter
+%
+%%\input{dedication.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%%\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%%
+%\input{epigraph.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%
+%\pagestyle{plain}  % display page number only
+%
+%\input{acknowledgments.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%
+%\input{abstract-front.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 
 \setcounter{tocdepth}{2}  % define depth of ToC
 \phantomsection\addcontentsline{toc}{chapter}{{\contentsname}}  % display ToC to ToC
@@ -410,17 +410,17 @@ In Chapter~\ref{ch:mb}, we present the formalism of Markovian bandits and existi
 % --- BACK MATTER ----------------------
 
 \iftotalcompilation
-\pdfbookmark[-1]{Back Matter}{Back Matter}
-
-\pagenumbering{arabic}  % arabic page numbering (e.g., 1 2 3), reset counter
-\renewcommand*{\thepage}{A\arabic{page}}  % prepend A to appendix page number
-\pagestyle{scrheadings}  % display header and footer
-\addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
-\fi
-
-\appendix
-\inputchapter{\includechapterappendix}{chapter_appendix.tex}
-\inputchapter{\includechapterappendixtwo}{chapter_appendixtwo.tex}
+%\pdfbookmark[-1]{Back Matter}{Back Matter}
+%
+%\pagenumbering{arabic}  % arabic page numbering (e.g., 1 2 3), reset counter
+%\renewcommand*{\thepage}{A\arabic{page}}  % prepend A to appendix page number
+%\pagestyle{scrheadings}  % display header and footer
+%\addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
+%\fi
+%
+%\appendix
+%\inputchapter{\includechapterappendix}{chapter_appendix.tex}
+%\inputchapter{\includechapterappendixtwo}{chapter_appendixtwo.tex}
 
 \iftotalcompilation
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
