@@ -307,7 +307,7 @@ The gain and bias can be computed using Bellman evaluation equations given in Pr
 Equations~\eqref{eq:gain_eval} and \eqref{eq:bias_eval} uniquely define $\vg$ and determine $\vh$ up to an element of the null space of $(\mI-\mP^\pi)$ where $\mI$ is the identity matrix of size $S\times S$.
 If $\mP^\pi$ is unichain\footnote{we provide more explanation about unichain in \ref{it:unichain} of Definition~\ref{ch:mdp:defn:mdp_class}.}, then we say that policy $\pi$ is unichain and its gain is state independent: $g^\pi(s)=g^\pi(s')$ for any $s,s'\in\gS$.
 So, for unichain policy $\pi$, we just denote its gain by $g^\pi$.
-Moreover, if $\pi$ is unichain, its bias $\vh^\pi$ is defined up to a constant vector.
+Moreover, if $\pi$ is unichain, its bias $\vh^\pi$ is defined up to a constant vector (see \cite[Chapter 8]{puterman2014markov}).
 
 \subsection{Classification of Markov decision process}
 Since \Eqref{eq:avg_obj} compares policies based on their average reward in steady regime, we need to take into account the chain structure induced by the policies.
