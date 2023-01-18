@@ -6,8 +6,15 @@
 \label{ch:indexability}
 
 In the previous chapter, we gave the formalism of Markovian bandits and recalled two index policies: Gittins and Whittle index policies.
-In this chapter, we discuss the existence of the Whittle index in undiscounted restless bandit arm and provide a technical lemma to characterize such an existence.
-To do so, we first discuss the ambiguities that exist in the classical definition of indexability...
+In this chapter, we discuss the existence of the Whittle index of undiscounted restless Markovian arm and provide a few main contributions to characterize such an existence.
+
+We present our main contributions in Section~\ref{ch:idx:sec:contrib}. The $\lambda$-penalized MDP that is the basis to define the indexability is described in Section~\ref{ch:idx:sec:penal_mdp}.
+After that, we cover the ambiguities of classical definition of indexability accompanied with simple examples in Section~\ref{ch:idx:sec:classic_idx}.
+Section~\ref{ch:idx:sec:bell} contains a new notion of Bellman optimality and the properties of Bellman optimal policies.
+We give our definition of indexability and of Whittle index in Section~\ref{ch:idx:sec:idx}.
+Section~\ref{ch:idx:sec:more_defn} extends the discussion about indexability.
+Finally, we conclude the chapter in Section~\ref{ch:idx:sec:conc} by summarizing the chapter and give a brief introduction to the next chapter.
+
 
 Since index policies require computation on each arm individually,  in the remaining of the chapter, we focus only on a single arm and drop the index from the expected reward and state transition.
 To ease the exposition, we redefine a few notations:
@@ -19,6 +26,15 @@ To ease the exposition, we redefine a few notations:
     \item $g^*_i$ is the optimal gain of state $i$
     \item $h^*_i$ is the optimal bias of state $i$ 
 \end{itemize}
+
+\section{Contribution}
+\label{ch:idx:sec:contrib}
+
+In this chapter, we discuss about the definition of indexability and present two main contributions.
+
+Our first contribution is to propose a univocal definition of indexability. This definition clarifies ambiguities that exist in the classical definitions: Classical definitions assume that an arm is indexable if the optimal set of active states is a non-increasing function of some penalty term $\lambda$. While this definition works for most practical cases, it is not always precise enough because the optimal set is in general not unique. In our definition, we specify the notion of increasingness that should be used. Our definition guarantees the uniqueness of Whittle indices.
+
+Last but not least, we introduce a new notion of optimality called Bellman optimality. This notion is more restrictive than the classical gain optimality but it is rich enough to allow us to redefine the indexability in undiscounted restless Markovian bandits. We also study the characterization of gain and Bellman optimal policies. In particular, we provide a checkable condition for unicity of a given Bellman optimal policy. This is a new contribution in the vast literature of MDP.
 
 \section{\texorpdfstring{$\lambda$-p}{P}enalized MDP}
 \label{ch:idx:sec:penal_mdp}
@@ -56,14 +72,15 @@ Yet, we argue that this definition has two problems:
     \item What notion of ``optimality'' should be used? Should it be ``gain optimal'', ``bias optimal'' or another notion of optimality?
 \end{enumerate}
 
-The most problematic choice is the notion of increasingness: Interpretation $(\exists)$ is more permissive: For instance, consider an arm with two states and assume that the optimal policy is $\{1,2\}$ for $\lambda<0$ and is either $\{1\}$ or $\emptyset$ for $\lambda>0$.
+The most problematic choice is the notion of increasingness that applies to both discounted and undiscounted restless bandit: Interpretation $(\exists)$ is more permissive: For instance, consider an arm with two states and assume that the optimal policy is $\{1,2\}$ for $\lambda<0$ and is either $\{1\}$ or $\emptyset$ for $\lambda>0$.
 Interpretation $(\exists)$ says that the arm is indexable while interpretation ($\forall$) says that this arm is not indexable.
 If the arm is indexable, what should be the index of state $1$?
 Any choice $\lambda_1\in[0,+\infty]$ seems reasonable.
 Saying that the arm is not indexable clarifies the situation.
 So, we will choose interpretation ($\forall$) in our new definition of indexability in Section~\ref{ch:idx:sec:idx}.
 
-For the choice of optimality, let us consider the example in \figurename~\ref{fig:ambiguous_example}.
+The choice of optimality is due to the average reward criterion.
+To show it, let us consider the example in \figurename~\ref{fig:ambiguous_example}.
 In this example, the gain optimal policies are $\{1,2\}$ and $\{2\}$ for $\lambda<0$, and $\{1\}$ and $\emptyset$ for $\lambda>0$.
 According to the interpretation~$(\exists)$, the problem should be indexable but the index for state $1$ is unclear.
 According to the interpretation~$(\forall)$, the problem should not be indexable.
@@ -152,12 +169,12 @@ Yet, $\pi^1\notin\argmax_{\pi'}\Bigl(\vr^{\pi'}+\mP^{\pi'}\vh^*\Bigr)$ for any $
 
 Thus, we define a new notion of optimality as the following.
 \begin{defn}[Bellman optimal policy]
-    \label{ch:idx:defn:bell}
     A policy $\pi$ is \emph{Bellman optimal} if there exists a vector $\vh^*\in\R^n$ that satisfies Bellman optimality equation \eqref{eq:bias_opt} with the optimal gain $\vg^*$ such that
     \begin{equation}
         \label{ch:idx:eq:bell}
         \mP^\pi\vg^*=\vg^* \text{ and } \pi\in\argmax_{\pi'}\Bigl(\vr^{\pi'}{+}\mP^{\pi'}\vh^*\Bigr).
     \end{equation}
+    \label{ch:idx:defn:bell}
 \end{defn}
 By \cite[Theorem~9.1.7]{puterman2014markov}, Bellman optimal policy always exists in MDPs with finite state and action spaces and Bellman optimal implies gain optimal.
 However, we will see in Section~\ref{ssec:gain_charac} that the converse is not true in general.
@@ -399,9 +416,9 @@ Recall that the classical definition of indexability use in the literature is am
 
 To solve these ambiguities, we use the following definition of indexability.  
 \begin{defn}
-    \label{ch:idx:defn:idx}
     Given a finite-state arm, let $\Pi^*(\lambda)$ be the set of all Bellman optimal policies for a penalty $\lambda$.
     We say that the arm is indexable if for all $\lambda<\lambda'$, and all policies $\pi\in\Pi^*(\lambda)$ and $\pi'\in\Pi^*(\lambda')$, then $\pi\supseteq\pi'$.
+    \label{ch:idx:defn:idx}
 \end{defn}
 This definition says that the function $\pi^*(\lambda)\supseteq\pi^*(\lambda')$ regardless of the choice of Bellman optimal policies.
 With this definition, the example in \figurename~\ref{fig:ambiguous_example} is indexable.
@@ -426,7 +443,6 @@ We will revisit this lemma again in the next chapter in order to propose a chara
 
 We should stress that the Whittle index $\lambda_i$ can either be finite or infinite. When we say that ``a policy $\pi$ is optimal for the penalty $+\infty$'', this means ``there exists a penalty $\bar{\lambda}$ such that $\pi$ is optimal for all $\lambda\ge\bar{\lambda}$''.
 With this lemma, the indices in Figure~\ref{fig:ambiguous_example} are $\lambda_1=\lambda_2=0$.
-%Also, the last part of the lemma implies that $\pi^k$ is the unique Bellman optimal policy for all penalty $\lambda\in(\mu^{k-1}_{\min}, \mu^{k}_{\min})$.
 
 \begin{proof}
     The lemma is a direct consequence of the definition of indexability.
@@ -442,7 +458,62 @@ With this lemma, the indices in Figure~\ref{fig:ambiguous_example} are $\lambda_
     So, the condition in Definition~\ref{ch:idx:defn:idx} is satisfied.
 \end{proof}
 
+\section{More definitions of indexability?}
+\label{ch:idx:sec:more_defn}
+
+In our new definition of indexability, we use the notion of Bellman optimality.
+We believe this notion is the most natural one.
+%It coincides with the notion of optimality in infinite-horizon discounted MDPs.
+This allows the example of \figurename~\ref{fig:ambiguous_example} to be indexable.
+However, we must recognize that this new definition still does not cover all the problem of indexability.
+Indeed, let us consider the two examples in \figurename~\ref{fig:ambiguous_example2}.
+
+\begin{figure}[ht]
+   \centering
+   \begin{tabular}{ccc}
+       \begin{minipage}{.35\linewidth}
+           \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+           \node[state,color=blue]  (A) {$2$};
+           \node[state,color=blue]  (B) [left =1.5cm of A]   {$1$};
+           \path[->]
+               (A) edge[loop above,color=black]  node{$1{-}\lambda$} (A)
+               (A) edge[loop right, color=red, dashed]     node{$1$} (A)
+               (B) edge[color=black]     node{$1{-}\lambda$} (A)
+               (B) edge[loop left, color=red, dashed]     node[left]{$1$} (B);
+           \end{tikzpicture}
+       \end{minipage}
+       &
+       \begin{minipage}{.35\linewidth}
+           \begin{tikzpicture}[state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+               \node[state,color=blue] at (0,0) (A) {$1$};
+               \node[state,color=blue] at (2,.5)  (B) {$2$};
+               \node[state,color=blue] at (2,-.5)  (C) {$3$};
+               \node[state,color=blue] at (4,0)  (D) {$4$};
+           \path[->]
+               (A) edge[color=black]  node[above]{$1{-}\lambda$} (B)
+               (A) edge[color=red, dashed]     node[below]{$1$} (C)
+               (B) edge[color=red, dashed]     node[above]{$1$} (D)
+               (C) edge[color=black]     node[below]{$1{-}\lambda$} (D)
+               (B) edge[color=black, loop above] node{$-10-\lambda$} (B)
+               (C) edge[color=red, dashed,loop below] node{$-10$} (C)
+               (D) edge[color=red, dashed,loop above] node{$10$} (D)
+               (D) edge[color=black, loop below] node{$-\lambda$} (D)
+               ;
+           \end{tikzpicture}
+       \end{minipage}        \\
+       (a) & (b)
+    \end{tabular}
+    \caption{Ambiguous examples: All transitions are deterministic and labels on transitions indicate rewards. Solid black arrows correspond to the action ``activate'' and dashed red arrows to the action ``rest''.
+}
+    \label{fig:ambiguous_example2}
+\end{figure}
+
+For example (a), the Bellman optimal and gain optimal policies are identical: policies $\{1,2\}$ and $\{2\}$ for $\lambda<0$, and $\{1\}$ and $\emptyset$ for $\lambda>0$.
+Hence, example (a) is not indexable according to Definition~\ref{ch:idx:defn:idx}.
+However, the intuition would suggest that the index for this problem should be $\lambda_1=\lambda_2=0$. This is what would have happened if we had used the notion of \emph{bias optimal} policy that is stronger than the notion of Bellman optimal policy. Yet, this would not solve the ambiguity of example (b) for which the index of state $1$ is not clear unless one would use an even  stronger notion of optimality (such as the notion of \emph{Blackwell optimality} discussed in \cite[Chapter~10]{puterman2014markov}). In this thesis, we do not use these stronger definitions because computing a Blackwell-optimal policy in a $n$-state MDP is, to the best of our knowledge, not computable in $O(n^3)$ (the complexity of computing Blackwell-optimal policies is unknown to this date). Hence, in this thesis we use the notion of Bellman optimality that we think is the best tradeoff between expressiveness and computability.
+
 \section{Conclusion}
+\label{ch:idx:sec:conc}
 
 To sum up, we have presented the ambiguities in the classical definition of indexability and proposed a new definition that clarifies those ambiguities.
 Along this new definition of indexability, we also gave the corresponding definition of the Whittle index.
