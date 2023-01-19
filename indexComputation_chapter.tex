@@ -987,77 +987,6 @@ All experiments were conducted on a laptop (Macbook Pro 2020) with an Intel Core
 
 Finally, in all of our experiments, the generated arms are all unichain.
 
-\subsection{Arithmetic complexity of Subroutine~\ref{algo:update_X} and memory usage}
-
-Recall that in Subroutine~\ref{algo:update_X}, we compute the values $X^{\ell}_{ij}$ by doing the update (for all iteration $k$, for all $\ell=1$ to $k$ and for all $i\in[n]$ or all $i\in\pi^{\ell+1}$ if we do not test indexability):
-\begin{align}
-    \label{eq:apx_update}
-    X_{i\sigma^{k}}^{\ell+1} = X_{i\sigma^{k}}^{\ell} -\displaystyle\frac{X^{\ell}_{i\sigma^{\ell}}}{1+X^{\ell}_{\sigma^{\ell}\sigma^{\ell}}}X^{\ell}_{\sigma^{\ell}\sigma^{k}}
-\end{align}
-
-If we test indexability, there are $\sum_{k=1}^nk n = n^3/2+O(n^2)$ such updates. If we do not test indexability, there are $\sum_{k=1}^n \sum_{\ell=1}^k (n-\ell) = n^3/3 + O(n^2)$ such updates.  Below, we show each update of Equation~\eqref{eq:apx_update} can be done in two arithmetic operations (one addition and one multiplication), which leads to the complexity of $n^3+O(n^2)$ (or $(2/3)n^3+O(n^2)$) arithmetic operations for the computation of all the needed $X^k_{ij}$.  We also show how to reduce the memory size to $O(n^2)$.
-
-Let $W_{i\ell} := X^\ell_{i \sigma^\ell}/(1+X^\ell_{\sigma^\ell\sigma^\ell})$ and $V_i :=X^\ell_{i\sigma^k}$. Using this, Equation~\eqref{eq:apx_update} can be rewritten as: 
-\begin{align}
-    \label{eq:apx_update_V}
-    V_{i} = V_{i} - W_{i\ell} V_{\sigma^{\ell}}.
-\end{align}
-
-This results in the following loop at iteration $k$:
-\begin{itemize}
-    \item Initialize $V_{i}$ from $X^1_{i\sigma^k}$. 
-    \item For all $\ell\in\{1,\dots, k-1\}$, and all $i\in[n]$ (or $i\in\pi^{\ell+1}$), apply \eqref{eq:apx_update_V}. 
-    \item Compute $W_{ik}= V_{i}/(1+V_{\sigma^k})$
-    %\item For $\ell=k$, and all $i\in[n]$ (or $i\in\pi^{\ell+1}$), apply \eqref{eq:apx_update_V}.
-\end{itemize}
-Note that the value of $\mV$ is not necessary for iteration $k$ (only the values of $W_{i\ell}$ are needed). This shows that the algorithm can be implemented with a memory $O(n^2)$.% Moreover, each update of \eqref{eq:apx_update} can be implemented by $2$ arithmetic operations (one multiplication and one subtraction). 
-
-\subsection{Speedup when not checking the indexability: First found go last} 
-%TODO:continue here
-When the indexability is not tested, the update \eqref{eq:apx_update_V} is computed for all $i\in\pi^{\ell+1}$. This creates inefficiencies (due to  inefficient cache usage) because the elements $V_{i}$ are not accessed sequentially.
-
-To speedup the memory accesses, our solution is to sort the items during the execution of the algorithm. At iteration $k$, the algorithm computes $\sigma^{k}$. When this is done, our implementation switches all quantities in positions $\sigma^{k}$ and $n-k+1$. These quantities are $\delta, y, z, \mW$ and $\mX$. For instance, once $\sigma^1$ is found, we know that the state at position $n$ is state $n$ and we do the following switches:
-\begin{align*}
-    \delta_{\sigma^1}, \delta_{n} &\rightarrow \delta_{n}, \delta_{\sigma^1} \\
-    y^1_{\sigma^1}, y^1_{n} &\rightarrow y^1_{n}, y^1_{\sigma^1} \\
-    z^1_{\sigma^1}, z^1_{n} &\rightarrow z^1_{n}, z^1_{\sigma^1} \\
-    \mW_{\sigma^1 :}, \mW_{n :} &\rightarrow \mW_{n:}, \mW_{\sigma^1:} \\
-    \text{ and } \mX_{\sigma^1 :}, \mX_{n :} &\rightarrow \mX_{n :}, \mX_{\sigma^1 :}.
-\end{align*}
-
-To do so, we need an array to store all states such that at iteration $k$, the first $n-k$ states of the array are the active states. We will need to track the position of each state in such array.
-
-
-\subsection{Analysis of the experimental time to solve a linear system}
-\label{apx:inversion}
-
-In this section, we report in Figure~\ref{fig:benchmark_inverse} the time taken by the default implementation to solve a linear system of the form $\mA\mX=\mB$ where $\mA$ and $\mB$ are two square matrices. To obtain this figure, we generated random (full) matrices where each entry is between $0$ and $1$ and use the function  \texttt{scipy.linalg.solve} from the library \texttt{scipy}. The reported numbers suggest that the complexity of the solver is closer to $O(n^{2.8})$ than to $O(n^3)$, although we agree that the difference between the $O(n^{2.8})$ and the $O(n^3)$ curves is small. Note that this is in accordance with the papers \cite{huang2016strassen,huang2018practical} that claim that the fastest implementations of matrix multiplication and inversion are based on Strassen's algorithm and should therefore be in $O(n^{2.8})$. 
-
-\begin{figure}[ht]
-    \centering
-    \begin{tabular}{cc}
-        \begin{minipage}{0.5\linewidth}
-            \includegraphics[width=\linewidth]{execution_time_solve}
-        \end{minipage}
-        &\begin{minipage}{0.45\linewidth}
-            \begin{tabular}{|c|c|}
-                \hline
-                $n$ & Time (in second)\\\hline
-                1000 & $ 0.03\pm0.02$ \\
-                2000 & $ 0.24\pm0.01$ \\
-                4000 & $ 1.83\pm0.05$ \\
-                5000 & $ 3.6\pm0.3$ \\
-                7000 & $ 8.7\pm0.5$ \\
-                10000 & $23.7\pm0.6$ \\
-                13000 & $54.0\pm2.5$ \\
-                15000 & $80.8\pm1.8$ \\                
-                \hline
-            \end{tabular}
-        \end{minipage}
-    \end{tabular}
-    \caption{Time taken of the default implementations \texttt{scipy.linalg.solve} of scipy to solve a linear system $\mA\mX=\mB$ where $\mA$ and $\mB$ are two square $n\times n$ matrices.}
-    \label{fig:benchmark_inverse}
-\end{figure}
 
 \subsection{Time to compute Whittle indices}
 
@@ -1364,5 +1293,210 @@ This  leads to the next fundamental  question: {why should the computation of Wh
 In this chapter, we present an algorithm that is efficient for detecting the non-indexability and computing the Whittle index of all indexable finite-state restless bandits whose arms are all unichain. For weaker assumption where the arms are just weakly communicating, this algorithm can still test the indexability and compute the Whittle index of some arms that are multichain and remains efficient if it is able to do so.
 Our algorithm is based on the efficient application of the Sherman-Morrison formula. This is a unified algorithm that works for both discounted and non-discounted restless bandits, and can be used for Gittins index computation.  We present a first version of our algorithm that runs in $n^3+o(n^3)$ arithmetic operations (or in $(2/3)n^3+o(n^3)$ if we do not test the indexability). So, we conclude that Whittle index is not harder to compute than Gittins index. The second version of our algorithm uses the fastest matrix multiplication method and has a complexity of $O(n^{2.5286})$. This makes it the first subcubic algorithm to compute Whittle index or Gittins index. We provide numerical simulations that show that our algorithm is very efficient in practice: it can test indexability and compute the index of a $n$-state restless bandit arm in less than one second for $n=1000$, and in a few minutes for $n=15000$. These numbers are provided for dense matrices. One might expect to have more efficient algorithms if the arm has a sparse structure. We leave this question for future work. 
 
+\appendix
+\renewcommand{\thesection}{\Alph{section}}
+
+\section{Implementations}
+\label{apx:implementation}
+
+\subsection{Analysis of the experimental time to solve a linear system}
+\label{apx:inversion}
+
+In this section, we report in Figure~\ref{fig:benchmark_inverse} the time taken by the default implementation to solve a linear system of the form $\mA\mX=\mB$ where $\mA$ and $\mB$ are two square matrices. To obtain this figure, we generated random (full) matrices where each entry is between $0$ and $1$ and use the function  \texttt{scipy.linalg.solve} from the library \texttt{scipy}. The reported numbers suggest that the complexity of the solver is closer to $O(n^{2.8})$ than to $O(n^3)$, although we agree that the difference between the $O(n^{2.8})$ and the $O(n^3)$ curves is small. Note that this is in accordance with the papers \cite{huang2016strassen,huang2018practical} that claim that the fastest implementations of matrix multiplication and inversion are based on Strassen's algorithm and should therefore be in $O(n^{2.8})$. 
+
+\begin{figure}[ht]
+    \centering
+    \begin{tabular}{cc}
+        \begin{minipage}{0.5\linewidth}
+            \includegraphics[width=\linewidth]{execution_time_solve}
+        \end{minipage}
+        &\begin{minipage}{0.45\linewidth}
+            \begin{tabular}{|c|c|}
+                \hline
+                $n$ & Time (in second)\\\hline
+                1000 & $ 0.03\pm0.02$ \\
+                2000 & $ 0.24\pm0.01$ \\
+                4000 & $ 1.83\pm0.05$ \\
+                5000 & $ 3.6\pm0.3$ \\
+                7000 & $ 8.7\pm0.5$ \\
+                10000 & $23.7\pm0.6$ \\
+                13000 & $54.0\pm2.5$ \\
+                15000 & $80.8\pm1.8$ \\                
+                \hline
+            \end{tabular}
+        \end{minipage}
+    \end{tabular}
+    \caption{Time taken of the default implementations \texttt{scipy.linalg.solve} of scipy to solve a linear system $\mA\mX=\mB$ where $\mA$ and $\mB$ are two square $n\times n$ matrices.}
+    \label{fig:benchmark_inverse}
+\end{figure}
+
+\subsection{Arithmetic complexity of Subroutine~\ref{algo:update_X} and memory usage}
+
+Recall that in Subroutine~\ref{algo:update_X}, we compute the values $X^{\ell}_{ij}$ by doing the update (for all iteration $k$, for all $\ell=1$ to $k$ and for all $i\in[n]$ or all $i\in\pi^{\ell+1}$ if we do not test indexability):
+\begin{align}
+    \label{eq:apx_update}
+    X_{i\sigma^{k}}^{\ell+1} = X_{i\sigma^{k}}^{\ell} -\displaystyle\frac{X^{\ell}_{i\sigma^{\ell}}}{1+X^{\ell}_{\sigma^{\ell}\sigma^{\ell}}}X^{\ell}_{\sigma^{\ell}\sigma^{k}}
+\end{align}
+
+If we test indexability, there are $\sum_{k=1}^nk n = n^3/2+O(n^2)$ such updates. If we do not test indexability, there are $\sum_{k=1}^n \sum_{\ell=1}^k (n-\ell) = n^3/3 + O(n^2)$ such updates.  Below, we show each update of Equation~\eqref{eq:apx_update} can be done in two arithmetic operations (one addition and one multiplication), which leads to the complexity of $n^3+O(n^2)$ (or $(2/3)n^3+O(n^2)$) arithmetic operations for the computation of all the needed $X^k_{ij}$.  We also show how to reduce the memory size to $O(n^2)$.
+
+Let $W_{i\ell} := X^\ell_{i \sigma^\ell}/(1+X^\ell_{\sigma^\ell\sigma^\ell})$ and $V_i :=X^\ell_{i\sigma^k}$. Using this, Equation~\eqref{eq:apx_update} can be rewritten as: 
+\begin{align}
+    \label{eq:apx_update_V}
+    V_{i} = V_{i} - W_{i\ell} V_{\sigma^{\ell}}.
+\end{align}
+
+This results in the following loop at iteration $k$:
+\begin{itemize}
+    \item Initialize $V_{i}$ from $X^1_{i\sigma^k}$. 
+    \item For all $\ell\in\{1,\dots, k-1\}$, and all $i\in[n]$ (or $i\in\pi^{\ell+1}$), apply \eqref{eq:apx_update_V}. 
+    \item Compute $W_{ik}= V_{i}/(1+V_{\sigma^k})$
+    %\item For $\ell=k$, and all $i\in[n]$ (or $i\in\pi^{\ell+1}$), apply \eqref{eq:apx_update_V}.
+\end{itemize}
+Note that the value of $\mV$ is not necessary for iteration $k$ (only the values of $W_{i\ell}$ are needed). This shows that the algorithm can be implemented with a memory $O(n^2)$.% Moreover, each update of \eqref{eq:apx_update} can be implemented by $2$ arithmetic operations (one multiplication and one subtraction). 
+
+\subsection{Speedup when not checking the indexability: First found go last} 
+When the indexability is not tested, the update \eqref{eq:apx_update_V} is computed for all $i\in\pi^{\ell+1}$. This creates inefficiencies (due to  inefficient cache usage) because the elements $V_{i}$ are not accessed sequentially.
+
+To speedup the memory accesses, our solution is to sort the items during the execution of the algorithm. At iteration $k$, the algorithm computes $\sigma^{k}$. When this is done, our implementation switches all quantities in positions $\sigma^{k}$ and $n-k+1$. These quantities are $\delta, y, z, \mW$ and $\mX$. For instance, once $\sigma^1$ is found, we know that the state at position $n$ is state $n$ and we do the following switches:
+\begin{align*}
+    \delta_{\sigma^1}, \delta_{n} &\rightarrow \delta_{n}, \delta_{\sigma^1} \\
+    y^1_{\sigma^1}, y^1_{n} &\rightarrow y^1_{n}, y^1_{\sigma^1} \\
+    z^1_{\sigma^1}, z^1_{n} &\rightarrow z^1_{n}, z^1_{\sigma^1} \\
+    \mW_{\sigma^1 :}, \mW_{n :} &\rightarrow \mW_{n:}, \mW_{\sigma^1:} \\
+    \text{ and } \mX_{\sigma^1 :}, \mX_{n :} &\rightarrow \mX_{n :}, \mX_{\sigma^1 :}.
+\end{align*}
+
+To do so, we need an array to store all states such that at iteration $k$, the first $n-k$ states of the array are the active states. We will need to track the position of each state in such array.
+
+%Let $\Sigma$ and $I$ be these two arrays:
+%\begin{itemize}
+%    \item at iteration $k$, $\Sigma_{1:n-k}$ are the active states and for $1\le\ell<k, \Sigma_{n-\ell+1}$ gives state $\sigma^{\ell}$
+%    \item for any state $i$, $I_{i}$ gives the its position in array $\Sigma$.
+%\end{itemize}
+%Effectively, at iteration $k>1$, we know $\sigma^{k-1}$ and want to send it to position $n-k+2$. So, array $\Sigma$ tells us which state occupies the position $n-k+2$. Also, array $I$ tells us the position of state $\sigma^{k-1}$ in $\Sigma$.
+%So, we do
+%\begin{align*}
+%    \Sigma_{I_{\sigma^{k-1}}}, \Sigma_{n-k+2} &\rightarrow \Sigma_{n-k+2}, \sigma^{k-1}  \\
+%    I_{\sigma^{k-1}}, I_{\Sigma_{n-k+2}} &\rightarrow n-k+2, I_{\sigma^{k-1}}.
+%\end{align*}
+%We illustrate this idea in Figure~\ref{fig:ill_implem}. Now, we apply this idea to the above quantities:
+%\begin{align*}
+%    \delta_{I_{\sigma^{k-1}}}, \delta_{n-k+2} &\rightarrow \delta_{n-k+2}, \delta_{I_{\sigma^{k-1}}} \\
+%    y^{k-1}_{I_{\sigma^{k-1}}}, y^{k-1}_{n-k+2} &\rightarrow y^{k-1}_{n-k+2}, y^{k-1}_{I_{\sigma^{k-1}}} \\
+%    z^{k-1}_{I_{\sigma^{k-1}}}, z^{k-1}_{n-k+2} &\rightarrow z^{k-1}_{n-k+2}, z^{k-1}_{I_{\sigma^{k-1}}} \\
+%    W_{I_{\sigma^{k-1}}:}, W_{n-k+2:} &\rightarrow W_{n-k+2:}, W_{I_{\sigma^{k-1}}:} \\
+%    \text{ and } X_{I_{\sigma^{k-1}}:}, X_{n-k+2:} &\rightarrow X_{n-k+2:}, X_{I_{\sigma^{k-1}}:}.
+%\end{align*}
+%Then, if we do not check the indexability, we do
+%\begin{align*}
+%    \text{ for } \iota\in\{1,\dots,n-k\}, \mu^k_\iota =\frac{\delta_\iota +\gamma z^{k-1}_\iota-\mu^{k-1}_{\min} \gamma y^k_\iota}{1-\gamma y^k_\iota}.
+%\end{align*}
+%Let $\iota_{\min}$ be the index such that $\mu^k_{\iota_{\min}}=\mu^k_{\min}= \displaystyle\min_{\iota\in\{1,\dots,n-k\}}\mu^k_\iota$. Then, we have state $\sigma^k=\Sigma_{\iota_{\min}}$ and we go to iteration $k+1$.
+%
+%\begin{figure}
+%    At iteration $1$, $\qquad \qquad \ $
+%    \begin{tabular}{lc|lc}
+%        $\Sigma$ &
+%        \begin{tikzpicture}
+%        \matrix (m) [matrix of nodes,
+%                     nodes={draw, minimum size=8mm,anchor=center},
+%                     nodes in empty cells, minimum height = 1cm,
+%                     row 1/.style={nodes={draw=none}},]
+%        {
+%          1 & 2 & 3 & 4 \\
+%          1 & 2 & 3 & 4 \\
+%        };
+%        \end{tikzpicture} &
+%        $I$ &
+%        \begin{tikzpicture}
+%        \matrix (m) [matrix of nodes,
+%                     nodes={draw, minimum size=8mm,anchor=center},
+%                     nodes in empty cells, minimum height = 1cm,
+%                     row 1/.style={nodes={draw=none}},]
+%        {
+%          1 & 2 & 3 & 4 \\
+%          1 & 2 & 3 & 4 \\
+%        };
+%        \end{tikzpicture}
+%    \end{tabular} \\
+%    At iteration $2$, $\sigma^1=1$,
+%    \begin{tabular}{lc|lc}
+%        $\Sigma$ &
+%        \begin{tikzpicture}
+%        \matrix (m) [matrix of nodes,
+%                     nodes={draw, minimum size=8mm,anchor=center},
+%                     nodes in empty cells, minimum height = 1cm,
+%                     row 1/.style={nodes={draw=none}},]
+%        {
+%          1 & 2 & 3 & 4 \\
+%          4 & 2 & 3 & $\sigma^1=1$ \\
+%        };
+%        \end{tikzpicture} &
+%        $I$ &
+%        \begin{tikzpicture}
+%        \matrix (m) [matrix of nodes,
+%                     nodes={draw, minimum size=8mm,anchor=center},
+%                     nodes in empty cells, minimum height = 1cm,
+%                     row 1/.style={nodes={draw=none}},]
+%        {
+%          $\sigma^1=1$ & 2 & 3 & 4 \\
+%          4 & 2 & 3 & 1 \\
+%        };
+%        \end{tikzpicture}
+%    \end{tabular} \\
+%    At iteration $3$, $\sigma^2=4$,
+%    \begin{tabular}{lc|lc}
+%        $\Sigma$ &
+%        \begin{tikzpicture}
+%        \matrix (m) [matrix of nodes,
+%                     nodes={draw, minimum size=8mm,anchor=center},
+%                     nodes in empty cells, minimum height = 1cm,
+%                     row 1/.style={nodes={draw=none}},]
+%        {
+%          1 & 2 & 3 & 4 \\
+%          3 & 2 & $\sigma^2=4$ & $\sigma^1$ \\
+%        };
+%        \end{tikzpicture} &
+%        $I$ &
+%        \begin{tikzpicture}
+%        \matrix (m) [matrix of nodes,
+%                     nodes={draw, minimum size=8mm,anchor=center},
+%                     nodes in empty cells, minimum height = 1cm,
+%                     row 1/.style={nodes={draw=none}},]
+%        {
+%          $\sigma^1$ & 2 & 3 & $\sigma^2=4$ \\
+%          4 & 2 & 1 & 3 \\
+%        };
+%        \end{tikzpicture}
+%    \end{tabular} \\
+%    At iteration $4$, $\sigma^3=3$,
+%    \begin{tabular}{lc|lc}
+%        $\Sigma$ &
+%        \begin{tikzpicture}
+%        \matrix (m) [matrix of nodes,
+%                     nodes={draw, minimum size=8mm,anchor=center},
+%                     nodes in empty cells, minimum height = 1cm,
+%                     row 1/.style={nodes={draw=none}},]
+%        {
+%          1 & 2 & 3 & 4 \\
+%          2 & $\sigma^3=3$ & $\sigma^2$ & $\sigma^1$ \\
+%        };
+%        \end{tikzpicture} &
+%        $I$ &
+%        \begin{tikzpicture}
+%        \matrix (m) [matrix of nodes,
+%                     nodes={draw, minimum size=8mm,anchor=center},
+%                     nodes in empty cells, minimum height = 1cm,
+%                     row 1/.style={nodes={draw=none}},]
+%        {
+%          $\sigma^1$ & 2 & $\sigma^3=3$ & $\sigma^2$ \\
+%          4 & 1 & 2 & 3 \\
+%        };
+%        \end{tikzpicture}
+%    \end{tabular}
+%\caption{Illustration in a 4-state RB process.}
+%\label{fig:ill_implem}
+%\end{figure}
 
 \endgroup
