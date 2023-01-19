@@ -145,7 +145,7 @@ We define a new notion of optimality as the following.
     A policy $\pi$ is \emph{Bellman optimal} if there exists a vector $\vh^*\in\R^n$ that satisfies Bellman optimality equation \eqref{ch:idx:eq:bias_opt} with the optimal gain $\vg^*$ such that for all state $i\in[n]$,
     \begin{equation}
         \label{ch:idx:eq:bell}
-        \sum_{j=1}^nP^{\pi_i}_{ij}g^*_j(\lambda)=g^*_i(\lambda) \text{ and } \pi_i=\argmax_{a\in\{0,1\}} \Big(r^{a}_i - \lambda a_i + \sum_{j=1}^n P^{a}_{ij}h^*_j(\lambda)\Big).
+        \sum_{j=1}^nP^{\pi_i}_{ij}g^*_j =g^*_i \text{ and } \pi_i=\argmax_{a\in\{0,1\}} \Big(r^{a}_i - \lambda a_i + \sum_{j=1}^n P^{a}_{ij}h^*_j\Big).
     \end{equation}
 \end{defn}
 By \cite[Theorem~9.1.7]{puterman2014markov}, Bellman optimal policy always exists in MDPs with finite state and action spaces and Bellman optimal implies gain optimal.
@@ -403,7 +403,7 @@ By computing the solution $(\vg^*,\vh^*)$ to the Bellman optimality equations \e
 Beside showing the difference between gain and Bellman optimalities, Lemma~\ref{ch:idx:lem:opt_pol} is very useful to prove the properties of Bellman optimal policy in the following section.
 
 \paragraph{Remark.} The characterization of gain optimal policies was analysed in \cite{puterman2014markov, schweitzer1978functional}.
-However, it was expressed and proved differently from what we have done for Lemma~\ref{ch:mbp:lem:opt_pol}.
+However, it was expressed and proved differently from what we have done for Lemma~\ref{ch:idx:lem:opt_pol}.
 
 \subsection{Conditions for the unicity of the Bellman optimal policy}
 \label{ch:idx:ssec:unicity_bell}
@@ -431,13 +431,13 @@ In contrast, the following lemma clarifies this question for Bellman optimal pol
     Then for any $\vh^\pi$ and $\vh^\theta$ solutions of Bellman evaluation equation \eqref{eq:bias_eval} for $\pi$ and $\theta$ respectively, there exists a constant $c$ such that for all state $i\in[n]$: $h^\pi_i -h^\theta_i =c$. Moreover, in this case, ${B_i^{\theta_i}(\vg^*, \vh^\pi)=B_i^{\pi_i}(\vg^*, \vh^\theta)=0}$ for all state $i$.
 \end{lem}
 \begin{proof}
-    We define $\bar{\mP}^\pi$ and $\bar{\mP}^\theta$ for policies $\pi$ and $\theta$ respectively as we did in the proof of Lemma~\ref{ch:mbp:lem:opt_pol}.
+    We define $\bar{\mP}^\pi$ and $\bar{\mP}^\theta$ for policies $\pi$ and $\theta$ respectively as we did in the proof of Lemma~\ref{ch:idx:lem:opt_pol}.
     Since $\pi$ and $\theta$ are Bellman optimal, $\vh^\pi$ and $\vh^\theta$ satisfy the optimality equation \eqref{eq:bias_opt} together with $\vg^*$ (see Lemma~\ref{ch:idx:lem:bell_charac}).
     In consequence, we have
     \begin{align*}
         \vh^\pi \ge \vr^\theta -\vg^* +\mP^\theta\vh^\pi.
     \end{align*}
-    By Lemma~\ref{ch:mbp:lem:opt_pol}~\ref{it:opt_pol1}, the above inequality is an equality for any state $i\in\Phi^\theta$ because policy $\theta$ is gain optimal.
+    By Lemma~\ref{ch:idx:lem:opt_pol}~\ref{it:opt_pol1}, the above inequality is an equality for any state $i\in\Phi^\theta$ because policy $\theta$ is gain optimal.
 
     As $\vh^\theta$ satisfies the evaluation equation \eqref{eq:bias_eval}, we have
     \begin{align*}
