@@ -2,17 +2,19 @@
 \let\clearpage\relax
 
 %\dominitoc
-\chapter{Learning Algorithms for Restless Markovian Bandits}
+\chapter{Learning in Average Reward Restless Markovian Bandits}
 \label{ch:learning_restless}
 
-%\minitoc
 
+Restless Markovian bandits are generalization of stochastic bandits in which each arm is represented by a Markov decision process. A restless bandit can be seen as a Markov decision process with a state-space that is exponential in the number of arms. Hence, general-purpose learning algorithm are not efficient when applied to restless. Recently, a few learning algorithms have been specifically designed to work for restless bandits. Yet, they most often work only for very particular subclasses of restless bandits, or they hold under conditions that are very hard to verify.
 
-Restless multi-armed bandits (RMAB) are generalization of stochastic bandits in which each arm is represented by a Markov decision process. A RMAB can be seen as a Markov decision process with a state-space that is exponential in the number of arms. Hence, general-purpose learning algorithm are not efficient when applied to RMAB. Recently, a few learning algorithms have been specifically designed to work for restless bandits. Yet, they most often work only for very particular subclasses of restless bandits, or they hold under conditions that are very hard to verify.
-    
-In this document, we provide some explanations why. The performance of a learning algorithm for a RMAB depends in general on some structural conditions (like diameter or bias) of the global MDP.  In this document, we show that properties of the local arms (like unichain or small diameter) do not, in general, imply similar properties for the global Markov decision processes.  This implies that defining a class of RMAB that has desirable properties (like small diameter) is difficult. 
+In this chapter, we provide some explanations why. The performance of a learning algorithm for a restless depends, in general, on some structural conditions (like diameter or bias) of the global MDP.  Here, we show that the properties of the local arms (like unichain or small diameter) do not, in general, imply similar properties for the global Markov decision processes. This implies that defining a class of restless bandit that has desirable properties (like small diameter) is difficult. 
 
 \section{Introduction}
+
+In average reward criterion, the current best learning algorithms have a regret over $T$ time steps bounded by $\landauO(\sqrt{DSAT})$ in the unknown MDP with state size $S$, action size $A$, and diameter $D$ (see Table~\ref{ch:rl:tab:infinite} for more algorithms regret guarantee).
+
+%Reinforcement learning algorithms work depending on the assumption of MDP structure such as ergodic, communicating, and weakly communicating.
 
 (here should motivate the problem + add related work about learning and why it is related to diameters and other properties)
 
@@ -25,80 +27,90 @@ We show that:
     \item For globally ergodic, diameter can be exponential in the number of arms
 \end{itemize}
 
+We recall Table~\ref{ch:rl:tab:infinite} below
+
 \begin{table}[ht]
 \begin{tabular}{|l|l|l|l|}
 \hline
-Algorithm   & Regret & Structure assumption                                              & Policy computation            \\ \hline
-REGAL       & $\tilde{O}(sp(\vh^*)S\sqrt{AT})$ \cite{bartlett2012regal} & weakly communicating & No efficient implementation   \\ 
-UCRL2       & $\tilde{O}(DS\sqrt{AT})$ \cite{jaksch2010near} & diameter is finite        & Extended value iteration(EVI) \\ 
-TSDE        & $\tilde{O}(sp(\vh^*)S\sqrt{AT})$ \cite{ouyang2017learning} & weakly communicating & Value iteration        \\ 
-OSP         & $\tilde{O}(\sqrt{t_{mix}SAT})$ \cite{ortner2020regret} & ergodic           & No efficient implementation   \\ 
-SCAL        & $\tilde{O}(sp(\vh^*)S\sqrt{AT})$ \cite{fruit2018efficient} & weakly communicating & modified EVI           \\
+Algorithm & Regret & Assump. on $M$ & Policy comp.            \\ \hline
+UCRL2 \cite{jaksch2010near}       & $\tilde{\landauO}(DS\sqrt{AT})$ & comm.         & EVI \\ 
+REGAL \cite{bartlett2012regal}      & $\tilde{\landauO}(HS\sqrt{AT})$  & weakly comm. & Intractable   \\ 
+TSDE \cite{ouyang2017learning}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & VI       \\ 
+SCAL \cite{fruit2018efficient}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & modified EVI           \\
+OSP \cite{ortner2020regret}         & $\tilde{\landauO}(\sqrt{t_{mix}SAT})$ & ergodic           & Intractable   \\ 
+UCRL2B \cite{fruit2020improved}      & $\tilde{\landauO}(\sqrt{\Gamma DSAT})$ & comm.      & EVI                           \\
 %KL-UCRL     & $\tilde{O}$(\sqrt{S\sum_{x,a}\sV^*_{x,a}T}) & ergodic                     & modified EVI                  \\ \hline
-UCRL2B      & $\tilde{O}(S\sqrt{DAT})$ \cite{fruit2020improved}& diameter is finite      & EVI                           \\
-EBF         & $\tilde{O}(\sqrt{sp(\vh^*)SAT})$ \cite{zhang2019regret} & weakly communicating     & No efficient implementation   \\ \hline
-lower bound & $\Omega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
+EBF \cite{zhang2019regret}         & $\tilde{\landauO}(\sqrt{HSAT})$ & weakly comm.     & Intractable   \\
+UCRL-V \cite{tossou2019near}         & $\tilde{\landauO}(\sqrt{DSAT})$ & comm.     & modified EVI   \\ \hline
+Lower bound & $\landauOmega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
 \end{tabular}
-\caption{Regret comparison for model-based RL algorithms in long-term average reward MDPs with $S$ states, $A$ actions, and $T$ steps.
-$D$ is the diameter of the MDP, $sp(\vh^*)\le D$ is the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP. For more concrete definition of these parameters see Sections~\ref{ssec:mdp_params}.}
+\caption{The quest to minimax regret lower bound for model-based RL algorithms in infinite horizon average reward model with $S$ states, $A$ actions, and $T$ steps.
+$D$ is the diameter of the MDP, $H\ge sp(\vh^*)$ is the upper bound on the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP and $\Gamma$ is the upper bound on the number of next possible states.
+EVI stands for Extended value iteration \cite{jaksch2010near}, VI for value iteration, assump. for assumption, comm. for communicating, and comp. for computation.
+Intractable here means that there is no efficient implementations.
+}
+\label{ch:restless:tab:infinite}
 \end{table}
 
+Applying these algorithms to learn restless Markovian bandits with average reward criterion provokes a few critical issues:
+\begin{itemize}
+    \item imposing the structure on restless bandit is computationally ``hard'' to verified
+    \item the state size of restless bandit is exponential in the number of arms which makes the regret not scalable with the number of arms
+    \item the diameter $D$ (if defined), mixing time $t_{mix}$ (if defined), or span of the optimal bias $H$ may also be exponential in the number of arms
+    \item compute an optimal policy in restless bandit is computationally PSPACE-hard \cite{papadimitriou1994complexity}, let the computation of optimistic policy
+\end{itemize}
 
-\section{Basic definitions}
+A few existing works have tried to remove the exponentiality in the state size of restless bandit such as \cite{jung2019regret, ortner2012regret, wang2020restless} for partially observed setting and \cite{akbarzadeh2022learning} for fully observed setting.
+However, removing the exponentiality of the number of arms in the $D, t_{mix}$, or $H$ remains unclear.
+Moreover, these quantities are defined only if the MDP has a specific structure.
+For instance, the mixing time is defined only if the MDP is ergodic.
+Such an assumption is costly to verified in restless bandit due the curse of dimensionality in the state size of the global MDP.
 
-\subsection{MDP}
+\section{Undiscounted restless Markovian bandit}
+\label{ch:restless:sec:restless}
 
-We consider a discrete-time MDP $M=(\bar{\gS},\bar{\gA},r,p)$ with a finite state-space $\bar{\gS}$ and a finite action space $\bar\gA$. At time $t$, if the process is in state $x$ and action $a$ is taken, it earns a reward $r(x,a)$ and jumps to state $y$ with probability $p(y|x,a)$. A stationary Markovian policy for such a MDP is a function $\pi:\bar{\gS}\to\bar\gA$. A policy $\pi$ induces a Markov chain with transition matrix $\mP^\pi$ where $P^\pi(x,y) = p(y | x, \pi(x))$. 
+We consider a restless Markovian bandit having $n$ arms.
+Each arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ is a MDP with finite state space $\gS_i$ of size $S_i$ and binary action space $\{0,1\}$ where $0$ denotes the action ``rest'' and $1$ denotes the action ``activate''.
+If arm $i$ is in state $s_i$ and the decision maker executes $a_i\in\{0,1\}$, the arm incurs a random reward with expected value $r_i(s_i,a_i)$ and transitions to state $s'_i\in\gS_i$ with probability $p_i(s'_i\mid s_i,a_i)$.
 
-\subsection{RMAB}
+The sequential decision problem is presented as the following.
+At time step $1$, the state of all arms denoted by $\vs_1:=(s_{1,1},\dots,s_{1,n})$ is sampled according to some initial distribution $\rho$ over the state space $\gX:=\gS_1\times\dots\times\gS_n$.
+At time step $t\ge1$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates exactly $m$ arms encoded by action $\va_t:=(a_{t,1},\dots,a_{t,n})$ such that $\va_t\in\{0,1\}^n$ and $\sum_{i=1}^{n} a_{t,i}=m$ where $m\in[n]$ is constant over time.
+%The decision maker then receives a random reward $r_t=\sum_{i=1}^{n}r_{t,i}$ where $r_{t,i}$ is a random reward from arm $i$.
+Each arm $i$ incurs then a random reward $r_{t,i}$ and makes
+a transition to new state $s_{t+1,i}$ in function of $s_{t,i}$ and $a_{t,i}$ but independently from the other arms.
+So, the restless Markovian bandit is a specific MDP -- that we denote by $M$ -- whose state space is $\gX$ and action space is $\gA(m):=\{\va\in\{0,1\}^n : \sum_{i=1}^{n}a_i =m\}$.
+We say that $M$ is the \emph{global} MDP and its arm is the \emph{local} MDP.
 
-A discrete-time multi-armed restless bandit problem with $n$ arms is a collection of $n$ arms. Each arm is a MDP with a finite state space $\gS_i$ and a binary action space $\gA=\{0,1\}$, where $0$ stands for "passive" and $1$ for "active". At each time instant, the decision maker chooses which of the $n$ arms to activate, with the constraint of activating exactly $m$ of the $n$ arms. The state space of the global MDP is $\bar{\gS} = \gS_1\times\dots\times\gS_n$ and the action space is composed of the vectors of $\{0,1\}^N$ whose components sum to $m$. We denote this action space by $\bar{\gA}$.  Given an action $\va\in\bar{\gA}$, all arms evolve independently; the arms are only coupled via the policy.
+The decision maker wants to compute a policy $\pi:\gX\mapsto\gA(m)$ that maximizes the gain as defined in Section~\ref{ch:mdp:sec:gain}: for any $\vs\in\gX$,
+\begin{equation}
+    \label{ch:restless:eq:obj}
+    g^\pi(s):=\lim_{T\to+\infty}\frac1T \E^\pi\left[ \sum_{t=1}^{T} \sum_{i=1}^nr_{t,i} \mid \vs_1=\vs\right].
+\end{equation}
 
-A RMAB is a MDP with specific structure. 
+As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ such that for all $\vs\in\gX, g^{\pi^*}(\vs)=g^*(\vs):=\max_{\pi}g^{\pi}(\vs)$ exists and is deterministic.
+However, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that computing an optimal policy in undiscounted restless bandit $M$ is PSPACE-hard.
+
+%In about 1980, Peter Whittle proposed a heuristic in the form of largest index rule, later known as \textbf{Whittle index policy}, for undiscounted restless bandit problem.
+%The computational complexity of this heuristic is linear in the number of arms which makes it scalable for problems with large number of arms.  
+%We discuss more about this index policy in the following section.
+%Similar to what is done in Section~\ref{ssec:rested_formul}, we assume that the state space of the arms are pairwise distinct: $\gS_i\cap\gS_j=\emptyset$ for any $i\neq j$.
+%So, we will drop the index $i$ from expected reward and transition if no confusion is possible: we denote them by $r(s_i,a_i)$ instead of $r_i(s_i,a_i)$ and by $p(s'_i\mid s_i,a_i)$ instead of $p_i(s'_i\mid s_i,a_i)$.
+%In consequence, for any global state-action pair $(\vs,\va)$ with $\vs\in\gX$ and $\va\in\gA$, the expected reward from the MDP $M$ is given by $r(\vs,\va)=\sum_{i=1}^{n}r(s_i,a_i)$.
+%Moreover, $M$ transitions to next state $\vs'\in\gX$ with probability $p(\vs'\mid \vs,\va)=\prod_{i=1}^n p(s'_i\mid s_i,a_i)$.
+
+%The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1)$ is the discount factor.
 
 \subsection{Structural properties of MDP}
 \label{ssec:mdp_params}
 
-We classify MDPs in two ways:
-
-\begin{enumerate}
-    \item On the basis of the chain structure of the set of Markov chains induced by all stationary policies
-    \item On the basis of patterns of states which are accessible from each other under some stationary policy.
-\end{enumerate}
-
-
-Following Puterman~\cite{puterman2014markov}, we say that a MDP is:
-\begin{itemize}
-    \item \emph{recurrent} if for all policy $\pi$, the matrix $\mP^\pi$ defines a Markov chain where all states are recurrent (equivalently, for all states $x$ and $y$, a Markov chain starting in $x$ will visit $y$ with probability $1$);
-    \item \emph{unichain} if for all policy $\pi$, the matrix $\mP^\pi$ has a single recurrent class plus a possibly empty set of transient states;
-    %\item \emph{communicating} if there exists a policy such that $P^\pi$ induces an ergodic Markov chain. 
-    \item \emph{multichain} if the transition matrix corresponding to \emph{at least one} stationary policy contains two or more closed irreducible recurrent classes;
-    \item \emph{communicating} if, for every pair of states, there exists a policy such that one state of the pair is accessible from other state of the same pair; and
-    %\item \emph{weakly communicating} if there exists a policy such that $P^\pi$ has a unique recurrent class. No, cuz there is multichain weakly communicating
-    \item \emph{weakly communicating} if there exists a closed set of states, with each state in that set accessible from every other state in that set under some deterministic stationary policy, plus a possibly empty set of transient states.
-\end{itemize}
-In addition, a recurrent or unichain MDP is called \emph{aperiodic} if all matrices $\mP^\pi$ are aperiodic.  We say that a MDP is \emph{ergodic} if it is recurrent and aperiodic. 
-
-We note that:
-\begin{itemize}
-    \item Recurrent implies unichain and communicating.
-    \item Communicating implies weakly communicating.
-    %\item Weakly communicating implies communicating.
-    \item Unichain implies weakly communicating.
-\end{itemize}
-%\KK{I think communicating implies weakly communicating.}
+In addition to Definition~\ref{ch:mdp:defn:mdp_class}, we say that a MDP is \emph{recurrent} if for all policy $\pi$, the matrix $\mP^\pi$ defines a Markov chain where all states are recurrent (equivalently, for all states $x$ and $y$, a Markov chain starting in $x$ will visit $y$ with probability $1$);
+A recurrent or unichain MDP is called \emph{aperiodic} if all matrices $\mP^\pi$ are aperiodic.  We say that a MDP is \emph{ergodic} if it is recurrent and aperiodic. 
 
 In \cite{fruit2018near}, it is proven that in weakly communicating MDPs, no algorithm can ever achieve a logarithmic growth of the regret without first suffering a linear regret for a number of steps that is exponential in the parameters of the MDP.
 
-\subsection{Diameter}
-
-For any stationary policy $\pi$, let $T^\pi(y \mid M, x)$ be the random variable for the first time step in which state $y$ is reached when starting at state $x$ and following the policy $\pi$ in MDP $M$.
-From \cite[Definition 1]{jaksch2010near}, the diameter of a MDP $M$ is defined by
-\begin{align*}
-    D = \max_{x\neq y}\min_{\pi} \ex{T^\pi(y\mid M, x)}.
-\end{align*}
-
-Hence, any noncommunicating MDP has \emph{infinite diameter}. Conversely, any MDP having finite diameter is communicating.
+By Definition~\ref{ch:rl:defn:diameter}, any MDP that is not weakly communicating has \emph{infinite diameter}.
+For more detail MDP classification, see \figurename~\ref{ch:mdp:fig:mdp_class}
 
 It is shown in \cite[Appendix A]{jaksch2010near} that the diameter is at least $\log_{|\gA|}|\gS|-3$.
 This implies that the diameter of RMAB model in which each arm has the same state size $S$, is at least
@@ -132,6 +144,60 @@ Following \cite[Definition 5.1]{wei2020model},
     \end{align*}
     that is, the maximum time required for any policy starting at any initial state to make the state distribution $\frac14$-close (in $\ell_1$ norm) to the stationary distribution.
 \end{defn}
+
+\begin{figure}[ht]
+    \centering
+    \begin{tabular}{ccc}
+    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+        \node[state, black!45!green]  (A) {$1$};
+        \node[state, black!45!green]  (B) [below = 2cm of A]   {$2$};
+        \node[state, black!45!green]  (C) [below left = 1cm and 1.5cm of A]   {$3$};
+        \path[->]
+        (A) edge[bend left=60]     node{}	(B)
+        (A) edge[bend left, dashed, red]     node{}	(B)
+	    (B) edge[bend left=60]     node{}	(A)
+	    (C) edge[bend left]     node{}	(A)
+        (C) edge[bend right, dashed, red]     node{}	(B)
+	    (B) edge[bend left, dashed, red]     node{}	(A);
+    \end{tikzpicture}
+    &
+    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+        \node[state, black!30!purple]  (A) {$1$};
+        \node[state, black!30!purple]  (B) [below = 2cm of A]   {$2$};
+        \path[->]
+        (A) edge[bend left=60]     node{}	(B)
+        (A) edge[bend left, dashed, red]     node{}	(B)
+	    (B) edge[bend left=60]     node{}	(A)
+	    (B) edge[bend left, dashed, red]     node{}	(A);
+    \end{tikzpicture}
+    &
+    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+        \node[state]  (A) {$1,1$};
+        \node[state]  (B) [above = 2cm of A]   {$2,2$};
+        \node[state]  (C) [right = 4cm of B]   {$1,2$};
+        \node[state]  (D) [below = 2cm of C]   {$2,1$};
+        \node[state]  (E) [right = 2cm of B]   {$3,1$};
+        \node[state]  (F) [below = 2cm of E]   {$3,2$};
+        \path[->]
+        (A) edge[bend left, black!45!green]     node{}	(B)
+        (A) edge[bend left=60, black!30!purple]     node{}	(B)
+	    (B) edge[bend left, black!45!green]     node{}	(A)
+	    (B) edge[bend left=60, black!30!purple]     node{}	(A)
+	    (C) edge[bend left, black!45!green]     node{}	(D)
+	    (C) edge[bend left=60, black!30!purple]     node{}	(D)
+        (D) edge[bend left, black!45!green] node{} (C)
+        (D) edge[bend left=60, black!30!purple] node{} (C)
+        (E) edge[ black!30!purple] node{} (B)
+        (E) edge[black!45!green] node{} (C)
+        (F) edge[ black!30!purple] node{} (D)
+        (F) edge[black!45!green] node{} (A);
+    \end{tikzpicture}
+    \\
+        Arm $1$ & Arm $2$ & Global MDP
+    \end{tabular}
+    \caption{A restless bandit with two arms. TODO: Add more explanation}
+    \label{fig:hard}
+\end{figure}
 
 
 \section{Structural properties: counter-examples and positive results}
