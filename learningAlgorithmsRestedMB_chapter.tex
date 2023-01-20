@@ -103,11 +103,8 @@ the states
 ($s_{t,a}$ or $s_a$) are for scalar values.} of all arms,
 $\vs_t=(s_{t,1}\ \dots\ s_{t,n})$, and chooses which arm $a_t$ to activate.
 This problem can be cast as a MDP -- that we denote by $M$ -- with state
-space $\gX$ and action space \([n]\). Let $a\in[n]$ and $\vs,\vs'\in\gX$. If the
-state at time $t$ is $\vs_t=\vs$, the chosen arm is $A_t=a$, then the agent
-receives a random reward $r_t$ drawn from some distribution on \([0,1]\) with
-mean \(r(s_a)\) and the MDP $M$ transitions to state $\vs_{t+1}=\vs'$ with
-probability \(p(\vs'\mid \vs,a)\) that satisfies:
+space $\gX$ and action space \([n]\). Let $a\in[n]$ and $\vs,\vs'\in\gX$. If the state at time $t$ is $\vs_t=\vs$, the chosen arm is $A_t=a$, then arm $a$ incurs a random reward $r_t$ drawn from some distribution on \([0,1]\) with
+mean \(r(s_a)\) and the MDP $M$ transitions to state $\vs_{t+1}=\vs'$ with probability \(p(\vs'\mid \vs,a)\) that satisfies:
 \begin{align}
     \label{eq:defP}
     p(\vs' \mid \vs,a) 
@@ -132,40 +129,40 @@ An alternative definition of $v$ is to consider a finite-horizon problem with a 
     \label{eq:V-vs_R}
     v_{M}^\pi(\vs)  {=} \ex{\E^\pi\left[\sum_{t=1}^{H} r_t \mid \vs_1{=}\vs\right]}.
 \end{equation}
-%TODO
 \begin{prob}
 \label{pb:problem_1}
-Given a Markovian bandit $M$ with $n$ arms, each is a Markov reward process $\langle\gS^a,\vr^a,\mQ^a\rangle$ with a finite state space of size $S$, find a policy $\pi\colon\gS^1{\times}\dots{\times}\gS^n\mapsto[n]$ that maximizes $V_{M}^\pi(\vx)$ for any state $\vx$ distributed according to initial global state distribution $\rho$.
+Given a rested bandit $M$ with $n$ arms, each is a Markov reward process $\langle\gS_a,\vr_a,\mQ_a\rangle$ with a finite state space of size $S$, find a policy $\pi\colon\gS_1{\times}\dots{\times}\gS_n\mapsto[n]$ that maximizes $v_{M}^\pi(\vs)$ for any state $\vs$ distributed according to initial global state distribution $\rho$.
 \end{prob}
 
-By a small abuse of notation, we denote by $V_M^\pi(\rho)$ the expected reward when the initial state is randomly generated according to $\rho: V_M^\pi(\rho)=\sum_{\vx}\rho(\vx)V_{M}^\pi(\vx)$.
+By a small abuse of notation, we denote by $v_M^\pi(\rho)$ the expected reward when the initial state is randomly generated according to $\rho: v_M^\pi(\rho)=\sum_{\vs}\rho(\vs)v_{M}^\pi(\vs)$.
 A policy
-$\pi_*$ is optimal for Problem~\ref{pb:problem_1} if $ V_{M}^{\pi_*}(\vx) \ge V_{M}^\pi(\vx) $ for all
-$\pi\in\Pi$ and $\vx\in\gE$. By \cite{puterman2014markov},
-such a policy exists and does not depend on $\vx$ (or $\rho$). One well-known optimal policy is the Gittins index policy, defined below. 
+$\pi_*$ is optimal for Problem~\ref{pb:problem_1} if $ v_{M}^{\pi_*}(\vs) \ge v_{M}^\pi(\vs) $ for all
+$\pi\in\Pi$ and $\vs\in\gX$.
+As we have seen in Chapter~\ref{ch:mdp},
+such a policy exists and does not depend on $\vs$ (or $\rho$). One well-known optimal policy is the Gittins index policy as presented in Chapter~\ref{ch:mb}. 
 
-\subsection{Gittins index policy}
-\label{ssec:Gittins}
-
-It is possible to compute an optimal
-policy $\pi_*$ for Problem~\ref{pb:problem_1} in a reasonable amount of time using the so called Gittins indices:
-\cite{gittins1979bandit} defines the \emph{Gittins index} for any arm $a$ in state $x_a\in\gS^a$ as 
-\begin{equation}
-    \label{eq:eq_Gindex}
-    \mathrm{GIndex}(x_a)=\sup_{\tau>0}\frac{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}r^a(Z_{t}) \mid Z_{1}=x_a}}{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}\mid Z_{1}=x_a}},
-\end{equation}
-where $Z$ is a Markov chain whose transitions are given by $\mQ^a$ and $\tau$ can
-be any stopping time adapted to the natural filtration of $(Z_t)_{t\ge1}$. So, Gittins index can be considered as the maximal reward density over time of an arm at the given state.
-
-\cite{gittins1979bandit} shows that activating
-the arm having the largest current index is an optimal policy. Such a policy
-can be computed very efficiently: The computation of the indices of an arm
-with $S$ states can be done in \(O(S^3)\) arithmetic operations, which means
-that the computation of Gittins index policy is linear in the number of arms
-as it takes \(O(nS^3)\) arithmetic operations.
-For more details about Gittins indices and optimality, we refer to
-\cite{gittins2011multi,weber1992gittins}. For a survey on how to
-compute Gittins indices, we refer to \cite{chakravorty2014multi}, and to \cite{gast2022computing} for a recent paper that shows how to compute Gittins index in subcubic time (\emph{i.e.}, $o(S^3))$ for each of the $n$ arms).
+%\subsection{Gittins index policy}
+%\label{ssec:Gittins}
+%
+%It is possible to compute an optimal
+%policy $\pi_*$ for Problem~\ref{pb:problem_1} in a reasonable amount of time using the so called Gittins indices:
+%\cite{gittins1979bandit} defines the \emph{Gittins index} for any arm $a$ in state $x_a\in\gS^a$ as 
+%\begin{equation}
+%    \label{eq:eq_Gindex}
+%    \mathrm{GIndex}(x_a)=\sup_{\tau>0}\frac{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}r^a(Z_{t}) \mid Z_{1}=x_a}}{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}\mid Z_{1}=x_a}},
+%\end{equation}
+%where $Z$ is a Markov chain whose transitions are given by $\mQ^a$ and $\tau$ can
+%be any stopping time adapted to the natural filtration of $(Z_t)_{t\ge1}$. So, Gittins index can be considered as the maximal reward density over time of an arm at the given state.
+%
+%\cite{gittins1979bandit} shows that activating
+%the arm having the largest current index is an optimal policy. Such a policy
+%can be computed very efficiently: The computation of the indices of an arm
+%with $S$ states can be done in \(O(S^3)\) arithmetic operations, which means
+%that the computation of Gittins index policy is linear in the number of arms
+%as it takes \(O(nS^3)\) arithmetic operations.
+%For more details about Gittins indices and optimality, we refer to
+%\cite{gittins2011multi,weber1992gittins}. For a survey on how to
+%compute Gittins indices, we refer to \cite{chakravorty2014multi}, and to \cite{gast2022computing} for a recent paper that shows how to compute Gittins index in subcubic time (\emph{i.e.}, $o(S^3))$ for each of the $n$ arms).
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,14 +179,14 @@ the same Markovian bandit problem, where the transitions and the rewards
 are drawn independently for each episode.
 What is new here is that  the time horizon $H$ is random and has a geometric distribution with expected value $1/(1-\gamma)$. It is drawn  independently for each episode. This implies that Gittins index policy is optimal for a decision maker that would know the transition matrices and rewards.
 
-In this chapter, we consider \emph{episodic learning algorithms}. Let
-$H_1,\ldots, H_k$ be the sequence of random episode lengths and let
-$t_k:=1{+}\sum_{i=1}^{k-1}H_i$ be the starting time of the $k$th episode. Let 
-\(\gO_{k-1}:=\{\mX_1,A_1,R_1,\dots,\mX_{t_k-1},A_{t_k-1},R_{t_k-1}\}\) denote
-the observations made prior and up to episode \(k\). An \emph{Episodic Learning
-Algorithm} \(\Algo\) is a function that maps observations \(\gO_{k-1}\) to
-\(\Algo(\gO_{k-1})\), a probability distribution whose support is $\Pi$.  At the
-beginning of episode $k$, the algorithm samples \(\pi_k\sim\Algo(\gO_{k-1})\)
+As mentioned in Chapter~\ref{ch:rl}, in this thesis, we consider \emph{episodic learning algorithms}.
+Let $H^1,\ldots, H^k$ be the sequence of random episode lengths and let
+$t^k:=1{+}\sum_{i=1}^{k-1}H^i$ be the starting time of the $k$th episode.
+The observations made prior and up to episode \(k\) is denoted \(o_{t^{k}}:=\{\vs_1,a_1,r_1,\dots,\vs_{t^k-1},a_{t^k-1},r_{t^k-1},s_{t^k}\}\).
+An \emph{Episodic Learning
+Algorithm} \(\Algo\) is a function that maps observations \(o_{t^k}\) to
+\(\Algo(o_{t^k})\), a probability distribution whose support is $\Pi$.  At the
+beginning of episode $k$, the algorithm samples \(\pi^k\sim\Algo(o_{t^k})\)
 and uses this policy during the whole $k$th episode. Note that one could also
 design algorithms where learning takes place inside each episode. We will see
 later that episodic learning as described here is enough to design algorithms
@@ -200,20 +197,20 @@ episodes $K$, we denote by $\Reg(K,\Algo,M)$ the regret of a
 learning algorithm \(\Algo\), defined as
 \begin{align}
   \Reg(K,\Algo,M) :=  \sum_{k=1}^K %\underbrace{
-      V^{\pi_*}_M(\mX_{t_k}) - V^{\pi_k}_M(\mX_{t_k})%}_{ =: \delta_k(\bX_{t_k})}
+      v^{\pi_*}_M(\vs_{t^k}) - v^{\pi^k}_M(\vs_{t^k})%}_{ =: \delta_k(\bX_{t_k})}
       .\label{eq:regretTraj}
 \end{align}
-It is the sum over all episodes of the value of the optimal policy $\pi_*$ minus the value obtained by applying the policy $\pi_k$ chosen by the algorithm for episode $k$. In what follows, we will provide bounds on the expected regret.
+It is the sum over all episodes of the value of the optimal policy $\pi_*$ minus the value obtained by applying the policy $\pi^k$ chosen by the algorithm for episode $k$. In what follows, we will provide bounds on the expected regret.
 
 A no-regret algorithm is an algorithm $\Algo$ such that its expected regret $\ex{\Reg(K,\Algo,M)}$ grows sub-linearly in the number of episodes $K$. This implies that the expected regret over episode $k$  converges to $0$ as $k$ goes to infinity. Such an algorithm learns an optimal policy of Problem~\ref{pb:problem_1}.
 
-Note that, for discounted MDPs, an alternative regret definition (used for instance by \cite{zhou2021nearly}) is to use the non-episodic version $\sum_{t=1}^T (V^{\pi_*}_M(\mX_{t}) - V^{\pi_t}_M(\mX_{t}))$. In our definition at Equation~\eqref{eq:regretTraj}, we use an episodic approach where the process is restarted according to $\rho$ after each episode of geometrically distributed length $H_k$.
+Note that, for discounted MDPs, an alternative regret definition (used for instance by \cite{zhou2021nearly}) is to use the non-episodic version $\sum_{t=1}^T (v^{\pi_*}_M(\vs_{t}) - v^{\pi_t}_M(\vs_{t}))$. In our definition at Equation~\eqref{eq:regretTraj}, we use an episodic approach where the process is restarted according to $\rho$ after each episode of geometrically distributed length $H^k$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%
-\section{Learning algorithms for Markovian bandits}
+\section{Learning algorithms for rested Markovian bandits}
 \label{sec:learning_algorithms}
-
+%TODO
 In what follows, we present three algorithms having a regret that grows like $\tilde{O}(S\sqrt{nK})$, that we call MB-PSRL, MB-UCRL2 and MB-UCBVI. As their names suggest, these algorithms are adaptation of PSRL, UCRL2 and UCBVI to Markovian bandit problems that intend to overcome the exponentiality in $n$ of their regret. The structure of the three MB-* algorithms are similar and is represented in Algorithm~\ref{fig:algos}. All algorithms are episodic learning algorithms. At the beginning of each episode, a MB-* learning algorithm computes a new policy $\pi_k$ that will be used during an episode of geometrically distributed length. The difference between the three algorithms lies in the way this new policy $\pi_k$ is computed. MB-PSRL uses posterior sampling while MB-UCRL2 and MB-UCBVI use optimism. We detail the three algorithms below. 
 
 \begin{algorithm}[ht]
