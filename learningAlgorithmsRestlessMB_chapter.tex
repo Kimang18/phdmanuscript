@@ -411,86 +411,7 @@ The RMABs having such arms are communicating.
 However, the upper bound on the global span tends to infinity when $\varepsilon$ tends to $0$.
 \end{proof}
 
-\subsubsection{Minimax lower bound on the expected regret}
-
-\begin{thm}
-    There exists an ergodic RMAB in which any (near-)optimal learning algorithm suffers a regret that is upper bounded linearly in $T$, the total number of time steps.
-\end{thm}
-\begin{proof}
-    We show this theorem by constructing a RMAB whose span of the optimal bias equals $T$.
-    Then, we use the existing result on the lower bound of general MDP to conclude the proof.
-
-    Consider a RMAB with 2 arms whose transition is given in Figure~\ref{fig:lower_bound} and at each time step, we activate only one arm.
-    This RMAB is ergodic.
-    The reward in local states $1$ and $a$ is $1$, and states $2$ and $b$ is $0$.
-    To maximize the average reward in this RMAB, we need Arm~$1$ to stay in state $1$ as frequently as possible.
-    So, one optimal policy is
-    \begin{align*}
-        \pi^*(1a)=1, \pi^*(1b)=1, \pi^*(2a)=2, \pi^*(2b)=2.
-    \end{align*}
-    That is, when the RMAB is in state $1a$, it is optimal to activate Arm~$1$.
-    Under policy $\pi^*$, the Markov chain $\mP^{\pi^*}$ is ergodic (see Figure~\ref{fig:lower_bound}(c)).
-    The reward under this policy is $r^{\pi^*}(1a)=1, r^{\pi^*}(1b)=1, r^{\pi^*}(2a)=1, r^{\pi^*}(2b)=0$.
-    Using Bellman evaluation equations for $\pi^*$ with the condition that $h^*(2b)=0$, we get
-    \begin{align*}
-        g^*=h^*(1a)=\frac{3-\varepsilon}{4-2\varepsilon}, h^*(1b)=\frac1{\varepsilon(2-\varepsilon)},
-        h^*(2a)=\frac{1+\varepsilon}{2\varepsilon}.
-    \end{align*}
-    Then, the span of $\vh^*$ is given by $sp(\vh^*)=\displaystyle\frac{1+\varepsilon}{2\varepsilon}$.
-    Following \cite{jaksch2010near, zhang2019regret}, the minimax lower bound in general MDPs is $\landauOmega(\sqrt{sp(\vh^*)SAT})$ and it is unimprovable.
-    This means that any (near-)optimal learning algorithm suffers a regret bounded by $\tilde{\landauO}(\sqrt{sp(\vh^*)SAT})$ in any communicating MDP.
-    In the RMAB above, which is an ergodic MDP, this upper bound becomes $\tilde{\landauO}\Bigl(\sqrt{SAT(1+\varepsilon)/(2\varepsilon)}\Bigr)$.
-    We conclude the proof by letting $\varepsilon=1/(2T-1)$ which results in $(1+\varepsilon)/(2\varepsilon)=T$.
-    %$\displaystyle\Omega\left(\sqrt{\frac{1+\varepsilon}{2\varepsilon}T}\right)$.
-    %Then, for $\varepsilon=1/T$, any learning algorithm suffers a regret that is at least linear in $T$.
-    \KK{How to define the upper bound on span? $H=sp(\vh^*)$ or $H=\max_{\pi}sp(\vh^\pi)$?}
-    \KK{Define $H=\max_{\pi}sp(\vh^\pi)$ requires that the MDP is unichain}
-    \KK{Define $H=sp(\vh^*)$ requires that the MDP is weakly communicating because we need the optimal gain to be state independent. This is what is used in \cite{bartlett2012regal,zhang2019regret}}
-    \begin{figure}[ht]
-        \centering
-        \begin{tabular}{ccc}
-        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state]  (A) {$1$};
-            \node[state]  (B) [below = 2cm of A]   {$2$};
-            \path[->]
-            (A) edge[bend left, color=red, dashed]     node{}	(B)
-            (A) edge[bend left=80]     node{$1-\varepsilon$}	(B)
-            (A) edge[loop above]     node{$\varepsilon$}	(A)
-    	    (B) edge[bend left, color=red, dashed]     node{}	(A)
-    	    (B) edge[bend left=80]     node{}	(A);
-        \end{tikzpicture}
-        &
-        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state]  (A) {$a$};
-            \node[state]  (B) [below = 2cm of A]   {$b$};
-            \path[->]
-            (A) edge[bend left=80]     node{}	(B)
-            (A) edge[bend left, color=red, dashed]     node{}	(B)
-    	    (B) edge[bend left=80]     node{}	(A)
-    	    (B) edge[bend left, color=red, dashed]     node{}	(A);
-        \end{tikzpicture}
-        &
-        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state]  (A) {$1a$};
-            \node[state]  (B) [right = 1.5cm of A]   {$1b$};
-            \node[state]  (C) [right = 1.5cm of B]   {$2a$};
-            \node[state]  (D) [right = 1.5cm of C]   {$2b$};
-            \path[->]
-            (A) edge[bend left=50]     node{$1-\varepsilon$}	(D)
-            (A) edge[bend left]     node{$\varepsilon$}	(B)
-    	    (B) edge[bend left]     node{$1-\varepsilon$}	(C)
-    	    (B) edge[bend left]     node{$\varepsilon$}	(A)
-            (C) edge[bend left]     node{$1$}	(B)
-            (D) edge[bend left=50] node{$1$} (A);
-        \end{tikzpicture}
-        \\
-            (a) Arm $1$ & (b) Arm $2$ & (c) Markov chain under $\pi^*$
-        \end{tabular}
-        \caption{A RMAB with two 2-state arms. The red arrows show the state transition due to passive action and black ones show the state transition under active action.}
-        \label{fig:lower_bound}
-    \end{figure}
-\end{proof}
-
+\subsection{Minimax lower bound on the expected regret}
 
 \begin{thm}[Hard to learn]
     For any learning algorithm, there exists a communicating global MDP, where arms, TOCONTINUE
@@ -499,20 +420,44 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
     We construct a restless bandit having two arms: Arm $1$ is given in \figurename~\ref{fig:hard_local2} and Arm $2$ is the Arm $2$ of \figurename~\ref{fig:hard_local}.
     We give the corresponding bandit problem in \figurename~\ref{fig:hard_local2}.
     All actions at state $(2,2)$ are optimal.
-    An optimal polic is the following $\pi^*(1,1)=1, \pi^*(1,2)=2, \pi^*(2,1)=1, \pi^*(2,2)=2$.
-    That is, it is optimal to activate the arm in state $2$.
+    An optimal policy is the following: $\pi^*(1,1)=1, \pi^*(1,2)=2, \pi^*(2,1)=1, \pi^*(2,2)=2$.
+    %That is, it is optimal to activate the arm in state $2$.
     $\pi^*$ induces a unichain Markov chain with the single recurrent class $\gX^1:=\{(1,2),(2,1)\}$.
-    The optimal gain is $g^*=1$ and the span of the optimal bias is $sp(\vh^*)=\frac1\delta$.
+    The optimal gain is $g^*=1$ and the span of the optimal bias is $sp(\vh^*)=\frac1\varepsilon$.
 
     Suboptimal policies activate Arm $2$ when the global MDP is in state $(1,1)$ and have a recurrent class $\gX^2:=\{(1,1),(2,2)\}$.
     The gain of all states in $\gX^2$ under those suboptimal policies is $1/2$.
-    The regret gap of suboptimal policies when staying in $\gX^2$ is then $g^*-1/2=1/2$.
+    The regret gap of suboptimal action in $(1,1)$ is then $g^*-1/2=1/2$.
 
     At time $1$, the MDP is in state $(1,1)$.
+    According to the structure MDP, the expected number of Arm $1$ activations to get from $(1,1)$ to $(1,2)$ is $\tau_1:=1/\varepsilon$.
     Consider a learner $\tilde{\gL}$ that acts uniformly randomly at state $(1,1)$ and optimally in all other states. 
-    The expected number of activations on Arm $1$ to get $(1,1)$ transitions to state $(1,2)$ is $1/\delta$.
-    This means that $\tilde{\gL}$ spends, in expectation, $\landauOmega(4/\delta)$ time steps in $\gX^2$ before leaving to $\gX^1$ and get the maximum gain.
-    Then, the regret of $\tilde{\gL}$ is $\landauOmega(2/\delta)$.
+    %The expected number of activations on Arm $1$ to get $(1,1)$ transitions to state $(1,2)$ is $1/\delta$.
+    Since $\tilde{\gL}$ acts uniformly randomly at $(1,1)$, the expected number of visits to state $(1,1)$ is $2\tau_1$ time steps.
+    This means that $\tilde{\gL}$ spends, in expectation, $\landauOmega(4\tau_1)$ time steps in $\gX^2$ before leaving to $\gX^1$ and get the maximum gain.
+    Since $\tilde{\gL}$ acts suboptimally in state $(1,1)$ at least $\tau_1$ time steps (\ie, $\tilde{\gL}$ activates Arm $2$ in $(1,1)$), the regret of $\tilde{\gL}$ is at least $\landauOmega(\tau_1)$ ($\tau_1$ time steps in $(1,1)$ means $2\tau_1$ time steps in $\gX^2$).
+
+    Consider now a learner $\bar{\gL}$ that knows everything except the transition of state $1$ of both arms (expected reward of all states and transition of state $2$).
+    So, $\bar{\gL}$ acts optimally in state $(1,2), (2,1)$ and $(2,2)$ but needs to learn how to get from $(1,1)$ to $(1,2)$.
+    Starting in $(1,1)$, the expected number of visits to $(1,1)$ of $\bar{\gL}$ is at least $\tau_1$.
+    Following \cite{osband2016lower}, when both $\bar{\gL}$ and $\tilde{\gL}$ acts in $(1,1)$ for $N$ times, the KL-divergence of the distribution of $\bar{\gL}$'s actions and the distribution of $\tilde{\gL}$'s actions, denoted by $d_{KL}$, is upper bounded by $\displaystyle\frac{N}{2}\log_2\Bigl(\frac1{1-\varepsilon}\Bigr)$ \cite[Lemma~2]{osband2016lower}.
+    Moreover, by Pinsker's inequality (also followed from \cite{osband2016lower}), the expected number of times that $\bar{\gL}$ activates Arm $1$ in $(1,1)$ (\ie acts optimally) over $N$ times is upper bounded by
+    \begin{align*}
+        N(\sqrt{\frac12d_{KL}}+\frac12)
+        &\le N\left(\sqrt{\frac{N}4\log_2\Bigl(\frac1{1-\varepsilon}\Bigr)}+\frac12\right) \\
+        &\le N\left(\sqrt{\frac{N\varepsilon}{4\ln(2)(1-\varepsilon)}}+\frac12\right)
+    \end{align*}
+    %(divided by $2$ because there are $2$ actions).
+    This means that, over $N$ times in $(1,1)$, $\bar{\gL}$ acts suboptimally at least
+    \begin{align*}
+        N\left(1-\sqrt{\frac{N\varepsilon}{4\ln(2)(1-\varepsilon)}}-\frac12\right)
+        &= N\left(\frac12 -\sqrt{\frac{N\varepsilon}{4\ln(2)(1-\varepsilon)}}\right) \\
+        &= \frac{N}2\left(1 -\sqrt{\frac{N\varepsilon}{\ln(2)(1-\varepsilon)}}\right)
+        %&\ge \frac{N}2 \left(1-\sqrt{\frac{N\varepsilon}{\ln2}}\right)%= \frac{\tau_1}2 \left(1-\sqrt{\frac{1}{\ln2}}\right).
+    \end{align*}
+    The regret of $\bar{\gL}$ is then at least $\frac{N}2 \left(1-\sqrt{\frac{N\varepsilon}{\ln(2)(1-\varepsilon)}}\right)$. %(we say ``at least'' because $\tau_1$ is the expected number of Arm $1$ activations to leave $(1,1)$ to $(1,2)$).
+    %Any learners without any initial knowledge about both states of both arms suffer a regret at least the regret of $\bar{\gL}$.
+    %Taking $\tau_1=1/\varepsilon=2T$ to conclude the proof.
 
     \begin{figure}[htbp]
         \centering
@@ -521,8 +466,8 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
             \node[state, black!45!green]  (A) {$1$};
             \node[state, black!45!green]  (B) [below = 2cm of A]   {$2$};
             \path[->]
-            (A) edge[bend left=75]     node{$0,p{=}1{-}\delta$}	(B)
-            (A) edge[loop above]     node[above]{$0,p{=}\delta$}	(A)
+            (A) edge[bend left=75]     node{$0,p{=}1{-}\varepsilon$}	(B)
+            (A) edge[loop above]     node[above]{$0,p{=}\varepsilon$}	(A)
             (A) edge[bend left, dashed, red]     node{$0$}	(B)
     	    (B) edge[bend left=75]     node{$1$}	(A)
             (B) edge[bend left, dashed, red]     node{$0$}	(A);
@@ -535,13 +480,13 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
                 \node[state]  (D) [left = 2.5cm of A]   {$2,2$};
                 \path[->]
                 (A) edge[bend right=80, black!30!purple]     node[above]{$0,p{=}1$}	(D)
-                (B) edge[bend left, black!45!green]     node{$0,p{=}\delta$}	(A)
-                (B) edge[bend right, black!45!green]     node[below]{$0,p{=}1{-}\delta$}	(C)
+                (B) edge[bend left, black!45!green]     node{$0,p{=}\varepsilon$}	(A)
+                (B) edge[bend right, black!45!green]     node[below]{$0,p{=}1{-}\varepsilon$}	(C)
                 (C) edge[bend right=80, black!30!purple]     node[above]{$0,p{=}1$}	(B);
                 % transition of optimal actions
                 \draw[-{Stealth}{Stealth}]
-                (A) edge[bend right, black!45!green]     node[above]{$0,p{=}1{-}\delta$}	(D)
-                (A) edge[bend left, black!45!green]     node{$0,p{=}\delta$}	(B)
+                (A) edge[bend right, black!45!green]     node[above]{$0,p{=}1{-}\varepsilon$}	(D)
+                (A) edge[bend left, black!45!green]     node{$0,p{=}\varepsilon$}	(B)
                 (B) edge[bend right=80, black!30!purple]     node[below]{$1,p{=}1$}	(C)
                 (C) edge[bend right, black!45!green]     node[above]{$1,p{=}1$}	(B)
                 (D) edge[bend right, black!45!green] node[below]{$1,p{=}1$} (A)
@@ -558,53 +503,10 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
         }
         \label{fig:hard_local2}
     \end{figure}
-
 \end{proof}
 
-    \begin{figure}[htbp]
-        \centering
-        \begin{tabular}{cc}
-        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state, black!45!green]  (A) {$1$};
-            \node[state, black!45!green]  (B) [below = 2cm of A]   {$2$};
-            \path[->]
-            (A) edge[bend left=75]     node{$0,p{=}\varepsilon$}	(B)
-            (A) edge[loop above]     node[above]{$0,p{=}1{-}\varepsilon$}	(A)
-            (A) edge[bend left, dashed, red]     node{$0$}	(B)
-    	    (B) edge[bend left=75]     node{$1$}	(A)
-            (B) edge[bend left, dashed, red]     node{$0$}	(A);
-        \end{tikzpicture}
-        &
-        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-                \node[state]  (A) {$1,1$};
-                \node[state]  (B) [right = 2.5cm of A]   {$1,2$};
-                \node[state]  (C) [right = 2.5cm of B]   {$2,1$};
-                \node[state]  (D) [left = 2.5cm of A]   {$2,2$};
-                \path[->]
-                (A) edge[bend right=80, black!30!purple]     node[above]{$0,p{=}1$}	(D)
-                (B) edge[bend left, black!45!green]     node{$0,p{=}1{-}\varepsilon$}	(A)
-                (B) edge[bend right, black!45!green]     node[below]{$0,p{=}\varepsilon$}	(C)
-                (C) edge[bend right=80, black!30!purple]     node[above]{$0,p{=}1$}	(B);
-                % transition of optimal actions
-                \draw[-{Stealth}{Stealth}]
-                (A) edge[bend right, black!45!green]     node[above]{$0,p{=}\varepsilon$}	(D)
-                (A) edge[bend left, black!45!green]     node{$0,p{=}1{-}\varepsilon$}	(B)
-                (B) edge[bend right=80, black!30!purple]     node[below]{$1,p{=}1$}	(C)
-                (C) edge[bend right, black!45!green]     node[above]{$1,p{=}1$}	(B)
-                (D) edge[bend right, black!45!green] node[below]{$1,p{=}1$} (A)
-                (D) edge[bend right=80, black!30!purple] node[below]{$1,p{=}1$} (A);
-        \end{tikzpicture}
-        \\
-            Arm $1$ is ergodic & Global MDP is communicating
-        \end{tabular}
-        \caption{
-            2-state restless Markovian arms.
-            The black arrows show state transition of action activate and the red dashed one for action rest.
-            The numbers along the arrows show the expected reward when executing the actions.
-            The double head arrows show the state transition of optimal actions.
-        }
-        \label{fig:hard_local3}
-    \end{figure}
+
+
 
 
 \subsection{Positive Results}
@@ -908,5 +810,130 @@ Note that this high probability does not depends on the episode $k$.
     \item What about Lazy MDPs? \emph{i.e.} chains such that $P(i | i,a)>\varepsilon$ for all states and actions.
     \item If RMAB problem is in stationary regime, what is the regime of each arm?
 \end{itemize}
+
+
+
+
+\begin{thm}[Hard to learn restless bandit (incorrect)]
+    For any learning algorithm, and any total time steps $T$, there exists a communicating global MDP, whose arms are all ergodic, that make the algorithm suffers a regret linear in $T$.
+\end{thm}
+
+\begin{proof}
+    We construct a restless bandit having two arms as given in \figurename~\ref{fig:hard_local4} and global problem in \figurename~\ref{fig:hard_global4}.
+    All actions at state $(2,2)$ are optimal.
+    An optimal policy is the following: $\pi^*(1,1)=2, \pi^*(1,2)=2, \pi^*(2,1)=1, \pi^*(2,2)=2$.
+    %That is, it is optimal to activate the arm in state $2$.
+    $\pi^*$ induces a unichain Markov chain with the single recurrent class $\gX^1:=\{(1,2),(2,1)\}$.
+    The optimal gain is $g^*=1$ and the span of the optimal bias is $sp(\vh^*)=\frac1\varepsilon$.
+    Suboptimal policies activate Arm $1$ when the global MDP is in state $(1,1)$ and have a recurrent class $\gX^2:=\{(1,1),(2,2)\}$.
+    The gain of all states in $\gX^2$ under those suboptimal policies is $1/2$.
+    The regret gap of suboptimal action in $(1,1)$ is then $g^*-1/2=1/2$.
+
+    At time $1$, the MDP is in state $(1,1)$.
+    According to the structure MDP, the expected number of Arm $1$ activations to get from $(1,1)$ to $(1,2)$ is $\tau_1:=1/\varepsilon$.
+    Consider a learner $\tilde{\gL}$ that acts uniformly randomly at state $(1,1)$ and optimally in all other states. 
+    %The expected number of activations on Arm $1$ to get $(1,1)$ transitions to state $(1,2)$ is $1/\delta$.
+    Since $\tilde{\gL}$ acts uniformly randomly at $(1,1)$, the expected number of visits to state $(1,1)$ is $2\tau_1$ time steps.
+    This means that $\tilde{\gL}$ spends, in expectation, $\landauOmega(4\tau_1)$ time steps in $\gX^2$ before leaving to $\gX^1$ and get the maximum gain.
+    Since $\tilde{\gL}$ acts suboptimally in state $(1,1)$ at least $\tau_1$ time steps (\ie, $\tilde{\gL}$ activates Arm $2$ in $(1,1)$), the regret of $\tilde{\gL}$ is at least $\landauOmega(\tau_1)$ ($\tau_1$ time steps in $(1,1)$ means $2\tau_1$ time steps in $\gX^2$).
+    Now, consider a learner $\bar{\gL}$ that knows everything except the transition of state $1$ of both arms (expected reward of all states and transition of state $2$).
+    So, $\bar{\gL}$ acts optimally in state $(1,2), (2,1)$ and $(2,2)$ but needs to learn how to get from $(1,1)$ to $(1,2)$.
+    Starting in $(1,1)$, the expected number of visits to $(1,1)$ of $\bar{\gL}$ is at least $\tau_1$.
+    Following \cite{osband2016lower}, when both $\bar{\gL}$ and $\tilde{\gL}$ acts in $(1,1)$ for $N$ times, the KL-divergence of the distribution of $\bar{\gL}$'s actions and the distribution of $\tilde{\gL}$'s actions, denoted by $d_{KL}$, is upper bounded by $\displaystyle\frac{N}{2}\left(\delta\log_2\Bigl(\frac{\delta}{\delta+\varepsilon}\Bigr)+(1-\delta)\log_2\Bigl(\frac{1-\delta}{1-\delta-\varepsilon}\Bigr)\right)$ \cite[Lemma~2]{osband2016lower}.
+    Moreover, by Pinsker's inequality (also followed from \cite{osband2016lower}), the expected number of times that $\bar{\gL}$ activates Arm $1$ in $(1,1)$ (\ie acts optimally) over $N$ times is upper bounded by
+    \begin{align*}
+        N(\sqrt{\frac12d_{KL}}+\frac12)
+        &\le N\left(\sqrt{\frac{N}{4}\left(\delta\log_2\Bigl(\frac{\delta}{\delta+\varepsilon}\Bigr)+(1-\delta)\log_2\Bigl(\frac{1-\delta}{1-\delta-\varepsilon}\Bigr)\right)}+\frac12\right) \\
+        &\le N\left(\sqrt{\frac{N\varepsilon^2}{4\ln(2)\delta}}+\frac12\right)
+    \end{align*}
+    where the last inequality is true only if $0\le\delta\le1/2$ and $\varepsilon\le1-2\delta$ \cite[Proposition~1]{osband2016lower}.
+    This means that, over $N$ times in $(1,1)$, $\bar{\gL}$ acts suboptimally at least
+    \begin{align*}
+        N -N\left(\sqrt{\frac{N\varepsilon^2}{4\ln(2)\delta}}+\frac12\right)
+        &= N\left(\frac12-\sqrt{\frac{N\varepsilon^2}{4\ln(2)\delta}}\right) \\
+        &= \frac{N}2 \left(1-\sqrt{\frac{N\varepsilon^2}{\ln(2)\delta}}\right)\le \frac{N}2 \left(1-\sqrt{\frac{\varepsilon}{\ln(2)\delta}}\right)%= \frac{\tau_1}2 \left(1-\sqrt{\frac{1}{\ln2}}\right).
+    \end{align*}
+    where the last inequality is true because $N\ge \tau_1$ and $\tau_1=1/\varepsilon$.
+    The regret of $\bar{\gL}$ is then at least $\frac{N}2 \left(1-\sqrt{\frac{\varepsilon}{\ln(2)\delta}}\right)$. %(we say ``at least'' because $\tau_1$ is the expected number of Arm $1$ activations to leave $(1,1)$ to $(1,2)$).
+    Any learners without any initial knowledge about both states of both arms suffer a regret at least the regret of $\bar{\gL}$.
+    Taking $\varepsilon=\frac{\delta}{T}$ and $\delta=0.25$, to conclude the proof.
+
+    \begin{figure}[htbp]
+        \centering
+        \begin{tabular}{cc}
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state, black!45!green]  (A) {$1$};
+            \node[state, black!45!green]  (B) [below = 2cm of A]   {$2$};
+            \path[->]
+            (A) edge[bend left=75]     node{$0,p{=}1{-}\delta$}	(B)
+            (A) edge[loop above]     node[above]{$0,p{=}\delta$}	(A)
+            (A) edge[bend left, dashed, red]     node{$0$}	(B)
+    	    (B) edge[bend left=75]     node{$1$}	(A)
+            (B) edge[bend left, dashed, red]     node{$0$}	(A);
+        \end{tikzpicture}
+        &
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state, black!45!green]  (A) {$1$};
+            \node[state, black!45!green]  (B) [below = 2cm of A]   {$2$};
+            \path[->]
+            (A) edge[bend left=75]     node{$0,p{=}1{-}\delta{-}\varepsilon$}	(B)
+            (A) edge[loop above]     node[above]{$0,p{=}\delta{+}\varepsilon$}	(A)
+            (A) edge[bend left, dashed, red]     node{$0$}	(B)
+    	    (B) edge[bend left=75]     node{$1$}	(A)
+            (B) edge[bend left, dashed, red]     node{$0$}	(A);
+        \end{tikzpicture}
+        \\
+            Arm $1$ is ergodic & Arm $2$ is ergodic
+        \end{tabular}
+        \caption{
+            2-state restless Markovian arms.
+            The black arrows show state transition of action activate and the red dashed one for action rest.
+            The numbers along the arrows show the expected reward when executing the actions.
+            The double head arrows show the state transition of optimal actions.
+        }
+        \label{fig:hard_local4}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centering
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+                \node[state]  (A) {$1,1$};
+                \node[state]  (B) [right = 2.5cm of A]   {$1,2$};
+                \node[state]  (C) [right = 2.5cm of B]   {$2,1$};
+                \node[state]  (D) [left = 2.5cm of A]   {$2,2$};
+                \path[->]
+                (A) edge[bend right, black!45!green]     node[above]{$0,p{=}1{-}\delta$}	(D)
+                (A) edge[bend left, black!45!green]     node{$0,p{=}\delta$}	(B)
+                (B) edge[bend left, black!45!green]     node{$0,p{=}\delta$}	(A)
+                (B) edge[bend right, black!45!green]     node[below]{$0,p{=}1{-}\delta$}	(C)
+                (C) edge[bend right=80, black!30!purple]     node[above]{$0,p{=}1{-}\delta{-}\varepsilon$}	(B)
+                (C) edge[bend left=90, black!30!purple]     node[above]{$0,p{=}\delta{+}\varepsilon$}	(A);
+                % transition of optimal actions
+                \draw[-{Stealth}{Stealth}]
+                (A) edge[bend right=80, black!30!purple]     node[above]{$0,p{=}1{-}\delta{-}\varepsilon$}	(D)
+                (A) edge[bend left=90, black!30!purple]     node[above]{$0,p{=}\delta{+}\varepsilon$}	(C)
+                (B) edge[bend right=80, black!30!purple]     node[below]{$1,p{=}1$}	(C)
+                (C) edge[bend right, black!45!green]     node[above]{$1,p{=}1$}	(B)
+                (D) edge[bend right, black!45!green] node[below]{$1,p{=}1$} (A)
+                (D) edge[bend right=80, black!30!purple] node[below]{$1,p{=}1$} (A);
+        \end{tikzpicture}
+        \caption{
+            A restless bandit with two arms given in \figurename~\ref{fig:hard_local4}.
+            This global MDP is communicating.
+            Each time, exactly one arm is activated.
+            The global state is denoted by $(s_1,s_2)$ where $s_1$ is the state of Arm $1$ and $s_2$ of Arm $2$.
+            The green arrows show the state transition when activating Arm $1$.
+            The purple arrows show the state transiiton when activating Arm $2$.
+            The numbers along the arrows show the expected reward and transition probability (if the transition is probabilistic) when executing the actions.
+            The double head arrows show the state transition of optimal actions.
+            The suboptimal policies induce two recurrent classes: $\gX^1:=\{(1,2), (2,1)\}$ and $\gX^2:=\{(1,1),(2,2)\}$.
+            The optimal gain in class $\gX^1$ is $1$.
+            The suboptimal gain in class $\gX^2$ is $0.5$.
+        }
+        \label{fig:hard_global4}
+    \end{figure}
+\end{proof}
+
+
 
 \endgroup
