@@ -5,20 +5,62 @@
 \chapter{Learning in Average Reward Restless Markovian Bandits}
 \label{ch:learning_restless}
 
+In the previous chapter, we adapt a few learning algorithms to discounted rested Markovian bandits and showed that their regrets, which are upper bounded sublinearly in the number of arms, match the minimax Bayesian regret that we derived in the chapter.
+We also showed that any optimistic index policy that computes optimistic index on each arm independently from the other arms does not guarantee the optimism in face of uncertainty (OFU) principle.
+In this chapter, we consider the learning problem in restless Markovian bandit with average reward criterion.
+Such a bandit suffers from the curse of dimensionality and general-purpose learning algorithm are not efficient when applied to restless bandit. Recently, a few learning algorithms have been specifically designed to work for restless bandits. Yet, they most often work only for very particular subclasses of restless bandits, or they hold under conditions that are very hard to verify.
+Hence, in this chapter, we provide some explanations why the performance of a learning algorithm for a restless bandit depends, in general, on some structural conditions (like diameter or bias) of the global MDP. We show that the properties of the local arms (like ergodic or small diameter) do not, in general, imply similar properties for the global MDPs. This implies that defining a class of restless bandit that has desirable properties (like small diameter) is difficult. 
 
-Restless Markovian bandits are generalization of stochastic bandits in which each arm is represented by a Markov decision process. A restless bandit can be seen as a Markov decision process with a state-space that is exponential in the number of arms. Hence, general-purpose learning algorithm are not efficient when applied to restless. Recently, a few learning algorithms have been specifically designed to work for restless bandits. Yet, they most often work only for very particular subclasses of restless bandits, or they hold under conditions that are very hard to verify.
-
-In this chapter, we provide some explanations why. The performance of a learning algorithm for a restless depends, in general, on some structural conditions (like diameter or bias) of the global MDP.  Here, we show that the properties of the local arms (like unichain or small diameter) do not, in general, imply similar properties for the global Markov decision processes. This implies that defining a class of restless bandit that has desirable properties (like small diameter) is difficult. 
+In Section~\ref{}, we...
 
 \section{Introduction}
 
-In average reward criterion, the current best learning algorithms have a regret over $T$ time steps bounded by $\landauO(\sqrt{DSAT})$ in the unknown MDP with state size $S$, action size $A$, and diameter $D$ (see Table~\ref{ch:rl:tab:infinite} for more algorithms regret guarantee).
+Restless Markovian bandits are the specific MDPs that manifest the curse of dimensionality.
+The obvious effect of the curse is the bandit state size that is exponential in the number of arms.
+%Moreover, not only the state size that is cursed, but also the MDP parameters such as diameter.
+However, to the best of our knowledge, there is yet no clear dependency between the diameter or mixing time of the global MDP and the number of arms in general restless Markovian bandit.
+
+For learning generic MDPs with average reward criterion, the current best algorithms have a regret over $T$ time steps bounded by $\landauO(\sqrt{DSAT})$ in the unknown MDP with state size $S$, action size $A$, and diameter $D$ (see Table~\ref{ch:rl:tab:infinite} for more algorithms regret guarantee).
+This regret is valid for communicating MDPs.
+To what we have observed, the parameters of the MDPs that appear in regret upper bound are:
+\begin{itemize}
+    \item diameter $D$ defined by Definition~\ref{ch:rl:defn:diameter} in, for example, \cite{jaksch2010near, fruit2020improved, tossou2019near}
+    \item span of optimal bias $H\ge sp(\vh^*)$ in, for example, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret}
+    \item mixing time $t_{mix}$ defined by Definition~\ref{ch:restless:defn:mixing_time} in, for example, \cite{ortner2020regret}.
+\end{itemize}
+Applying these algorithms to learn restless Markovian bandits with average reward criterion provokes a few critical issues:
+\begin{itemize}
+    \item verifying the structure of restless bandit is computationally ``expensive'' 
+    \item the state size of restless bandit is exponential in the number of arms which makes the regret not scalable with the number of arms
+    \item the diameter $D$ (if defined), mixing time $t_{mix}$ (if defined), or span of the optimal bias $H$ may also be exponential in the number of arms
+    \item compute an optimal policy in restless bandit is PSPACE-hard \cite{papadimitriou1994complexity}, let alone the computation of optimistic policy
+\end{itemize}
+%These parameters are finite for MDPs with specific structure.
+%That is, the mixing time is defined for ergodic MDPs and the diameter of a MDP is finite if and only if the MDP is communicating.
+%These algorithms are then applicable to restless Markovian bandits only if the latter have the specified structure.
+
+%It is then reasonable to assume some structure properties of the bandit.
+For partially observed restless bandit, the work of \cite{ortner2012regret} derives colored-UCRL algorithm, modified version of UCRL2, that achieves a regret sublinear in time.
+Colored-UCRL successfully removes the exponentiality of the number of arms from the state size of the bandit in its regret.
+However, the mixing time parameter yet appears in the regret bound and the dependency between the mixing time and the number of arms is unclear.
+The same discussion goes to the work of \cite{jung2019thompson} that adapts TSDE to the same setting of restless bandit in \cite{ortner2012regret}.
+Last but not least, Restless-UCB of \cite{wang2020restless} has a regret provably bounded linearly in the number of arms for partially observed restless bandit.
+Yet, we must mention that this result is valid for a very restrictive class of restless bandit.
+
+The work of \cite{akbarzadeh2022learning} adapts TSDE to the fully observed restless bandit problem and successfully removes the exponentiality of the number of arms from the state size of the bandit in its regret.
+However, there is an assumption on the ergodicity coefficient of the global MDP and the dependency between such a coefficient and the number of arms is unclear.
+
+Finally, due to the curse of dimensionality, verifying the structure of the bandit may be computationally expensive, let alone the learning aspect.
+This inspires us to study the implication of structure of arms in the structure of the bandit because verifying the structure of all arms is done linearly in the number of arms.
+
+%That is, in average reward criterion, the structure of the MDP plays an important role in the performance of the learning algorithms.
+
 
 %Reinforcement learning algorithms work depending on the assumption of MDP structure such as ergodic, communicating, and weakly communicating.
 
-(here should motivate the problem + add related work about learning and why it is related to diameters and other properties)
+%(here should motivate the problem + add related work about learning and why it is related to diameters and other properties)
 
-(We should define local properties and global properties).
+%(We should define local properties and global properties).
 
 We show that:
 \begin{itemize}
@@ -52,19 +94,11 @@ Intractable here means that there is no efficient implementations.
 \label{ch:restless:tab:infinite}
 \end{table}
 
-Applying these algorithms to learn restless Markovian bandits with average reward criterion provokes a few critical issues:
-\begin{itemize}
-    \item imposing the structure on restless bandit is computationally ``hard'' to verified
-    \item the state size of restless bandit is exponential in the number of arms which makes the regret not scalable with the number of arms
-    \item the diameter $D$ (if defined), mixing time $t_{mix}$ (if defined), or span of the optimal bias $H$ may also be exponential in the number of arms
-    \item compute an optimal policy in restless bandit is computationally PSPACE-hard \cite{papadimitriou1994complexity}, let the computation of optimistic policy
-\end{itemize}
-
-A few existing works have tried to remove the exponentiality in the state size of restless bandit such as \cite{jung2019regret, ortner2012regret, wang2020restless} for partially observed setting and \cite{akbarzadeh2022learning} for fully observed setting.
-However, removing the exponentiality of the number of arms in the $D, t_{mix}$, or $H$ remains unclear.
-Moreover, these quantities are defined only if the MDP has a specific structure.
-For instance, the mixing time is defined only if the MDP is ergodic.
-Such an assumption is costly to verified in restless bandit due the curse of dimensionality in the state size of the global MDP.
+%A few existing works have tried to remove the exponentiality in the state size of restless bandit such as \cite{jung2019regret, ortner2012regret, wang2020restless} for partially observed setting and \cite{akbarzadeh2022learning} for fully observed setting.
+%However, removing the exponentiality of the number of arms in the $D, t_{mix}$, or $H$ remains unclear.
+%Moreover, these quantities are defined only if the MDP has a specific structure.
+%For instance, the mixing time is defined only if the MDP is ergodic.
+%Such an assumption is costly to verified in restless bandit due the curse of dimensionality in the state size of the global MDP.
 
 \section{Undiscounted restless Markovian bandit}
 \label{ch:restless:sec:restless}
@@ -137,7 +171,7 @@ Let $\vh\in\sR^S$. The span of $\vh$ is given by $sp(\vh)=\max_xh(x) - \min_xh(x
 
 Following \cite[Definition 5.1]{wei2020model},
 \begin{defn}
-    \label{def:mixing_time}
+    \label{ch:restless:defn:mixing_time}
     The mixing time of an ergodic MDP is defined as
     \begin{align*}
         t_{mix} := \max_{\pi}\min\left\{ t\ge1 \mid \lVert (\mP^\pi)^t(x,\cdot) - \mu^\pi\rVert_1 \le \frac14, \forall x\right\},
