@@ -338,7 +338,50 @@ The following theorem shows that a restless bandit whose arms are all ergodic or
         \label{fig:recur_non_communicate}
     \end{figure}
     \medskip \\
-    \textbf{Proof of \ref{thm:ergodic_arms_multichain_RB}} -- It is given by another counter-example in \figurename~\ref{fig:local_ergodic_multichain_RB}.
+    \textbf{Proof of \ref{thm:ergodic_arms_multichain_RB}} -- It is given by the following counter-example.
+    Consider a restless bandit with two 8-state arms presented in \figurename~\ref{fig:ergodic_arm}.
+    Both arms are identical in term of state transition that is summarized in Table~\ref{tab:ergodic_arm}.
+    We observe that when rest, state $1$ and $2$ have the same possible next states $2$ and $3$.
+    Similarly, the pair $\{3,4\}$ has $\{4,5\}$, $\{5,6\}$ has $\{6,7\}$, and $\{7,8\}$ has $\{8,1\}$.
+    Similar pattern is observed under action activate: $\{2,3\}$ has $\{3,4\}$, $\{4,5\}$ has $\{5,6\}$, $\{6,7\}$ has $\{7,8\}$, and $\{8,1\}$ has $\{1,2\}$.
+    This means that we can construct a cycle of transition by switching between rest (R) and activate (A):
+    \begin{align*}
+        \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \{3,4\} \overset{R}{\to} \{4,5\} \overset{A}{\to} \{5,6\} \overset{R}{\to} \{6,7\} \overset{A}{\to} \{7,8\} \overset{R}{\to} \{8,1\} \overset{A}{\to} \{1,2\}.
+    \end{align*}
+    With a proper synchronization between the states of Arm $1$ and Arm $2$, we can construct policies that induce two recurrent classes as presented in \figurename~\ref{fig:local_ergodic_multichain_RB}.
+    Indeed, consider the following arrangement.
+    \begin{align*}
+        &\text{Arm 1} : \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \{3,4\} \overset{R}{\to} \dots \overset{A}{\to} \{1,2\} \\
+        &\text{Arm 2} : \{4,5\} \overset{A}{\to} \{5,6\} \overset{R}{\to} \{6,7\} \overset{A}{\to} \dots \overset{R}{\to} \{4,5\} \\
+        &\text{MDP} : \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix} \overset{2}{\to} \begin{pmatrix}2,6\\3,5\\3,6\end{pmatrix} \overset{1}{\to} \begin{pmatrix}3,7\\4,6\\4,7\end{pmatrix} \overset{2}{\to} \dots \overset{1}{\to} \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix}
+    \end{align*}
+    It means that any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the global MDP is in state $(s,s+4), (s+1,s+3)$, and $(s+1,s+4)$ induce a recurrent class $\gX^1$ as given in \figurename~\ref{fig:local_ergodic_multichain_RB} (note that for $s$ big enough, state $9$ is state $1$, $10$ is $2$, etc).
+    The recurrent class $\gX^2$ in \figurename~\ref{fig:local_ergodic_multichain_RB} is constructed by simply changing the sequence of Arm 2's state in the arrangement above and adapting the state of global MDP accordingly:
+    \begin{align*}
+        &\text{Arm 2} : \{8,1\} \overset{A}{\to} \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \dots \overset{R}{\to} \{8,1\} \\
+        &\text{MDP} : \begin{pmatrix}1,1\\2,8\\2,1\end{pmatrix} \overset{2}{\to} \begin{pmatrix}2,2\\3,1\\3,2\end{pmatrix} \overset{1}{\to} \begin{pmatrix}3,3\\4,2\\4,3\end{pmatrix} \overset{2}{\to} \dots \overset{1}{\to} \begin{pmatrix}1,1\\2,8\\2,1\end{pmatrix}
+    \end{align*}
+    So, any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the global MDP is in state $(s,s), (s+1,s+7)$, and $(s+1,s)$ induce the class $\gX^2$.
+    All in all, any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the global MDP is in state $(s,s), (s+1,s+7), (s+1,s), (s,s+4), (s+1,s+3)$ and $(s+1,s+4)$ induce two recurrent classes $\gX^1$ and $\gX^2$.
+    That concludes the proof.
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            Current state & Next state when rest & Next state when activate \\\hline 
+            $1$   & $2$ or $3$  &  $1$ or $2$ \\
+            $2$   & $2$ or $3$  &  $3$ or $4$ \\
+            $3$   & $4$ or $5$  &  $3$ or $4$ \\
+            $4$   & $4$ or $5$  &  $5$ or $6$ \\
+            $5$   & $6$ or $7$  &  $5$ or $6$ \\
+            $6$   & $6$ or $7$  &  $7$ or $8$ \\
+            $7$   & $8$ or $1$  &  $7$ or $8$ \\
+            $8$   & $8$ or $1$  &  $1$ or $2$ \\ \hline
+        \end{tabular}
+        \caption{State transition of arms in \figurename~\ref{fig:ergodic_arm}.}
+        \label{tab:ergodic_arm}
+    \end{table}
+    %in \figurename~\ref{fig:local_ergodic_multichain_RB}.
     \begin{figure}
         \centering
         \begin{tabular}{cc}
@@ -491,7 +534,7 @@ The following theorem shows that a restless bandit whose arms are all ergodic or
         \caption{
             State transition within two recurrent classes of a restless with 2 arms presented in \figurename~\ref{fig:ergodic_arm}.
             The first recurrent class is $\gX^1 =\{(s,s+4),(s+1,s+3),(s+1,s+4): s\in[8]\}$ and the second one is $\gX^2 =\{(s,s),(s+1,s),(s+1,s+7): s\in[8]\}$.
-            These are two recurrent classes under any policies that activate Arm 2 for any impair $s\in[8]$ and Arm 1 for any pair $s\in[8]$ when the bandit is in states $(s,s),(s,s+4),(s+1,s),(s+1,s+3),(s+1,s+4),(s+1,s+7)$.
+            These are two recurrent classes under any policies that activate Arm 2 for any odd $s\in[8]$ and Arm 1 for any even $s\in[8]$ when the bandit is in states $(s,s),(s,s+4),(s+1,s),(s+1,s+3),(s+1,s+4),(s+1,s+7)$.
             The blue arrows show the state transition when Arm $2$ is activated and the green ones show the one when Arm $1$ is activated.
             Each ellipse regroups the states having the same state transition under the same action.
             Note that each ellipse can transition to itself like in $\gX^1$ state $(2,4)$ can transition to state $(2,5)$ but it not shown.
@@ -500,7 +543,7 @@ The following theorem shows that a restless bandit whose arms are all ergodic or
         \label{fig:local_ergodic_multichain_RB}
     \end{figure}
 \end{proof}
-
+%TODO:
 \subsubsection{Diameter, mixing time, and span}
 
 \begin{thm}
