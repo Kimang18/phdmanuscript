@@ -217,7 +217,7 @@ However, if the transition is deterministic, \ie, the probability is $1$, we onl
     \end{tabular}
     \caption{
         Restless Markovian arms. Arm 1 has 3 states and Arm 2 has 2 states.
-        The black arrows show state transition of action activate and the red dashed one for action rest.
+        The black arrows show state transition of action activate and the dashed red one for action rest.
         The numbers along the arrows show the expected reward when executing the actions.
         The corresponding global MDP is given in \figurename~\ref{fig:hard_global}
     }
@@ -270,70 +270,87 @@ However, if the transition is deterministic, \ie, the probability is $1$, we onl
 
 %The following theorem shows that a restless bandit whose arms are all unichain is not necessarily unichain. This is true under the additional condition that all arms are aperiodic.
 \subsection{Negative Results}
-The following theorem shows that a restless bandit whose arms are all ergodic is not necessarily ergodic.
-\begin{thm}
+The following theorem shows that a restless bandit whose arms are all ergodic or all recurrent is not necessarily unichain.
+
+\begin{thm}[Multichain Restless bandit]
+    We consider restless bandit problem having finite number of arms and each arm has finite number of states.
     \begin{enumerate}[label=(\roman*)]
-        \item \label{thm:not_ergodic} There exists a RMAB whose arms are all recurrent that is noncommunicating. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
-        %\item \label{thm:aperiodic_RB_ergo} There exists a Restless bandit whose arms are all ergodic that is not recurrent. 
-        \item \label{thm:ergodic_arms_multichain_RB} There exists a RMAB whose arms are all ergodic that is multichain.
+        \item \label{thm:not_ergodic} There exists a restless bandit whose arms are all recurrent that is not weakly communicating. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
+        \item \label{thm:ergodic_arms_multichain_RB} There exists a restless whose arms are all ergodic that is multichain.
     \end{enumerate}
 \end{thm}
 
 \begin{proof}
-    \textbf{Proof of \ref{thm:not_ergodic}} -- It is given by the counter-example in which the RMAB has two arms as given by \figurename~\ref{fig:recur_non_communicate}.
-    For each arm, both "activate" and "rest" induce the same transition.
-    In such example, the RMAB is a noncommunicating multichain MDP because if we start at state $1a$ or $2b$, then, there are two recurrent classes: one composed of $\{1a, 2b\}$ and the other one is $\{1b, 2a\}$.
+    \textbf{Proof of \ref{thm:not_ergodic}} -- It is given by the counter-example in which the restless bandit has two arms as given by \figurename~\ref{fig:recur_non_communicate} and exactly one arm is activated at each decision time.
+    For each arm, both ``activate'' and ``rest'' actions induce the same state transition.
+    In such example, the restless bandit is a multichain and not weakly communicating MDP because if we start at state $(1,1)$ or $(2,2)$, then there are two recurrent classes: one composed of $\{(1,1), (2,2)\}$ and the other one is $\{(1,2), (2,1)\}$.
     \begin{figure}[ht]
         \centering
         \begin{tabular}{ccc}
         \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state]  (A) {$1$};
-            \node[state]  (B) [below = 2cm of A]   {$2$};
+            \node[state, black!45!green,line width=0.4mm]  (A) {$1$};
+            \node[state, black!45!green,line width=0.4mm]  (B) [below = 2cm of A]   {$2$};
             \path[->]
-            (A) edge[bend left]     node{}	(B)
-    	    (B) edge[bend left]     node{}	(A);
+            (A) edge[bend left=75]     node{$0$}	(B)
+            (A) edge[bend left, dashed, red]     node{$0$}	(B)
+    	    (B) edge[bend left=75]     node{$1$}	(A)
+            (B) edge[bend left, dashed, red]     node{$0$}	(A);
         \end{tikzpicture}
         &
         \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state]  (A) {$a$};
-            \node[state]  (B) [below = 2cm of A]   {$b$};
+            \node[state, RoyalBlue,line width=0.4mm]  (A) {$1$};
+            \node[state, RoyalBlue,line width=0.4mm]  (B) [below = 2cm of A]   {$2$};
             \path[->]
-            (A) edge[bend left]     node{}	(B)
-    	    (B) edge[bend left]     node{}	(A);
+            (A) edge[bend left=75]     node{$0$}	(B)
+            (A) edge[bend left, dashed, red]     node{$0$}	(B)
+    	    (B) edge[bend left=75]     node{$1$}	(A)
+    	    (B) edge[bend left, dashed, red]     node{$0$}	(A);
         \end{tikzpicture}
         &
         \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state]  (A) {$1a$};
-            \node[state]  (B) [right = 1.5cm of A]   {$1b$};
-            \node[state]  (C) [right = 1.5cm of B]   {$2a$};
-            \node[state]  (D) [right = 1.5cm of C]   {$2b$};
-            \path[->]
-            (A) edge[bend left=50]     node{}	(D)
-    	    (B) edge[bend left]     node{}	(C)
-    	    (C) edge[bend left]     node{}	(B)
-            (D) edge[bend left=50] node{} (A);
+                \node[state]  (A) {$1,1$};
+                \node[state]  (B) [right = 1.5cm of A]   {$1,2$};
+                \node[state]  (C) [right = 2cm of B]   {$2,1$};
+                \node[state]  (D) [left = 2cm of A]   {$2,2$};
+                \path[->]
+                (A) edge[bend right, black!45!green, line width=0.4mm]     node[above]{$0$}	(D)
+                (A) edge[bend right=80, RoyalBlue, line width=0.4mm]     node[above]{$0$}	(D)
+                (B) edge[bend right, black!45!green, line width=0.4mm]     node[below]{$0$}	(C)
+                (B) edge[bend right=80, RoyalBlue, line width=0.4mm]     node[below]{$0$}	(C)
+                (C) edge[bend right, black!45!green, line width=0.4mm]     node[above]{$0$}	(B)
+                (C) edge[bend right=80, RoyalBlue, line width=0.4mm]     node[above]{$0$}	(B)
+                % transition of optimal actions
+                (D) edge[bend right, black!45!green, line width=0.4mm] node[below]{$1$} (A)
+                (D) edge[bend right=80, RoyalBlue, line width=0.4mm] node[below]{$1$} (A);
         \end{tikzpicture}
         \\
-            Arm $1$ & Arm $2$ & Global MDP
+            Arm $1$ & Arm $2$ & Global MDP having four states.
         \end{tabular}
-        \caption{A RMAB with two 2-state arms that are recurrent.}
+        \caption{
+            A restless bandit with two arms and exactly one arm is activated at each decision time.
+            The global state is denoted by $(s_1,s_2)$ where $s_1$ is the state of Arm $1$ and $s_2$ of Arm $2$.
+            The green arrows show the state transition when activating Arm $1$.
+            The blue arrows show the state transiiton when activating Arm $2$.
+            The numbers along the green and blue arrows show the expected reward when executing the actions.\\
+            For both arms, the black arrows show state transition of action activate and the dashed red one for action rest.
+            The numbers along the black and dashed red arrows show the expected reward when executing the actions.
+        }
         \label{fig:recur_non_communicate}
     \end{figure}
     \medskip \\
     \textbf{Proof of \ref{thm:ergodic_arms_multichain_RB}} -- It is given by another counter-example in \figurename~\ref{fig:local_ergodic_multichain_RB}.
     \begin{figure}
         \centering
-        \begin{tabular}{c}
+        \begin{tabular}{cc}
         \begin{tikzpicture}[on grid, state/.style={ellipse,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state]  (A) {$8$};
-            \node[state]  (B) [right = 1.6cm of A]    {$1$};
-            \node[state]  (C) [right = 1.6cm of B]    {$2$};
-            \node[state]  (D) [below = 1.6cm of C]    {$3$};
-            \node[state]  (E) [below = 1.6cm of D]    {$4$};
-            \node[state]  (F) [left = 1.6cm of E]    {$5$};
-            \node[state]  (G) [left = 1.6cm of F]    {$6$};
-            \node[state]  (H) [below = 1.6cm of A]    {$7$};
-            \node[text width=5cm] (I) [left = 1.4cm of H] {Arm's structure};
+            \node[state, black!45!green, line width=0.4mm]  (A) {$8$};
+            \node[state, black!45!green, line width=0.4mm]  (B) [right = 1.6cm of A]    {$1$};
+            \node[state, black!45!green, line width=0.4mm]  (C) [right = 1.6cm of B]    {$2$};
+            \node[state, black!45!green, line width=0.4mm]  (D) [below = 1.6cm of C]    {$3$};
+            \node[state, black!45!green, line width=0.4mm]  (E) [below = 1.6cm of D]    {$4$};
+            \node[state, black!45!green, line width=0.4mm]  (F) [left = 1.6cm of E]    {$5$};
+            \node[state, black!45!green, line width=0.4mm]  (G) [left = 1.6cm of F]    {$6$};
+            \node[state, black!45!green, line width=0.4mm]  (H) [below = 1.6cm of A]    {$7$};
             \path[->]
                 (A) edge[red, dashed, bend right=30] node{} (B)
                 edge[red, dashed, loop above] node{} (A)
@@ -368,53 +385,118 @@ The following theorem shows that a restless bandit whose arms are all ergodic is
                 edge[bend left=50]     node{}	(A)
                 (H) edge[loop left] node{} (H)
                 edge[bend left=30]     node{}	(A);
-        \end{tikzpicture} \\
+        \end{tikzpicture} 
+        &
         \begin{tikzpicture}[on grid, state/.style={ellipse,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state]  (A) {$\begin{tabular}{c}15\\24\\25\end{tabular}$};
-            \node[state]  (B) [right = 2cm of A]    {$\begin{tabular}{c}26\\35\\36\end{tabular}$};
-            \node[state]  (C) [right = 2cm of B]    {$\begin{tabular}{c}37\\46\\47\end{tabular}$};
-            \node[state]  (D) [right = 2cm of C]    {$\begin{tabular}{c}48\\57\\58\end{tabular}$};
-            \node[state]  (E) [below = 3cm of D]    {$\begin{tabular}{c}51\\68\\61\end{tabular}$};
-            \node[state]  (F) [left = 2cm of E]    {$\begin{tabular}{c}62\\71\\72\end{tabular}$};
-            \node[state]  (G) [left = 2cm of F]    {$\begin{tabular}{c}73\\82\\83\end{tabular}$};
-            \node[state]  (H) [left = 2cm of G]    {$\begin{tabular}{c}84\\13\\14\end{tabular}$};
-            \node[text width=2cm] (J) [left = 1.5cm of A] {Recurrent\\Class $\bar{\gS}^{(1)}$};
+            \node[state, RoyalBlue,line width=0.4mm]  (A) {$8$};
+            \node[state, RoyalBlue,line width=0.4mm]  (B) [right = 1.6cm of A]    {$1$};
+            \node[state, RoyalBlue,line width=0.4mm]  (C) [right = 1.6cm of B]    {$2$};
+            \node[state, RoyalBlue,line width=0.4mm]  (D) [below = 1.6cm of C]    {$3$};
+            \node[state, RoyalBlue,line width=0.4mm]  (E) [below = 1.6cm of D]    {$4$};
+            \node[state, RoyalBlue,line width=0.4mm]  (F) [left = 1.6cm of E]    {$5$};
+            \node[state, RoyalBlue,line width=0.4mm]  (G) [left = 1.6cm of F]    {$6$};
+            \node[state, RoyalBlue,line width=0.4mm]  (H) [below = 1.6cm of A]    {$7$};
             \path[->]
-            (A) edge     node{}	(B)
-            (B) edge     node{}	(C)
-            (C) edge     node{}	(D)
-            (D) edge     node{}	(E)
-    	    (E) edge     node{}	(F)
-    	    (F) edge     node{}	(G)
-            (G) edge     node{}	(H)
-            (H) edge     node{}	(A);
+                (A) edge[red, dashed, bend right=30] node{} (B)
+                edge[red, dashed, loop above] node{} (A)
+                (B) edge[red, dashed, bend right=30] node{} (C)
+                edge[red, dashed, bend right=30] node{} (D)
+                (C) edge[red, dashed, bend right=30] node{} (D)
+                edge[red, dashed, loop above] node{} (C)
+                (D) edge[red, dashed, bend right=30] node{} (E)
+                edge[red, dashed, bend right=30] node{} (F)
+                (E) edge[red, dashed, bend right=30] node{} (F)
+                edge[red, dashed, loop below] node{} (E)
+                (F) edge[red, dashed, bend right=30] node{} (G)
+                edge[red, dashed, bend right=30] node{} (H)
+                (G) edge[red, dashed, bend right=30] node{} (H)
+                edge[red, dashed, loop below] node{} (G)
+                (H) edge[red, dashed, bend right=30] node{} (A)
+                edge[red, dashed, bend right=30] node{} (B)
+
+                (A) edge[bend left=30]     node{}	(B)
+                edge[bend left=50]     node{}	(C)
+                (B) edge[loop above] node{} (B)
+                edge[bend left=30]     node{}	(C)
+                (C) edge[bend left=30]     node{}	(D)
+                edge[bend left=50]     node{}	(E)
+                (D) edge[loop right] node{} (D)
+                edge[bend left=30]     node{}	(E)
+                (E) edge[bend left=30]     node{}	(F)
+                edge[bend left=50]     node{}	(G)
+                (F) edge[loop below] node{} (F)
+                edge[bend left=30]     node{}	(G)
+                (G) edge[bend left=30]     node{}	(H)
+                edge[bend left=50]     node{}	(A)
+                (H) edge[loop left] node{} (H)
+                edge[bend left=30]     node{}	(A);
+            \end{tikzpicture} \\
+            Arm $1$ & Arm $2$
+        \end{tabular}
+        \caption{
+            Two restless Markovian arms, each having $8$ states.
+            Both arms are identical.
+            The black arrows show state transition of action activate and the dashed red one for action rest.
+            To ease the exposition, the expected reward is not shown.
+            Also, each state transition happens with probability $0.5$.
+            That is, each arm goes from states $1$ and $2$ to state $2$ or $3$, states $3$ and $4$ to state $4$ or $5$, etc, under action rest, and goes from states $1$ and $8$ to state $1$ or $2$, etc, under action activate.
+            The restless bandit having these two arms and exactly one arm is activated at each decision time is multichain because some policies induce two classes of recurrent states as shown in \figurename~\ref{fig:local_ergodic_multichain_RB}.
+        }
+        \label{fig:ergodic_arm}
+    \end{figure}
+    \begin{figure}
+        \centering
+        \begin{tabular}{c}
+        \begin{tikzpicture}[on grid, state/.style={ellipse,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state]  (A) {$\begin{tabular}{c}1,5\\2,4\\2,5\end{tabular}$};
+            \node[state]  (B) [right = 2.4cm of A]    {$\begin{tabular}{c}2,6\\3,5\\3,6\end{tabular}$};
+            \node[state]  (C) [right = 2.4cm of B]    {$\begin{tabular}{c}3,7\\4,6\\4,7\end{tabular}$};
+            \node[state]  (D) [right = 2.4cm of C]    {$\begin{tabular}{c}4,8\\5,7\\5,8\end{tabular}$};
+            \node[state]  (E) [below = 3cm of D]    {$\begin{tabular}{c}5,1\\6,8\\6,1\end{tabular}$};
+            \node[state]  (F) [left = 2.4cm of E]    {$\begin{tabular}{c}6,2\\7,1\\7,2\end{tabular}$};
+            \node[state]  (G) [left = 2.4cm of F]    {$\begin{tabular}{c}7,3\\8,2\\8,3\end{tabular}$};
+            \node[state]  (H) [left = 2.4cm of G]    {$\begin{tabular}{c}8,4\\1,3\\1,4\end{tabular}$};
+            \node[text width=2cm] (J) [left = 1.5cm of A] {Recur.\\Class $\gX^1$};
+            \path[->]
+            (A) edge[RoyalBlue,line width=0.4mm]     node{}	(B)
+            (B) edge[black!30!green,line width=0.4mm]     node{}	(C)
+            (C) edge[RoyalBlue,line width=0.4mm]     node{}	(D)
+            (D) edge[black!30!green,line width=0.4mm]     node{}	(E)
+    	    (E) edge[RoyalBlue,line width=0.4mm]     node{}	(F)
+    	    (F) edge[black!30!green,line width=0.4mm]     node{}	(G)
+            (G) edge[RoyalBlue,line width=0.4mm]     node{}	(H)
+            (H) edge[black!30!green,line width=0.4mm]     node{}	(A);
         \end{tikzpicture} \\ \hfill\\
         \begin{tikzpicture}[on grid, state/.style={ellipse,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-            \node[state]  (A) {$\begin{tabular}{c}11\\28\\21\end{tabular}$};
-            \node[state]  (B) [right = 2cm of A]    {$\begin{tabular}{c}22\\31\\32\end{tabular}$};
-            \node[state]  (C) [right = 2cm of B]    {$\begin{tabular}{c}33\\42\\43\end{tabular}$};
-            \node[state]  (D) [right = 2cm of C]    {$\begin{tabular}{c}44\\53\\54\end{tabular}$};
-            \node[state]  (E) [below = 3cm of D]    {$\begin{tabular}{c}55\\64\\63\end{tabular}$};
-            \node[state]  (F) [left = 2cm of E]    {$\begin{tabular}{c}66\\75\\74\end{tabular}$};
-            \node[state]  (G) [left = 2cm of F]    {$\begin{tabular}{c}77\\86\\84\end{tabular}$};
-            \node[state]  (H) [left = 2cm of G]    {$\begin{tabular}{c}88\\17\\15\end{tabular}$};
-            \node[text width=2cm] (J) [left = 1.5cm of A] {Recurrent\\Class $\bar{\gS}^{(2)}$};
+            \node[state]  (A) {$\begin{tabular}{c}1,1\\2,8\\2,1\end{tabular}$};
+            \node[state]  (B) [right = 2.4cm of A]    {$\begin{tabular}{c}2,2\\3,1\\3,2\end{tabular}$};
+            \node[state]  (C) [right = 2.4cm of B]    {$\begin{tabular}{c}3,3\\4,2\\4,3\end{tabular}$};
+            \node[state]  (D) [right = 2.4cm of C]    {$\begin{tabular}{c}4,4\\5,3\\5,4\end{tabular}$};
+            \node[state]  (E) [below = 3cm of D]    {$\begin{tabular}{c}5,5\\6,4\\6,3\end{tabular}$};
+            \node[state]  (F) [left = 2.4cm of E]    {$\begin{tabular}{c}6,6\\7,5\\7,4\end{tabular}$};
+            \node[state]  (G) [left = 2.4cm of F]    {$\begin{tabular}{c}7,7\\8,6\\8,4\end{tabular}$};
+            \node[state]  (H) [left = 2.4cm of G]    {$\begin{tabular}{c}8,8\\1,7\\1,5\end{tabular}$};
+            \node[text width=2cm] (J) [left = 1.5cm of A] {Recur.\\Class $\gX^2$};
             \path[->]
-            (A) edge     node{}	(B)
-            (B) edge     node{}	(C)
-            (C) edge     node{}	(D)
-            (D) edge     node{}	(E)
-    	    (E) edge     node{}	(F)
-    	    (F) edge     node{}	(G)
-            (G) edge     node{}	(H)
-            (H) edge     node{}	(A);
+            (A) edge[RoyalBlue,line width=0.4mm]     node{}	(B)
+            (C) edge[RoyalBlue,line width=0.4mm]     node{}	(D)
+    	    (E) edge[RoyalBlue,line width=0.4mm]     node{}	(F)
+            (G) edge[RoyalBlue,line width=0.4mm]     node{}	(H)
+            (B) edge[black!30!green,line width=0.4mm]     node{}	(C)
+            (D) edge[black!30!green,line width=0.4mm]     node{}	(E)
+    	    (F) edge[black!30!green,line width=0.4mm]     node{}	(G)
+            (H) edge[black!30!green,line width=0.4mm]     node{}	(A);
         \end{tikzpicture}
         \end{tabular}
-        \caption{We consider a RMAB with 2 arms, each is an 8-state ergodic MDP where the arm goes from states $1$ and $2$ to state $2$ or $3$, states $3$ and $4$ to state $4$ or $5$, etc, under passive action, and goes from states $1$ and $8$ to state $1$ or $2$, etc, under active action. Both arms have the same structure.
-        The first row shows the state transition of the arm: the black arrows represent active transition and the red ones represent passive transition.
-        The second and third rows show the state transition of two recurrent classes under any policies that activate Arm 2 for any impair $x\in[8]$ and Arm 1 for any pair $x\in[8]$ when RMAB is in states $(x,x),(x,x+4),(x+1,x),(x+1,x+3),(x+1,x+4),(x+1,x+7)$.
-        The first recurrent class is $\bar{\gS}^{(1)} =\{(x,x+4),(x+1,x+3),(x+1,x+4) : x\in[8]\}$ and the second one is $\bar{\gS}^{(2)} =\{(x,x),(x+1,x),(x+1,x+7) : x\in[8]\}$. The rest of the states $\bar{\gS}\setminus(\bar{\gS}^{(1)}\cup\bar{\gS}^{(2)})$ are transient regardless of whether Arm $1$ or Arm $2$ is pulled.
-    }
+        \caption{
+            State transition within two recurrent classes of a restless with 2 arms presented in \figurename~\ref{fig:ergodic_arm}.
+            The first recurrent class is $\gX^1 =\{(s,s+4),(s+1,s+3),(s+1,s+4): s\in[8]\}$ and the second one is $\gX^2 =\{(s,s),(s+1,s),(s+1,s+7): s\in[8]\}$.
+            These are two recurrent classes under any policies that activate Arm 2 for any impair $s\in[8]$ and Arm 1 for any pair $s\in[8]$ when the bandit is in states $(s,s),(s,s+4),(s+1,s),(s+1,s+3),(s+1,s+4),(s+1,s+7)$.
+            The blue arrows show the state transition when Arm $2$ is activated and the green ones show the one when Arm $1$ is activated.
+            Each ellipse regroups the states having the same state transition under the same action.
+            Note that each ellipse can transition to itself like in $\gX^1$ state $(2,4)$ can transition to state $(2,5)$ but it not shown.
+            The rest of the states $\gX\setminus(\gX^1\cup\gX^2)$ are transient.
+        }
         \label{fig:local_ergodic_multichain_RB}
     \end{figure}
 \end{proof}
@@ -537,7 +619,7 @@ However, the upper bound on the global span tends to infinity when $\varepsilon$
         \end{tabular}
         \caption{
             2-state restless Markovian arms.
-            The black arrows show state transition of action activate and the red dashed one for action rest.
+            The black arrows show state transition of action activate and the dashed red one for action rest.
             The numbers along the arrows show the expected reward when executing the actions.
             The double head arrows show the state transition of optimal actions.
         }
@@ -929,7 +1011,7 @@ Note that this high probability does not depends on the episode $k$.
         \end{tabular}
         \caption{
             2-state restless Markovian arms.
-            The black arrows show state transition of action activate and the red dashed one for action rest.
+            The black arrows show state transition of action activate and the dashed red one for action rest.
             The numbers along the arrows show the expected reward when executing the actions.
             The double head arrows show the state transition of optimal actions.
         }
@@ -1005,7 +1087,7 @@ Note that this high probability does not depends on the episode $k$.
         \end{tabular}
         \caption{
             2-state restless Markovian arms.
-            The black arrows show state transition of action activate and the red dashed one for action rest.
+            The black arrows show state transition of action activate and the dashed red one for action rest.
             The numbers along the arrows show the expected reward when executing the actions.
             The double head arrows show the state transition of optimal actions.
         }
