@@ -18,19 +18,19 @@ In Section~\ref{}, we...
 Restless Markovian bandits are the specific MDPs that manifest the curse of dimensionality.
 The obvious effect of the curse is the bandit state size that is exponential in the number of arms.
 %Moreover, not only the state size that is cursed, but also the MDP parameters such as diameter.
-However, to the best of our knowledge, there is yet no clear dependency between the diameter or mixing time of the global MDP and the number of arms in general restless Markovian bandit.
+%However, to the best of our knowledge, there is yet no clear dependency between the diameter or mixing time of the global MDP and the number of arms in general restless Markovian bandit.
 
-For learning generic MDPs with average reward criterion, the current best algorithms have a regret over $T$ time steps bounded by $\landauO(\sqrt{DSAT})$ in the unknown MDP with state size $S$, action size $A$, and diameter $D$ (see Table~\ref{ch:rl:tab:infinite} for more algorithms regret guarantee).
-This regret is valid for communicating MDPs.
-To what we have observed, the parameters of the MDPs that appear in regret upper bound are:
+For learning generic MDPs with average reward criterion, the current best algorithms have a regret over $T$ time steps bounded by $\landauO(\sqrt{DSAT})$ in the unknown MDP with state size $S$, action size $A$, and diameter $D$ (see Table~\ref{ch:rl:tab:infinite} for more algorithms with regret guarantee).
+This regret is bound valid for communicating MDPs.
+To what we have observed, the parameters of the MDP that appear in regret upper bound are:
 \begin{itemize}
-    \item diameter $D$ defined by Definition~\ref{ch:rl:defn:diameter} in, for example, \cite{jaksch2010near, fruit2020improved, tossou2019near}
-    \item span of optimal bias $H\ge sp(\vh^*)$ in, for example, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret}
-    \item mixing time $t_{mix}$ defined by Definition~\ref{ch:restless:defn:mixing_time} in, for example, \cite{ortner2020regret}.
+    \item diameter $D$, defined by Definition~\ref{ch:rl:defn:diameter}, in \eg, \cite{jaksch2010near, fruit2020improved, tossou2019near}
+    \item span of optimal bias $H\ge sp(\vh^*)$ in \eg, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret}
+    \item mixing time $t_{mix}$, defined by Definition~\ref{ch:restless:defn:mixing_time}, in \eg, \cite{ortner2020regret}.
 \end{itemize}
 Applying these algorithms to learn restless Markovian bandits with average reward criterion provokes a few critical issues:
 \begin{itemize}
-    \item verifying the structure of restless bandit is computationally ``expensive'' 
+    %\item verifying the structure of restless bandit is computationally ``expensive'' 
     \item the state size of restless bandit is exponential in the number of arms which makes the regret not scalable with the number of arms
     \item the diameter $D$ (if defined), mixing time $t_{mix}$ (if defined), or span of the optimal bias $H$ may also be exponential in the number of arms
     \item compute an optimal policy in restless bandit is PSPACE-hard \cite{papadimitriou1994complexity}, let alone the computation of optimistic policy
@@ -40,15 +40,18 @@ Applying these algorithms to learn restless Markovian bandits with average rewar
 %These algorithms are then applicable to restless Markovian bandits only if the latter have the specified structure.
 
 %It is then reasonable to assume some structure properties of the bandit.
-For partially observed restless bandit, the work of \cite{ortner2012regret} derives colored-UCRL algorithm, modified version of UCRL2, that achieves a regret sublinear in time.
-Colored-UCRL successfully removes the exponentiality of the number of arms from the state size of the bandit in its regret.
+For partially observed restless bandit, the work of \cite{ortner2012regret} derives colored-UCRL algorithm, a modified version of UCRL2, that achieves a regret sublinear in time.
+Colored-UCRL successfully removes the exponentiality in the number of arms from the state size of the bandit in its regret.
 However, the mixing time parameter yet appears in the regret bound and the dependency between the mixing time and the number of arms is unclear.
 The same discussion goes to the work of \cite{jung2019thompson} that adapts TSDE to the same setting of restless bandit in \cite{ortner2012regret}.
-Last but not least, Restless-UCB of \cite{wang2020restless} has a regret provably bounded linearly in the number of arms for partially observed restless bandit.
-Yet, we must mention that this result is valid for a very restrictive class of restless bandit.
+To the best of our knowledge, Restless-UCB of \cite{wang2020restless} is the first algorithm that has a regret provably bounded linearly in the number of arms for partially observed restless bandit.
+Yet, we must mention that this result is valid for a very restrictive class of restless bandit in which each arm is the birth-death Markov reward process.
+Also, Restless-UCB requires a generative model to be able to uniformly explore the dynamic of each arm before commiting on its optimistic planning.
+All of these works also assume an oracle that knows how to compute an optimal policy given a restless bandit.
 
-The work of \cite{akbarzadeh2022learning} adapts TSDE to the fully observed restless bandit problem and successfully removes the exponentiality of the number of arms from the state size of the bandit in its regret.
-However, there is an assumption on the ergodicity coefficient of the global MDP and the dependency between such a coefficient and the number of arms is unclear.
+The work of \cite{akbarzadeh2022learning} adapts TSDE to the fully observed restless bandit problem and successfully removes the exponentiality in the number of arms from the state size of the bandit in the Bayesian regret of the modified version, namely Restless-TSDE.
+However, the ergodicity coefficient of the global MDP appears in the regret bound and the dependency between such a coefficient and the number of arms is unclear.
+In general, the ergodicity coefficient provides an upper bound on the mixing time of the MDP.
 
 Finally, due to the curse of dimensionality, verifying the structure of the bandit may be computationally expensive, let alone the learning aspect.
 This inspires us to study the implication of structure of arms in the structure of the bandit because verifying the structure of all arms is done linearly in the number of arms.
@@ -135,49 +138,54 @@ However, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that compu
 
 %The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1)$ is the discount factor.
 
-\subsection{Structural properties of MDP}
+\subsection{Structural properties of global MDP}
 \label{ssec:mdp_params}
 
-In addition to Definition~\ref{ch:mdp:defn:mdp_class}, we say that a MDP is \emph{recurrent} if for all policy $\pi$, the matrix $\mP^\pi$ defines a Markov chain where all states are recurrent (equivalently, for all states $x$ and $y$, a Markov chain starting in $x$ will visit $y$ with probability $1$);
-A recurrent or unichain MDP is called \emph{aperiodic} if all matrices $\mP^\pi$ are aperiodic.  We say that a MDP is \emph{ergodic} if it is recurrent and aperiodic. 
-
-In \cite{fruit2018near}, it is proven that in weakly communicating MDPs, no algorithm can ever achieve a logarithmic growth of the regret without first suffering a linear regret for a number of steps that is exponential in the parameters of the MDP.
-
-By Definition~\ref{ch:rl:defn:diameter}, any MDP that is not weakly communicating has \emph{infinite diameter}.
-For more detail MDP classification, see \figurename~\ref{ch:mdp:fig:mdp_class}
-
-It is shown in \cite[Appendix A]{jaksch2010near} that the diameter is at least $\log_{|\gA|}|\gS|-3$.
-This implies that the diameter of RMAB model in which each arm has the same state size $S$, is at least
-\begin{equation*}
-    \log_{|\bar{\gA}|}|\bar{\gS}| -3 = \sum_{i=1}^{n}\log_{|\bar{\gA}|}|\gS^{(i)}| -3 =n\log_{|\bar{\gA}|}S -3
-\end{equation*}
-
-\subsection{Span}
-
-\KK{What MDP structure should we assume?}
-
-Following \cite[Chapter~8]{puterman2014markov}, in finite-state Markov reward process $(\vr, \mP)$, we define $\bar{\mP}=\displaystyle\lim_{N\to+\infty}\frac1N\sum_{t=0}^{N-1}\mP^{t}$ as the Cesaro limit of the sequence $\{\mP^t\}_{t\ge0}$.
-This limit exists for finite-state process (see Section~A.4 of Appendix~A of \cite{puterman2014markov}).
-If $\bar{\mP}$ is stochastic, then the gain is $\vg=\bar{\mP}\vr$.
-The bias is defined according to the structure of Markov chain:
-\begin{enumerate}
-    \item if the Markov chain is \emph{aperiodic}, then the bias is $\vh=\displaystyle\sum_{t=0}^\infty(\mP^t-\bar{\mP})\vr$
-    \item if the Markov chain is \emph{periodic}, then the bias is $\vh=\displaystyle\lim_{N\to\infty}\frac1N\sum_{k=1}^N\sum_{t=0}^{k-1}(\mP^t-\bar{\mP})\vr$
-\end{enumerate}
-
-Let $\vh\in\sR^S$. The span of $\vh$ is given by $sp(\vh)=\max_xh(x) - \min_xh(x)$.
-
-\subsection{Mixing time}
-
+We presented the classification of MDPs in Definition~\ref{ch:mdp:defn:mdp_class} of Chapter~\ref{ch:mdp}.
+We also divided the MDP space as presented in \figurename~\ref{ch:mdp:fig:mdp_class}.
+In addition, we say that a MDP is \emph{recurrent} if for all policy $\pi$, the matrix $\mP^\pi$ defines a Markov chain where all states are recurrent (equivalently, for all states $s$ and $s'$, a Markov chain starting in $s$ will visit $s'$ with probability $1$).
+A recurrent or unichain MDP is called \emph{aperiodic} if all matrices $\mP^\pi$ are aperiodic.
+While the definition of ergodic MDP is given in Definition~\ref{ch:mdp:defn:mdp_class}, we also say that a MDP is \emph{ergodic} if it is recurrent and aperiodic.
 Following \cite[Definition 5.1]{wei2020model},
 \begin{defn}
     \label{ch:restless:defn:mixing_time}
     The mixing time of an ergodic MDP is defined as
     \begin{align*}
-        t_{mix} := \max_{\pi}\min\left\{ t\ge1 \mid \lVert (\mP^\pi)^t(x,\cdot) - \mu^\pi\rVert_1 \le \frac14, \forall x\right\},
+        t_{mix} := \max_{\pi}\min\left\{ t\ge1 \mid \lVert (\mP^\pi)^t(x,\cdot) - \mu^\pi\rVert_1 \le \frac14, \forall x\right\}.
     \end{align*}
-    that is, the maximum time required for any policy starting at any initial state to make the state distribution $\frac14$-close (in $\ell_1$ norm) to the stationary distribution.
 \end{defn}
+By Definition~\ref{ch:restless:defn:mixing_time}, the mixing time is the maximum time required for any policy starting at any initial state to make the state distribution $\frac14$-close (in $\ell_1$ norm) to the stationary distribution, the state distribution in steady regime.
+
+We recall that the diameter of a MDP (see Definition~\ref{ch:rl:defn:diameter}) is finite if and only if the MDP is communicating.
+It is shown in \cite[Appendix A]{jaksch2010near} that for any MDP with state space $\gX$ and action space $\gA$, the diameter is lower bounded by $\log_{|\gA|}|\gX|-3$.
+This implies that the diameter of a restless bandit with $n$ arms, each arm has the same state size $S$ and each time exactly $m$ arms are activated, is lower bounded by
+\begin{equation*}
+    \log_{|\gA(m)|}|\gX| -3 = \sum_{i=1}^{n}\log_{|\gA(m)|}|\gS_i| -3 =n\log_{{n \choose m}}S -3.
+\end{equation*}
+This means that the diameter of any restless bandit is at least linear in the number of arms.
+
+%\subsection{Span}
+%
+%Following \cite[Chapter~8]{puterman2014markov}, in finite-state Markov reward process $(\vr, \mP)$, we define $\bar{\mP}=\displaystyle\lim_{N\to+\infty}\frac1N\sum_{t=0}^{N-1}\mP^{t}$ as the Cesaro limit of the sequence $\{\mP^t\}_{t\ge0}$.
+%This limit exists for finite-state process (see Section~A.4 of Appendix~A of \cite{puterman2014markov}).
+%If $\bar{\mP}$ is stochastic, then the gain is $\vg=\bar{\mP}\vr$.
+%The bias is defined according to the structure of Markov chain:
+%\begin{enumerate}
+%    \item if the Markov chain is \emph{aperiodic}, then the bias is $\vh=\displaystyle\sum_{t=0}^\infty(\mP^t-\bar{\mP})\vr$
+%    \item if the Markov chain is \emph{periodic}, then the bias is $\vh=\displaystyle\lim_{N\to\infty}\frac1N\sum_{k=1}^N\sum_{t=0}^{k-1}(\mP^t-\bar{\mP})\vr$
+%\end{enumerate}
+%
+%Let $\vh\in\sR^S$. The span of $\vh$ is given by $sp(\vh)=\max_xh(x) - \min_xh(x)$.
+
+In the following, we study how the structure of local arms translate in the structure of the global MDPs.
+To do so, we will provide a few simple examples and counter-examples.
+In those examples, the bandit always has two arms and exactly one arm is activated at each decision time.
+To ease the exposition, Arm $1$ is drawn in green color and Arm $2$ in dark purple.
+In each arm, the transitions of action activate is drawn in back color and those of action rest is drawn in dashed red color.
+In the global MDP, the state transitions when activating Arm $1$ is drawn in green arrows and those when activating Arm $2$ is drawn in dark purple.
+The transitions under optimal action are drawn in double-head arrows.
+The expected reward and probability of transition are noted along the transition arrows.
+However, if the transition is deterministic, \ie, the probability is $1$, we only note the expected reward along the transition arrows.
 
 \begin{figure}[htbp]
     \centering
@@ -259,8 +267,6 @@ Following \cite[Definition 5.1]{wei2020model},
     }
     \label{fig:hard_global}
 \end{figure}
-
-\section{Structural properties: counter-examples and positive results}
 
 %The following theorem shows that a restless bandit whose arms are all unichain is not necessarily unichain. This is true under the additional condition that all arms are aperiodic.
 \subsection{Negative Results}
@@ -853,44 +859,122 @@ Note that this high probability does not depends on the episode $k$.
 \end{thm}
 
 \begin{proof}
-    We construct a restless bandit having two arms as given in \figurename~\ref{fig:hard_local4} and global problem in \figurename~\ref{fig:hard_global4}.
+    We construct a restless bandit having two arms as given in \figurename~\ref{fig:hard_local5} and global problem in \figurename~\ref{fig:hard_global5}.
     All actions at state $(2,2)$ are optimal.
-    An optimal policy is the following: $\pi^*(1,1)=2, \pi^*(1,2)=2, \pi^*(2,1)=1, \pi^*(2,2)=2$.
+    An optimal policy is the following: $\pi^*(1,1)=1, \pi^*(1,2)=2, \pi^*(2,1)=1, \pi^*(2,2)=2$.
     %That is, it is optimal to activate the arm in state $2$.
     $\pi^*$ induces a unichain Markov chain with the single recurrent class $\gX^1:=\{(1,2),(2,1)\}$.
     The optimal gain is $g^*=1$ and the span of the optimal bias is $sp(\vh^*)=\frac1\varepsilon$.
     Suboptimal policies activate Arm $1$ when the global MDP is in state $(1,1)$ and have a recurrent class $\gX^2:=\{(1,1),(2,2)\}$.
-    The gain of all states in $\gX^2$ under those suboptimal policies is $1/2$.
-    The regret gap of suboptimal action in $(1,1)$ is then $g^*-1/2=1/2$.
+    The gain of all states in $\gX^2$ under those suboptimal policies is $1-\varepsilon/2$.
+    The regret gap of suboptimal action in $(1,1)$ is then $g^*-1+\varepsilon/2=\varepsilon/2$.
+    The tricky state is $(1,1)$ in which activate Arm $2$ gives a reward $1-\varepsilon$ but induces suboptimal recurrent class $\gX^2$ while activate Arm $1$ give no rewards but induces optimal recurrent class $\gX^1$.
 
     At time $1$, the MDP is in state $(1,1)$.
-    According to the structure MDP, the expected number of Arm $1$ activations to get from $(1,1)$ to $(1,2)$ is $\tau_1:=1/\varepsilon$.
+    According to the structure MDP, the expected number of Arm $1$ activations to get from $(1,1)$ to $(1,2)$ is $\tau_1:=1/\delta$.
     Consider a learner $\tilde{\gL}$ that acts uniformly randomly at state $(1,1)$ and optimally in all other states. 
     %The expected number of activations on Arm $1$ to get $(1,1)$ transitions to state $(1,2)$ is $1/\delta$.
     Since $\tilde{\gL}$ acts uniformly randomly at $(1,1)$, the expected number of visits to state $(1,1)$ is $2\tau_1$ time steps.
     This means that $\tilde{\gL}$ spends, in expectation, $\landauOmega(4\tau_1)$ time steps in $\gX^2$ before leaving to $\gX^1$ and get the maximum gain.
-    Since $\tilde{\gL}$ acts suboptimally in state $(1,1)$ at least $\tau_1$ time steps (\ie, $\tilde{\gL}$ activates Arm $2$ in $(1,1)$), the regret of $\tilde{\gL}$ is at least $\landauOmega(\tau_1)$ ($\tau_1$ time steps in $(1,1)$ means $2\tau_1$ time steps in $\gX^2$).
-    Now, consider a learner $\bar{\gL}$ that knows everything except the transition of state $1$ of both arms (expected reward of all states and transition of state $2$).
-    So, $\bar{\gL}$ acts optimally in state $(1,2), (2,1)$ and $(2,2)$ but needs to learn how to get from $(1,1)$ to $(1,2)$.
+    Since $\tilde{\gL}$ acts suboptimally in state $(1,1)$ at least $\tau_1$ time steps (\ie, $\tilde{\gL}$ activates Arm $2$ in $(1,1)$), the regret of $\tilde{\gL}$ is at least $\landauOmega(\tau_1\varepsilon)$ ($\tau_1$ time steps in $(1,1)$ means $2\tau_1$ time steps in $\gX^2$).
+    %Now, consider a learner $\bar{\gL}$ that knows everything except the transition of state $1$ of both arms (expected reward of all states and transition of state $2$).
+    %So, $\bar{\gL}$ acts optimally in state $(1,2), (2,1)$ and $(2,2)$ but needs to learn how to get from $(1,1)$ to $(1,2)$.
+    Now, consider a learner $\bar{\gL}$ that acts optimally in state $(1,2), (2,1)$ and $(2,2)$ but needs to learn how to get from $(1,1)$ to $(1,2)$.
     Starting in $(1,1)$, the expected number of visits to $(1,1)$ of $\bar{\gL}$ is at least $\tau_1$.
-    Following \cite{osband2016lower}, when both $\bar{\gL}$ and $\tilde{\gL}$ acts in $(1,1)$ for $N$ times, the KL-divergence of the distribution of $\bar{\gL}$'s actions and the distribution of $\tilde{\gL}$'s actions, denoted by $d_{KL}$, is upper bounded by $\displaystyle\frac{N}{2}\left(\delta\log_2\Bigl(\frac{\delta}{\delta+\varepsilon}\Bigr)+(1-\delta)\log_2\Bigl(\frac{1-\delta}{1-\delta-\varepsilon}\Bigr)\right)$ \cite[Lemma~2]{osband2016lower}.
+    Following \cite{osband2016lower}, when both $\bar{\gL}$ and $\tilde{\gL}$ acts in $(1,1)$ for $N$ times, the KL-divergence of the distribution of $\bar{\gL}$'s actions and the distribution of $\tilde{\gL}$'s actions, denoted by $d_{KL}$, is upper bounded by $\displaystyle\frac{N}{2}\left(\log_2\Bigl(\frac{1}{1-\delta}\Bigr)\right)$ \cite[Lemma~2]{osband2016lower}.
     Moreover, by Pinsker's inequality (also followed from \cite{osband2016lower}), the expected number of times that $\bar{\gL}$ activates Arm $1$ in $(1,1)$ (\ie acts optimally) over $N$ times is upper bounded by
     \begin{align*}
         N(\sqrt{\frac12d_{KL}}+\frac12)
-        &\le N\left(\sqrt{\frac{N}{4}\left(\delta\log_2\Bigl(\frac{\delta}{\delta+\varepsilon}\Bigr)+(1-\delta)\log_2\Bigl(\frac{1-\delta}{1-\delta-\varepsilon}\Bigr)\right)}+\frac12\right) \\
-        &\le N\left(\sqrt{\frac{N\varepsilon^2}{4\ln(2)\delta}}+\frac12\right)
+        &\le N\left(\sqrt{\frac{N}{4}\left(\log_2\Bigl(\frac{1}{1-\delta}\Bigr)\right)}+\frac12\right) \\
+        &\le N\left(\sqrt{\frac{N\delta}{4\ln(2)(1-\delta)}}+\frac12\right)
     \end{align*}
-    where the last inequality is true only if $0\le\delta\le1/2$ and $\varepsilon\le1-2\delta$ \cite[Proposition~1]{osband2016lower}.
     This means that, over $N$ times in $(1,1)$, $\bar{\gL}$ acts suboptimally at least
     \begin{align*}
-        N -N\left(\sqrt{\frac{N\varepsilon^2}{4\ln(2)\delta}}+\frac12\right)
-        &= N\left(\frac12-\sqrt{\frac{N\varepsilon^2}{4\ln(2)\delta}}\right) \\
-        &= \frac{N}2 \left(1-\sqrt{\frac{N\varepsilon^2}{\ln(2)\delta}}\right)\le \frac{N}2 \left(1-\sqrt{\frac{\varepsilon}{\ln(2)\delta}}\right)%= \frac{\tau_1}2 \left(1-\sqrt{\frac{1}{\ln2}}\right).
+        N -N\left(\sqrt{\frac{N\delta}{4\ln(2)(1-\delta)}}+\frac12\right)
+        &= N\left(\frac12-\sqrt{\frac{N\delta}{4\ln(2)(1-\delta)}}\right) \\
+        &= \frac{N}2 \left(1-\sqrt{\frac{N\delta}{\ln(2)(1-\delta)}}\right)%\le \frac{N}2 \left(1-\sqrt{\frac{\varepsilon}{\ln(2)\delta}}\right)%= \frac{\tau_1}2 \left(1-\sqrt{\frac{1}{\ln2}}\right).
     \end{align*}
-    where the last inequality is true because $N\ge \tau_1$ and $\tau_1=1/\varepsilon$.
-    The regret of $\bar{\gL}$ is then at least $\frac{N}2 \left(1-\sqrt{\frac{\varepsilon}{\ln(2)\delta}}\right)$. %(we say ``at least'' because $\tau_1$ is the expected number of Arm $1$ activations to leave $(1,1)$ to $(1,2)$).
+    %where the last inequality is true because $N\ge \tau_1$ and $\tau_1=1/\varepsilon$.
+    The regret of $\bar{\gL}$ is then at least $\frac{N\varepsilon}2 \left(1-\sqrt{\frac{N\delta}{\ln(2)(1-\delta)}}\right)$. %(we say ``at least'' because $\tau_1$ is the expected number of Arm $1$ activations to leave $(1,1)$ to $(1,2)$).
     Any learners without any initial knowledge about both states of both arms suffer a regret at least the regret of $\bar{\gL}$.
-    Taking $\varepsilon=\frac{\delta}{T}$ and $\delta=0.25$, to conclude the proof.
+    %Taking $\varepsilon=\frac{\delta}{T}$ and $\delta=0.25$, to conclude the proof.
+
+    \begin{figure}[htbp]
+        \centering
+        \begin{tabular}{cc}
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state, black!45!green]  (A) {$1$};
+            \node[state, black!45!green]  (B) [below = 2cm of A]   {$2$};
+            \path[->]
+            (A) edge[bend left=90]     node[rotate=90,anchor=north]{$0,1{-}\delta$}	(B)
+            (A) edge[loop above]     node[above]{$0,\delta$}	(A)
+            (A) edge[bend left, dashed, red]     node[rotate=90,anchor=north]{$0,1$}	(B)
+            (B) edge[bend left=90]     node[rotate=90,anchor=north]{$1,1$}	(A)
+            (B) edge[bend left, dashed, red]     node[rotate=90,anchor=north]{$0,1$}	(A);
+        \end{tikzpicture}
+        &
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state, black!45!green]  (A) {$1$};
+            \node[state, black!45!green]  (B) [below = 2cm of A]   {$2$};
+            \path[->]
+            %(A) edge[bend left=75]     node{$0,p{=}1{-}\delta{-}\varepsilon$}	(B)
+            (A) edge[bend left=75]     node{$1{-}\varepsilon$}	(B)
+            %(A) edge[loop above]     node[above]{$0,p{=}\delta{+}\varepsilon$}	(A)
+            (A) edge[bend left, dashed, red]     node{$0$}	(B)
+    	    (B) edge[bend left=75]     node{$1$}	(A)
+            (B) edge[bend left, dashed, red]     node{$0$}	(A);
+        \end{tikzpicture}
+        \\
+            Arm $1$ is ergodic & Arm $2$
+        \end{tabular}
+        \caption{
+            2-state restless Markovian arms.
+            The black arrows show state transition of action activate and the red dashed one for action rest.
+            The numbers along the arrows show the expected reward when executing the actions.
+            The double head arrows show the state transition of optimal actions.
+        }
+        \label{fig:hard_local5}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centering
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+                \node[state]  (A) {$1,1$};
+                \node[state]  (B) [right = 2.5cm of A]   {$1,2$};
+                \node[state]  (C) [right = 2.5cm of B]   {$2,1$};
+                \node[state]  (D) [left = 2.5cm of A]   {$2,2$};
+                \path[->]
+                (B) edge[bend left, black!45!green]     node{$0,\delta$}	(A)
+                (B) edge[bend right, black!45!green]     node[below]{$0,1{-}\delta$}	(C)
+                (A) edge[bend right=80, black!30!purple]     node[above]{$1{-}\varepsilon,1$}	(D)
+                (C) edge[bend right=80, black!30!purple]     node[above]{$1{-}\varepsilon,1$}	(B);
+                % transition of optimal actions
+                \draw[-{Stealth}{Stealth}]
+                (A) edge[bend right, black!45!green]     node[above]{$0,1{-}\delta$}	(D)
+                (A) edge[bend left, black!45!green]     node{$0,\delta$}	(B)
+                (B) edge[bend right=80, black!30!purple]     node[below]{$1,1$}	(C)
+                (C) edge[bend right, black!45!green]     node[above]{$1,1$}	(B)
+                (D) edge[bend right, black!45!green] node[below]{$1,1$} (A)
+                (D) edge[bend right=80, black!30!purple] node[below]{$1,1$} (A);
+        \end{tikzpicture}
+        \caption{
+            A restless bandit with two arms given in \figurename~\ref{fig:hard_local5}.
+            This global MDP is communicating.
+            Each time, exactly one arm is activated.
+            The global state is denoted by $(s_1,s_2)$ where $s_1$ is the state of Arm $1$ and $s_2$ of Arm $2$.
+            The green arrows show the state transition when activating Arm $1$.
+            The purple arrows show the state transition when activating Arm $2$.
+            The numbers along the arrows show the expected reward and transition probability (if the transition is probabilistic) when executing the actions.
+            The double head arrows show the state transition of optimal actions.
+            The suboptimal policies induce two recurrent classes: $\gX^1:=\{(1,2), (2,1)\}$ and $\gX^2:=\{(1,1),(2,2)\}$.
+            The optimal gain in class $\gX^1$ is $1$.
+            The suboptimal gain in class $\gX^2$ is $1-\varepsilon/2$.
+        }
+        \label{fig:hard_global5}
+    \end{figure}
+\end{proof}
+
+
 
     \begin{figure}[htbp]
         \centering
@@ -966,8 +1050,6 @@ Note that this high probability does not depends on the episode $k$.
         }
         \label{fig:hard_global4}
     \end{figure}
-\end{proof}
-
 
 
 \endgroup
