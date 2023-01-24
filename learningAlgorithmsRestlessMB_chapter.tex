@@ -49,7 +49,7 @@ Yet, we must mention that this result is valid for a very restrictive class of r
 Also, Restless-UCB requires a generative model to be able to uniformly explore the dynamic of each arm before commiting on its optimistic planning.
 All of these works also assume an oracle that knows how to compute an optimal policy given a restless bandit.
 
-The work of \cite{akbarzadeh2022learning} adapts TSDE to the fully observed restless bandit problem and successfully removes the exponentiality in the number of arms from the state size of the bandit in the Bayesian regret of the modified version, namely Restless-TSDE.
+The work of \cite{akbarzadeh2022learning} adapts TSDE to the fully observed restless bandit problem and successfully removes the exponentiality in the number of arms from the state size of the bandit in the Bayesian regret of the modified version, namely RB-TSDE.
 However, the ergodicity coefficient of the global MDP appears in the regret bound and the dependency between such a coefficient and the number of arms is unclear.
 In general, the ergodicity coefficient provides an upper bound on the mixing time of the MDP.
 
@@ -72,30 +72,30 @@ We show that:
     \item For globally ergodic, diameter can be exponential in the number of arms
 \end{itemize}
 
-We recall Table~\ref{ch:rl:tab:infinite} below
-
-\begin{table}[ht]
-\begin{tabular}{|l|l|l|l|}
-\hline
-Algorithm & Regret & Assump. on $M$ & Policy comp.            \\ \hline
-UCRL2 \cite{jaksch2010near}       & $\tilde{\landauO}(DS\sqrt{AT})$ & comm.         & EVI \\ 
-REGAL \cite{bartlett2012regal}      & $\tilde{\landauO}(HS\sqrt{AT})$  & weakly comm. & Intractable   \\ 
-TSDE \cite{ouyang2017learning}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & VI       \\ 
-SCAL \cite{fruit2018efficient}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & modified EVI           \\
-OSP \cite{ortner2020regret}         & $\tilde{\landauO}(\sqrt{t_{mix}SAT})$ & ergodic           & Intractable   \\ 
-UCRL2B \cite{fruit2020improved}      & $\tilde{\landauO}(\sqrt{\Gamma DSAT})$ & comm.      & EVI                           \\
-%KL-UCRL     & $\tilde{O}$(\sqrt{S\sum_{x,a}\sV^*_{x,a}T}) & ergodic                     & modified EVI                  \\ \hline
-EBF \cite{zhang2019regret}         & $\tilde{\landauO}(\sqrt{HSAT})$ & weakly comm.     & Intractable   \\
-UCRL-V \cite{tossou2019near}         & $\tilde{\landauO}(\sqrt{DSAT})$ & comm.     & modified EVI   \\ \hline
-Lower bound & $\landauOmega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
-\end{tabular}
-\caption{The quest to minimax regret lower bound for model-based RL algorithms in infinite horizon average reward model with $S$ states, $A$ actions, and $T$ steps.
-$D$ is the diameter of the MDP, $H\ge sp(\vh^*)$ is the upper bound on the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP and $\Gamma$ is the upper bound on the number of next possible states.
-EVI stands for Extended value iteration \cite{jaksch2010near}, VI for value iteration, assump. for assumption, comm. for communicating, and comp. for computation.
-Intractable here means that there is no efficient implementations.
-}
-\label{ch:restless:tab:infinite}
-\end{table}
+%We recall Table~\ref{ch:rl:tab:infinite} below
+%
+%\begin{table}[ht]
+%\begin{tabular}{|l|l|l|l|}
+%\hline
+%Algorithm & Regret & Assump. on $M$ & Policy comp.            \\ \hline
+%UCRL2 \cite{jaksch2010near}       & $\tilde{\landauO}(DS\sqrt{AT})$ & comm.         & EVI \\ 
+%REGAL \cite{bartlett2012regal}      & $\tilde{\landauO}(HS\sqrt{AT})$  & weakly comm. & Intractable   \\ 
+%TSDE \cite{ouyang2017learning}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & VI       \\ 
+%SCAL \cite{fruit2018efficient}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & modified EVI           \\
+%OSP \cite{ortner2020regret}         & $\tilde{\landauO}(\sqrt{t_{mix}SAT})$ & ergodic           & Intractable   \\ 
+%UCRL2B \cite{fruit2020improved}      & $\tilde{\landauO}(\sqrt{\Gamma DSAT})$ & comm.      & EVI                           \\
+%%KL-UCRL     & $\tilde{O}$(\sqrt{S\sum_{x,a}\sV^*_{x,a}T}) & ergodic                     & modified EVI                  \\ \hline
+%EBF \cite{zhang2019regret}         & $\tilde{\landauO}(\sqrt{HSAT})$ & weakly comm.     & Intractable   \\
+%UCRL-V \cite{tossou2019near}         & $\tilde{\landauO}(\sqrt{DSAT})$ & comm.     & modified EVI   \\ \hline
+%Lower bound & $\landauOmega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
+%\end{tabular}
+%\caption{The quest to minimax regret lower bound for model-based RL algorithms in infinite horizon average reward model with $S$ states, $A$ actions, and $T$ steps.
+%$D$ is the diameter of the MDP, $H\ge sp(\vh^*)$ is the upper bound on the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP and $\Gamma$ is the upper bound on the number of next possible states.
+%EVI stands for Extended value iteration \cite{jaksch2010near}, VI for value iteration, assump. for assumption, comm. for communicating, and comp. for computation.
+%Intractable here means that there is no efficient implementations.
+%}
+%\label{ch:restless:tab:infinite}
+%\end{table}
 
 %A few existing works have tried to remove the exponentiality in the state size of restless bandit such as \cite{jung2019regret, ortner2012regret, wang2020restless} for partially observed setting and \cite{akbarzadeh2022learning} for fully observed setting.
 %However, removing the exponentiality of the number of arms in the $D, t_{mix}$, or $H$ remains unclear.
@@ -177,7 +177,7 @@ This means that the diameter of any restless bandit is at least linear in the nu
 %
 %Let $\vh\in\sR^S$. The span of $\vh$ is given by $sp(\vh)=\max_xh(x) - \min_xh(x)$.
 
-In the following, we study how the structure of local arms translate in the structure of the global MDPs.
+In the following, we study the structure of the global MDPs when the local arms all are well structured.
 To do so, we will provide a few simple examples and counter-examples.
 In those examples, the bandit always has two arms and exactly one arm is activated at each decision time.
 To ease the exposition, Arm $1$ is drawn in green color and Arm $2$ in dark purple.
@@ -187,113 +187,85 @@ The transitions under optimal action are drawn in double-head arrows.
 The expected reward and probability of transition are noted along the transition arrows.
 However, if the transition is deterministic, \ie, the probability is $1$, we only note the expected reward along the transition arrows.
 
-\begin{figure}[htbp]
-    \centering
-    \begin{tabular}{cc}
-    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-        \node[state, black!45!green]  (A) {$1$};
-        \node[state, black!45!green]  (B) [below = 2cm of A]   {$2$};
-        \node[state, black!45!green]  (C) [below left = 1cm and 2cm of A]   {$3$};
-        \path[->]
-        (A) edge[bend left=75]     node{$0$}	(B)
-        (A) edge[bend left, dashed, red]     node{$0$}	(B)
-	    (B) edge[bend left=75]     node{$1$}	(A)
-	    (C) edge[bend left]     node{$0$}	(A)
-        (C) edge[bend right, dashed, red]     node[below]{$0$}	(B)
-        (B) edge[bend left, dashed, red]     node{$0$}	(A);
-    \end{tikzpicture}
-    &
-    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-        \node[state, black!30!purple]  (A) {$1$};
-        \node[state, black!30!purple]  (B) [below = 2cm of A]   {$2$};
-        \path[->]
-        (A) edge[bend left=75]     node{$0$}	(B)
-        (A) edge[bend left, dashed, red]     node{$0$}	(B)
-	    (B) edge[bend left=75]     node{$1$}	(A)
-	    (B) edge[bend left, dashed, red]     node{$0$}	(A);
-    \end{tikzpicture}
-    \\
-        Arm $1$ & Arm $2$ 
-    \end{tabular}
-    \caption{
-        Restless Markovian arms. Arm 1 has 3 states and Arm 2 has 2 states.
-        The black arrows show state transition of action activate and the dashed red one for action rest.
-        The numbers along the arrows show the expected reward when executing the actions.
-        The corresponding global MDP is given in \figurename~\ref{fig:hard_global}
-    }
-    \label{fig:hard_local}
-\end{figure}
-
-
-\begin{figure}[ht]
-    \centering
-    \begin{tabular}{c}
-    \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
-        \node[state]  (A) {$1,1$};
-        \node[state]  (B) [above = 2cm of A]   {$2,2$};
-        \node[state]  (C) [right = 4cm of B]   {$1,2$};
-        \node[state]  (D) [below = 2cm of C]   {$2,1$};
-        \node[state]  (E) [right = 2cm of B]   {$3,1$};
-        \node[state]  (F) [below = 2cm of E]   {$3,2$};
-        \path[->]
-        (A) edge[bend left, black!45!green]     node{$0$}	(B)
-        (A) edge[bend left=75, black!30!purple]     node{$0$}	(B)
-	    (C) edge[bend left, black!45!green]     node{$0$}	(D)
-        (D) edge[bend left=75, black!30!purple] node{$0$} (C)
-        (E) edge[ black!30!purple] node[above]{$0$} (B)
-        (F) edge[black!45!green] node[below]{$0$} (A);
-        \draw[-{Stealth}{Stealth}]
-	    (B) edge[bend left=75, black!30!purple]     node{$1$}	(A)
-	    (B) edge[bend left, black!45!green]     node{$1$}	(A)
-        (D) edge[bend left, black!45!green] node{$1$} (C)
-	    (C) edge[bend left=75, black!30!purple]     node{$1$}	(D)
-        (E) edge[black!45!green] node[above]{$0$} (C)
-        (F) edge[ black!30!purple] node[below]{$1$} (D);
-    \end{tikzpicture}
-    \\
-        Global MDP is multichain and not weakly communicating.
-    \end{tabular}
-    \caption{
-        A restless bandit with two arms given in \figurename~\ref{fig:hard_local}.
-        Each time, exactly one arm is activated.
-        The global state is denoted by $(s_1,s_2)$ where $s_1$ is the state of Arm $1$ and $s_2$ of Arm $2$.
-        The green arrows show the state transition when activating Arm $1$.
-        The purple arrows show the state transiiton when activating Arm $2$.
-        The numbers along the arrows show the expected reward when executing the actions.
-        The double head arrows show the state transition of optimal actions.
-        The global MDP is multichain and not weakly communicating because state $(3,1)$ and $(3,2)$ are transient states and there are two recurrent classes: $\gX^1:=\{(1,1), (2,2)\}$ and $\gX^2:=\{(1,2),(2,1)\}$.
-        The optimal gain in class $\gX^1$ is $0.5$ and in class $\gX^2$ is $1$.
-        This shows that the actions in states $(3,1)$ and $(3,2)$ are decisive.
-    }
-    \label{fig:hard_global}
-\end{figure}
 
 %The following theorem shows that a restless bandit whose arms are all unichain is not necessarily unichain. This is true under the additional condition that all arms are aperiodic.
 \subsection{Negative Results}
-The following theorem shows that a restless bandit whose arms are all ergodic or all recurrent is not necessarily unichain.
 
-\begin{thm}[Multichain Restless bandit]
-    We consider restless bandit problem having finite number of arms and each arm has finite number of states.
-    \begin{enumerate}[label=(\roman*)]
-        \item \label{thm:not_ergodic} There exists a restless bandit whose arms are all recurrent that is not weakly communicating. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
-        \item \label{thm:ergodic_arms_multichain_RB} There exists a restless whose arms are all ergodic that is multichain.
-    \end{enumerate}
+In general, the expected regret is frequently bounded based on the concentration inequalities. 
+These inequalities encode how well an unknown parameter is estimated.
+So, it should be safe to say that ``the regret is bounded if the unknown parameters of the MDP are well estimated''.
+Meanwhile, for a restless Markovian arm having $S$ states, there are at most $2S+2S^2$ parameters.
+This means that a restless bandit having $n$ arms, each with $S$ states, is a specific MDP in which there are $n(2S+2S^2)$ parameters instead of $\landauO(S^{n})$.
+Intuitively, if each arm visits all of its states frequently, then the $2S+2S^2$ unknown parameters should be well estimated as well as the $n(2S+2S^2)$ unknown parameters of the global MDP.
+Then, the expected regret in learning such a restless bandit should be bounded linearly in $n$.
+Unfortunately, we show in this section that this reasoning is not always applicable. 
+
+\subsubsection{Non learnable restless bandit}
+
+We show in the following theorem that the assumption that each arm is unichain and has bounded span of optimal bias is not enough to make a restless bandit learnable.
+
+\begin{thm}[Non learnable restless bandit]
+    \label{thm:non_learnable}
+    For any learning algorithm $\gL$, there is a restless bandit having all unichain arms, each has a local span of optimal bias bounded by $0.5$, such that for any total number of time steps $T\ge2$, the expected regret of $\gL$ at least $\frac{T}4$.
 \end{thm}
-
 \begin{proof}
-    \textbf{Proof of \ref{thm:not_ergodic}} -- It is given by the counter-example in which the restless bandit has two arms as given by \figurename~\ref{fig:recur_non_communicate} and exactly one arm is activated at each decision time.
-    For each arm, both ``activate'' and ``rest'' actions induce the same state transition.
-    In such example, the restless bandit is a multichain and not weakly communicating MDP because if we start at state $(1,1)$ or $(2,2)$, then there are two recurrent classes: one composed of $\{(1,1), (2,2)\}$ and the other one is $\{(1,2), (2,1)\}$.
-    \begin{figure}[ht]
+    Consider two restless bandit problems given in \figurename~\ref{fig:hard_global}.
+    The arms of both bandits are given in \figurename~\ref{fig:hard_local}.
+    All arms are unichain and have a local span of optimal bias bounded by $0.5$.
+    Both bandits $M^a$ and $M^b$ have two recurrent classes $\gX^1$ whose optimal gain is $0.5$ and $\gX^2$ whose optimal gain is $1$.
+    So, the regret gap when ending up in $\gX^1$ instead of $\gX^2$ is $\frac12$.
+    At time step $1$, both $M^a$ and $M^b$ are in state $(3,1)$ with probability $0.5$ and state $(3,2)$ with probability $0.5$.
+    Consider any learning algorithm $\gL$ that knows the parameters of both $M^a$ and $M^b$ but does not know with which one it is interacting.
+    In states $(3,1)$, $\gL$ activates Arm $1$ with probability $p_1$ and in $(3,2)$, $\gL$  rests Arm $1$ with probability $p_2$ where $p_1$ and $p_2$ are our degree of freedoms to minimize the expected regret.
+
+    Facing $M^a$, $\gL$ ends up in $\gX^1$ with probability $(1-p_1)$ when starting in $(3,1)$ and with probability $(1-p_2)$ when starting in $(3,2)$.
+    Then, its expected regret is
+    \begin{align*}
+        \ex{\Reg(\gL,M^a,T)}
+        &=0.5\Bigl((1-p_1)\frac{T}2 +p_1\times 0\Bigr) +0.5\Bigl((1-p_2)\frac{T}2 +p_2\times 0\Bigr)\\
+        &=\frac{T}2\left(1-\frac{p_1+p_2}2\right).
+    \end{align*}
+    Facing $M^b$, $\gL$ ends up in $\gX^1$ with probability $p_1$ when starting in $(3,1)$ and with probability $p_2$ when starting in $(3,2)$ and its expected regret is
+    \begin{align*}
+        \ex{\Reg(\gL,M^b,T)}
+        &=0.5\Bigl((1-p_1)\times 0 +p_1\frac{T}2\Bigr) +0.5\Bigl((1-p_2)\times 0 +p_2\frac{T}2\Bigr)\\
+        &=\frac{T}2\times\frac{p_1+p_2}2.
+    \end{align*}
+    Then $\gL$ wants to adjust $p_1$ and $p_2$ such that
+    \begin{equation}
+        \label{eq:rg_linear}
+        \min_{p_1,p_2\in[0,1]}\left(\max\biggl\{\frac{T}2\left(1-\frac{p_1+p_2}2\right), \frac{T}2\times\frac{p_1+p_2}2\biggr\}\right).
+    \end{equation}
+    For the best possible choice of $(p_1,p_2)$, the minimum value of \eqref{eq:rg_linear} is $\displaystyle\frac{T}4$.
+    This means that no learning algorithms can achieve an expected regret smaller than $\frac{T}4$ on both models at the same time.
+    That concludes the proof.
+
+    \begin{figure}[htbp]
         \centering
         \begin{tabular}{ccc}
         \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
             \node[state, black!45!green,line width=0.4mm]  (A) {$1$};
             \node[state, black!45!green,line width=0.4mm]  (B) [below = 2cm of A]   {$2$};
+            \node[state, black!45!green,line width=0.4mm]  (C) [below left = 1cm and 2cm of A]   {$3$};
             \path[->]
             (A) edge[bend left=75]     node{$0$}	(B)
             (A) edge[bend left, dashed, red]     node{$0$}	(B)
     	    (B) edge[bend left=75]     node{$1$}	(A)
+    	    (C) edge[bend left]     node{$0$}	(A)
+            (C) edge[bend right, dashed, red]     node[below]{$0$}	(B)
+            (B) edge[bend left, dashed, red]     node{$0$}	(A);
+        \end{tikzpicture}
+        &
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state, black!45!green,line width=0.4mm]  (A) {$1$};
+            \node[state, black!45!green,line width=0.4mm]  (B) [below = 2cm of A]   {$2$};
+            \node[state, black!45!green,line width=0.4mm]  (C) [below left = 1cm and 2cm of A]   {$3$};
+            \path[->]
+            (A) edge[bend left=75]     node{$0$}	(B)
+            (A) edge[bend left, dashed, red]     node{$0$}	(B)
+    	    (B) edge[bend left=75]     node{$1$}	(A)
+    	    (C) edge[bend left, dashed, red]     node{$0$}	(A)
+            (C) edge[bend right]     node[below]{$0$}	(B)
             (B) edge[bend left, dashed, red]     node{$0$}	(A);
         \end{tikzpicture}
         &
@@ -305,6 +277,122 @@ The following theorem shows that a restless bandit whose arms are all ergodic or
             (A) edge[bend left, dashed, red]     node{$0$}	(B)
     	    (B) edge[bend left=75]     node{$1$}	(A)
     	    (B) edge[bend left, dashed, red]     node{$0$}	(A);
+        \end{tikzpicture}
+        \\
+            Arm $1^a$ & Arm $1^b$ & Arm $2$ 
+        \end{tabular}
+        \caption{
+            Restless Markovian arms. Arm $1^a$ and Arm $1^b$ has 3 states and Arm $2$ has 2 states.
+            The black arrows show state transition of action activate and the dashed red one for action rest.
+            The numbers along the arrows show the expected reward when executing the actions.
+            The span of the optimal bias in any arms is $0.5$.
+            The two corresponding global MDPs is given in \figurename~\ref{fig:hard_global}
+        }
+        \label{fig:hard_local}
+    \end{figure}
+    
+    \begin{figure}[htbp]
+        \centering
+        \begin{tabular}{cc}
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state]  (A) {$1,1$};
+            \node[state]  (B) [above = 2cm of A]   {$2,2$};
+            \node[state]  (C) [right = 4cm of B]   {$1,2$};
+            \node[state]  (D) [below = 2cm of C]   {$2,1$};
+            \node[state]  (E) [right = 2cm of B]   {$3,1$};
+            \node[state]  (F) [below = 2cm of E]   {$3,2$};
+            \path[->]
+            (A) edge[line width=0.4mm, bend left, black!45!green]     node{$0$}	(B)
+    	    (C) edge[line width=0.4mm, bend left, black!45!green]     node{$0$}	(D)
+            (D) edge[line width=0.4mm, bend left=75, RoyalBlue] node{$0$} (C)
+            (A) edge[line width=0.4mm, bend left=75, RoyalBlue]     node{$0$}	(B)
+            (E) edge[line width=0.4mm, RoyalBlue] node[above]{$0$} (B)
+            (F) edge[line width=0.4mm, black!45!green] node[below]{$0$} (A)
+            %\draw[-{Stealth}{Stealth}]
+    	    (B) edge[line width=0.4mm, bend left, black!45!green]     node{$1$}	(A)
+            (D) edge[line width=0.4mm, bend left, black!45!green] node{$1$} (C)
+    	    (B) edge[line width=0.4mm, bend left=75, RoyalBlue]     node{$1$}	(A)
+    	    (C) edge[line width=0.4mm, bend left=75, RoyalBlue]     node{$1$}	(D)
+            (E) edge[line width=0.4mm, black!45!green] node[above]{$0$} (C)
+            (F) edge[line width=0.4mm, RoyalBlue] node[below]{$1$} (D);
+        \end{tikzpicture}
+        &
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state]  (A) {$1,1$};
+            \node[state]  (B) [above = 2cm of A]   {$2,2$};
+            \node[state]  (C) [right = 4cm of B]   {$1,2$};
+            \node[state]  (D) [below = 2cm of C]   {$2,1$};
+            \node[state]  (E) [right = 2cm of B]   {$3,1$};
+            \node[state]  (F) [below = 2cm of E]   {$3,2$};
+            \path[->]
+            (A) edge[line width=0.4mm, bend left, black!45!green]     node{$0$}	(B)
+    	    (C) edge[line width=0.4mm, bend left, black!45!green]     node{$0$}	(D)
+            (D) edge[line width=0.4mm, bend left=75, RoyalBlue] node{$0$} (C)
+            (A) edge[line width=0.4mm, bend left=75, RoyalBlue]     node{$0$}	(B)
+            (E) edge[line width=0.4mm, black!45!green] node[above]{$0$} (B)
+            (F) edge[line width=0.4mm, RoyalBlue] node[below]{$1$} (A)
+            %\draw[-{Stealth}{Stealth}]
+    	    (B) edge[line width=0.4mm, bend left, black!45!green]     node{$1$}	(A)
+            (D) edge[line width=0.4mm, bend left, black!45!green] node{$1$} (C)
+    	    (B) edge[line width=0.4mm, bend left=75, RoyalBlue]     node{$1$}	(A)
+    	    (C) edge[line width=0.4mm, bend left=75, RoyalBlue]     node{$1$}	(D)
+            (E) edge[line width=0.4mm, RoyalBlue] node[above]{$0$} (C)
+            (F) edge[line width=0.4mm, black!45!green] node[below]{$0$} (D);
+        \end{tikzpicture}
+        \\
+            $M^a:=\{\text{Arm }1^a, \text{Arm }2\}$ & $M^b:=\{\text{Arm }1^b, \text{Arm }2\}$
+        \end{tabular}
+        \caption{
+            Two restless bandits, each with two arms given in \figurename~\ref{fig:hard_local}.
+            Exactly one arm is activated at each decision time and the initial global state is either $(3,1)$ or $(3,2)$.
+            The global state is denoted by $(s_1,s_2)$ where $s_1$ is the state of Arm $1$ and $s_2$ of Arm $2$.
+            The green arrows show the state transition when activating Arm $1$.
+            The purple arrows show the state transition when activating Arm $2$.
+            The numbers along the arrows show the expected reward when executing the actions.
+            The global MDP $M^a$ is formed by Arm $1^a$ and Arm $2$ and $M^b$ by Arm $1^b$ and Arm $2$.
+            Both MDPs are multichain and not weakly communicating because state $(3,1)$ and $(3,2)$ are transient states and there are two recurrent classes: $\gX^1:=\{(1,1), (2,2)\}$ and $\gX^2:=\{(1,2),(2,1)\}$.
+            The optimal gain in class $\gX^1$ is $0.5$ and in class $\gX^2$ is $1$.
+            This shows that the actions in states $(3,1)$ and $(3,2)$ are decisive.
+            In $M^a$, the optimal action in state $(3,1)$ is to rest Arm $2$ and in state $(3,2)$ is to activate Arm $2$.
+            In contrast, in $M^b$, the optimal action in state $(3,1)$ is to activate Arm $2$ and in state $(3,2)$ is to rest Arm $2$.
+            Starting by either $(3,1)$ or $(3,2)$, no learning algorithms have a sublinear expected regret in both examples.
+        }
+        \label{fig:hard_global}
+    \end{figure}
+\end{proof}
+
+This theorem means that a more restrictive assumption on local arm should be defined.
+We should mention that the global MDPs used in the proof of Theorem~\ref{thm:non_learnable} are not weakly communicating.
+This means that their diameter is infinite.
+We will see in the following that there exists restless bandits whose diameter that is exponential in the number of arms.
+
+\subsubsection{Hard to learn restless bandits whose all arms are ergodic}
+
+The following theorem shows that a restless bandit whose arms are all ergodic or all recurrent is not necessarily unichain.
+
+\begin{thm}[Multichain Restless bandit]
+    We consider restless bandit problem having finite number of arms and each arm has finite number of states.
+    \begin{enumerate}[label=(\roman*)]
+        \item \label{thm:not_ergodic} There exists a restless bandit whose arms are all recurrent that is not weakly communicating. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
+        \item \label{thm:ergodic_arms_multichain_RB} There exists a restless bandit whose arms are all ergodic that is multichain.
+    \end{enumerate}
+\end{thm}
+
+\begin{proof}
+    \textbf{Proof of \ref{thm:not_ergodic}} -- It is given by the counter-example in which the restless bandit has two arms as given by \figurename~\ref{fig:recur_non_communicate} and exactly one arm is activated at each decision time.
+    For each arm, both ``activate'' and ``rest'' actions induce the same state transition.
+    In such example, the restless bandit is a multichain and not weakly communicating MDP because if we start at state $(1,1)$ or $(2,2)$, then there are two recurrent classes: one composed of $\{(1,1), (2,2)\}$ and the other one is $\{(1,2), (2,1)\}$.
+    \begin{figure}[ht]
+        \centering
+        \begin{tabular}{cc}
+        \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
+            \node[state, black!45!green,line width=0.4mm]  (A) {$1$};
+            \node[state, black!45!green,line width=0.4mm]  (B) [below = 2cm of A]   {$2$};
+            \path[->]
+            (A) edge[bend left=75]     node{$0$}	(B)
+            (A) edge[bend left, dashed, red]     node{$0$}	(B)
+    	    (B) edge[bend left=75]     node{$1$}	(A)
+            (B) edge[bend left, dashed, red]     node{$0$}	(A);
         \end{tikzpicture}
         &
         \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
@@ -324,10 +412,11 @@ The following theorem shows that a restless bandit whose arms are all ergodic or
                 (D) edge[bend right=80, RoyalBlue, line width=0.4mm] node[below]{$1$} (A);
         \end{tikzpicture}
         \\
-            Arm $1$ & Arm $2$ & Global MDP having four states.
+            Arm $1$ & Global MDP having four states.
         \end{tabular}
         \caption{
             A restless bandit with two arms and exactly one arm is activated at each decision time.
+            Arm $1$ is given and Arm $2$ is identical to Arm $1$ and given in \figurename~\ref{fig:hard_local}.
             The global state is denoted by $(s_1,s_2)$ where $s_1$ is the state of Arm $1$ and $s_2$ of Arm $2$.
             The green arrows show the state transition when activating Arm $1$.
             The blue arrows show the state transiiton when activating Arm $2$.
@@ -350,11 +439,12 @@ The following theorem shows that a restless bandit whose arms are all ergodic or
     \end{align*}
     With a proper synchronization between the states of Arm $1$ and Arm $2$, we can construct policies that induce two recurrent classes as presented in \figurename~\ref{fig:local_ergodic_multichain_RB}.
     Indeed, consider the following arrangement.
-    \begin{align*}
-        &\text{Arm 1} : \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \{3,4\} \overset{R}{\to} \dots \overset{A}{\to} \{1,2\} \\
-        &\text{Arm 2} : \{4,5\} \overset{A}{\to} \{5,6\} \overset{R}{\to} \{6,7\} \overset{A}{\to} \dots \overset{R}{\to} \{4,5\} \\
-        &\text{MDP} : \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix} \overset{2}{\to} \begin{pmatrix}2,6\\3,5\\3,6\end{pmatrix} \overset{1}{\to} \begin{pmatrix}3,7\\4,6\\4,7\end{pmatrix} \overset{2}{\to} \dots \overset{1}{\to} \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix}
-    \end{align*}
+    \begin{align}
+        &\text{Arm 1} : \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \{3,4\} \overset{R}{\to} \dots \overset{A}{\to} \{1,2\} \nonumber \\
+        &\text{Arm 2} : \{4,5\} \overset{A}{\to} \{5,6\} \overset{R}{\to} \{6,7\} \overset{A}{\to} \dots \overset{R}{\to} \{4,5\} \nonumber \\
+        &\text{MDP} : \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix} \overset{2}{\to} \begin{pmatrix}2,6\\3,5\\3,6\end{pmatrix} \overset{1}{\to} \begin{pmatrix}3,7\\4,6\\4,7\end{pmatrix} \overset{2}{\to} \dots \overset{1}{\to} \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix} \label{eq:mdp_transition}
+    \end{align}
+    where the symbol $\overset{i}{\to}$ in \Eqref{eq:mdp_transition} means the transition when Arm $i$ is activated.
     It means that any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the global MDP is in state $(s,s+4), (s+1,s+3)$, and $(s+1,s+4)$ induce a recurrent class $\gX^1$ as given in \figurename~\ref{fig:local_ergodic_multichain_RB} (note that for $s$ big enough, state $9$ is state $1$, $10$ is $2$, etc).
     The recurrent class $\gX^2$ in \figurename~\ref{fig:local_ergodic_multichain_RB} is constructed by simply changing the sequence of Arm 2's state in the arrangement above and adapting the state of global MDP accordingly:
     \begin{align*}
@@ -478,11 +568,12 @@ The following theorem shows that a restless bandit whose arms are all ergodic or
         \end{tabular}
         \caption{
             Two restless Markovian arms, each having $8$ states.
-            Both arms are identical.
+            Both arms are identical in term of transition structure.
             The black arrows show state transition of action activate and the dashed red one for action rest.
             To ease the exposition, the expected reward is not shown.
             Also, each state transition happens with probability $0.5$.
             That is, each arm goes from states $1$ and $2$ to state $2$ or $3$, states $3$ and $4$ to state $4$ or $5$, etc, under action rest, and goes from states $1$ and $8$ to state $1$ or $2$, etc, under action activate.
+            We provide a list of transition in Table~\ref{tab:ergodic_arm}.
             The restless bandit having these two arms and exactly one arm is activated at each decision time is multichain because some policies induce two classes of recurrent states as shown in \figurename~\ref{fig:local_ergodic_multichain_RB}.
         }
         \label{fig:ergodic_arm}
@@ -543,8 +634,9 @@ The following theorem shows that a restless bandit whose arms are all ergodic or
         \label{fig:local_ergodic_multichain_RB}
     \end{figure}
 \end{proof}
-%TODO:
-\subsubsection{Diameter, mixing time, and span}
+
+
+\subsubsection{Diameter, mixing time, and span of the optimal bias}
 
 \begin{thm}
     \begin{enumerate}[label=(\roman*)]
