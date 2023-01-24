@@ -203,14 +203,18 @@ Unfortunately, we show in this section that this reasoning is not always applica
 
 \subsubsection{Non learnable restless bandit}
 
-We show in the following theorem that the assumption that each arm is unichain and has bounded span of optimal bias is not enough to make a restless bandit learnable.
+We show in the following theorem that the assumption that each arm is unichain and has a bounded local span of bias under any policy is not enough to make a restless bandit learnable.
 
 \begin{thm}[Non learnable restless bandit]
     \label{thm:non_learnable}
-    For any learning algorithm $\gL$, there is a restless bandit having all unichain arms, each has a local span of optimal bias bounded by $0.5$, such that for any total number of time steps $T\ge2$, the expected regret of $\gL$ at least $\frac{T}4$.
+    We consider reinforcement learning problem with restless Markovian bandit.
+    \begin{enumerate}[label=(\roman*)]
+        \item \label{it:non_learnable1} For any learning algorithm $\gL$, there is a restless bandit having arms all unichain, each arm has a bounded local span of bias under any local policy, such that for any total number of time steps $T\ge2$, the expected regret of $\gL$ at least $\frac{T}4$.
+        \item \label{it:non_learnable2} For any learning algorithm $\gL$, any total number of time steps $T\ge2$, there is a restless bandit having arms all unichain, each arm has a bounded local span of bias under any local policy, that is weakly communicating and such that, the expected regret of $\gL$ at least $\frac{T}5$.
+    \end{enumerate}
 \end{thm}
 \begin{proof}
-    Consider two restless bandit problems given in \figurename~\ref{fig:hard_global}.
+    \textbf{Proof of \ref{it:non_learnable1}} -- consider two restless bandit problems given in \figurename~\ref{fig:hard_global}.
     The arms of both bandits are given in \figurename~\ref{fig:hard_local}.
     All arms are unichain and have a local span of optimal bias bounded by $0.5$.
     Both bandits $M^a$ and $M^b$ have two recurrent classes $\gX^1$ whose optimal gain is $0.5$ and $\gX^2$ whose optimal gain is $1$.
@@ -240,6 +244,11 @@ We show in the following theorem that the assumption that each arm is unichain a
     For the best possible choice of $(\mu_1,\mu_2)$, the minimum value of \eqref{eq:rg_linear} is $\displaystyle\frac{T}4$.
     This means that no learning algorithms can achieve an expected regret smaller than $\frac{T}4$ on both models at the same time.
     That concludes the proof.
+    \medskip \\
+
+    \textbf{Proof of \ref{it:non_learnable2}} -- It is derived from \ref{it:non_learnable1} by slightly modifying the transition of state $1$ of Arm $1$ as the following: if Arm $1$ is activated in state $1$, it transitions to state $3$ with probability $\varepsilon$ or to state $2$ with probability $1-\varepsilon$.
+    Then, the modified global MDPs $M^a(\varepsilon)$ and $M^b(\varepsilon)$ are both weakly communicating.
+    By specifying a very small $\varepsilon$, for example, $\varepsilon=1/T^2$ and following the proof of \ref{it:non_learnable1} conclude the proof. 
 
     \begin{figure}[htbp]
         \centering
@@ -362,8 +371,15 @@ We show in the following theorem that the assumption that each arm is unichain a
     \end{figure}
 \end{proof}
 
+The difference between \ref{it:non_learnable1} and \ref{it:non_learnable2} of Theorem~\ref{thm:non_learnable} is that the global MDPs in \ref{it:non_learnable1} do not depend on $T$ while the ones in \ref{it:non_learnable2} does.
+So the result of \ref{it:non_learnable1} is stronger.
+The reason that \ref{it:non_learnable2} is proposed is because the global MDPs in \ref{thm:non_learnable1} are not weakly communicating.
+According to Definition~\ref{ch:rl:defn:rg_infinite}, the regret is not defined in MDPs that are not weakly communicating.
+So, the regret in \ref{thm:non_learnable1} should be understood as the difference between the cumulative reward of an optimal policy and the cumulative reward of the learner. 
+For \ref{it:non_learnable2}, the global MDPs are weakly communicating and Definition~\ref{ch:rl:defn:rg_infinite} is used for regret.
+
 Theorem~\ref{thm:non_learnable} inspires use to define a more restrictive assumption on local arm.
-We should mention that the global MDPs used in the proof of Theorem~\ref{thm:non_learnable} are not weakly communicating. So, their diameter is infinite.
+%We should mention that the global MDPs used in the proof of Theorem~\ref{thm:non_learnable} are not weakly communicating. So, their diameter is infinite.
 %We will see in the following that there exists restless bandits whose diameter is exponential in the number of arms.
 
 \subsubsection{Hard to learn restless bandits whose arms all are ergodic}
@@ -655,8 +671,8 @@ Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the di
     \begin{enumerate}[label=(\roman*)]
         \item \label{thm:diam} there exists a bandit having $n$ 2-state arms, each arm has the diameter bounded by $2$, that is ergodic and has a diameter bounded by $2^n$. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
         %\item \label{thm:aperiodic_RB_ergo} There exists a Restless bandit whose arms are all ergodic that is not recurrent. 
-        \item \label{thm:mixing} there exists a bandit, whose arms are all ergodic with bounded mixing time, that is ergodic and has a mixing time in the same order of $\landauO(1/\varepsilon)$ for any $\varepsilon\in(0,1)$.
-        \item \label{thm:span} there exists a bandit, whose arms all have a bounded local span of optimal bias, that is communicating and has a global span of optimal bias in the same order of $\landauO(1/\varepsilon)$ for any $\varepsilon\in(0,1)$.
+        \item \label{thm:mixing} there exists a bandit, whose arms all are ergodic with bounded mixing time, that is ergodic and has a mixing time in the same order of $\landauO(1/\varepsilon)$ for any $\varepsilon\in(0,1)$.
+        \item \label{thm:span} there exists a bandit, whose arms all have a bounded local span of bias under any local policy, that is communicating and has a global span of optimal bias in the same order of $\landauO(1/\varepsilon)$ for any $\varepsilon\in(0,1)$.
     \end{enumerate}
 \end{thm}
 \begin{proof}
@@ -715,7 +731,7 @@ The term ``positive'' refers to the fact that the properties frequently required
 This term does not imply neither the learning algorithm achieves sublinear expected regret nor their regret bounded is explicitly linear in the number of arms.
 
 \begin{thm}
-    \label{thm:aperiodic_RB_comm} A restless bandit whose arms are all ergodic is a communicating MDP.
+    \label{thm:aperiodic_RB_comm} A restless bandit whose arms all are ergodic is a communicating MDP.
 \end{thm}
 \begin{proof}
     We prove the theorem by its contraposition. Assume that a given global MDP is not communicating (either weakly communicating or not weakly communicating).
@@ -810,42 +826,44 @@ So, $sp(\vh^*)\le r_{max}/\varepsilon^n$.
 
 \subsection{Regret definition and required assumptions}
 
-Classically, the regret of the learner after $T$ time steps is given by
+By Definition~\ref{ch:rl:defn:rg_infinite}, the regret of a learning algorithm $\gL$ after $T$ time steps in a restless bandit $M$ that is weakly communicating is given by
 \begin{align}
-    \Reg(M,T) := Tg^* - \sum_{t=1}^{T} \vr(\bX_{t},\bA_{t}). \label{eq:regret}
+    \Reg(\gL,M,T) := Tg^*_M - \sum_{t=1}^{T} \sum_{i=1}^nr_{i,t}. \label{eq:regret}
 \end{align}
 %This definition implicitly requires that the unknown MDP $M$ is weakly communicating and the reward is bounded.
-This definition implicitly requires that the reward is bounded and the optimal gain $g^*$ is state-independent.
+%This definition implicitly requires that the reward is bounded and the optimal gain $g^*$ is state-independent.
 
-For Bayesian approach, the prior distribution $\phi$ of the unknown MDP is given.
-We define the Bayesian regret by 
+For Bayesian learning algorithm $\gL$, the prior distribution $\phi$ of $M$ is chosen by  $\gL$.
+We recall from \eqref{eq:bayes_rg} the Bayesian regret of $\gL$.
 \begin{align}
-    \BayReg(\phi, T) := \ex{\Reg(M, T)} \label{eq:bayreg}
+    \BayReg(\gL, \phi, T) := \ex{\Reg(\gL, M, T)}.
 \end{align}
-where the expectation over all the randomness ($\phi$, agent's trajectory...).
 
-In the following, We present a methodology to bound the regret.
-Then, we go through the assumptions required for such methodology.
+In the following, we present the framework of UCRL2 to bound the regret.
+%Then, we go through the assumptions required for such methodology.
 
-\subsubsection{UCRL2 and TSDE framework}
+\subsubsection{UCRL2 framework}
 
 The algorithm updates its policy in episodic manner using doubling trick.
 Let $K_T$ be the total number of episodes (or policy updates) up to time $T$.
 Let $t^k$ be the time step when episode $k$ with the convention that $t^1:=1$.
-Let $M^k$ be the imagined MDP of the algorithm for episode $k$ and $\pi^k$ be the policy used in episode $k$.
-We require $\pi^k$ to induce state-independent gain in order to have the Bellman evaluation equations
+Let $M^k$ be the imagined global MDP of the algorithm for episode $k$ and $\pi^k$ be the policy used in episode $k$.
+We require $\pi^k$ to induce state-independent gain in order to have the Bellman evaluation equation: for global state $\vs$, $\va=\pi^(\vs)$,
 \begin{align*}
-    g^k +h^{\pi^k}(\vx) = \vr^k(\vx, \pi^k(\vx)) +\sum_{\vy}\vp^k(\vy \mid \vx, \pi^k(\vx))h^{\pi^k}(\vy).
+    g^{\pi^k}_{M^k} +h^{\pi^k}_{M^k}(\vs) = \sum_{i=1}^nr^k(s_i, a_i) +\sum_{\vs'\in\gX}p^k(\vs' \mid \vs, \va)h^{\pi^k}_{M^k}(\vs').
 \end{align*}
 Then,
 \begin{align*}
-    \Reg(M, T)&=\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \underbrace{(g^*{-}g^k)}_{\Delta_1} {+}\underbrace{(\vr^k{-}\vr)(\mX_t,\mA_t)}_{\Delta_2} {+}\underbrace{\sum_{\vy}(\vp^k-\vp)(\vy \mid \mX_t, \mA_t)h^{\pi^k}(\vy)}_{\Delta_3}\\
-              &\quad  \underbrace{h^{\pi^k}(\mX_{t+1}){-}h^{\pi^k}(\mX_{t})}_{\Delta_4} {+}\underbrace{\sum_{\vy}\vp(\vy \mid \mX_t, \mA_t)h^{\pi^k}(\vy)-h^{\pi^k}(\mX_{t+1})}_{\Delta_5}
+    \Reg(\gL, M, T)
+    &=\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \underbrace{(g^*_M{-}g^{\pi^k}_{M^k})}_{\Delta_1} {+}\underbrace{\sum_{i=1}^n(r^k{-}r)(s_{t,i},a_{t,i})}_{\Delta_2} \\
+    &\quad {+}\underbrace{\sum_{\vs'\in\gX}(p^k-p)(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs')}_{\Delta_3} {+}\underbrace{h^{\pi^k}_{M^k}(\vs_{t+1}){-}h^{\pi^k}_{M^k}(\vs_{t})}_{\Delta_4} \\
+    &\quad {+}\underbrace{\sum_{\vs'\in\gX} p(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs')-h^{\pi^k}_{M^k}(\vs_{t+1})}_{\Delta_5}.
 \end{align*}
-
+The five quantities are bounded as the following.
 \begin{itemize}
-    \item The second term $\Delta_2$ is bounded by sub-Gaussian inequality (or simply zero if $\{r_i\}_{i\in[n]}$ is known);
-    \item The first term $\Delta_1$ and the last term $\Delta_5$ are bounded based on the approach used: for optimism, $\Delta_1$ is non-positive due to optimism and the sum of $\Delta_5$ is bounded by Azuma-Hoeffding inequality for martingale difference sequence. For Bayesian, $\Delta_1$ is bounded by $K_T$ and $\Delta_5$ has zero expectation.
+    \item The second term $\Delta_2$ is bounded by sub-Gaussian inequality (or simply zero if the rewards are deterministic);
+    \item The first term $\Delta_1$ and the last term $\Delta_5$ are bounded based on the approach used: for optimism, $\Delta_1$ is non-positive due to optimism and the sum of $\Delta_5$ is bounded by Azuma-Hoeffding inequality for martingale difference sequence. For Bayesian methods, the expected value of $\Delta_1$ is bounded by $K_T$ and of $\Delta_5$ is zero
+    \item the sum of $\Delta_4$ is a telescopic sum which is bounded by $K_TH$ where $H:=\max\{\max_{\pi}sp(\vh^\pi_M)\}$.
 \end{itemize}
 The terms $\Delta_3$ and $\Delta_4$ require additional assumption on $h^{\pi^k}$
 \begin{align*}
