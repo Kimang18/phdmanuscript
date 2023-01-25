@@ -1,19 +1,24 @@
 \begingroup
 \let\clearpage\relax
 
-%\dominitoc
 \chapter{Learning in Average Reward Restless Markovian Bandits}
 \label{ch:learning_restless}
 
 In the previous chapter, we adapt a few learning algorithms to discounted rested Markovian bandits and showed that their regrets, which are upper bounded sublinearly in the number of arms, match the minimax Bayesian regret that we derived in the chapter.
-We also showed that any optimistic index policy that computes optimistic index on each arm independently from the other arms does not guarantee the optimism in face of uncertainty (OFU) principle.
+We also showed that any optimistic index policy that, relying on the confidence bonus on the transition of arms, computes optimistic index on each arm independently from the other arms does not guarantee the optimism in face of uncertainty (OFU) principle.
 In this chapter, we consider the learning problem in restless Markovian bandit with average reward criterion.
-Such a bandit suffers from the curse of dimensionality and general-purpose learning algorithm are not efficient when applied to restless bandit. Recently, a few learning algorithms have been specifically designed to work for restless bandits. Yet, they most often work only for very particular subclasses of restless bandits, or they hold under conditions that are very hard to verify.
+Such a bandit suffers from the curse of dimensionality and general-purpose learning algorithms are not efficient when applied to restless bandit. Recently, a few learning algorithms have been specifically designed to work for restless bandits. Yet, they most often work only for very particular subclasses of restless bandits, or they hold under conditions that are very hard to verify.
 Hence, in this chapter, we provide some explanations why the performance of a learning algorithm for a restless bandit depends, in general, on some structural conditions (like diameter or bias) of the global MDP. We show that the properties of the local arms (like ergodic or small diameter) do not, in general, imply similar properties for the global MDPs. This implies that defining a class of restless bandit that has desirable properties (like small diameter) is difficult. 
 
-In Section~\ref{}, we...
+In Section~\ref{ch:restless:related}, we provide the context of learning in restless bandit problems and discuss the existing works in reinforcement learning with generic MDPs and with restless bandit problems.
+We then recall the notations and problem formulation of undiscounted restless bandit in Section~\ref{ch:restless:sec:restless}.
+Section~\ref{ch:restless:sec:example} accumulates examples and counter-examples that respectively provide desirable and non-desirable properties for learning in restless bandit.
+In Section~\ref{ch:restless:sec:generic}, we give an overview of regret analysis of two classical algorithms, namely UCRL2 \cite{jaksch2010near} and TSDE \cite{ouyang2017learning}, when considering the restless bandit as a generic MDP.
+We present the existing results that exploit the structure of restless bandit to bound the regret and discuss about the conditions to assume when learning restless bandit in Section~\ref{ch:restless:sec:structure}.
+Section~\ref{ch:restless:sec:conclude} concludes this chapter.
 
 \section{Introduction}
+\label{ch:restless:related}
 
 Restless Markovian bandits are the specific MDPs that manifest the curse of dimensionality.
 The obvious effect of the curse is the bandit state size that is exponential in the number of arms.
@@ -21,18 +26,18 @@ The obvious effect of the curse is the bandit state size that is exponential in 
 %However, to the best of our knowledge, there is yet no clear dependency between the diameter or mixing time of the global MDP and the number of arms in general restless Markovian bandit.
 
 For learning generic MDPs with average reward criterion, the current best algorithms have a regret over $T$ time steps bounded by $\landauO(\sqrt{DSAT})$ in the unknown MDP with state size $S$, action size $A$, and diameter $D$ (see Table~\ref{ch:rl:tab:infinite} for more algorithms with regret guarantee).
-This regret is bound valid for communicating MDPs.
+This regret bound is valid for communicating MDPs.
 To what we have observed, the parameters of the MDP that appear in regret upper bound are:
 \begin{itemize}
-    \item diameter $D$, defined by Definition~\ref{ch:rl:defn:diameter}, in \eg, \cite{jaksch2010near, fruit2020improved, tossou2019near}
-    \item span of optimal bias $H\ge sp(\vh^*)$ in \eg, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret}
-    \item mixing time $t_{mix}$, defined by Definition~\ref{ch:restless:defn:mixing_time}, in \eg, \cite{ortner2020regret}.
+    \item the diameter $D$, defined by Definition~\ref{ch:rl:defn:diameter}, in \eg, \cite{jaksch2010near, fruit2020improved, tossou2019near}
+    \item the upper bound on span of optimal bias $H\ge sp(\vh^*)$ in \eg, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret}
+    \item the mixing time $t_{mix}$, defined by Definition~\ref{ch:restless:defn:mixing_time}, in \eg, \cite{ortner2020regret}.
 \end{itemize}
-Applying these algorithms to learn restless Markovian bandits with average reward criterion provokes a few critical issues:
+Then, applying these algorithms to learn restless Markovian bandits with average reward criterion provokes a few critical issues:
 \begin{itemize}
     %\item verifying the structure of restless bandit is computationally ``expensive'' 
     \item the state size of restless bandit is exponential in the number of arms which makes the regret not scalable with the number of arms
-    \item the diameter $D$ (if defined), mixing time $t_{mix}$ (if defined), or span of the optimal bias $H$ may also be exponential in the number of arms
+    \item the diameter $D$ (if defined), mixing time $t_{mix}$ (if defined), or the upper bound on span of the optimal bias $H$ may also be exponential in the number of arms
     \item compute an optimal policy in restless bandit is PSPACE-hard \cite{papadimitriou1994complexity}, let alone the computation of optimistic policy
 \end{itemize}
 %These parameters are finite for MDPs with specific structure.
@@ -41,17 +46,17 @@ Applying these algorithms to learn restless Markovian bandits with average rewar
 
 %It is then reasonable to assume some structure properties of the bandit.
 For partially observed restless bandit, the work of \cite{ortner2012regret} derives colored-UCRL algorithm, a modified version of UCRL2, that achieves a regret sublinear in time.
-Colored-UCRL successfully removes the exponentiality in the number of arms from the state size of the bandit in its regret.
+Colored-UCRL ``successfully'' removes the exponentiality in the number of arms from the state size of the bandit in its regret bound.
 However, the mixing time parameter yet appears in the regret bound and the dependency between the mixing time and the number of arms is unclear.
 The same discussion goes to the work of \cite{jung2019thompson} that adapts TSDE to the same setting of restless bandit in \cite{ortner2012regret}.
-To the best of our knowledge, Restless-UCB of \cite{wang2020restless} is the first algorithm that has a regret explicitly bounded linearly in the number of arms for partially observed restless bandit.
+To the best of our knowledge, Restless-UCB of \cite{wang2020restless} is the first algorithm that has a regret bounded explicitly linearly in the number of arms for partially observed restless bandit.
 Yet, we must mention that this result is valid for a very restrictive class of restless bandit in which each arm is the birth-death Markov reward process.
 Also, Restless-UCB requires a generative model to be able to uniformly explore the dynamic of each arm before commiting on its optimistic planning.
 All of these works also assume an oracle that knows how to compute an optimal policy given a restless bandit.
 
-The work of \cite{akbarzadeh2022learning} adapts TSDE to the fully observed restless bandit problem and successfully removes the exponentiality in the number of arms from the state size of the bandit in the Bayesian regret of the modified version, namely RB-TSDE.
+The work of \cite{akbarzadeh2022learning} adapts TSDE to the fully observed restless bandit problem and ``successfully'' removes the exponentiality in the number of arms from the state size of the bandit in the Bayesian regret bound of RB-TSDE, the modified version of TSDE.
 However, the ergodicity coefficient of the global MDP appears in the regret bound and the dependency between such a coefficient and the number of arms is unclear.
-In general, the ergodicity coefficient provides an upper bound on the mixing time of the MDP.
+%It may be useful to note that the ergodicity coefficient provides an upper bound on the mixing time of the MDP.
 
 Finally, due to the curse of dimensionality, verifying the structure of the bandit may be computationally expensive, let alone the learning aspect.
 This inspires us to study the implication of structure of arms in the structure of the bandit because verifying the structure of all arms is done linearly in the number of arms.
@@ -65,35 +70,18 @@ This inspires us to study the implication of structure of arms in the structure 
 
 %(We should define local properties and global properties).
 
-We show that:
+In this chapter, we show that:
 \begin{itemize}
-    \item Local ergodic does not imply global weakly communicating because of periodicity 
-    \item Local ergodic (= recurrent + aperiodic) does not imply globally ergodic (for now, our only example is unichain. Can we do more?)
-    \item For globally ergodic, diameter can be exponential in the number of arms
+    \item there is a bandit, whose arms all are unichain, that is not learnable
+    \item for restless bandits whose arms all are ergodic,
+        \begin{itemize}
+            \item there is a bandit that is multichain
+            \item there is an ergodic bandit whose diameter is exponential in the number of arms
+            \item there is an ergodic bandit whose mixing time can be as big as we want
+        \end{itemize}
 \end{itemize}
 
-%We recall Table~\ref{ch:rl:tab:infinite} below
-%
-%\begin{table}[ht]
-%\begin{tabular}{|l|l|l|l|}
-%\hline
-%Algorithm & Regret & Assump. on $M$ & Policy comp.            \\ \hline
-%UCRL2 \cite{jaksch2010near}       & $\tilde{\landauO}(DS\sqrt{AT})$ & comm.         & EVI \\ 
-%REGAL \cite{bartlett2012regal}      & $\tilde{\landauO}(HS\sqrt{AT})$  & weakly comm. & Intractable   \\ 
-%TSDE \cite{ouyang2017learning}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & VI       \\ 
-%SCAL \cite{fruit2018efficient}        & $\tilde{\landauO}(HS\sqrt{AT})$ & weakly comm. & modified EVI           \\
-%OSP \cite{ortner2020regret}         & $\tilde{\landauO}(\sqrt{t_{mix}SAT})$ & ergodic           & Intractable   \\ 
-%UCRL2B \cite{fruit2020improved}      & $\tilde{\landauO}(\sqrt{\Gamma DSAT})$ & comm.      & EVI                           \\
-%%KL-UCRL     & $\tilde{O}$(\sqrt{S\sum_{x,a}\sV^*_{x,a}T}) & ergodic                     & modified EVI                  \\ \hline
-%EBF \cite{zhang2019regret}         & $\tilde{\landauO}(\sqrt{HSAT})$ & weakly comm.     & Intractable   \\
-%UCRL-V \cite{tossou2019near}         & $\tilde{\landauO}(\sqrt{DSAT})$ & comm.     & modified EVI   \\ \hline
-%Lower bound & $\landauOmega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
-%\end{tabular}
-%\caption{The quest to minimax regret lower bound for model-based RL algorithms in infinite horizon average reward model with $S$ states, $A$ actions, and $T$ steps.
-%$D$ is the diameter of the MDP, $H\ge sp(\vh^*)$ is the upper bound on the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP and $\Gamma$ is the upper bound on the number of next possible states.
-%EVI stands for Extended value iteration \cite{jaksch2010near}, VI for value iteration, assump. for assumption, comm. for communicating, and comp. for computation.
-%Intractable here means that there is no efficient implementations.
-%}
+%TODO
 %\label{ch:restless:tab:infinite}
 %\end{table}
 
@@ -107,7 +95,7 @@ We show that:
 \label{ch:restless:sec:restless}
 
 We consider a restless Markovian bandit having $n$ arms.
-Each arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ is a MDP with finite state space $\gS_i$ of size $S_i$ and binary action space $\{0,1\}$ where $0$ denotes the action ``rest'' and $1$ denotes the action ``activate''.
+Each arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ is a MDP with finite state space $\gS_i$ of size $S$ and binary action space $\{0,1\}$ where $0$ denotes the action ``rest'' and $1$ denotes the action ``activate''.
 If arm $i$ is in state $s_i$ and the decision maker executes $a_i\in\{0,1\}$, the arm incurs a random reward with expected value $r_i(s_i,a_i)$ and transitions to state $s'_i\in\gS_i$ with probability $p_i(s'_i\mid s_i,a_i)$.
 Similarly to what is done in Chapter~\ref{ch:rested}, we assume that the state space of the arms are pairwise distinct: $\gS_i\cap\gS_j=\emptyset$ for any $i\neq j$.
 So, we will drop the index $i$ from expected reward and transition if no confusion is possible: we denote them by $r(s_i,a_i)$ instead of $r_i(s_i,a_i)$ and by $p(s'_i\mid s_i,a_i)$ instead of $p_i(s'_i\mid s_i,a_i)$.
@@ -120,15 +108,16 @@ Each arm $i$ incurs then a random reward $r_{t,i}$ and makes
 a transition to new state $s_{t+1,i}$ in function of $s_{t,i}$ and $a_{t,i}$ but independently from the other arms.
 So, the restless Markovian bandit is a specific MDP -- that we denote by $M$ -- whose state space is $\gX$ and action space is $\gA(m):=\{\va\in\{0,1\}^n : \sum_{i=1}^{n}a_i =m\}$.
 We say that $M$ is the \emph{global} MDP and its arm is the \emph{local} MDP.
+Without loss of generality, we assume that for any global state $\vs\in\gX$ and global action $\va\in\gA(m)$, the expected reward is bounded like $\sum_{i=1}^{n}r(s_i,a_i)\in[0,r_{max}]$.
 
 The decision maker wants to compute a policy $\pi:\gX\mapsto\gA(m)$ that maximizes the gain as defined in Section~\ref{ch:mdp:sec:gain}: for any $\vs\in\gX$,
 \begin{equation}
     \label{ch:restless:eq:obj}
-    g^\pi(\vs):=\lim_{T\to+\infty}\frac1T \E^\pi\left[ \sum_{t=1}^{T} \sum_{i=1}^nr_{t,i} \mid \vs_1=\vs\right].
+    g^\pi_M(\vs):=\lim_{T\to+\infty}\frac1T \E^\pi\left[ \sum_{t=1}^{T} \sum_{i=1}^nr_{t,i} \mid \vs_1=\vs\right].
 \end{equation}
 
 As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ such that for all $\vs\in\gX, g^{\pi^*}(\vs)=g^*(\vs):=\max_{\pi}g^{\pi}(\vs)$ exists and is deterministic.
-However, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that computing an optimal policy in undiscounted restless bandit $M$ is PSPACE-hard.
+However, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that computing an optimal policy in restless bandit $M$ is PSPACE-hard.
 
 %In about 1980, Peter Whittle proposed a heuristic in the form of largest index rule, later known as \textbf{Whittle index policy}, for undiscounted restless bandit problem.
 %The computational complexity of this heuristic is linear in the number of arms which makes it scalable for problems with large number of arms.  
@@ -150,20 +139,20 @@ While the definition of ergodic MDP is given in Definition~\ref{ch:mdp:defn:mdp_
 Following \cite[Definition 5.1]{wei2020model},
 \begin{defn}
     \label{ch:restless:defn:mixing_time}
-    The mixing time of an ergodic MDP is defined as
+    The mixing time of an ergodic MDP with state space $\gS$ is defined as
     \begin{align*}
-        t_{mix} := \max_{\pi}\min\left\{ t\ge1 : \lVert (\mP^\pi)^t(x,\cdot) - \mu^\pi\rVert_1 \le \frac14, \forall x\right\}.
+        t_{mix} := \max_{\pi}\min\left\{ t\ge1 : \norm{(\mP^\pi)^t(s,\cdot) - \mu^\pi}_{\ell_1} \le \frac14, \forall s\in\gS\right\}.
     \end{align*}
 \end{defn}
 By Definition~\ref{ch:restless:defn:mixing_time}, the mixing time is the maximum time required for any policy starting at any initial state to make the state distribution $\frac14$-close (in $\ell_1$ norm) to the stationary distribution, the state distribution in steady regime.
 
 We recall that the diameter of a MDP (see Definition~\ref{ch:rl:defn:diameter}) is finite if and only if the MDP is communicating.
-It is shown in \cite[Appendix A]{jaksch2010near} that for any MDP with state space $\gX$ and action space $\gA$, the diameter is lower bounded by $\log_{|\gA|}|\gX|-3$.
-This implies that the diameter of a restless bandit with $n$ arms, each arm has the same state size $S$ and each time exactly $m$ arms are activated, is lower bounded by
+It is shown in \cite[Appendix A]{jaksch2010near} that for any MDP with state space $\gS$ and action space $\gA$, the diameter is lower bounded by $\log_{|\gA|}|\gS|-3$.
+This implies that the diameter of a restless bandit $M$ described above is lower bounded by % with $n$ arms, each arm has the same state size $S$ and each decision time exactly $m$ arms are activated, is lower bounded by
 \begin{equation*}
     \log_{|\gA(m)|}|\gX| -3 = \sum_{i=1}^{n}\log_{|\gA(m)|}|\gS_i| -3 =n\log_{{n \choose m}}S -3.
 \end{equation*}
-This means that the diameter of any restless bandit is at least linear in the number of arms.
+This is the lower bound of the diameter of general restless Markovian bandit that is communicating.
 
 %\subsection{Span}
 %
@@ -177,6 +166,9 @@ This means that the diameter of any restless bandit is at least linear in the nu
 %\end{enumerate}
 %
 %Let $\vh\in\sR^S$. The span of $\vh$ is given by $sp(\vh)=\max_xh(x) - \min_xh(x)$.
+
+\section{Examples and counter-examples}
+\label{ch:restless:sec:example}
 
 In the following, we study the structure of the global MDPs when the local arms all are well structured.
 To do so, we will provide a few simple examples and counter-examples.
@@ -203,14 +195,14 @@ Unfortunately, we show in this section that this reasoning is not always applica
 
 \subsubsection{Non learnable restless bandit}
 
-We show in the following theorem that the assumption that each arm is unichain and has a bounded local span of bias under any policy is not enough to make a restless bandit learnable.
+We show in the following theorem that the assumption that each arm is unichain and has a bounded local span of bias of any local policy is not enough to make a restless bandit learnable.
 
 \begin{thm}[Non learnable restless bandit]
     \label{thm:non_learnable}
     We consider reinforcement learning problem with restless Markovian bandit.
     \begin{enumerate}[label=(\roman*)]
-        \item \label{it:non_learnable1} For any learning algorithm $\gL$, there is a restless bandit having arms all unichain, each arm has a bounded local span of bias under any local policy, such that for any total number of time steps $T\ge2$, the expected regret of $\gL$ at least $\frac{T}4$.
-        \item \label{it:non_learnable2} For any learning algorithm $\gL$, any total number of time steps $T\ge2$, there is a restless bandit having arms all unichain, each arm has a bounded local span of bias under any local policy, that is weakly communicating and such that, the expected regret of $\gL$ at least $\frac{T}5$.
+        \item \label{it:non_learnable1} For any learning algorithm $\gL$, there is a restless bandit having arms all unichain, each arm has a bounded local span of bias of any local policy, such that for any total number of time steps $T\ge2$, the expected regret of $\gL$ at least $\frac{T}4$.
+        \item \label{it:non_learnable2} For any learning algorithm $\gL$, any total number of time steps $T\ge2$, there is a restless bandit having arms all unichain, each arm has a bounded local span of bias of any local policy, that is weakly communicating and such that, the expected regret of $\gL$ at least $\frac{T}5$.
     \end{enumerate}
 \end{thm}
 \begin{proof}
@@ -672,7 +664,7 @@ Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the di
         \item \label{thm:diam} there exists a bandit having $n$ 2-state arms, each arm has the diameter bounded by $2$, that is ergodic and has a diameter bounded by $2^n$. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
         %\item \label{thm:aperiodic_RB_ergo} There exists a Restless bandit whose arms are all ergodic that is not recurrent. 
         \item \label{thm:mixing} there exists a bandit, whose arms all are ergodic with bounded mixing time, that is ergodic and has a mixing time in the same order of $\landauO(1/\varepsilon)$ for any $\varepsilon\in(0,1)$.
-        \item \label{thm:span} there exists a bandit, whose arms all have a bounded local span of bias under any local policy, that is communicating and has a global span of optimal bias in the same order of $\landauO(1/\varepsilon)$ for any $\varepsilon\in(0,1)$.
+        \item \label{thm:span} there exists a bandit, whose arms all have a bounded local span of bias of any local policy, that is communicating and has a global span of optimal bias in the same order of $\landauO(1/\varepsilon)$ for any $\varepsilon\in(0,1)$.
     \end{enumerate}
 \end{thm}
 \begin{proof}
@@ -765,6 +757,7 @@ The following theorem also provides a result on the structure of global MDP.
 Last but not least, we show how the assumption on the ergodicity coefficient of local arms affects the ergodicity coefficient of the global MDP.
 \begin{thm}
     \label{thm:ergodicity_coeff}
+    %Given a restless bandit $M$ 
     For each arm $i\in[n]$, the ergodicity coefficient $\gamma_i$ of the arm is defined by
     \begin{align*}
         \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\}.
@@ -783,18 +776,18 @@ Last but not least, we show how the assumption on the ergodicity coefficient of 
     \end{equation}
     then $\Gamma \le 1-\varepsilon^n$.
 \end{thm}
-Hence, for a restless bandit with $n$ arms, if \eqref{eq:gamma_ep} holds for all $i\in[n]$, then the global span of optimal bias is bounded like 
-\begin{align*}
- sp(\vh^*)\le \landauOmega(1/\varepsilon^n)
-\end{align*}
-where $\vh^*$ is the optimal bias of the global MDP.
-Indeed, if \eqref{eq:gamma_ep} holds for all $i\in[n]$, then $\Gamma \le 1-\varepsilon^n$ and the global MDP is unichain.
+Hence, for the restless bandit $M$ described in Section~\ref{ch:restless:sec:restless}, if \eqref{eq:gamma_ep} holds for all $i\in[n]$, then the global span of optimal bias is bounded like 
+\begin{align}
+    sp(\vh^*_M)\le \frac{r_{max}}{\varepsilon^n} \label{eq:span_expo}
+\end{align}
+where $\vh^*_M$ is the optimal bias of the global MDP $M$.
+Indeed, if \eqref{eq:gamma_ep} holds for all $i\in[n]$, then $\Gamma \le 1-\varepsilon^n$ and the global MDP $M$ is unichain.
 Let $\pi^*$ be an optimal policy and $\vr^{\pi^*}$ and $\mP^{\pi^*}$ be the expected reward vector and transition matrix under policy $\pi^*$.
-Suppose that for any global state $\vs$, $r^{\pi^*}(\vs)\in[0,r_{max}]$.
-Then, the optimal gain $g^*$ is bounded in $[0, r_{max}]$.
-We recall that the Bellman evaluation equation for $\pi^*$ in vector form is $\vh^*=\vr^{\pi^*} - g^*\vone +\mP^{\pi^*}\vh^*$.
-Then, $sp(\vh^*)\le r_{max} +sp(\mP^{\pi^*}\vh^*)\le r_{max} +\Gamma sp(\vh^*)$ because $sp(\mP^{\pi^*}\vh^*)\le \Gamma sp(\vh^*)$.
-So, $sp(\vh^*)\le r_{max}/\varepsilon^n$.
+For any global state $\vs\in\gX$, $r^{\pi^*}(\vs)\in[0,r_{max}]$.
+Then, the optimal gain $g^*_M$ is bounded in $[0, r_{max}]$.
+We recall that the Bellman evaluation equation for unichain policy $\pi^*$ in vector form is $\vh^*=\vr^{\pi^*} - g^*\vone +\mP^{\pi^*}\vh^*$.
+Then, $sp(\vh^*_M)\le r_{max} +sp(\mP^{\pi^*}\vh^*_M)\le r_{max} +\Gamma sp(\vh^*_M)$ because $sp(\mP^{\pi^*}\vh^*_M)\le \Gamma sp(\vh^*_M)$.
+So, $sp(\vh^*_M)\le r_{max}/\varepsilon^n$.
 
 \begin{proof}
     For any two global states $\vs,\vs'\in\gX$ and any two actions $\va,\va'\in\gA(m)$, we have
@@ -821,126 +814,179 @@ So, $sp(\vh^*)\le r_{max}/\varepsilon^n$.
     We can conclude that $\Gamma\le 1-\varepsilon^n$ using its definition.
 \end{proof}
 
-\section{Assumptions for learning restless bandit}
-\KK{I have not found a better title yet.}
 
-\subsection{Regret definition and required assumptions}
+%\subsection{Regret definition and required assumptions}
+\section{Restless bandit as a generic MDP}
+\label{ch:restless:sec:generic}
+
+\KK{I have not found a better title yet.}
 
 By Definition~\ref{ch:rl:defn:rg_infinite}, the regret of a learning algorithm $\gL$ after $T$ time steps in a restless bandit $M$ that is weakly communicating is given by
 \begin{align}
-    \Reg(\gL,M,T) := Tg^*_M - \sum_{t=1}^{T} \sum_{i=1}^nr_{i,t}. \label{eq:regret}
+    \Reg(\gL,M,T) := Tg^*_M - \sum_{t=1}^{T} \sum_{i=1}^nr_{t,i}. \label{eq:regret}
 \end{align}
 %This definition implicitly requires that the unknown MDP $M$ is weakly communicating and the reward is bounded.
 %This definition implicitly requires that the reward is bounded and the optimal gain $g^*$ is state-independent.
 
 For Bayesian learning algorithm $\gL$, the prior distribution $\phi$ of $M$ is chosen by  $\gL$.
-We recall from \eqref{eq:bayes_rg} the Bayesian regret of $\gL$.
+We recall the Bayesian regret of $\gL$ from \eqref{eq:bayes_rg}.
 \begin{align}
-    \BayReg(\gL, \phi, T) := \ex{\Reg(\gL, M, T)}.
+    \BayReg(\gL, \phi, T) := \ex{\ex{\Reg(\gL, M, T) \mid M}}.
 \end{align}
 
 In the following, we present the framework of UCRL2 to bound the regret.
 %Then, we go through the assumptions required for such methodology.
 
-\subsubsection{UCRL2 framework}
+\subsection{UCRL2 framework}
 
 The algorithm updates its policy in episodic manner using doubling trick.
 Let $K_T$ be the total number of episodes (or policy updates) up to time $T$.
-Let $t^k$ be the time step when episode $k$ with the convention that $t^1:=1$.
+Let $t^k$ be the time step when episode $k$ begins with the convention that $t^1:=1$.
 Let $M^k$ be the imagined global MDP of the algorithm for episode $k$ and $\pi^k$ be the policy used in episode $k$.
-We require $\pi^k$ to induce state-independent gain in order to have the Bellman evaluation equation: for global state $\vs$, $\va=\pi^(\vs)$,
+We require $\pi^k$ to be unichain to induce state-independent gain and the Bellman evaluation equation for $\pi^k$ in the imagined MDP $M^k$: for global state $\vs\in\gX$, $\va=\pi^k(\vs)$,
 \begin{align*}
-    g^{\pi^k}_{M^k} +h^{\pi^k}_{M^k}(\vs) = \sum_{i=1}^nr^k(s_i, a_i) +\sum_{\vs'\in\gX}p^k(\vs' \mid \vs, \va)h^{\pi^k}_{M^k}(\vs').
+    0 =  \sum_{i=1}^nr^k(s_i, a_i) -g^{\pi^k}_{M^k} +\sum_{\vs'\in\gX}p^k(\vs' \mid \vs, \va)h^{\pi^k}_{M^k}(\vs') -h^{\pi^k}_{M^k}(\vs).
 \end{align*}
 Then,
 \begin{align*}
     \Reg(\gL, M, T)
-    &=\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \underbrace{(g^*_M{-}g^{\pi^k}_{M^k})}_{\Delta_1} {+}\underbrace{\sum_{i=1}^n(r^k{-}r)(s_{t,i},a_{t,i})}_{\Delta_2} \\
-    &\quad {+}\underbrace{\sum_{\vs'\in\gX}(p^k-p)(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs')}_{\Delta_3} {+}\underbrace{h^{\pi^k}_{M^k}(\vs_{t+1}){-}h^{\pi^k}_{M^k}(\vs_{t})}_{\Delta_4} \\
-    &\quad {+}\underbrace{\sum_{\vs'\in\gX} p(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs')-h^{\pi^k}_{M^k}(\vs_{t+1})}_{\Delta_5}.
+    &= \sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \Bigl(g^*_M -\sum_{i=1}^{n}r(s_{t,i},a_{t,i})\Bigr) +\underbrace{\sum_{i=1}^{n}\Bigl(r(s_{t,i},a_{t,i})-r_{t,i}\Bigr)}_{\Delta_{t,0}} \\
+    &=\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \underbrace{(g^*_M{-}g^{\pi^k}_{M^k})}_{\Delta_{t,1}} {+}\underbrace{\sum_{i=1}^n(r^k{-}r)(s_{t,i},a_{t,i})}_{\Delta_{t,2}} \\
+    &\quad {+}\underbrace{\sum_{\vs'\in\gX}(p^k-p)(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs')}_{\Delta_{t,3}} {+}\underbrace{h^{\pi^k}_{M^k}(\vs_{t+1}){-}h^{\pi^k}_{M^k}(\vs_{t})}_{\Delta_{t,4}} \\
+    &\quad {+}\underbrace{\sum_{\vs'\in\gX} p(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs')-h^{\pi^k}_{M^k}(\vs_{t+1})}_{\Delta_{t,5}} +\Delta_{t,0}.
 \end{align*}
-The five quantities are bounded as the following.
+The six quantities are bounded differently according to the approach used.
+
+\subsubsection{UCRL2 algorithm}
+
+The assumption used in UCRL2 is that the unknown MDP $M$ is \textbf{communicating} (otherwise, the diameter is infinite) and has bounded diameter $D$ and bounded non-negative reward.
+This assumption implies that the optimal gain $g^*_M$ is state-independent and the regret is well defined.
+It is shown in \cite{jaksch2010near} that using UCRL2 algorithm provides the following: for each episode $k\ge1$,
 \begin{itemize}
-    \item The second term $\Delta_2$ is bounded by sub-Gaussian inequality (or simply zero if the rewards are deterministic);
-    \item The first term $\Delta_1$ and the last term $\Delta_5$ are bounded based on the approach used: for optimism, $\Delta_1$ is non-positive due to optimism and the sum of $\Delta_5$ is bounded by Azuma-Hoeffding inequality for martingale difference sequence. For Bayesian methods, the expected value of $\Delta_1$ is bounded by $K_T$ and of $\Delta_5$ is zero
-    \item the sum of $\Delta_4$ is a telescopic sum which is bounded by $K_TH$ where $H:=\max\{\max_{\pi}sp(\vh^\pi_M)\}$.
-\end{itemize}
-The terms $\Delta_3$ and $\Delta_4$ require additional assumption on $h^{\pi^k}$
-\begin{align*}
-    sp(\vh^{\pi^k})\le H^k \text{ where } H^k<+\infty.
-\end{align*}
-%Let $\Pi^k$ be the set of \emph{gain optimal} policies in MDP $M^k$.
-%The assumption needed is that 
-%\begin{align*}
-%    \Pi^k\neq \emptyset \text{ and }\sup_{\pi^k\in\Pi^k}sp(\vh^{\pi^k})\le H^k \text{ where } H^k<+\infty.
-%\end{align*}
-Under this assumption
-\begin{itemize}
-    \item the sum of $\Delta_4$ is the \emph{telescopic sum} which is bounded by $K_TH$ where $H:=\max_{k\le K_T}H^k$. Depending on the doubling trick used, $K_T$ is bounded \emph{a priori} by $O\big(\sqrt{SA\ln(T)}\big)$;
-    \item $\Delta_3$ is bounded by $H\vert\vp^k-\vp\vert_{1}$ and $\vert\vp^k-\vp\vert_{1}$ is bounded by Weissman's inequality.
+    \item the imagined MDP $M^k$ chosen by extended value iteration is communicating
+    \item the gain $g^{\pi^k}_{M^k}$ is state-independent
+    \item the diameter of $M^k$ is bounded, $D^k\le D$
+    \item the span of bias of policy $\pi^k$ in $M^k$ is bounded, $sp(\vh^{\pi^k}_{M^k})\le D^k\le D$.
 \end{itemize}
 
-\paragraph{UCRL2 assumption}
+%The second item is true because the set of plausible MDPs $\gM^k$ can be considered as a MDP with finitely many actions.
+%If $M$ belongs to $\gM^k$, then $\gM^k$ is also \emph{communicating}.
+%$g^k$ can be considered as the optimal gain of this finitely many actions MDP $\gM^k$.
+%So, $g^k$ is state-independent.
+%The third item is true because $M$ belongs to $\gM^k$ together with $\gM^k$ is a MDP with finitely many actions imply that the diameter of $\gM^k$ is upper bounded by the diameter of $M$.
+%Under the assumption, \cite[Theorem~4]{bartlett2012regal} implies that the span of the optimal bias (the bias that verifies Bellman optimality equation) is bounded by the diameter of the MDP times the optimal gain.
 
-The assumption used in UCRL2 is that the unknown MDP $M$ is \emph{communicating} (otherwise, the diameter is infinite) and has bounded non-negative reward.
-This assumption implies
+So, for UCRL2, the six quantities above are bounded as the following.
 \begin{itemize}
-    \item $g^*$ is state-independent and the regret is well defined;
-    \item for each $k\ge1$, $M^k$ is communicating and $g^k$ is state-independent;
-    \item for each $k\ge1$, $sp(\vh^{\pi^k})$ is bounded by the diameter of $M$.
+    \item By martingale argument and Azuma-Hoeffding's inequality for martingale difference sequence,
+        \begin{itemize}
+            \item the sum $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1}\Delta_{t,0}$ is bounded by $\landauO(r_{max}\sqrt{T\ln(T)})$ with high probability
+            \item the sum $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1}\Delta_{t,5}$ is bounded by $\landauO(D\sqrt{T\ln(T)})$ with high probability
+        \end{itemize}
+    \item \label{it:optimism} The term $\Delta_{t,1}$ is non-positive thanks to the optimism
+    \item The term $\Delta_{t,2}$ is bounded by Hoeffding's inequality (or simply zero if the rewards are deterministic);
+    \item The telescopic sum $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \Delta_{t,4}$ is bounded by $\sum_{k=1}^{K_T} sp(\vh^{\pi^k}_{M^k}){\le} DK_T$
+    \item Finally, the term $\Delta_{t,3}$ is bounded by $sp(\vh^{\pi^k}_{M^k}) \norm{\vp^k-\vp}_{\ell_1}\le D\norm{\vp^k-\vp}_{\ell_1}$ and $\norm{\vp^k-\vp}_{\ell_1}$ by Weissman's inequality.
 \end{itemize}
-The second item is true because the set of plausible MDPs $\gM^k$ can be considered as a MDP with finitely many actions.
-If $M$ belongs to $\gM^k$, then $\gM^k$ is also \emph{communicating}.
-$g^k$ can be considered as the optimal gain of this finitely many actions MDP $\gM^k$.
-So, $g^k$ is state-independent.
-The third item is true because $M$ belongs to $\gM^k$ together with $\gM^k$ is a MDP with finitely many actions imply that the diameter of $\gM^k$ is upper bounded by the diameter of $M$.
-Under the assumption, \cite[Theorem~4]{bartlett2012regal} implies that the span of the optimal bias (the bias that verifies Bellman optimality equation) is bounded by the diameter of the MDP times the optimal gain.
+Moreover, by using doubling trick, \cite[Proposition~18]{jaksch2010near} gives, for any $T\ge \abs{\gX}\abs{\gA(m)}$, $K_T\le \abs{\gX}\abs{\gA(m)}\log_2(\frac{8T}{\abs{\gX}\abs{\gA(m)}})$.
 
-%\KK{I cannot find any assumption about $sp(\vh^{\pi^k})\le H^k$ in UCRL2 paper}
+Hoeffding's and Weissman's inequalities induce another term of the form $\frac{1}{\sqrt{n^k(\vs_t,\va_t)}}$.
+The sum $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1}\frac{1}{\sqrt{n^k(\vs_t,\va_t)}}$ is bounded by $\landauO(\sqrt{\abs{\gX}\abs{\gA(m)}T})$ similarly to what we have seen in Chapter~\ref{ch:rested}. %Section~\ref{sec:} of Chapter~\ref{ch:rested}.
 
-\paragraph{TSDE assumption}
+\subsubsection{TSDE algorithm}
 
+TSDE is a Bayesian algorithm. So, it starts by choosing a prior distribution $\phi$ about the unknown MDP $M$.
 Let $\mathrm{supp}(\phi)$ denote the support of the distribution $\phi$.
-The assumption used for TSDE is that $\mathrm{supp}(\phi)$ is a set of \emph{weakly communicating} MDPs and there exists $H<+\infty$ such that in any MDP drawn from the support, if $\vh\in\sR^S$ verifies Bellman optimality equation, then $sp(\vh)\le H$.
-This assumption implies that
+So, $\phi$ is chosen such that $M\in\mathrm{supp}(\phi)$.
+The assumptions used for TSDE are the expected reward of $M$ is non-negative and bounded, and the following.
 \begin{itemize}
-    \item $g^*$ is state-independent and the regret is well defined;
-    \item for each $k\ge1$, $M^k$ is weakly communicating and $g^k$ is state-independent;
-    \item for each $k\ge1$, $sp(\vh^{\pi^k})$ is bounded by $H$.
+    \item $\mathrm{supp}(\phi)$ is a set of \textbf{weakly communicating} MDPs
+    \item there exists $H<+\infty$ such that any MDP in $\mathrm{supp}(\phi)$ has the span of optimal bias bounded by $H$.
+\end{itemize}
+These assumptions imply that for each episode $k\ge1$,
+\begin{itemize}
+    \item the imagined MDP $M^k$ sampled from the posterior is weakly communicating
+    \item the gain $g^{\pi^k}_{M^k}$ is state-independent
+    \item the span of bias of policy $\pi^k$ in $M^k$ is bounded by $H$, $sp(\vh^{\pi^k}_{M^k})\le H$.
+\end{itemize}
+So, for TSDE, the six quantities above are bounded as the following.
+\begin{itemize}
+    \item $\Delta_{t,0}$ and $\Delta_{t,5}$ are martingale difference term whose expected values are zero
+    \item The expected value of $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1}\Delta_{t,1}$ is bounded by the upper bound of $K_T$ times $r_{max}$
+    \item The second term $\Delta_{t,2}$ is bounded by Hoeffding's inequality (or simply zero if the rewards are deterministic);
+    \item The telescopic sum $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \Delta_{t,4}$ is bounded by $HK_T$
+    \item Finally, the term $\Delta_{t,3}$ is bounded by $H\norm{\vp^k-\vp}_{\ell_1}$ and $\norm{\vp^k-\vp}_{\ell_1}$ by Weissman's inequality.
 \end{itemize}
 
-\KK{What follows is just a draft. The notations are not rigorous at all.}
+Moreover, the doubling trick of TSDE gives $K_T\le \sqrt{2\abs{\gX}\abs{\gA(m)}T\ln(T)}$ \cite[Lemma~1]{ouyang2017learning}.
+The term induced by Hoeffding's and Weissman's inequalities is bound exactly the same as UCRL2 does.
 
-\subsubsection{Our assumptions}
-
-For each arm $i\in[n]$, the unknown parameter $P_i$ belongs to a compact set $\Theta_i$.
-Using Whittle index policy as a baseline, we need the two following assumptions:
-\begin{asmp}
-    \label{asmp:indexable}
-    For any $i\in[n], P\in\Theta_i$, the arm $\langle\gS_i,\{0,1\},P,r_i\rangle$ is indexable.
-\end{asmp}
-\begin{asmp}
-    \label{asmp:unichain}
-    For any $i\in[n], P\in\Theta_i$, the arm $\langle\gS_i,\{0,1\},P,r_i\rangle$ has at least one state that is reachable in one step from any other states under any actions:
-    \begin{align*}
-        \beta_i = 1-\min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{P^{a}(x_i,z_i), P^{a'}(y_i,z_i)\}<1.
-    \end{align*}
-\end{asmp}
-
-Assumption~\ref{asmp:indexable} allows Whittle index policy to be meaningful.
-By Theorem~\ref{thm:unichain}, Assumption~\ref{asmp:unichain} implies that the unknown RMAB is unichain. Consequently, the average gain of Whittle index policy is constant over all states of RMAB.
-%Let $(\mP^W, \vr^W)$ be the controlled parameters of the corresponding RMAB under Whittle index policy $\vpi^W$ and $(g^W, h^W)$ be the average gain and bias function under $\vpi^W$ and satisfying
-Let $(g^W, h^W)$ be the average gain and bias function under $\vpi^W$ and satisfying
-\begin{align}
-    g^W + h^W(\vx) = \vr(\vx,\va) +\sum_{\vz\in\bar{\gS}} \mP^{\va}(\vx, \vz)h^W(\vz),\hspace{1cm} \forall \vx\in\bar{\gS}, \va=\vpi^W(\vx). \label{eq:bellman}
-\end{align}
-
-\section{Open questions}
-
+So, directly apply UCRL2 or TSDE would incur a few problems
 \begin{itemize}
-    \item Does the above properties have implications on regret? 
-    \item What about Lazy MDPs? \emph{i.e.} chains such that $P(i | i,a)>\varepsilon$ for all states and actions.
-    \item If RMAB problem is in stationary regime, what is the regime of each arm?
+    \item the assumptions on global MDP may be computationally infeasible to check
+    \item the regret bound is exponential in the number of arms $n$.
 \end{itemize}
+Broadly speaking, the regret bound is exponential in $n$ because
+\begin{itemize}
+    \item the total number of episodes $K_T$ is in function of $S^n{n \choose m}$
+    \item the concentration of global transition $\norm{\vp^k-\vp}_{\ell_1}$ is in function of $\sqrt{S^n}$.
+\end{itemize}
+
+\section{Exploit restless bandit's structure in learning}
+\label{ch:restless:sec:structure}
+
+\subsection{Assumptions on local arms}
+
+As we have mentioned, computing an optimal policy in restless bandit is PSPACE-hard \cite{papadimitriou1994complexity}.
+The computationally efficient policy known is Whittle index policy which is asymptotically optimal under some technical conditions \cite{weber1990index}.
+However, Whittle index policy is not optimal in general.
+This brings a discussion about what baseline should be used in the regret definition.
+\begin{itemize}
+    \item Shall we compare the algorithm to an oracle that knows an optimal policy of any restless bandit?
+    \item Shall we use Whittle index policy as a baseline?
+\end{itemize}
+Assuming an oracle is what is done in \cite{osband2014near, rosenberg2020oracle, xu2020reinforcement} when learning in factored-MDPs.
+We will then focus the discussion on the second question.
+
+First of all, Whittle index policy is defined only if bandit is indexable.
+Also, since Whittle index policy is not optimal, the gain under this policy can be state-dependent.
+So, we need to assume that the unknown MDP is unichain and indexable.
+
+For optimism, we have shown in Chapter~\ref{ch:rested} that optimistic algorithms that apply confidence bonus on arm's transition cannot leverage index policy to choose an imagined MDP $M^k$ with index policy $\pi^k$ that guarantees the optimism.
+Aggravatingly, there is no guarantee that the imagined MDP $M^k$ is indexable, let alone the optimism.
+%So, an assumption that there exists an oracle that knows how to choose $M^k$ that is indexable
+So, we believe that using the Whittle index policy as a baseline is not practical for the optimism approach.
+
+For posterior sampling, we need the imagined MDP $M^k$ to be indexable.
+This can be done by making an assumption on the support of the prior distribution.
+That is, any MDP in the support $\mathrm{supp}(\phi)$ is unichain and indexable.
+
+\subsection{Techniques to reduce exponentiality in the number of arms}
+
+An alternative doubling trick adapted to restless Markovian bandit is proposed in \cite{ortner2012regret, jung2019thompson, akbarzadeh2022learning} so that the total number of episodes is bounded linearly in $n$ (see \eg, \cite[Lemma~A.1]{akbarzadeh2022learning} or \cite[Lemma~8]{jung2019thompson}).
+
+Also, for any global state $\vs\in\gX$ and global action $\va\in\gA(m)$, it follows from \cite[Lemma~13]{jung2019thompson} that
+\begin{align*}
+    \sum_{\vs'\in\gX} \abs{p^k(\vs'\mid \vs,\va) -p(\vs'\mid \vs,\va)}
+    \le \sum_{i=1}^{n} \sum_{s'_i\in\gS_i} \abs{p^k(s'_i\mid s_i,a_i) -p(s'_i\mid s_i,a_i)}
+\end{align*}
+where $\sum_{s'_i\in\gS_i} \abs{p^k(s'_i\mid s_i,a_i) -p(s'_i\mid s_i,a_i)}$ is the concentration of local transition which is in function of $\sqrt{S}$.
+That is, following the recent work \cite{ortner2012regret, jung2019thompson, akbarzadeh2022learning}, the concentration of global transition $\norm{\vp^k-\vp}_{\ell_1}$ is just in function of $n\sqrt{S}$.
+
+\subsection*{Regret bound polynomial in the number arms?}
+
+As we have seen in this chapter, the parameters of global MDP such as the diameter $D$, the mixing time, or the upper bound on span $H$ can be exponential in the number of arms.
+For instance, if the conditions in Theorem~\ref{thm:thm:ergodicity_coeff} are satisfied, the global span of optimal bias is bounded exponentially in the number of arms as given in \eqref{eq:span_expo}.
+
+We believe that, there is no clear dependency between the parameters of the global MDP and the number of arms in general.
+
+\section{Conclusion}
+\label{ch:restless:sec:conclude}
+
+In this chapter, we provided different examples that show that defining a class of restless bandit that is learnable by relying on the assumption on local arms is hard.
+In particular, we showed that there exists a restless bandit, which is weakly communicating and whose arms all are unichain with bounded local span, that is not learnable.
+We also discussed about the conditions to assume in order to design a learning algorithm with regret guarantee.
+Yet, in learning restless Markovian bandit, we believe the exponentiality in the number of arms in the regret bound of learning algorithm is not settled yet.
+The chapter terminates here.
 
 \endgroup
