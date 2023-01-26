@@ -230,7 +230,7 @@ That is, at each time step, the decision maker can stop interacting with the MDP
 So, the value of state $s$ under stationary policy $\pi$ is the expected sum of rewards over the random horizon:
 \begin{equation}
     \label{eq:discount_finite}
-    v^\pi_\gamma(s) :=\E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1=s\right] =\ex{\E^\pi\bigg[\sum_{t=1}^H r_t\mid H, s_1=s\bigg]} =\ex{w^\pi_{1:H}(s)}
+    v^\pi_\gamma(s) :=\E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1=s\right] =\ex{\E^\pi\bigg[\sum_{t=1}^H r_t\mid H, s_1=s\bigg]} =\ex{W^\pi_{1:H}(s)}
 \end{equation}
 where the expectation of the fourth term integrates over the randomness of the horizon $H$ whose expected value is $1/(1-\gamma)$.
 

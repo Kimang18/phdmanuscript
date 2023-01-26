@@ -5,6 +5,8 @@
 \chapter{Reinforcement Learning}
 \label{ch:rl}
 
+\KK{change $n$ to $N$}
+
 In the previous chapter, we used the formalism of MDPs to describe how a decision maker interacts with its environment.
 Depending on the chosen optimality criterion, we explained how an optimal policy can be obtained when the parameters of the MDP are fully known.
 In this chapter, we consider the case when the MDP's parameters are \textbf{unknown} and need to be learned by the decision maker via trial and error.
@@ -473,7 +475,7 @@ For the sake of completeness, we recall the result of \cite{jaksch2010near} for 
     \label{ch:rl:prop:uclr2}
     For any communicating MDP $M$ with $S$ states, $A$ actions and diameter $D$, with probability at least $1-\delta$, it holds that for any $T>1$, the regret of UCRL2 is bounded by
     \begin{align*}
-        \Reg(\mathrm{UCRL2}, M, T) \le 34DS\sqrt{AT\ln\Bigl(\frac{T}{\delta}\Bigr)}.
+        \Reg(\textnormal{UCRL2}, M, T) \le 34DS\sqrt{AT\ln\Bigl(\frac{T}{\delta}\Bigr)}.
     \end{align*}
 \end{prop}
 Compare to Proposition~\ref{prop:minimax_rg_lb}, the upper bound in Proposition~\ref{ch:rl:prop:uclr2} is loose by a factor $\sqrt{DS}$ ignoring the logarithmic term.
@@ -522,7 +524,7 @@ UCBVI enjoys the following worst-case regret guarantee.
     In finite horizon setting with horizon $H$, for any unknown MDP $M$ with $S$ states and $A$ actions,
     with probability at least $1-\delta$, it holds that the regret of UCBVI is bounded by
     \begin{align*}
-        \Reg(\mathrm{UCBVI}, M, K) \le 20H^{3/2}\sqrt{SAK}L +250H^2S^2AL^2
+        \Reg(\textnormal{UCBVI}, M, K) \le 20H^{3/2}\sqrt{SAK}L +250H^2S^2AL^2
     \end{align*}
     where $L:=\ln\Bigl(\frac{5SAKH^2}{\delta}\Bigr)$.
 \end{prop}
@@ -573,7 +575,7 @@ PSRL enjoys the following Bayesian regret guarantee.
     In finite horizon setting with horizon $H$, if $\phi$ is the prior distribution of the unknown MDP $M$ with $S$ states and $A$ actions, then
     \begin{equation}
         \label{eq:brg_psrl}
-        \BayReg(\mathrm{PSRL}, \phi, T) = \landauO\left(HS\sqrt{AT\ln\Bigl(SAT\Bigr)}\right)
+        \BayReg(\textnormal{PSRL}, \phi, T) = \landauO\left(HS\sqrt{AT\ln\Bigl(SAT\Bigr)}\right)
     \end{equation}
     where $T=KH$.
 \end{prop}
