@@ -368,42 +368,41 @@ Apart from the logarithmic terms, the lower bound provided by Theorem~\ref{thm:l
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Scalability of learning algorithms for Markovian bandits}
-%TODO
 Historically, Problem~{\ref{pb:problem_1}} was considered unresolved until \cite{gittins1979bandit} proposed Gittins indices. This is because previous solutions were based on Dynamic Programming in the global MDP which are computationally expensive. Hence, after establishing regret guarantees, we are now interested in the computational complexity of our learning algorithms, which is often disregarded in the learning literature.
 
 \subsection{MB-PSRL and MB-UCBVI are scalable}
 \label{sec:OFU}
 
-If one excludes the simulation of the MDP, the computational cost of MB-PSRL and MB-UCBVI of each episode is low. For MB-PSRL, its cost is essentially due to three components: Updating the observations, sampling from the posterior distribution and computing the optimal policy. The first two are relatively fast when the conjugate posterior has a closed form: updating the observation takes $O(1)$ at each time, and sampling from the posterior can be done in $O(nS^2)$ -- more details on posterior distributions are given in Appendix~\ref{apx:algos}. When the conjugate posterior is implicit (\emph{i.e.}, under the integral form), the computation can be higher but remains linear in the number of arms. For MB-UCBVI, the cost is due to two components: computing the bonus terms and computing the Gittins policy for the optimistic MDP. Computing the bonus is linear in the number of bandits and the length of the episode. As explained in Section~\ref{ssec:Gittins}, the computation of the Gittins index policy for a given problem can be done in $O(nS^3)$. Hence, MB-PSRL and MB-UCBVI have a regret and a runtime both linear in the number of arms.
+If one excludes the simulation of the MDP, the computational cost of MB-PSRL and MB-UCBVI of each episode is low. For MB-PSRL, its cost is essentially due to three components: Updating the observations, sampling from the posterior distribution and computing the optimal policy. The first two are relatively fast when the conjugate posterior has a closed form: updating the observation takes $O(1)$ at each time, and sampling from the posterior can be done in $O(nS^2)$ -- more details on posterior distributions are given in Appendix~\ref{apx:algos}. When the conjugate posterior is implicit (\emph{i.e.}, under the integral form), the computation can be higher but remains linear in the number of arms. For MB-UCBVI, the cost is due to two components: computing the bonus terms and computing the Gittins policy for the optimistic MDP. Computing the bonus is linear in the number of bandits and the length of the episode. As explained in Chapter~\ref{ch:mb}, the computation of the Gittins index policy for a given problem can be done in $O(nS^3)$. Hence, MB-PSRL and MB-UCBVI have a regret and a runtime both linear in the number of arms.
 
-\subsection{MB-UCRL2 is not scalable because it cannot use an Index Policy}
+\subsection{MB-UCRL2 is not scalable because it cannot use an index policy}
 \label{ssec:no-OFU}
 
 While MB-UCRL2 has a regret equivalent to the one of MB-PSRL, its computational complexity, and in particular the complexity of computing an \emph{optimistic} policy that maximizes \Eqref{eq:EVI} does not scale with $n$. Such a policy can be computed by using \emph{extended value iteration} \cite{jaksch2010near}. This computation is polynomial in the number of states of the global MDP and is therefore exponential in the number of arms, precisely $O(nS^{2n})$.
-For MB-PSRL (or MB-UCBVI), the computation is easier because the sampled (optimistic) MDP is a Markovian bandit problem. Hence, using Gittins Theorem, computing the optimal policy can be done by computing local indices. In the following, we show that it is not possible to solve \Eqref{eq:EVI} by using local indices. This suggests that MB-UCRL2 (nor any of the modifications of UCRL2's variants that would use extended value iteration) cannot be implemented efficiently.
+For MB-PSRL (or MB-UCBVI), the computation is easier because the sampled (optimistic) MDP is a rested bandit problem. Hence, using Proposition~\ref{ch:mb:prop:gidx_defn}, computing the optimal policy can be done by computing local indices. In the following, we show that it is not possible to solve \Eqref{eq:EVI} by using local indices. This suggests that MB-UCRL2 (nor any of the modifications of UCRL2's variants that would use extended value iteration) cannot be implemented efficiently.
 
-More precisely, to find an optimistic policy (that satisfies \Eqref{eq:optimism}), UCRL2 and its variants, \eg, KL-UCRL \cite{filippi2010optimism}, compute a policy $\pi_k$ that is optimal for the most optimistic MDP in $\sM_k$. This can be done by using extended value iteration. We now show that this cannot be replaced by the computation of local indices.
+More precisely, to find an optimistic policy (that satisfies \Eqref{eq:optimism}), UCRL2 and its variants, \eg, KL-UCRL \cite{filippi2010optimism}, compute a policy $\pi^k$ that is optimal for the most optimistic MDP in $\sM^k$. This can be done by using extended value iteration. We now show that this cannot be replaced by the computation of local indices.
 
-Let us consider that the estimates and confidence bounds for a given arm $a$ are $\hatB^a:=(\hat{\vr}^a,\hat{\mQ}^a,b^r_a,b^{Q}_a)$. We say that an algorithm computes indices locally for  Arm $a$ if for each $x_a\in\gS^a$, it computes an index $I^{\hatB^a}(x_a)$ by using only $\hatB^a$ but not $\hatB^{a'}$ for any $a'\ne a$. We denote by $\pi^{I(\hatB)}$ the index policy that uses index $I^{\hatB^a}$ for arm $a$ and by $\sM(\hatB)$ the set of Markovian bandit problems $M'$ that satisfy \Eqref{eq:conf_rq}.
+Let us consider that the estimates and confidence bounds for a given arm $a$ are $\hatB_a:=(\hat{\vr}_a,\hat{\mP}_a,\beta_{r},\beta_{P})$. We say that an algorithm computes indices locally for Arm $a$ if for each $s_a\in\gS_a$, it computes an index $I^{\hatB_a}(s_a)$ by using only $\hatB_a$ but not $\hatB_{b}$ for any $b\ne a$. We denote by $\pi^{I(\hatB)}$ the index policy that uses index $I^{\hatB_a}$ for arm $a$ and by $\sM(\hatB)$ the set of rested bandits $M'$ that satisfy \Eqref{eq:conf_rq}.
 \begin{thm}
     \label{thm:no_OFU}
-    For any algorithm that computes indices locally, there exists a Markovian bandit problem $M$, an initial state $\vx$ and estimates $\hatB^a:=(\hat{\vr}^a,\hat{\mQ}^a,b^r_a, b^Q_a)$ such that $M\in\sM(\hatB)$ and
+    For any algorithm that computes indices locally, there exists a rested bandit $M$, an initial state $\vs$ and estimates $\hatB_a:=(\hat{\vr}_a,\hat{\mP}_a, \beta_r, \beta_P)$ such that $M\in\sM(\hatB)$ and
     \begin{align*}
-        \sup_{M'\in\sM(\hatB)}V^{\pi^{I(\hatB)}}_{M'}(\vx) < \sup_\pi V^{\pi}_{M}(\vx).
+        \sup_{M'\in\sM(\hatB)}V^{\pi^{I(\hatB)}}_{M'}(\vs) < \sup_\pi V^{\pi}_{M}(\vs).
     \end{align*}
 \end{thm}
 \begin{proof}
     The proof presented in Appendix~\ref{apx:proof_OFU} is obtained by constructing a set $\sM$ and two MDPs $M_1$ and $M_2$ in $\sM$ such that \Eqref{eq:optimism} cannot hold simultaneously for both $M_1$ and $M_2$. 
 \end{proof}
-This theorem implies that one cannot define local indices such that \Eqref{eq:optimism} holds for all bandit problems $M\in\sM_k$. Yet, the use of this inequality is central in the regret analysis of UCRL2 (see the proof of UCRL2 \cite{jaksch2010near}). This implies that the current methodology to obtain regret bounds for UCRL2 and its variants, \eg, \cite{bourel2020tightening,fruit2018efficient,talebi2018variance,filippi2010optimism}, that use Extended Value Iteration is not applicable to bound the regret of their modified version that computes indices locally. 
+This theorem implies that one cannot define local indices such that \Eqref{eq:optimism} holds for all rested bandits $M'\in\sM^k$. Yet, the use of this inequality is central in the regret analysis of UCRL2 (see the proof of UCRL2 \cite{jaksch2010near}). This implies that the current methodology to obtain regret bounds for UCRL2 and its variants, \eg, \cite{bourel2020tightening,fruit2018efficient,talebi2018variance,filippi2010optimism}, that use Extended Value Iteration is not applicable to bound the regret of their modified version that computes indices locally. 
 
-Note that for any set $\sM$ such that $M \in \sM$, there still exists an index policy $\pi^{\mathrm{ind}}$ that is optimistic because all MDPs in $\sM$ are Markovian bandit problems. This optimistic index policy satisfies
+Note that for any set $\sM$ such that $M \in \sM$, there still exists an index policy $\pi^{\mathrm{ind}}$ that is optimistic because all MDPs in $\sM$ are rested bandits. This optimistic index policy satisfies
 \begin{align*}
   \sup_{M'\in\sM}V^{\pi^{\mathrm{ind}}}_{M'} \ge \sup_\pi V^{\pi}_{M}.
 \end{align*}
-This means that restricting to index policies is not a restriction for optimism. What Theorem~\ref{thm:no_OFU} shows is that an optimistic index policy can be defined only after the most optimistic MDP $M\in\sM$ is computed and computing optimistic policy and $M$ simultaneously depends on the confidence sets of all arms.
+This means that restricting to index policies is not a restriction for optimism. What Theorem~\ref{thm:no_OFU} shows is that an optimistic index policy can be defined only after the most optimistic MDP $M'\in\sM$ is computed and computing optimistic policy and $M'$ simultaneously depends on the confidence sets of all arms.
 
-Therefore, we  believe that UCRL2 and its variants cannot compute optimistic  policy locally: they should all require the joint knowledge of all $\{\hatB^a\}_{a\in[n]}$.
+Therefore, we  believe that UCRL2 and its variants cannot compute optimistic  policy locally: they should all require the joint knowledge of all $\{\hatB_a\}_{a\in[n]}$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -418,7 +417,7 @@ The model is an environment with 3 arms, all following a Markov chain that is ob
 We investigate the average regret and policy computation time of each algorithm.
 To do so, we run each algorithm for $80$ simulations and for $K=3000$ episodes per simulation. We arbitrarily choose the discount factor $\gamma=0.99$. In \figurename~\ref{fig:randomwalk_3b4s}, we show the average cumulative regret of the 3 algorithms. We observe that the average regret of MB-UCBVI is larger than those of MB-PSRL and MB-UCRL2.
 %This indicates that using an algorithm specifically designed for Markovian bandit problems is much more efficient.
-Moreover, we observe that MB-PSRL obtains the best performance and that its regret seems to grow slower than $O(\sqrt{K})$. This is in accordance to what was observed for PSRL \cite{osband2013more}. 
+Moreover, we observe that MB-PSRL obtains the best performance and that its regret seems to grow slower than $\landauO(\sqrt{K})$. This is in accordance to what was observed for PSRL \cite{osband2013more}. 
 Note that the expected number of time steps after $K$ episodes is $K/(1-\gamma)$ which means that in our setting with $K=3000$ episodes there are $300\,000$ time steps in average. 
 In \figurename~\ref{fig:randomwalk_cpt_3b4s}, we compare the computation time of the various algorithms. We observe that the computation time (the $y$-axis is in log-scale) of MB-PSRL and MB-UCBVI, the index-based algorithms, are the fastest by far. 
 Moreover, the computation time of these algorithms seem to be independent of the number of episodes. 
@@ -462,10 +461,10 @@ The broad implication of this work is that, on the one hand, if a weakly coupled
     \bfseries \Large Supplementary material
 \end{center}
 
-The appendix are organized as follows:
+The section is organized as follows:
 \begin{itemize}
     \item In Appendix~\ref{apx:proof_thm1}, we prove Theorem~\ref{thm:regret_upper_bound}. 
-    \item In Appendix~\ref{apx:sketch_of_proof_lower}, we obtain a Bayesian minimax regret lower bound for any reinforcement learning algorithm in Markovian bandits (Theorem~\ref{thm:lower_bound}).
+    \item In Appendix~\ref{apx:sketch_of_proof_lower}, we obtain a Bayesian minimax regret lower bound for any reinforcement learning algorithm in rested bandits (Theorem~\ref{thm:lower_bound}).
     \item In Appendix~\ref{apx:proof_OFU}, we show that \Eqref{eq:EVI} cannot be solved by local indices (Theorem~\ref{thm:no_OFU}).
     \item In Appendix~\ref{apx:algos}, we provide a detailed description of the algorithms that we use in our numerical comparisons. 
     \item In Appendix~\ref{apx:add_numerical}, we provide additional numerical experiments that show the good behavior of MB-PSRL. 
@@ -485,51 +484,51 @@ The proof of the regret bounds for our three algorithms share a common structure
 \subsection{Overview of the Proof}
 \label{ssec:overview}
 
-Let $\pi_*$ be the optimal policy of the true MDP $M$ and $\pi_k$ the optimal policy for $M_k$, the sampled MDP at episode $k$. Recall that the expected regret is $\sum_{k=1}^K \ex{\Delta_k}$, where $\Delta_k {=} W_{M,1:H_k}^{\pi_*}(\mX_{t_k}) {-} W_{M,1:H_k}^{\pi_k}(\mX_{t_k})$.
-For each of the three algorithms, we will define an event $\gE^\text{Algo}_{k-1}$ that is $\gO_{k-1}$-measurable. $\gE^\text{Algo}_{k-1}$ is true with high probability and guarantees that $M$ and $M_k$ are close.
+Let $\pi^*$ be the optimal policy of the true MDP $M$ and $\pi^k$ the optimal policy for $M^k$, the sampled MDP at episode $k$. Recall that the expected regret is $\sum_{k=1}^K \ex{\Delta^k}$, where $\Delta^k {=} W_{M,1:H^k}^{\pi^*}(\vs_{t^k}) {-} W_{M,1:H^k}^{\pi^k}(\vs_{t^k})$.
+For each of the three algorithms, we will define an event $\gE_\text{Algo}^{k}$ that is $o_{t^k}$-measurable. $\gE_\text{Algo}^{k}$ is true with high probability and guarantees that $M$ and $M^k$ are close.
 We have:
 \begin{align}
-    \ex{\Delta_k}
-    &= \ex{\Delta_k\ind{\lnot\gE_{k-1}^\text{Algo}} +\Delta_k\ind{\gE_{k-1}^\text{Algo}} } \nonumber\\
-    &\le \ex{H_k}\Proba{\lnot\gE_{k-1}^\text{Algo}} + \ex{\Delta_k \ind{\gE_{k-1}^\text{Algo}}} \label{eq:gap_overview}
+    \ex{\Delta^k}
+    &= \ex{\Delta^k\ind{\lnot\gE_\text{Algo}^{k}} +\Delta^k\ind{\gE^{k}_\text{Algo}} } \nonumber\\
+    &\le \ex{H^k}\Proba{\lnot\gE^{k}_\text{Algo}} + \ex{\Delta^k \ind{\gE^{k}_\text{Algo}}} \label{eq:gap_overview}
 \end{align}
-because $\Delta_k\le H_k$ and the random variables $H_k$ and $\ind{\gE_{k-1}^\text{Algo}}$ are independent.
-For each of the three algorithms, the policy $\pi_k$ used at episode $k$ is optimal for a model $M_k$, that is either sampled from the posterior distribution for MB-PSRL, or computed by extended value iteration for MB-UCRL2, or equal to the model with the bonus for MB-UCBVI. We have
+because $\Delta^k\le H^k$ and the random variables $H^k$ and $\ind{\gE^{k}_\text{Algo}}$ are independent.
+For each of the three algorithms, the policy $\pi^k$ used at episode $k$ is optimal for a model $M^k$, that is either sampled from the posterior distribution for MB-PSRL, or computed by extended value iteration for MB-UCRL2, or equal to the model with the bonus for MB-UCBVI. We have
 \begin{align*}
-    \Delta_k=\underbrace{W_{M,1:H_k}^{\pi_*}(\mX_{t_k}) - W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k})}_{:=\Delta^{model}_k}%
-    + \underbrace{W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k}) - W_{M,1:H_k}^{\pi_k}(\mX_{t_k})}_{:=\Delta^{conc}_k}.
+    \Delta^k=\underbrace{W_{M,1:H^k}^{\pi^*}(\vs_{t^k}) - W_{M^k,1:H^k}^{\pi^k}(\vs_{t^k})}_{:=\Delta_{model}^k}%
+    + \underbrace{W_{M^k,1:H^k}^{\pi^k}(\vs_{t^k}) - W_{M,1:H^k}^{\pi^k}(\vs_{t^k})}_{:=\Delta_{conc}^k}.
 \end{align*}
-As we deal with the expected regret and $H_k$ is independent of the model $M_k$ and of the policy $\pi_k$, we have:
+As we deal with the expected regret and $H^k$ is independent of the model $M^k$ and of the policy $\pi^k$, we have:
 \begin{align}
-    \ex{\Delta^{model}_k} = V_{M}^{\pi_*}(\mX_{t_k}) - V_{M_k}^{\pi_k}(\mX_{t_k}) \label{eq:def_model}
+    \ex{\Delta_{model}^k} = v_{M}^{\pi^*}(\vs_{t^k}) - v_{M^k}^{\pi^k}(\vs_{t^k}) \label{eq:def_model}
 \end{align}
-As we see later, the above equation can be used to show that $\ex{\Delta^{model}_k \ind{\gE_{k-1}^\text{Algo}}}$ is either $0$ (for MB-PSRL) or non-positive (for MB-UCRL2 or MB-UCBVI). 
+As we see later, the above equation can be used to show that $\ex{\Delta_{model}^k \ind{\gE^{k}_\text{Algo}}}$ is either $0$ (for MB-PSRL) or non-positive (for MB-UCRL2 or MB-UCBVI). 
 
-We are then left with $\ex{\Delta^{conc}_k \ind{\gE_{k-1}^\text{Algo}}}$. To do so, we use Lemma~\ref{lem:regret_decomposition} to show that there exists a constant $B_k$ (equal to $H_k$ for MB-PSRL and MB-UCRL2, and $H_kL_{k-1}/(2(1-\beta))$ for MB-UCBVI) such that 
+We are then left with $\ex{\Delta_{conc}^k \ind{\gE^{k}_\text{Algo}}}$. To do so, we use Lemma~\ref{lem:regret_decomposition} to show that there exists a constant $B^k$ (equal to $H^k$ for MB-PSRL and MB-UCRL2, and $H^kL^{k}/(2(1-\gamma))$ for MB-UCBVI) such that 
 \begin{align}
-    &\ex{\Delta^{conc}_k\ind{\gE_{k-1}^\text{Algo}}}=\ex{\ind{\gE_{k-1}^\text{Algo}} \Big(W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k}){-}W_{M,1:H_k}^{\pi_k}(\mX_{t_k})\Big)} \nonumber\\
-    & {\le} \mathbb{E}\left[\ind{\gE_{k-1}^\text{Algo}} \sum_{t=t_k}^{t_{k+1}{-}1}\norm{r_k(X_{t,A_t}){-}r(X_{t,A_t})}{+}B_k\norm{Q_{k}(X_{t,A_t},\cdot){-}Q(X_{t,A_t},\cdot)}_1\right] \label{eq:proof2}
+    &\ex{\Delta_{conc}^k\ind{\gE^{k}_\text{Algo}}}=\ex{\ind{\gE^{k}_\text{Algo}} \Big(W_{M^k,1:H^k}^{\pi^k}(\vs_{t^k}){-}W_{M,1:H^k}^{\pi^k}(\vs_{t^k})\Big)} \nonumber\\
+    & {\le} \mathbb{E}\left[\ind{\gE^{k}_\text{Algo}} \sum_{t=t^k}^{t^{k+1}{-}1}\abs{r^k(s_{t,a_t}){-}r(s_{t,a_t})}{+}B^k\norm{\mP^{k}(s_{t,a_t},\cdot){-}\mP(s_{t,a_t},\cdot)}_{\ell_1}\right] \label{eq:proof2}
 \end{align}
-where ${\norm{Q_{k}(x_a,\cdot)-Q(x_a,\cdot)}_1=\sum_{y_a}\norm{Q_{k}(x_a,y_a)-Q(x_a,y_a)}}$. 
-For an arm $a$ and a state $x_a\in\gS^a$, we denote\footnote{In the paper, we use the notation $\ind{E}$ to denote a random variable that equals $1$ if $E$ is true and $0$ otherwise. For instance, $\ind{Y_i=y}=1$ if $Y_i=y$ and $0$ otherwise.} by $N_{k-1}(x_a){=} \sum_{t=1}^{t_{k}-1} \ind{X_{t,A_t}=x_a}$ the number of times that Arm~$a$ is activated before episode $k$ while being in state $x_a$. \Eqref{eq:proof2} relates the performance gap to the distance between the reward functions and transition matrices of the MDPs $M$ and $M_k$. 
-With $L_K{=}\sqrt{2\log\frac{4SnK^2\log K}{1-\beta}}$, the event $\gE_{k-1}^\text{Algo}$ guarantees that for all $a, x_a$ and $ k\ge1$, 
+where ${\norm{\mP^{k}(s_a,\cdot)-\mP(s_a,\cdot)}_{\ell_1}=\sum_{s'_a}\abs{P^{k}(s_a,s'_a)-P(s_a,s'_a)}}$. 
+For an arm $a$ and a state $s_a\in\gS_a$, we denote\footnote{In the paper, we use the notation $\ind{E}$ to denote a random variable that equals $1$ if $E$ is true and $0$ otherwise. For instance, $\ind{Y_i=y}=1$ if $Y_i=y$ and $0$ otherwise.} by $N^{k}(s_a){=} \sum_{t=1}^{t^{k}-1} \ind{s_{t,a_t}=s_a}$ the number of times that Arm~$a$ is activated before episode $k$ while being in state $s_a$. \Eqref{eq:proof2} relates the performance gap to the distance between the reward functions and transition matrices of the MDPs $M$ and $M^k$. 
+With $L^K{=}\sqrt{2\ln\frac{4SnK^2\ln K}{1-\gamma}}$, the event $\gE^{k}_\text{Algo}$ guarantees that for all $a, s_a$ and $ k\ge1$, 
 \begin{align}
     \label{eq:concentration}
-    \norm{r_k(x_a){-}r(x_a)} {\le} \frac{L_K}{\sqrt{\max\{1,N_{k-1}(x_a)\}}} \text{ and }
-    \norm{Q_{k}(x_a,\cdot){-}Q(x_a, .)}_1 {\le} \frac{2L_K {+}3\sqrt{S}}{\sqrt{\max\{1,N_{k-1}(x_a)\}}}
+    \abs{r^k(s_a){-}r(s_a)} {\le} \frac{L^K}{\sqrt{\max\{1,N^{k}(s_a)\}}} \text{ and }
+    \norm{\mP^{k}(s_a,\cdot){-}\mP(s_a,\cdot)}_{\ell_1} {\le} \frac{2L^K {+}3\sqrt{S}}{\sqrt{\max\{1,N^{k}(s_a)\}}}
 \end{align}
 We use this with \Eqref{eq:proof2} to show that:
 \begin{align}
     \label{eq:proof3}
-    \sum_{k=1}^K\ex{\Delta^{conc}_k \ind{\gE^\text{Algo}_{k-1}}} &\le  \ex{C^\text{Algo}_K\sum_{k=1}^K\sum_{t=t_k}^{t_{k+1}-1}\frac{1}{\sqrt{\max\{1,N_{k-1}(x_a)\}}}},
+    \sum_{k=1}^K\ex{\Delta_{conc}^k \ind{\gE_\text{Algo}^{k}}} &\le  \ex{C_\text{Algo}^K\sum_{k=1}^K\sum_{t=t^k}^{t^{k+1}-1}\frac{1}{\sqrt{\max\{1,N^{k}(s_a)\}}}},
 \end{align}
-where $C^\text{Algo}_K$ is a random variable that depends on the algorithm studied. 
+where $C_\text{Algo}^K$ is a random variable that depends on the algorithm studied. 
 
-The final analysis takes care of the right term of \Eqref{eq:proof3} and is more technical. It uses the fact that there cannot be too many large terms in this sum because if an arm is activated many times, then $1/\sqrt{N_{k-1}(X_{t,A_t})}$ is small. 
-The main technical hurdle here is to deal with the $K$ random episodes $H_1,\ldots, H_K$. 
+The final analysis takes care of the right term of \Eqref{eq:proof3} and is more technical. It uses the fact that there cannot be too many large terms in this sum because if an arm is activated many times, then $1/\sqrt{N^{k}(s_{t,a_t})}$ is small. 
+The main technical hurdle here is to deal with the $K$ random episodes $H^1,\ldots, H^K$. 
 This is specific to our approach compared to the analysis of finite horizons. 
-To bound this, one needs to bound terms of the form $\ex{\max_{1\leq k\leq K} (H_k)^\alpha}$ with $\alpha\in\{1.5,2\}$ (see \Eqref{eq:proof_bound}). 
-To bound this, we use the geometric distribution of $H_k$ to show that $\ex{\max_{1\leq k\leq K} (H_k)^{\alpha}}=O((\frac{\log K}{1-\beta})^{\alpha})$ (see Lemma~\ref{lem:moment}).
+To bound this, one needs to bound terms of the form $\ex{\max_{1\leq k\leq K} (H^k)^\alpha}$ with $\alpha\in\{1.5,2\}$ (see \Eqref{eq:proof_bound}). 
+To bound this, we use the geometric distribution of $H^k$ to show that $\ex{\max_{1\leq k\leq K} (H^k)^{\alpha}}=\landauO\bigl((\frac{\ln K}{1-\gamma})^{\alpha}\bigr)$ (see Lemma~\ref{lem:moment}).
 
 \subsection{Technical lemmas common to the three algorithms}
 \label{ssec:technical_lemmas}
@@ -537,163 +536,163 @@ To bound this, we use the geometric distribution of $H_k$ to show that $\ex{\max
 In this section, we establish a series of lemmas that are true for any learning algorithm used. They show that:
 \begin{itemize}
     \item The estimates $\hat{r}$ and $\hat{Q}$ concentrates on their true values (Lemma~\ref{lem:concentration});
-    \item One can transform $\Delta^{conc}_k$ into \Eqref{eq:proof2} (Lemma~\ref{lem:regret_decomposition});
+    \item One can transform $\Delta_{conc}^k$ into \Eqref{eq:proof2} (Lemma~\ref{lem:regret_decomposition});
     \item The sum \Eqref{eq:proof3} can be analyzed (Lemma~\ref{lem:sum}).
 \end{itemize}
 
 \subsubsection{High Probability Events}
 
-Recall that $\gO_{k-1}$ are the observations collected by the decision maker before episode $k$. Based on $\gO_{k-1}$, we compute the empirical estimators of reward vector and transition matrix as the following: For all $a\in[n]$ and any $x_a\in\gS^a$, let $N_{k-1}(x_a)=\sum_{t=1}^{t_{k}-1}\ind{X_{t,A_t}=x_a}$ be the number of times so far that an arm $a$ was activated in state $x_a$ (at episode $1$, we have ${N_0(x_a)=0}$).
-Recall that $t_{k}{:=} 1 {+}\sum_{i=1}^{k-1}H_i$, and that $\hat{r}_{k-1}$ and $\hat{Q}_{k-1}$ are the empirical mean reward vector and transition matrix. More precisely, $\hat{r}_{k-1}(x_a)$ is the empirical mean reward earned when arm $a$ is chosen while being in state $x_a$:
+Recall that $o_{t^k}$ are the observations collected by the decision maker before episode $k$. Based on $o_{t^k}$, we compute the empirical estimators of reward vector and transition matrix as the following: For all $a\in[n]$ and any $s_a\in\gS_a$, let $N^{k}(s_a)=\sum_{t=1}^{t^{k}-1}\ind{s_{t,a_t}=s_a}$ be the number of times so far that an arm $a$ was activated in state $s_a$ (at episode $1$, we have ${N^1(s_a)=0}$).
+Recall that $t^{k}{:=} 1 {+}\sum_{i=1}^{k-1}H^i$, and that $\hat{\vr}^{k}$ and $\hat{\mP}^{k}$ are the empirical mean reward vector and transition matrix. More precisely, $\hat{r}^{k}(s_a)$ is the empirical mean reward earned when arm $a$ is chosen while being in state $s_a$:
 \begin{align*}
-    \hat{r}_{k-1}(x_a) = \frac{1}{N_{k-1}(x_a)}\sum_{t=1}^{t_{k}-1} R_t\ind{A_t=a \land X_{t,A_t}=x_a},
+    \hat{r}^{k}(s_a) = \frac{1}{N^{k}(s_a)}\sum_{t=1}^{t^{k}-1} r_t\ind{a_t=a \land s_{t,a_t}=s_a},
 \end{align*}
-and $\hat{Q}_{k-1}(x_a,y_a)$ is the fraction of times that arm $a$ moved from $x_a$ to $y_a$:
+and $\hat{P}^{k}(s_a,s'_a)$ is the fraction of times that arm $a$ moved from $s_a$ to $s'_a$:
 \begin{align*}
-    \hat{Q}_{k-1}(x_a,y_a) = \frac{1}{N_{k-1}(x_a)}\sum_{t=1}^{t_{k}-1} \ind{A_t=a \land X_{t,A_t}=x_a \land X_{t+1,A_t}=y_a}.
+    \hat{P}^{k}(s_a,s'_a) = \frac{1}{N^{k}(s_a)}\sum_{t=1}^{t^{k}-1} \ind{a_t=a \land s_{t,a_t}=s_a \land s_{t+1,a_t}=s'_a}.
 \end{align*}
 
 We design confidence sets similar to \cite{jaksch2010near,bartlett2012regal}.
 
 \begin{lem}
     \label{lem:concentration}
-    For any $k\le K$, let $L_{k-1}=\sqrt{2\log\left(2SnK(k-1)\frac{\log(K(k-1))}{1-\beta}\right)}$. Let
+    For any $k\le K$, let $L^{k}=\sqrt{2\ln\left(2SnK(k-1)\frac{\ln(K(k-1))}{1-\gamma}\right)}$. Let
     \begin{align}
-        \gE_{k-1}^H&:= \bigg\{\forall k'\le k{-}1{:} H_{k'}\le \frac{\log(K(k-1))}{1-\beta}\bigg\} \label{eq:conc_h}\\
-        \gE_{k-1}^r&:= \bigg\{\forall a\in[n], x_a\in\gS^a, k'\le k{-}1{:} \norm{\hat{r}_{k'}(x_a){-}r(x_a)} \le \frac{L_{k-1}}{2\sqrt{\max\{1,N_{k'}(x_a)\}}}\bigg\} \label{eq:conc_r} \\
-        \gE_{k-1}^Q&:= \bigg\{\forall a\in[n], x_a\in\gS^a, k'\le k{-}1{:} \norm{\hat{Q}_{k'}(x_a,\cdot){-}Q(x_a, \cdot)}_1 \le \frac{L_{k-1}{+}1.5\sqrt{S}}{\sqrt{\max\{1,N_{k'}(x_a)\}}}\bigg\}. \label{eq:conc_q} \\
-        \gE_{k-1}^V&:= \bigg\{\forall a\in[n], \vx\in\gE, k'\le k{-}1{:} |\hat{r}_{k'}(x_a){-}r(x_a) \nonumber \\
-                   &\qquad +\beta \sum_{\vy}(\hat{P}_{k'}^a(\vx,\vy) {-}P^a(\vx,\vy))V_M^{\pi_*}(\vy)|
-        \le \frac{L_{k-1}}{2(1-\beta)\sqrt{\max\{1,N_{k'}(x_a)\}}}\bigg\} \label{eq:conc_V}
+        \gE^{k}_H&:= \bigg\{\forall k'< k{:} H^{k'}\le \frac{\ln(K(k-1))}{1-\gamma}\bigg\} \label{eq:conc_h}\\
+        \gE^{k}_r&:= \bigg\{\forall a\in[n], s_a\in\gS_a, k'< k{:} \abs{\hat{r}^{k'}(s_a){-}r(s_a)} \le \frac{L^{k}}{2\sqrt{\max\{1,N^{k'}(s_a)\}}}\bigg\} \label{eq:conc_r} \\
+        \gE^{k}_P&:= \bigg\{\forall a\in[n], s_a\in\gS_a, k'< k{:} \norm{\hat{\mP}^{k'}(s_a,\cdot){-}\mP(s_a, \cdot)}_{\ell_1} \le \frac{L^{k}{+}1.5\sqrt{S}}{\sqrt{\max\{1,N^{k'}(s_a)\}}}\bigg\} \label{eq:conc_q} \\
+        \gE^{k}_v&:= \bigg\{\forall a\in[n], \vs\in\gX, k'< k{:} \Bigl\vert\hat{r}^{k'}(s_a){-}r(s_a) \nonumber \\
+                   &\quad +\gamma \sum_{\vs'\in\gX}\Bigl(\hat{p}^{k'}(\vs' \mid\vs, a) {-}p(\vs'\mid\vs,a)\Bigr)v_M^{\pi^*}(\vs')\Bigr\vert
+        \le \frac{L^{k}}{2(1-\gamma)\sqrt{\max\{1,N^{k'}(s_a)\}}}\bigg\} \label{eq:conc_V}
     \end{align}
-    Then, the above events are all $\gO_{k-1}$-measurable. Moreover:
+    Then, the above events are all $o_{t^k}$-measurable. Moreover:
     \begin{align*}
-        &\Proba{\lnot\gE_{k-1}^H}\le1/K \\ 
-        &\Proba{\lnot \gE_{k-1}^r }\le 2/K \\
-        &\Proba{\lnot \gE_{k-1}^Q }\le 2/K \\
-        &\Proba{\lnot \gE_{k-1}^V }\le 2/K.
+        &\Proba{\lnot\gE^{k}_H}\le1/K \\ 
+        &\Proba{\lnot \gE^{k}_r }\le 2/K \\
+        &\Proba{\lnot \gE^{k}_P }\le 2/K \\
+        &\Proba{\lnot \gE^{k}_v }\le 2/K.
     \end{align*} 
 \end{lem}
 
 \begin{proof}
-    For event $\gE_{k-1}^H$, since $\{H_{k'}\}_{k'\le k{-}1}$ are i.i.d. and geometrically distributed with parameter $(1-\beta)$, we have that
+    For event $\gE^{k}_H$, since $\{H^{k'}\}_{k'< k}$ are i.i.d. and geometrically distributed with parameter $(1-\gamma)$, we have that
     \begin{align*}
-        \Proba{\exists k'\le k-1: H_{k'}>\epsilon} \le \sum_{k'=1}^{k-1} \Proba{H_{k'}>\epsilon} =(k-1)\beta^{\lfloor \epsilon\rfloor}.
+        \Proba{\exists k'< k: H^{k'}>\epsilon} \le \sum_{k'=1}^{k-1} \Proba{H^{k'}>\epsilon} =(k-1)\gamma^{\lfloor \epsilon\rfloor}.
     \end{align*}
-    Then, with $\epsilon=\frac{\log(1/(K(k-1)))}{\log(\beta)}$, we get $\Proba{\exists k'\le k{-}1: H_{k'}>\epsilon}\le 1/K$.
+    Then, with $\epsilon=\frac{\ln(1/(K(k-1)))}{\ln(\gamma)}$, we get $\Proba{\exists k'<k: H^{k'}>\epsilon}\le 1/K$.
     Moreover,
     \begin{align*}
-        \epsilon = \frac{\log(1/(K(k-1)))}{\log(\beta)}= \frac{\log(K(k-1))}{\log(1/\beta)} < \frac{\log(K(k-1))}{1-\beta}.
+        \epsilon = \frac{\ln(1/(K(k-1)))}{\ln(\gamma)}= \frac{\ln(K(k-1))}{\ln(1/\gamma)} < \frac{\ln(K(k-1))}{1-\gamma}.
     \end{align*}
-    Then, $\Proba{\exists k'\le k{-}1: H_{k'}>\frac{\log(K(k-1))}{1-\beta}}\le 1/K$.
+    Then, $\Proba{\exists k'< k: H^{k'}>\frac{\ln(K(k-1))}{1-\gamma}}\le 1/K$.
 
-    Let $\tau_k = (k-1)\frac{\log(K(k-1))}{1-\beta}$. Under event $\gE_{k-1}^H$, the random variable $t_k$ is upper bounded by the deterministic quantity $\tau_k$. In what follows, we assume that event $\gE_{k-1}^H$ holds.
+    Let $\tau^k = (k-1)\frac{\ln(K(k-1))}{1-\gamma}$. Under event $\gE^{k}_H$, the random variable $t^k$ is upper bounded by the deterministic quantity $\tau^k$. In what follows, we assume that event $\gE^{k}_H$ holds.
 
-    For event $\gE_{k-1}^r$, let $\tilde{r}_\ell(x_a)$ be a random variable that is the empirical mean of $\ell$ i.i.d. realization of the reward when the arm in state $x_a$ is chosen. In particular, ${\hat{r}_{k-1}(x_a) = \tilde{r}_{N_{k{-}1}(x_a)}(x_a)}$. By Hoeffding's inequality, for any $\epsilon>0$, one has:
+    For event $\gE^{k}_r$, let $\tilde{r}_\ell(s_a)$ be a random variable that is the empirical mean of $\ell$ i.i.d. realizations of the reward when the arm in state $s_a$ is chosen. In particular, ${\hat{r}^{k}(s_a) = \tilde{r}_{N^{k}(s_a)}(s_a)}$. By Hoeffding's inequality, for any $\epsilon>0$, one has:
     \begin{align*}
-        \Proba{\norm{\tilde{r}_\ell(x_a) - r(x_a)} \ge \epsilon  } \le 2 e^{-2 \ell\epsilon^2}.
+        \Proba{\abs{\tilde{r}_\ell(s_a) - r(s_a)} \ge \epsilon  } \le 2 e^{-2 \ell\epsilon^2}.
     \end{align*}
-    In particular, this holds for $\epsilon=\sqrt{\frac{\log (2SnK\tau_k)}{2\ell}}$. As $N_{k-1}(x_a)< \tau_k$, by using the union-bound, this implies that: 
+    In particular, this holds for $\epsilon=\sqrt{\frac{\ln (2SnK\tau^k)}{2\ell}}$. As $N^{k}(s_a)< \tau^k$, by using the union-bound, this implies that: 
     \begin{align}
-        &\Proba{\gE_{k-1}^H \land \exists a, x_a, k'\le k{-}1: \norm{\hat{r}_{k'}(x_a) - r(x_a)} \ge \sqrt{\frac{\log (2SnK\tau_k)}{2N_{k'}(x_a)}}}\label{eq:estR_k}\\
-        &\qquad\le \sum_{a}\sum_{x_a}\Proba{\exists \ell\in\{1,\dots,\tau_k-1\}: \norm{\tilde{r}_{\ell}(x_a) - r(x_a)} \ge \sqrt{\frac{\log (2SnK\tau_k)}{2\ell}}}\nonumber\\
-        &\qquad\le \sum_{\ell=1}^{\tau_k}\sum_a\sum_{x_a}\Proba{\norm{\tilde{r}_{\ell}(x_a) - r(x_a)} \ge \sqrt{\frac{\log (2SnK\tau_k)}{2\ell}}}\nonumber\\
-        &\qquad\le  n S \sum_{\ell=1}^{\tau_k} 2e^{-2 \ell \frac{\log (2SnK\tau_k)}{2\ell}} =1/K,\nonumber
+        &\Proba{\gE^{k}_H \land \exists a, s_a, k'< k: \abs{\hat{r}^{k'}(s_a) - r(s_a)} \ge \sqrt{\frac{\ln (2SnK\tau^k)}{2N^{k'}(s_a)}}}\label{eq:estR_k}\\
+        &\qquad\le \sum_{a}\sum_{s_a}\Proba{\exists \ell\in\{1,\dots,\tau^k-1\}: \abs{\tilde{r}_{\ell}(s_a) - r(s_a)} \ge \sqrt{\frac{\ln (2SnK\tau^k)}{2\ell}}}\nonumber\\
+        &\qquad\le \sum_{\ell=1}^{\tau^k}\sum_a\sum_{s_a}\Proba{\abs{\tilde{r}_{\ell}(s_a) - r(s_a)} \ge \sqrt{\frac{\ln (2SnK\tau^k)}{2\ell}}}\nonumber\\
+        &\qquad\le  n S \sum_{\ell=1}^{\tau^k} 2e^{-2 \ell \frac{\ln (2SnK\tau^k)}{2\ell}} =1/K,\nonumber
     \end{align}
-    where the second and third  line is the union on all possible events $N_{k'}(x_a){=}\ell$ for all ${\ell{\in}\{1,\dots, \tau_k-1\}}$.
-    In total this says $\Proba{\gE_{k-1}^H\land \lnot \gE_{k-1}^r}\le 1/K$.
-    Now, $\lnot \gE_{k-1}^r {=}(\gE_{k-1}^H \land \lnot \gE_{k-1}^r) \lor (\lnot \gE_{k-1}^H \land \lnot \gE_{k-1}^r)$.
+    where the second and third  line is the union on all possible events $N^{k'}(s_a){=}\ell$ for all ${\ell{\in}\{1,\dots, \tau^k-1\}}$.
+    In total this says $\Proba{\gE^{k}_H\land \lnot \gE^{k}_r}\le 1/K$.
+    Now, $\lnot \gE^{k}_r {=}(\gE^{k}_H \land \lnot \gE^{k}_r) \lor (\lnot \gE^{k}_H \land \lnot \gE^{k}_r)$.
     Then, using union bound,
     \begin{align*}
-        \Proba{\lnot \gE_{k-1}^r}
-        &\le \Proba{\lnot \gE_{k-1}^r \land \gE_{k-1}^H} + \Proba{\lnot \gE_{k-1}^r \land \lnot \gE_{k-1}^H} \\
-        &\le \Proba{\lnot \gE_{k-1}^r \land \gE_{k-1}^H} + \Proba{\lnot \gE_{k-1}^H} \le 2/K
+        \Proba{\lnot \gE^{k}_r}
+        &\le \Proba{\lnot \gE^{k}_r \land \gE^{k}_H} + \Proba{\lnot \gE^{k}_r \land \lnot \gE^{k}_H} \\
+        &\le \Proba{\lnot \gE^{k}_r \land \gE^{k}_H} + \Proba{\lnot \gE^{k}_H} \le 2/K
     \end{align*}
 
-    The event $\gE_{k-1}^Q$ is similar but by using Weissman's inequality \cite{weissman2003inequalities} instead of Hoeffding's bound. Indeed, by using Equation~(8) in Theorem~2.1 of \cite{weissman2003inequalities}, if $N_{k-1}(x_a)$ was not a random variable, one would have 
+    The event $\gE^{k}_P$ is similar but by using Weissman's inequality \cite{weissman2003inequalities} instead of Hoeffding's bound. Indeed, by using Equation~(8) in Theorem~2.1 of \cite{weissman2003inequalities}, if $N^{k}(s_a)$ was not a random variable, one would have 
     \begin{align*}
-        \Proba{\norm{\hat{Q}_{k-1}(x_a,\cdot){-}Q(x_a,\cdot)}_1\ge \epsilon} \le 2^S e^{- N_{k-1}(x_a) \epsilon^2/2}.
+        \Proba{\norm{\hat{\mP}^{k}(s_a,\cdot){-}\mP(s_a,\cdot)}_{\ell_1}\ge \epsilon} \le 2^S e^{- N^{k}(s_a) \epsilon^2/2}.
     \end{align*}
-    Following the same approach as for \Eqref{eq:estR_k} with $\epsilon=\sqrt{2\log(SnK\tau_k2^S)/N_{k-1}(x_a)}$, we use the union-bound to show that:
+    Following the same approach as for \Eqref{eq:estR_k} with $\epsilon=\sqrt{2\ln(SnK\tau^k2^S)/N^{k}(s_a)}$, we use the union-bound to show that:
     \begin{align*}
-        &\Proba{\gE_{k-1}^H\land\exists a, x_a, k'{\le}k{-}1: \norm{\hat{Q}_{k'}(x_a,\cdot){-}Q(x_a,\cdot)}_1 {\ge} \sqrt{\frac{2\log(SnK\tau_k 2^S)}{N_{k'}(x_a)}}} \\
-        &\qquad \le \tau_k n S 2^Se^{ -N_{k'}(x_a)\frac{2\log(SnK\tau_k2^S)}{2N_{k'}(x_a)}} = 1/K.
+        &\Proba{\gE^{k}_H\land\exists a, x_a, k'<k: \norm{\hat{\mP}^{k'}(s_a,\cdot){-}\mP(s_a,\cdot)}_{\ell_1} {\ge} \sqrt{\frac{2\ln(SnK\tau^k 2^S)}{N^{k'}(s_a)}}} \\
+        &\qquad \le \tau^k n S 2^Se^{ -N^{k'}(s_a)\frac{2\ln(SnK\tau^k2^S)}{2N^{k'}(s_a)}} = 1/K.
     \end{align*}
-    By definition of $L_{k-1}=\sqrt{2\log(2SnK\tau_k)}$ and since $\sqrt{x+y}\le\sqrt{x}+\sqrt{y}$, we have
+    By definition of $L^{k}=\sqrt{2\ln(2SnK\tau^k)}$ and since $\sqrt{x+y}\le\sqrt{x}+\sqrt{y}$, we have
     \begin{align*}
-      \sqrt{2\log(SnK\tau_k2^S)}
-      &=\sqrt{2\log(2SnK\tau_k) {+} 2(S-1)\log 2}\\
-      & \le L_{k-1} +\sqrt{2(S-1)\log2} \le L_{k-1} + 1.5\sqrt{S}.
+      \sqrt{2\ln(SnK\tau^k2^S)}
+      &=\sqrt{2\ln(2SnK\tau^k) {+} 2(S-1)\ln 2}\\
+      & \le L^{k} +\sqrt{2(S-1)\ln2} \le L^{k} + 1.5\sqrt{S}.
     \end{align*}
     Hence: 
     \begin{align*}
-        &\Proba{\gE_{k-1}^H\land\exists a, x_a, k'\le k{-}1: \norm{\hat{Q}_{k'}(x_a,\cdot)-Q_{}(x_a,\cdot)}_1 \ge \frac{L_{k-1}+1.5\sqrt{S}}{\sqrt{N_{k'}(x_a)}}} \le 1/K.
+        &\Proba{\gE^{k}_H\land\exists a, s_a, k'< k: \norm{\hat{\mP}^{k'}(s_a,\cdot)-\mP(s_a,\cdot)}_{\ell_1} \ge \frac{L^{k}+1.5\sqrt{S}}{\sqrt{N^{k'}(s_a)}}} \le 1/K.
     \end{align*}
-    As done for $\gE^r_{k-1}$, we have $\lnot \gE_{k-1}^Q {=}(\gE_{k-1}^H \land \lnot \gE_{k-1}^Q) \lor (\lnot \gE_{k-1}^H \land \lnot \gE_{k-1}^Q)$. With the same process, we get $\Proba{\lnot \gE_{k-1}^Q}\le 2/K$.
+    As done for $\gE_r^{k}$, we have $\lnot \gE^{k}_P {=}(\gE^{k}_H \land \lnot \gE^{k}_P) \lor (\lnot \gE^{k}_H \land \lnot \gE^{k}_P)$. With the same process, we get $\Proba{\lnot \gE^{k}_P}\le 2/K$.
         
-    For event $\gE_{k-1}^V$, we have that $\hat{r}_{k-1}+\hat{P}_{k-1}V_M^{\pi_*}$ is the empirical mean of $r+PV_M^{\pi_*}$.
-    This is because $V_M^{\pi_*}$ is deterministic and $\hat{r}_{k-1}$ and $\hat{P}_{k-1}$ are empirical mean of $r$ and $P$ respectively.
-    Using Hoeffding's inequality and following the same approach above, we have $\Proba{\neg \gE_{k-1}^V}\le 2/K$.
+    For event $\gE^{k}_v$, we have that $\hat{r}^{k}+\gamma\hat{p}^{k}v_M^{\pi^*}$ is the empirical mean of $r+\gamma p v_M^{\pi^*}$.
+    This is because $v_M^{\pi^*}$ is deterministic and $\hat{r}^{k}$ and $\hat{p}^{k}$ are empirical mean of $r$ and $p$ respectively.
+    Using Hoeffding's inequality and following the same approach above, we have $\Proba{\neg \gE^{k}_v}\le 2/K$.
 \end{proof}
-Note that Lemma~\ref{lem:concentration} is about the statistical properties of the observations $\gO_{k-1}$ in the observation space.
+Note that Lemma~\ref{lem:concentration} is about the statistical properties of the observations $o_{t^k}$ in the observation space.
 These properties are true for any learning algorithms.
 In fact, we will combine different events of this lemma to bound the regret of our algorithm accordingly.
 
 \subsubsection{Concentration Gap}
 
-At episode $k$, our algorithms believe that the unknown MDP $M$ is the MDP $M_k$.
-For Bayesian algorithms, $M_k$ is sampled from posterior distribution while for optimistic algorithms, $M_k$ is chosen with respect to optimism principle.
-The algorithms follow the policy $\pi_k$ that is optimal for $M_k$.
-Recall that $W^{\pi_k}_{M,1:H_k}(\vx)$ is the expected reward of the MDP $M$ under policy $\pi_k$, starts in state $\vx$ and lasts for $H_k$ time steps and the expected cumulative discounted reward in $M$ starting from state $\vx$ under policy $\pi_k$ is $V_{M}^{\pi_k}(\vx){=}\mathbb{E}[W^{\pi_k}_{M, 1:H_k}(\vx)]$ where $H_k\sim \mathrm{Geom}(1-\beta)$ is the horizon of episode $k$.
+At episode $k$, our algorithms believe that the unknown MDP $M$ is the MDP $M^k$.
+For Bayesian algorithms, $M^k$ is sampled from posterior distribution while for optimistic algorithms, $M^k$ is chosen with respect to optimism principle.
+The algorithms follow the policy $\pi^k$ that is optimal for $M^k$.
+Recall that $W^{\pi^k}_{M,1:H^k}(\vs)$ is the expected reward of the MDP $M$ under policy $\pi^k$, starts in state $\vs$ and lasts for $H^k$ time steps and the expected cumulative discounted reward in $M$ starting from state $\vs$ under policy $\pi^k$ is $v_{M}^{\pi^k}(\vs){=}\mathbb{E}[W^{\pi^k}_{M, 1:H^k}(\vs)]$ where $H^k\sim \mathrm{Geom}(1-\gamma)$ is the horizon of episode $k$.
 
 \begin{lem}
     \label{lem:regret_decomposition}
-    For episode $k$, let $B_k\in\R^+$ be an upper bound\footnote{We will use $B_k=H_k$ for MB-PSRL and MB-UCRL2, and $B_k=H_kL_{k-1}/(2(1-\beta))$ for MB-UCBVI.} of $W_{M_k,1:H_k}^{\pi_k}(\vx)$, i.e., a constant $B_k$ such that for any $\vx\in\gE$, $W_{M_k,1:H_k}^{\pi_k}(\vx)\le B_k$. We have,
+    For episode $k$, let $B^k\in\R^+$ be an upper bound\footnote{We will use $B^k=H^k$ for MB-PSRL and MB-UCRL2, and $B^k=H^kL^{k}/(2(1-\gamma))$ for MB-UCBVI.} of $W_{M^k,1:H^k}^{\pi^k}(\vs)$, i.e., a constant $B^k$ such that for any $\vs\in\gX$, $W_{M^k,1:H^k}^{\pi^k}(\vs)\le B^k$. We have,
     \begin{align}
         \label{eq:lem_decompo}
-        &\ex{ \Delta_k^{conc} {\mid} \gO_{k-1}, H_k, M_k, M} {=} \ex{ W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k}){-}W_{M,1:H_k}^{\pi_k}(\mX_{t_k}) {\mid} \gO_{k-1}, H_k, M_k, M}\nonumber \\
-        &{\le}\mathbb{E}\bigg[\sum_{t=t_k}^{t_{k+1}-1}\norm{r_k(X_{t,A_t}){-}r(X_{t,A_t})}
-        {+}B_k\norm{Q_{k}(X_{t,A_t},\cdot){-}Q(X_{t,A_t},\cdot)}_1 {\mid} \gO_{k-1}, H_k, M_k, M\bigg]
+        &\ex{ \Delta^k_{conc} {\mid} o_{t^k}, H^k, M^k, M} {=} \ex{ W_{M^k,1:H^k}^{\pi^k}(\vs_{t^k}){-}W_{M,1:H^k}^{\pi^k}(\vs_{t^k}) {\mid} o_{t^k}, H^k, M^k, M}\nonumber \\
+        &{\le}\mathbb{E}\bigg[\sum_{t=t^k}^{t^{k+1}-1}\abs{r^k(s_{t,a_t}){-}r(s_{t,a_t})}
+        {+}B^k\norm{\mP^{k}(s_{t,a_t},\cdot){-}\mP(s_{t,a_t},\cdot)}_{\ell_1} {\mid} o_{t^k}, H^k, M^k, M\bigg]
     \end{align}
 \end{lem}
 
 \begin{proof}
-    From \Eqref{eq:discounted_reward} with $a=\pi_k(\vx)$,
+    From \Eqref{eq:discounted_reward} with $a=\pi^k(\vs)$,
     \begin{align}
-        W^{\pi_k}_{M, 1:H_k}(\vx) 
-        &=r(x_a) + \sum_{\vy} P^{\pi_k}(\vx, \vy)W^{\pi_k}_{M,2:H_k}(\vy) \label{eq:decompo2}
+        W^{\pi^k}_{M, 1:H^k}(\vs) 
+        &=r(s_a) + \sum_{\vs'} p(\vs' \mid \vs,a)W^{\pi^k}_{M,2:H^k}(\vs'). \label{eq:decompo2}
     \end{align}
-    where $P^{\pi_k}$ is the state transition dynamic of the system when following the policy $\pi_k$. Comparing the sampled MDP $M_k$ with the original $M$ and using \Eqref{eq:decompo2}, one has
+    Comparing the sampled MDP $M^k$ with the original $M$ and using \Eqref{eq:decompo2}, one has
     \begin{align}
-        W^{\pi_k}_{M_k, 1:H_k}(\vx) {-} W^{\pi_k}_{M, 1:H_k}(\vx)
-        &= r_k(x_a) {-} r(x_a) \nonumber \\
-        &{+} \sum_{\vy} P_k^{\pi_k}(\vx, \vy)W^{\pi_k}_{M_k, 2:H_k}(\vy) {-} \sum_{\vy} P^{\pi_k}(\vx, \vy)W^{\pi_k}_{M, 2:H_k}(\vy) \label{eq:depend_S}.
+        W^{\pi^k}_{M^k, 1:H^k}(\vs) {-} W^{\pi^k}_{M, 1:H^k}(\vs)
+        &= r^k(s_a) {-} r(s_a) \nonumber \\
+        &{+} \sum_{\vs'} p^k(\vs'\mid \vs,a)W^{\pi^k}_{M^k, 2:H^k}(\vs') {-} \sum_{\vs'} p(\vs' \mid \vs,a)W^{\pi^k}_{M,2:H^k}(\vs') \label{eq:depend_S}.
     \end{align}
-    Note that in the above equation, the last term is of the form $P_k^{\pi_k}W^{\pi_k}_{M_k} {-}P^{\pi_k}W^{\pi_k}_{M}$, which is equal to $(P_k^{\pi_k} {-}P^{\pi_k})W^{\pi_k}_{M_k} {+}P^{\pi_k}(W^{\pi_k}_{M_k} {-}W^{\pi_k}_{M})$. Moreover, $W_{M_k}^{\pi_k}$ is less than $B_k$.
+    Note that in the above equation, the last term is of the form $p^kW^{\pi^k}_{M^k} {-}pW^{\pi^k}_{M}$, which is equal to $(p^k {-}p)W^{\pi^k}_{M^k} {+}p(W^{\pi^k}_{M^k} {-}W^{\pi^k}_{M})$. Moreover, $W_{M_k}^{\pi_k}$ is less than $B_k$.
     Plugging this to the above equation shows that:
     \begin{align*}
-        &W^{\pi_k}_{M_k, 1:H_k}(\vx) {-} W^{\pi_k}_{M, 1:H_k}(\vx) \\
-        &\quad\le \norm{r_k(x_a) {-} r(x_a)} {+} B_k\sum_{\vy}\norm{P_k^{\pi_k}(\vx, \vy) {-} P^{\pi_k}(\vx, \vy)}\\
-        &\qquad {+} \sum_{\vy} P^{\pi_k}(\vx, \vy)(W^{\pi_k}_{M_k, 2:H_k}(\vy) {-} W^{\pi_k}_{M, 2:H_k}(\vy))\\
-        &\quad {=}\norm{r_k(x_a) {-} r(x_a)} {+} B_k\norm{P_k^{\pi_k}(\vx,\cdot){-}P^{\pi_k}(\vx,\cdot)}_1 {+} D^{M_k,M}_{H_k}(\vx) \\
-        &\qquad {+}W^{\pi_k}_{M_k, 2:H_k}(\mX_1) {-} W^{\pi_k}_{M, 2:H_k}(\mX_1)
+        &W^{\pi^k}_{M^k, 1:H^k}(\vs) {-} W^{\pi^k}_{M, 1:H^k}(\vs) \\
+        &\quad\le \abs{r^k(s_a) {-} r(s_a)} {+} B^k\sum_{\vs'}\abs{p^k(\vs'\mid \vs,a) {-} p(\vs' \mid \vs,a)}\\
+        &\qquad {+} \sum_{\vs'} p(\vs' \mid \vs,a)\Bigl(W^{\pi^k}_{M^k, 2:H^k}(\vs') {-} W^{\pi^k}_{M, 2:H^k}(\vs')\Bigr)\\
+        &\quad {=}\abs{r^k(s_a) {-} r(s_a)} {+} B^k\norm{\vp^k(\cdot\mid \vs,a) {-} \vp(\cdot \mid \vs,a)}_{\ell_1} {+} D^{M^k,M}_{H^k}(\vs) \\
+        &\qquad {+}W^{\pi^k}_{M^k, 2:H^k}(\vs_2) {-} W^{\pi^k}_{M, 2:H^k}(\vs_2)
     \end{align*}
-    where $D^{M_k,M}_{H_k}(\vx){:=} \sum_{\vy}P^{\pi_k}(\vx, \vy)(W^{\pi_k}_{M_k, 2:H_k}(\vy) {-} W^{\pi_k}_{M, 2:H_k}(\vy)) {-}(W^{\pi_k}_{M_k, 2:H_k}(\mX_1) {-} W^{\pi_k}_{M, 2:H_k}(\mX_1))$.
-    Note that in the equation above, $D^{M_k,M}_{H_k}(\vx)$ is a martingale difference with ${\mX_1\sim P^{\pi_k}(\vx,\cdot)}$.
-    Hence, the expected value of the martingale difference sequence  is zero.
-    As only arm $a$ makes a transition, we have $\norm{P_k^{\pi_k}(\vx,\cdot)-P^{\pi_k}(\vx,\cdot)}_1=\norm{Q_{k}(x_a,\cdot)-Q(x_a,\cdot)}_1$. Hence, a direct induction shows that \Eqref{eq:lem_decompo} holds.
+    where $D^{M^k,M}_{H^k}(\vs){:=} \sum_{\vs'}p(\vs' \mid \vs,a)\Bigl(W^{\pi^k}_{M^k, 2:H^k}(\vs') {-} W^{\pi^k}_{M, 2:H^k}(\vs')\Bigr) {-}(W^{\pi^k}_{M^k, 2:H^k}(\vs_2) {-} W^{\pi^k}_{M, 2:H^k}(\vs_2))$.
+    Note that in the equation above, $D^{M^k,M}_{H^k}(\vs)$ is a martingale difference term with ${\vs_2\sim \vp(\cdot \mid \vs,a)}$.
+    Hence, the expected value of the martingale difference term is zero.
+    As only arm $a$ makes a transition, we have $\norm{\vp^k(\cdot\mid \vs,a) {-} \vp(\cdot \mid \vs,a)}_{\ell_1}=\norm{\mP^{k}(s_{a},\cdot){-}\mP(s_{a},\cdot)}_{\ell_1}$. Hence, a direct induction shows that \Eqref{eq:lem_decompo} holds.
 \end{proof}
-
-\subsubsection{Bound on  the double sum}
+%TODO
+\subsubsection{Bound on the double sum}
 
 Recall that for $k\le K$, any $a\in[n]$ and any $x_a\in\gS^a$, $N_{k-1}(x_a)=\sum_{t=1}^{t_{k}-1}\ind{X_{t,A_t}=x_a}$ is the number of times so far that an arm $a$ was activated in state $x_a$ (at episode $1$, we have ${N_0(x_a)=0}$) and $\{H_k\}_{k\le K}$ be the sequence of episode horizons.
 
 \begin{lem}
-    \label{lem:sum}
     For any learning algorithms, we have
     \begin{align*}
         \sum_{k=1}^K \sum_{t=t_k}^{t_{k+1}-1}\frac1{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }} \le Sn\max_{k\le K}H_k+2\sqrt{SnK\max_{k\le K}H_k}
     \end{align*}
+    \label{lem:sum}
 \end{lem}
 \begin{proof}
 Let $\tilde{N}_t(x_a)$ be the number of times that arm $a$ has been activated before time $t$ while being in state $x_a$. By definition, $\tilde{N}_{t_k}(x_a)=N_{k-1}(x_a)$. Moreover, if $t\in\{t_k,\dots, t_{k+1}-1\}$, then $\tilde{N}_t(x_a)\le N_{k-1}(x_a) + H_k$. This shows that 
