@@ -93,7 +93,7 @@
 \pgfplotsset{compat=1.13}
 \usetikzlibrary{arrows,shapes,shapes.geometric,positioning,shadows,trees,calc,decorations.text,arrows.meta}
 %\usetikzlibrary{matrix,backgrounds,arrows,shapes,positioning,shadows,trees,calc,decorations.text}
-\usetikzlibrary{fit,backgrounds}
+\usetikzlibrary{matrix,fit,backgrounds}
 
 %\usepackage{titlesec}
 %titlesec is outdated and create Warning Missing number blablabla
@@ -188,6 +188,8 @@
 \definecolor{colorfuncall}{rgb}{0.6,0,0}
 
 % --- PDF SUPPORT ----------------------
+
+\usepackage{appendix}
 
 \usepackage{bookmark,hyperref}  % import as last package
 
@@ -364,10 +366,10 @@
 \iftotalcompilation
 \part{Background on Markov decision process, reinforcement learning, and Markovian bandits}
 \label{part:background}
-In this part, we recall the existing problem setups and results in the literature.
+In this part, we recall the existing problem setups and results in the literature of Markov decision process, reinforcement learning, and Markovian bandit.
 This part serves as the basis to understand the whole thesis.
 In Chapter~\ref{ch:mdp}, we present the formalism of Markov decision process.
-In Chapter~\ref{ch:rl}, we recapitulate the basics and results in reinforcement learing literature.
+In Chapter~\ref{ch:rl}, we recapitulate the basics and several existing results in reinforcement learing literature.
 In Chapter~\ref{ch:mb}, we present the formalism of Markovian bandits and existing theoretical results.
 
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
@@ -384,7 +386,16 @@ In Chapter~\ref{ch:mb}, we present the formalism of Markovian bandits and existi
 \iftotalcompilation
 \part{Indexability}
 \label{part:idx}
-\KK{In part, we present...}
+
+In this part, we present our results on indexability and index computation for Markovian bandits.
+In Chapter~\ref{ch:indexability}, we discuss about the ambiguities in the classical definition of indexability and propose a new definition that is univocal for any restless bandits.
+In Chapter~\ref{ch:index_computation}, we develop a unified algorithm that computes indexability and the Whittle index in either discounted or undiscounted restless bandits as well as the Gittins index in discounted rested bandits.
+This algorithm has a subcubic theoretical computational complexity and, to the best of our knowledge, it is the first algorithm to achieve such complexity.
+These are our contributions to the computational side of Markovian bandits literature.
+
+Particularly, we redefine a few notations to ease the exposition.
+We also introduce new notations when developping our algorithm.
+Those redefined and new notations are used exclusively in this part.
 
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 \clearpage
@@ -400,6 +411,14 @@ In Chapter~\ref{ch:mb}, we present the formalism of Markovian bandits and existi
 \iftotalcompilation
 \part{Learning in Markovian bandits}
 \label{part:learning}
+
+In this part, we focus on learning problem in Markovian bandits.
+We start by considering the learning with discounted rested bandits in Chapter~\ref{ch:learning_rested}.
+An efficient policy for discounted rested bandits is the Gittins index policy.
+We show that MB-PSRL, a modified PSRL for rested bandits, can leverage Gittins index to have a regret bound and runtime scalable in the number of arms.
+In Chapter~\ref{ch:learning_restless}, we consider the learning problem in restless bandits with average reward criterion.
+We...
+
 \KK{In this part, we work on learning problem...}
 \fi
 
