@@ -12,7 +12,7 @@
 
 \section{Topic of the thesis}
 
-Markov decision processes (MDPs) are a powerful model to solve stochastic optimization problems. They suffer, however, from what is called the \emph{curse of dimensionality}, which basically says that the state size of a Markov process is exponential in the number of system components. This implies that the complexity of computing an optimal policy is, in general, exponential in the number of system components. The same holds for general-purpose reinforcement learning algorithms: they all have a regret and a runtime exponential in the number of components, so they also suffer from the same curse.
+Markov decision processes (MDPs) are powerful models to solve stochastic optimization problems. They suffer, however, from what is called the \emph{curse of dimensionality}, which basically says that the state size of a Markov process is exponential in the number of system components. This implies that the complexity of computing an optimal policy is, in general, exponential in the number of system components. The same holds for general-purpose reinforcement learning (RL) algorithms: they all have a regret and a runtime exponential in the number of components, so they also suffer from the same curse.
 
 Very few MDPs are known to escape from this curse of dimensionality. One of the most famous examples is the Markovian bandit problem in which a decision maker faces $n$ MDPs (the $n$ components, that we will call the $n$ arms in the rest of the thesis), and must decide which arms to activate at each decision epoch.
 Markovian bandits have been applied to many resource allocations and scheduling problems such as wireless communication \cite{raghunathan2008index, liu2010indexability, aalto2019whittle}, web crawling \cite{nino2014dynamic, avrachenkov2022whittle}, congestion control \cite{avrachenkov2013congestion, avrachenkov2018impulsive}, queueing systems \cite{glazebrook2009index, aalto2009gittins, archibald2009indexability, aalto2011properties, larranaga2015asymptotically, borkar2017whittle, scully2018soap}, and clinical trials \cite{villar2015multi}.
@@ -31,7 +31,7 @@ To the best of our knowledge, there is no efficient general-purpose algorithm to
 Meanwhile, despite its desirable computational complexity compared the solutions of dynamic programming, there are very few RL algorithms that leverage index policy in learning with Markovian bandits.
 These raise two grand questions in this thesis:
 \begin{itemize}
-    \item {\color{myblue}\bfseries\large How to efficiently compute the indexability and Whittle index?}
+    \item {\color{myblue}\bfseries\large How to efficiently compute the indexability?}
     \item {\color{myblue}\bfseries\large Can index policy be a pillar for RL algorithms when learning in Markovian bandits?}
 \end{itemize}
 
@@ -87,9 +87,9 @@ In this part, we recall the existing problem setups and results in the literatur
 This part serves as the basis to understand our contributions and to position them among the vast literature of RL and Markovian bandits.
 
 We present the formalism of Markov decision process (MDP) in Chapter~\ref{ch:mdp}: we give the notations, optimization criteria as well as the existing theoretical results in MDP.
-This chapter is the main pillar of all the chapters that follow
+This chapter is the main pillar of all the chapters that follow.
 
-Chapter~\ref{ch:rl} consists of a summary of existing learning setups in RL, regret definition that is used as a performance metric of learning algorithms, regret baseline or minimax regret lower bound, as well as existing results in RL with generic tabular MDPs.
+Chapter~\ref{ch:rl} consists of a summary of existing learning setups in RL, regret definition that is used as a performance metric of learning algorithms, regret baseline or minimax regret lower bound, as well as several existing results in RL with generic tabular MDPs.
 
 We present the formalism of Markovian bandit in Chapter~\ref{ch:mb}. We give the notations, existing setups and optimization criteria in Markovian bandit literature.
 We finish this chapter by outlining all the questions that are discussed in the following chapters.
@@ -98,14 +98,14 @@ We finish this chapter by outlining all the questions that are discussed in the 
 
 In this part, we present our contributions for the computational side of Markovian bandit literature.
 
-In Chapter~\ref{ch:indexability}, we point out the possible ambiguities in the classical definition of indexability in undiscounted restless bandit by providing a few simple counter-examples.
-This leads us to introduce a new notion of optimality in the MDP with average reward criterion.
+In Chapter~\ref{ch:indexability}, we point out the possible ambiguities in the classical definition of indexability in restless Markovian bandit by providing a few simple counter-examples.
+This leads us to introduce a new notion of Bellman optimality in the MDP with average reward criterion.
 This new notion is then used in our definition of indexability that is thoroughly detailed in the chapter.
 Then, we give the corresponding definition of Whittle index accompanied with simple examples.
-We complete the chapter by studying the properties of the new notion of optimality that are useful for index and indexability computation.
+We complete the chapter by studying the properties of the Bellman optimality that are useful for index and indexability computation.
 
-In Chapter~\ref{ch:index_computation}, we present our new algorithm to test indexability presented in the previous chapter and compute the Whittle index.
-It is a single algorithm that computes indexability and the Whittle index in either discounted or undiscounted restless bandit as well as the Gittins index in discounted rested bandits.
+In Chapter~\ref{ch:index_computation}, we present our new algorithm to test indexability presented in the previous chapter and compute the Whittle index of any finite state restless arm.
+It is a single algorithm that computes indexability and the Whittle index in either discounted or undiscounted restless bandits as well as the Gittins index in discounted rested bandits.
 Moreover, to the best of our knowledge, this algorithm is the first algorithm to achieve subcubic theoretical computational complexity.
 That is, if the considered arm has $S$ states, then the best variant of our algorithm performs $\landauO(S^{2.5286})$ arithmetic operations\footnote{multiplications and additions of real numbers, regardless of their values.}.
 %That is, if the considered arm has $S$ states, then our algorithm perform $\landauO(S^3)$ (the constant for $S^3$ is explicit in the chapter) arithmetic operations\footnote{multiplications and additions of real numbers, regardless of their values.}.
@@ -122,22 +122,23 @@ We leave this question to the future work.
 
 In this part, we present our contributions for the learning side of Markovian bandit literature.
 
-In Chapter~\ref{ch:learning_rested}, we consider an episodic RL problem in which the unknown environment is a discounted rested Markovian bandit having $n$ arms and $S$ states per arm and the episode length is geometrically distributed.
+In Chapter~\ref{ch:learning_rested}, we consider an episodic RL problem in which the unknown environment is a rested Markovian bandit having $n$ arms and $S$ states per arm and the episode length is geometrically distributed.
 So, the bandit has $S^n$ states in total.
-Given that Gittins index policy is optimal and computationally efficient when the bandit is known \cite{gittins1979bandit}, we compare OFU method with posterior sampling in term of computational complexity and regret.
-To do so, we adapt UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, two different algorithms from OFU family, and PSRL \cite{osband2013more}, an algorithm from posterior sampling family, to discounted rested bandit.
+Given that Gittins index policy is optimal and computationally efficient when the bandit is known \cite{gittins1979bandit}, we compare the optimism in face of uncertainty (OFU) principle method with posterior sampling in term of runtime and learning performance encoded by regret.
+To do so, we adapt UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, two different algorithms from OFU family, and PSRL \cite{osband2013more}, an algorithm from posterior sampling family, to rested bandit with discount.
 The adapted versions are respectively called MB-UCRL2, MB-UCBVI, and MB-PSRL where ``MB'' stands for Markovian bandit.
 We show that the three MB-* algorithms have a regret upper bounded like $\landauO(S\sqrt{nK})$ where $K$ is the number of episodes.
 This is an exponential improvement in term of the number of arms $n$.
 We also derive the regret baseline for learning algorithms in rested bandit with discount.
-That is, any learning algorithm in discounted rested bandit suffers a regret that is at least $\Omega(\sqrt{SnK})$.
+That is, any algorithm learning in discounted rested bandit suffers a regret that is at least $\Omega(\sqrt{SnK})$.
 For computational aspect, we show that UCRL2 and its variants that use extended value iteration \cite{jaksch2010near} cannot leverage Gittins index policy to achieve efficient policy computation.
+This is because such algorithms rely on the confidence bonus on arms' transition; which does not allow them to guarantee the OFU principle when working on each arm independently of the other arms.
 Lastly, we perform several numerical experiments that advocate the good behavior of MB-PSRL.
 These experiments are reproducible by following this link \url{https://gitlab.inria.fr/kkhun/learning-in-rested-markovian-bandit}.
 While acknowledging that posterior sampling has a weaker regret guarantee, we conclude that this approach has an upper hand in term of problem adaptability when compared to OFU method.
 This is vital when working with the problems having a special structure such as weakly coupled MDPs.
 
-In Chapter~\ref{ch:learning_restless}, we move on to a infinite-horizon RL problem in which the unknown environment is an undiscounted restless Markovian bandit.
+In Chapter~\ref{ch:learning_restless}, we move on to a RL problem in which the unknown environment is restless Markovian bandit with average reward criterion.
 We study how the structure of arms translate in the structure of restless bandit model.
 This allows us to...
 
