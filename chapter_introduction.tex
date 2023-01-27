@@ -140,28 +140,24 @@ This allows us to...
 
 \section{Organization of the thesis}
 
-We highlight that Chapter~\ref{ch:mdp} and \ref{ch:mb} are required to understand our contributions in Part~\ref{part:idx}, and
-Part~\ref{part:background} is required to understand our contributions in Part~\ref{part:learning}.
-
-To facilitate the comprehension of this thesis, we suggest the following flow of reading: One would want to start with Chapter~\ref{ch:mdp} and \ref{ch:mb}, then Part~\ref{part:idx}. Next, one would want to jump back to Chapter~\ref{ch:rl} before diving into Part~\ref{part:learning} and finishing the conclusion.
 We also provide the thesis organization in \figurename~\ref{fig:flo}.
 
 \tikzset{rect/.style={rectangle, rounded corners, minimum width=4.5cm, minimum
-height=1cm,text centered, draw=black, fill=blue!5, drop shadow},
+height=1cm,text centered, draw=amblu, text=myblue, fill=RoyalBlue!5, drop shadow},
 arrow/.style={thick,->,>=stealth}}
 
 \begin{figure}[h]
 \begin{center}
 \begin{tikzpicture}[node distance=1cm]
 
-\node (mdp) [rect, label={[font=\small\sffamily,name=part1]above:{Part I: Background}}] {Chapter 2: Markov Decision Process};
+\node (mdp) [rect, label={[font=\small\sffamily,color=gray25,name=part1]above:{Part I: Background}}] {Chapter 2: Markov Decision Process};
 \node (rl) [rect, below right = 0.75cm and -2.5cm of mdp] {Chapter 3: Reinforcement Learning};
 \node (mb) [rect, below left = 0.75cm and -2.1cm of mdp] {Chapter 4: Markovian Bandits};
 
-\node (idx) [rect, below = 1.25cm of mb, label={[font=\small\sffamily,name=part2]above left:{Part II: Indexability}}] {Chapter 5: Indexability};
+\node (idx) [rect, below = 1.25cm of mb, label={[font=\small\sffamily,color=gray25,name=part2]above left:{Part II: Indexability}}] {Chapter 5: Indexability};
 \node (widx) [rect, below = 0.75cm of idx] {Chapter 6: Index Computation};
 
-\node (rested) [rect, below = 3cm of rl, label={[font=\small\sffamily,name=part3]above right:{Part III: Learning}}] {Chapter 7: Learning Rested Bandit};
+\node (rested) [rect, below = 3cm of rl, label={[font=\small\sffamily,color=gray25,name=part3]above right:{Part III: Learning}}] {Chapter 7: Learning Rested Bandit};
 \node (restless) [rect, below = 0.75cm of rested] {Chapter 8: Learning Restless Bandit};
 
 %\node (litrev) [rect, below left = 0.75cm and -1.1cm  of mdp,
@@ -188,6 +184,11 @@ arrow/.style={thick,->,>=stealth}}
 \end{center}
 \caption{Thesis organization} \label{fig:flo}
 \end{figure}
+
+To facilitate the comprehension of this thesis, we suggest the following flow of reading: One would want to start with Chapter~\ref{ch:mdp} and \ref{ch:mb}, then Part~\ref{part:idx}. Next, one would want to jump back to Chapter~\ref{ch:rl} before diving into Part~\ref{part:learning} and finishing the conclusion.
+
+We highlight that Chapter~\ref{ch:mdp} and \ref{ch:mb} are required to understand our contributions in Part~\ref{part:idx}, and
+Part~\ref{part:background} is required to understand our contributions in Part~\ref{part:learning}.
 
 %To introduce my work, I will write a nice introduction in the following.
 %Citation example for the Top500 website~\cite{top500} and some random paper~\cite{graham1969}.
