@@ -682,78 +682,77 @@ Recall that $W^{\pi^k}_{M,1:H^k}(\vs)$ is the expected reward of the MDP $M$ und
     Hence, the expected value of the martingale difference term is zero.
     As only arm $a$ makes a transition, we have $\norm{\vp^k(\cdot\mid \vs,a) {-} \vp(\cdot \mid \vs,a)}_{\ell_1}=\norm{\mP^{k}(s_{a},\cdot){-}\mP(s_{a},\cdot)}_{\ell_1}$. Hence, a direct induction shows that \Eqref{eq:lem_decompo} holds.
 \end{proof}
-%TODO
 \subsubsection{Bound on the double sum}
 
-Recall that for $k\le K$, any $a\in[n]$ and any $x_a\in\gS^a$, $N_{k-1}(x_a)=\sum_{t=1}^{t_{k}-1}\ind{X_{t,A_t}=x_a}$ is the number of times so far that an arm $a$ was activated in state $x_a$ (at episode $1$, we have ${N_0(x_a)=0}$) and $\{H_k\}_{k\le K}$ be the sequence of episode horizons.
+Recall that for $k\le K$, any $a\in[n]$ and any $s_a\in\gS_a$, $N^{k}(s_a)=\sum_{t=1}^{t^{k}-1}\ind{s_{t,a_t}=s_a}$ is the number of times so far that an arm $a$ was activated in state $s_a$ (at episode $1$, we have ${N^1(s_a)=0}$) and $\{H^k\}_{k\le K}$ be the sequence of episode horizons.
 
 \begin{lem}
     For any learning algorithms, we have
     \begin{align*}
-        \sum_{k=1}^K \sum_{t=t_k}^{t_{k+1}-1}\frac1{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }} \le Sn\max_{k\le K}H_k+2\sqrt{SnK\max_{k\le K}H_k}
+        \sum_{k=1}^K \sum_{t=t^k}^{t^{k+1}-1}\frac1{\sqrt{\max\{1,N^{k}(s_{t,a_t})\} }} \le Sn\max_{k\le K}H^k+2\sqrt{SnK\max_{k\le K}H^k}
     \end{align*}
     \label{lem:sum}
 \end{lem}
 \begin{proof}
-Let $\tilde{N}_t(x_a)$ be the number of times that arm $a$ has been activated before time $t$ while being in state $x_a$. By definition, $\tilde{N}_{t_k}(x_a)=N_{k-1}(x_a)$. Moreover, if $t\in\{t_k,\dots, t_{k+1}-1\}$, then $\tilde{N}_t(x_a)\le N_{k-1}(x_a) + H_k$. This shows that 
+Let $\tilde{N}_t(s_a)$ be the number of times that arm $a$ has been activated before time $t$ while being in state $s_a$. By definition, $\tilde{N}_{t^k}(s_a)=N^{k}(s_a)$. Moreover, if $t\in\{t^k,\dots, t^{k+1}-1\}$, then $\tilde{N}_t(s_a)\le N^{k}(s_a) + H^k$. This shows that 
 \begin{align*}
-    \sum_{k=1}^K \sum_{t=t_k}^{t_{k+1}-1}\frac1{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }}
-    &\le \sum_{k=1}^K \sum_{t=t_k}^{t_{k+1}-1}\frac{1}{\sqrt{\max\{1, \tilde{N}_t(X_{t,A_t})-H_k\} }}\\
-    &\le \sum_{t=1}^{t_{K+1}-1} \frac{1}{\sqrt{\max\{1,\tilde{N}_t(X_{t,A_t})-\max_k H_k\} }}.
+    \sum_{k=1}^K \sum_{t=t^k}^{t^{k+1}-1}\frac1{\sqrt{\max\{1,N^{k}(s_{t,a_t})\} }}
+    &\le \sum_{k=1}^K \sum_{t=t^k}^{t^{k+1}-1}\frac{1}{\sqrt{\max\{1, \tilde{N}_t(s_{t,a_t})-H^k\} }}\\
+    &\le \sum_{t=1}^{t^{K+1}-1} \frac{1}{\sqrt{\max\{1,\tilde{N}_t(s_{t,a_t})-\max_k H^k\} }}.
 \end{align*}
 The above sum can be reordered to group terms by state: The above sum equals
 \begin{align*}        
-    \sum_{a, x_a} \sum_{m=1}^{\tilde{N}_{t_{K+1}}(x_a)} \frac{1}{\sqrt{\max\{1, m-\max_k H_k\} }}
-    &\le \sum_{a, x_a} \left[\max_k H_k + \sum_{m=1}^{\max\{1,\tilde{N}_{t_{K+1}}(x_a)-\max_k H_k\}} \frac{1}{\sqrt{m}}\right],\\
-    &\le Sn\max_k H_k + \sum_{a, x_a} \sum_{m=1}^{\tilde{N}_{t_{K+1}}(x_a)} \frac{1}{\sqrt{m}},\\
-    &\le Sn\max_k H_k + 2\sum_{a, x_a} \sqrt{\tilde{N}_{t_{K+1}}(x_a)},
+    \sum_{a, s_a} \sum_{m=1}^{\tilde{N}_{t^{K+1}}(s_a)} \frac{1}{\sqrt{\max\{1, m-\max_k H^k\} }}
+    &\le \sum_{a, s_a} \left[\max_k H^k + \sum_{m=1}^{\max\{1,\tilde{N}_{t^{K+1}}(s_a)-\max_k H^k\}} \frac{1}{\sqrt{m}}\right],\\
+    &\le Sn\max_k H^k + \sum_{a, s_a} \sum_{m=1}^{\tilde{N}_{t^{K+1}}(s_a)} \frac{1}{\sqrt{m}},\\
+    &\le Sn\max_k H^k + 2\sum_{a, s_a} \sqrt{\tilde{N}_{t^{K+1}}(s_a)},
 \end{align*}
-where the last inequality holds because $\sum_{m=1}^{t_{K+1}}1/\sqrt{m}\le\int_1^{t_{K+1}}1/\sqrt{x}dx\le2\sqrt{{t_{K+1}}}$. 
+where the last inequality holds because $\sum_{m=1}^{t^{K+1}}1/\sqrt{m}\le\int_1^{t^{K+1}}1/\sqrt{x}dx\le2\sqrt{{t^{K+1}}}$. 
 
-Now, by Cauchy-Schwartz inequality, and because $\sum_{a,x_a}\tilde{N}_{t_{K+1}}(x_a) =t_{K+1}-1 {=}\sum_{k=1}^{K}H_k$, we have:
+Now, by Cauchy-Schwartz inequality, and because $\sum_{a,s_a}\tilde{N}_{t^{K{+}1}}(s_a) =t^{K{+}1}-1 {=}\sum_{k=1}^{K}H^k$, we have:
 \begin{align*}
-    \sum_{a,x_a}\sqrt{\tilde{N}_{t_{K+1}}(x_a)} \le \Big(\sum_{a,x_a}\tilde{N}_{t_{K+1}}(x_a)\Big)^{1/2}\Big(\sum_{a,x_a}1\Big)^{1/2}=\sqrt{Sn\sum_{k=1}^{K}H_k}\le \sqrt{SnK \max_{k\le K}H_k}.
+    \sum_{a,s_a}\sqrt{\tilde{N}_{t^{K+1}}(s_a)} \le \Big(\sum_{a,s_a}\tilde{N}_{t^{K+1}}(s_a)\Big)^{1/2}\Big(\sum_{a,s_a}1\Big)^{1/2}=\sqrt{Sn\sum_{k=1}^{K}H^k}\le \sqrt{SnK \max_{k\le K}H^k}.
 \end{align*}
 \end{proof}
 
-\subsubsection{Bound on the expectation of $\ex{\max_{k\le K}H_k}$}
+\subsubsection{Bound on the expectation of $\ex{\max_{k\le K}H^k}$}
 
 \begin{lem}
     \label{lem:moment}
     Let $\alpha\in[1,2.5]$. Then,
     \begin{align}
         \label{eq:lemma_HK}
-        \ex{\max_{k\le K}(H_k)^\alpha} &\le 5+5\left(\frac{\log K}{1-\beta}\right)^\alpha.
+        \ex{\max_{k\le K}(H^k)^\alpha} &\le 5+5\left(\frac{\ln K}{1-\gamma}\right)^\alpha.
     \end{align}
  \end{lem}
  \begin{proof}
     By definition, we have
     \begin{align*}
-        \ex{\max_{k\le K}(H_k)^\alpha} &=  \sum_{i=1}^\infty \Proba{ \max_{k\le K}(H_k)^\alpha \ge i}\\
-        &\le \sum_{i=1}^\infty \min(1, K \Proba{ (H_k)^\alpha \ge i})\\
-        &= \sum_{i=1}^\infty \min(1, K \beta^{i^{1/\alpha}}),
+        \ex{\max_{k\le K}(H^k)^\alpha} &=  \sum_{i=1}^\infty \Proba{ \max_{k\le K}(H^k)^\alpha \ge i}\\
+        &\le \sum_{i=1}^\infty \min(1, K \Proba{ (H^k)^\alpha \ge i})\\
+        &= \sum_{i=1}^\infty \min(1, K \gamma^{i^{1/\alpha}}),
     \end{align*}
-    where the inequality comes from the union bound and the last equality is because the random variables $H_k$ are geometrically distributed.
+    where the inequality comes from the union bound and the last equality is because the random variables $H^k$ are geometrically distributed.
  
-    Let $A=\min\{i : K \beta^{i^{1/\alpha}}\le 1\}$. Decomposing the above sum by group of size $A$, we have
+    Let $A=\min\{i : K \gamma^{i^{1/\alpha}}\le 1\}$. Decomposing the above sum by group of size $A$, we have
     \begin{align}
-        \sum_{i=1}^\infty \min(1, K \beta^{i^{1/\alpha}})
-        &= \sum_{j=0}^\infty \sum_{i=Aj+1}^{A(j+1)}\min(1, K \beta^{i^{1/\alpha}})\nonumber\\
-        &\le \sum_{j=0}^\infty A \min(1, K \beta^{(Aj)^{1/\alpha}})\nonumber\\
-        &= A + A\sum_{j=1}^\infty K (\beta^{A^{1/\alpha}})^{j^{1/\alpha}},
+        \sum_{i=1}^\infty \min(1, K \gamma^{i^{1/\alpha}})
+        &= \sum_{j=0}^\infty \sum_{i=Aj+1}^{A(j+1)}\min(1, K \gamma^{i^{1/\alpha}})\nonumber\\
+        &\le \sum_{j=0}^\infty A \min(1, K \gamma^{(Aj)^{1/\alpha}})\nonumber\\
+        &= A + A\sum_{j=1}^\infty K (\gamma^{A^{1/\alpha}})^{j^{1/\alpha}},
         \label{eq:sum_A}
     \end{align}
-    where the inequality holds because $\beta^{i^{1/\alpha}}$ is decreasing in $i$. 
+    where the inequality holds because $\gamma^{i^{1/\alpha}}$ is decreasing in $i$. 
  
-    By definition of $A$, we have $\beta^{A^{1/\alpha}}\le 1/K$. This implies that the second term of \Eqref{eq:sum_A} is smaller than $\sum_{j=1}^\infty K (1/K)^{j^{1/\alpha}}=\sum_{j=1}^\infty K^{1-j^{1/\alpha}}$. As $\alpha\le 2.5$, if  $K\ge5$, this is smaller than $\sum_{j=1}^\infty 5^{1-j^{1/2.5}}\approx 3.92<4$.
+    By definition of $A$, we have $\gamma^{A^{1/\alpha}}\le 1/K$. This implies that the second term of \Eqref{eq:sum_A} is smaller than $\sum_{j=1}^\infty K (1/K)^{j^{1/\alpha}}=\sum_{j=1}^\infty K^{1-j^{1/\alpha}}$. As $\alpha\le 2.5$, if  $K\ge5$, this is smaller than $\sum_{j=1}^\infty 5^{1-j^{1/2.5}}\approx 3.92<4$.
  
     This shows that for $K\ge5$, we have:
     \begin{align*}
-        \ex{\max_{k\le K}(H_k)^\alpha} \le 5A,
+        \ex{\max_{k\le K}(H^k)^\alpha} \le 5A,
     \end{align*}
-    where $A=\ceil{(-\log K/\log \beta)^{\alpha}}\le 1+(\log K/(1-\beta ))^\alpha$.
+    where $A=\ceil{(-\ln K/\ln \gamma)^{\alpha}}\le 1+(\ln K/(1-\gamma ))^\alpha$.
  
-    As for the case where $K\le4$, we have $\ex{\max_{k\le K}(H_k)^\alpha}\le K\ex{H_1^\alpha}\le \frac{K}{(1-\beta)^{\alpha}}$. This term is smaller than \Eqref{eq:lemma_HK} for $K\le4$.
+    As for the case where $K\le4$, we have $\ex{\max_{k\le K}(H^k)^\alpha}\le K\ex{(H^1)^\alpha}\le \frac{K}{(1-\gamma)^{\alpha}}$. This term is smaller than \Eqref{eq:lemma_HK} for $K\le4$.
  \end{proof}
 
 
@@ -762,39 +761,39 @@ Now, by Cauchy-Schwartz inequality, and because $\sum_{a,x_a}\tilde{N}_{t_{K+1}}
 
 We decompose the analysis of PSRL in three steps: 
 \begin{itemize}
-    \item We define the high-probability event $\gE^\text{PSRL}_{k-1}$.
-    \item We analyze $\sum_{k=1}^K\ex{\Delta^{model}_k \ind{\gE^\text{PSRL}_{k-1}}}$ (which equals $0$ here because of posterior sampling).
-    \item We analyze $\sum_{k=1}^K\ex{\Delta^{conc}_k \ind{\gE^\text{PSRL}_{k-1}}}$. 
+    \item We define the high-probability event $\gE_\text{PSRL}^{k}$.
+    \item We analyze $\sum_{k=1}^K\ex{\Delta_{model}^k \ind{\gE_\text{PSRL}^{k}}}$ (which equals $0$ here because of posterior sampling).
+    \item We analyze $\sum_{k=1}^K\ex{\Delta_{conc}^k \ind{\gE_\text{PSRL}^{k}}}$. 
 \end{itemize}
 We will use the same proof structure for MB-UCRL2 and MB-UCBVI. 
 
-Before doing the proof, we start by a first lemma that essentially formalizes the fact that the distribution of $M$ given $\gO_{k-1}$ is the same as the distribution of the sampled MDP $M_{k}$ conditioned on $\gO_{k-1}$. 
+Before doing the proof, we start by a first lemma that essentially formalizes the fact that the distribution of $M$ given $o_{t^k}$ is the same as the distribution of the sampled MDP $M^{k}$ conditioned on $o_{t^k}$. 
 \begin{lem}
     \label{lem:bayesian}
-    Assume that the MDP $M$ is drawn according to the prior $\phi$ and that $M_k$ is drawn according to the posterior $\phi(\cdot \mid \gO_{k-1})$. Then, for any $\gO_{k-1}$-measurable function $g$, one has:
+    Assume that the MDP $M$ is drawn according to the prior $\phi$ and that $M^k$ is drawn according to the posterior $\phi(\cdot \mid o_{t^k})$. Then, for any $o_{t^k}$-measurable function $g$, one has:
     \begin{align}
         \label{eq:lem_bayesian}
-        \ex{g(M)} = \ex{g(M_k)}. 
+        \ex{g(M)} = \ex{g(M^k)}. 
     \end{align}
 \end{lem}
 \begin{proof}
-    At the start of each episode $k$, MB-PSRL computes the posterior distribution of $M$ conditioned on the observations $\gO_{k-1}$, and draws $M_k$ from it. This implies that $M$ and $M_k$ are identically distributed conditioned on $\gO_{k-1}$. Consequently, if $g$ is a $\gO_{k-1}$-measurable function, one has:
+    At the start of each episode $k$, MB-PSRL computes the posterior distribution of $M$ conditioned on the observations $o_{t^k}$, and draws $M^k$ from it. This implies that $M$ and $M^k$ are identically distributed conditioned on $o_{t^k}$. Consequently, if $g$ is a $o_{t^k}$-measurable function, one has:
     \begin{align*}
-        \ex{g(M) \mid \gO_{k-1}} = \ex{g(M_k) \mid \gO_{k-1}}. 
+        \ex{g(M) \mid o_{t^k}} = \ex{g(M^k) \mid o_{t^k}}. 
     \end{align*}
     \Eqref{eq:lem_bayesian} then follows from the tower rule. 
 \end{proof}
 
 %%%%%%%%%%%%%%
 %%%%%%%%%%%%%%
-\subsubsection{Definition of the high-probability event $\gE^\text{PSRL}_{k-1}$}
+\subsubsection{Definition of the high-probability event $\gE_\text{PSRL}^{k}$}
 
 \begin{lem}
     \label{lem:concentration_psrl}
     At episode $k$, the event
     \begin{align*}
-        \gE^\text{PSRL}_{k-1} = &\bigg\{ \forall a{\in}[n], x_a{\in}\gS^a, k'\le k{-}1{:}
-            \norm{r_{k'+1}(x_a){-}r(x_a)} \le\frac{L_{k-1}}{\sqrt{\max\{1,N_{k'}(x_a)\} }}, \\
+        \gE_\text{PSRL}^{k} = &\bigg\{ \forall a{\in}[n], s_a{\in}\gS_a, k'< k{:}
+            \abs{r^{k'+1}(s_a){-}r(s_a)} \le\frac{L^{k}}{\sqrt{\max\{1,N^{k'}(s_a)\} }}, \\
             &\quad\norm{Q_{k'+1}(x_a,\cdot) {-}Q(x_a,\cdot)}_1 \le\frac{2L_{k-1}{+}3\sqrt{S}}{\sqrt{\max\{1,N_{k'}(x_a)\} }}, \text{ and } H_{k'}\le \frac{\log(K(k-1))}{1-\beta} \bigg\}
     \end{align*}
     is $\gO_{k-1}$-measurable and true with probability at least $1-9/K$.
