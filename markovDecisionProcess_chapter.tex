@@ -11,7 +11,7 @@
 
 In this chapter, we define the notion of Markov decision process (MDP) which is a generic model to solve Markovian bandit problem that we will describe in Chapter~\ref{ch:mb}.
 MDP is also used to mathematically describe the environment in Reinforcement learning (RL) framework.
-A MDP models a discrete-time decision problem where the decision maker executes available ``action'' over time steps and receives immediate incentive known as ``reward'' for each time step.
+An MDP models a discrete-time decision problem where the decision maker executes available ``action'' over time steps and receives immediate incentive known as ``reward'' for each time step.
 In such problem, the decision maker seeks to maximize the expected cumulative rewards by identifying a sequence of actions that produces such effect.
 
 %The reader who is familiar with MDP can go directly to Section~\ref{ch:mdp:sec:bell} which is a pillar of our contribution in Chapter~\ref{ch:index_computation}.
@@ -34,10 +34,10 @@ A Markov decision process $M$ is defined as a $4$-tuple $M:=\langle\gS, \gA, r, 
 $\gS$ and $\gA:=\cup_{s\in\gS}\gA_s$ denote the \emph{state} and \emph{action} space of the MDP.
 When the MDP is in state $s\in\gS$, the decision maker can execute one of the available actions in $\gA_s$.
 As a result of executing action $a\in\gA_s$ in state $s$, the MDP incurs a random \emph{reward} with \emph{expected value} $r(s,a)$ and then transitions to new state $s'\in\gS$ with probability $p(s'\mid s, a)\in[0,1]$ where $\sum_{s'\in\gS}p(s'\mid s,a)=1$.
-The name \emph{Markov} comes from the fact that the random reward and the next state depend only on state $s$ and action $a$ and are independent from anything else.
+The name \emph{Markov} comes from the fact that the random reward and the next state depend only on state $s$ and action $a$ and are independent of anything else.
 In this thesis, we consider the MDPs with \emph{finite} state and action spaces, $\abs{\gS}=:S\in\sN$, and $\abs{\gA}=:A\in\sN$.
 %Also, we assume that all random rewards are bounded and lie in $[0,1]$.
-%We provide an example of a MDP with two states and two actions per state in \figurename~\ref{fig:MDP_example}.
+%We provide an example of an MDP with two states and two actions per state in \figurename~\ref{fig:MDP_example}.
 
 %\begin{figure}[ht]
 %    \centering
@@ -50,7 +50,7 @@ In this thesis, we consider the MDPs with \emph{finite} state and action spaces,
 %            (B) edge[bend left, color=black] node{$a_1$} (A)
 %            (B) edge[bend right, color=red, dashed] node[below]{$a_0$} (A);
 %    \end{tikzpicture}
-%    \caption{Graphical representation of a MDP with $2$ states ($s_0$ and $s_1$) and 2 actions per state (black arrow and red dashed arrow). We have $p(s_0\mid s_0,a_0)=0, p(s_1\mid s_0,a_0)=1$ and so on.}
+%    \caption{Graphical representation of an MDP with $2$ states ($s_0$ and $s_1$) and 2 actions per state (black arrow and red dashed arrow). We have $p(s_0\mid s_0,a_0)=0, p(s_1\mid s_0,a_0)=1$ and so on.}
 %    \label{fig:MDP_example}
 %\end{figure}
 
@@ -94,7 +94,7 @@ In the next sections, we specify the objective function of the decision problem.
 
 %This section describes the \emph{finite horizon setting} and contains a brief presentation of optimality criterion in the setting.
 
-In finite horizon setting, the decision maker can collect rewards from a MDP $M$ over a \emph{fixed} number of time steps $H\in\N^+$ called the \emph{horizon}.
+In finite horizon setting, the decision maker can collect rewards from an MDP $M$ over a \emph{fixed} number of time steps $H\in\N^+$ called the \emph{horizon}.
 We call the expected cumulative reward when following a policy $\pi$ as the \emph{value function}.
 That is, the value of state $s$ when starting at time step $1\le h\le H$ and following policy $\pi$ is given by $w_{h:H}^\pi(s){:=}\E^\pi\Bigl[\sum_{t=h}^H r_t\mid s_h{=}s\Bigr]$.
 Formally, the decision maker want to find a policy that satisfies
@@ -121,7 +121,7 @@ and $w_{H:H}^{*}(s) =\max_{a\in\gA_s}r(s,a)$.
 %\end{equation}
 %and $W_{M,H:H}^{\pi^*}(s) =\max_{a\in\gA_s}r(s,a)$.
 %The function $W_{1:H}$ is the expected cumulative reward from time step $1$ to $H$.
-%Suppose that at time step $1\le h\le H$, a policy $\pi$ executes action $a=d_h(s)$ in state $s$ where $a\in\gA_s$ .
+%Suppose that at time step $1\le h\le H$, a policy $\pi$ executes action $a=d_h(s)$ in state $s$ where $a\in\gA_s$.
 %Then, the Bellman \emph{evaluation} equation in this setting is
 %\begin{equation}
 %    \label{eq:finite_be_eval}
@@ -168,7 +168,7 @@ with $w_{H+1:H}^\pi(s)=0$ (or in matrix notation $\vw_{H+1:H}^\pi=\vzero$).
 \section{Infinite horizon discounted problem}
 \label{ch:mdp:sec:discounted}
 
-In some problems, the decision maker can collect rewards over an infinite number of time steps and the immediate reward incurred by the MDP is more important then those rewards in the future time steps.
+In some problems, the decision maker can collect rewards over an infinite number of time steps and the immediate reward incurred by the MDP is more important than those rewards in the future time steps.
 To capture this aspect, one can introduce a discount factor denoted by $\gamma$ where $\gamma\in[0,1)$.
 If $\gamma=0$, the decision maker is solely interested in the immediate reward from the current state of the MDP.
 The value of state $s$ when following a policy $\pi$ is defined by $v^\pi_{\gamma}(s):=\E^\pi\Bigl[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1=s\Bigr]$.
@@ -209,7 +209,7 @@ That is, this schema stops after a finite number of iterations $K$ where $\norm{
 %\begin{algorithm}[ht]
 %    \DontPrintSemicolon
 %    \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
-%    \Input{a MDP $M=\langle\gS,\gA,r,p\rangle$, discount factor $\gamma\in[0,1)$, and accuracy $\varepsilon\in(0,1)$}
+%    \Input{an MDP $M=\langle\gS,\gA,r,p\rangle$, discount factor $\gamma\in[0,1)$, and accuracy $\varepsilon\in(0,1)$}
 %    \Init{}{Set $n=0$ and $v_0(s)=0$ for all $s\in\gS$}
 %    \BlankLine
 %    Set $v_1(s)=\max_{a\in\gA_s} r(s,a)$ for all $s\in\gS$ \;
@@ -311,14 +311,14 @@ Moreover, if $\pi$ is unichain, its bias $\vh^\pi$ is defined up to a constant v
 
 \subsection{Classification of Markov decision process}
 Since \Eqref{eq:avg_obj} compares policies based on their average reward in steady regime, we need to take into account the chain structure induced by the policies.
-%We assume that the reader is familiar with the notion of \emph{transient} and (positive) \emph{recurrent} states and/or class of a Markov chain(see \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov} for more detail) and classify the MDPs according to the following definition.
-In a MDP with finite state space, the states are either \emph{transient} or \emph{recurrent}.
+%We assume that the reader is familiar with the notion of \emph{transient} and (positive) \emph{recurrent} states and/or class of a Markov chain (see \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov} for more detail) and classify the MDPs according to the following definition.
+In an MDP with finite state space, the states are either \emph{transient} or \emph{recurrent}.
 A state is \emph{transient} if it is never visited in steady regime.
 For more formal definition, the reader may refer to \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov}.
 We classify the MDPs according to the following definition.
 \begin{defn}[Classification of MDPs]
     \label{ch:mdp:defn:mdp_class}
-    We say that a MDP is
+    We say that an MDP is
     \begin{enumerate}[label=(\roman*)]
         \item \textbf{ergodic} if the Markov chain induced by any stationary policy has a single recurrent class that equals the state space (\ie, all states are visited infinitely often with probability $1$ independently of initial state);
         \item \label{it:unichain} \textbf{unichain} if the Markov chain induced by any stationary policy is \emph{unichain}, \ie, it has a single recurrent class plus a --possibly empty-- set of transient states;
@@ -359,7 +359,7 @@ Figure~\ref{fig:mdp_class} summarizes this relation.
 \end{figure}
 
 Testing if a Markov chain is unichain can be done in $\landauO(\abs{\gS}^2)$ using Tarjan's strongly connected component algorithm.
-Testing if a MDP is unichain is, however, NP-hard \cite{tsitsiklis2007np}.
+Testing if an MDP is unichain is, however, NP-hard \cite{tsitsiklis2007np}.
 %For the pattern of states that are accessible from each other, we can check if a MDP is communicating or weakly communicating in $\landauO(\abs{\gS}^2)$ by leveraging \cite[Proposition~8.3.1]{puterman2014markov}:
 %we construct a stochastic matrix $\mP^{\#}$ such that for all $s,s'\in\gS$, $P^{\#}(s,s'):=\displaystyle\frac1{\abs{\gA_s}}\sum_{a\in\gA_s}p(s'\mid s,a)$.
 %We check the structure of Markov chain induced by $\mP^{\#}$ using Tarjan's strongly connected component algorithm and draw a conclusion as the following:
@@ -380,7 +380,7 @@ From \cite[Chapter~9]{puterman2014markov}, the optimal gain $\vg^*$ satisfies th
 \end{align}
 So, $\vg^*$ is uniquely defined by \eqref{eq:gain_opt} and \eqref{eq:bias_opt}.
 Any policies achieving $\vg^*$ are said to be \emph{gain optimal} (or average optimal): for any $\pi\in\Pi$, $g^\pi(s)\le g^*(s)$ for all $s\in\gS$.
-By \cite[Theorem~8.3.2]{puterman2014markov}, if a MDP is weakly communicating, then the optimal gain is state independent: $g^*(s)=g^*(s')$ for any $s,s'\in\gS$.
+By \cite[Theorem~8.3.2]{puterman2014markov}, if an MDP is weakly communicating, then the optimal gain is state independent: $g^*(s)=g^*(s')$ for any $s,s'\in\gS$.
 So, in weakly communicating MDPs, we just denote the optimal gain by $g^*$.
 Note that the fact that the optimal gain is constant over states does not imply that all gain optimal policies are unichain.
 Table~\ref{tab:mdp_vs_gain} describes the gain of stationary policies in different classes of MDPs.
