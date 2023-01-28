@@ -5,8 +5,6 @@
 \chapter{Reinforcement Learning}
 \label{ch:rl}
 
-\KK{change $n$ to $N$}
-
 In the previous chapter, we used the formalism of MDPs to describe how a decision maker interacts with its environment.
 Depending on the chosen optimality criterion, we explained how an optimal policy can be obtained when the parameters of the MDP are fully known.
 In this chapter, we consider the case when the MDP's parameters are \textbf{unknown} and need to be learned by the decision maker via trial and error.
@@ -435,7 +433,7 @@ We refer to \cite{jaksch2010near} for the detail about EVI and its convergence p
 
 Let $t^k$ be the time step when the episode $k$ begins and $t^1:=1$ (see Algorithm~\ref{algo:generics}).
 The observations up to time $t^k$ is denoted by $o_{t^k}{:=}\{s_1,a_1,r_1,\dots,s_{t^k-1},a_{t^k-1},r_{t^k-1},s_{t^k}\}$.
-For all state-action pair $(s,a)$, let $n^k(s,a)$ be the number of times up to $t^k$ that the algorithm executes action $a$ when the MDP is in state $s$.
+For all state-action pair $(s,a)$, let $N^k(s,a)$ be the number of times up to $t^k$ that the algorithm executes action $a$ when the MDP is in state $s$.
 At time step $t^k$, UCRL2 uses the observations $o_{t^k}$ to compute $\hat{r}^k$ and $\hat{p}^k$, the empirical means of $r$ and $p$ respectively.
 The confidence sets for reward and transition are then computed: for all state-action pair $(s,a)$,
 \begin{align*}
@@ -443,12 +441,12 @@ The confidence sets for reward and transition are then computed: for all state-a
     \sB_p^k(s,a)&:=\Bigl\{\vq\in[0,1]^{\abs{\gS}}: \norm{\vq-\hat{\vp}^k(\cdot\mid s,a)}_{\ell_1}\le \beta^k_p(s,a)
     \text{ and }\norm{\vq}_{\ell_1}=1\Bigr\}
 \end{align*}
-where $\beta_r^k(s,a)=\displaystyle\sqrt{\frac{c_r\ln(SAt^k)}{2\max\Bigl(1,n^k(s,a)\Bigr)}}$ and $\beta_p^k(s,a)=\displaystyle\sqrt{\frac{c_pS\ln(At^k)}{\max\Bigl(1,n^k(s,a)\Bigr)}}$ are the confidence bonuses, and $c_r$ and $c_p$ are constants to be chosen accordingly before the learning.
+where $\beta_r^k(s,a)=\displaystyle\sqrt{\frac{c_r\ln(SAt^k)}{2\max\Bigl(1,N^k(s,a)\Bigr)}}$ and $\beta_p^k(s,a)=\displaystyle\sqrt{\frac{c_pS\ln(At^k)}{\max\Bigl(1,N^k(s,a)\Bigr)}}$ are the confidence bonuses, and $c_r$ and $c_p$ are constants to be chosen accordingly before the learning.
 
 The set of plausible MDPs $\sM^k$ is constructed to contain the unknown $M$ with high probability.
 Hence, by \eqref{ch:rl:eq:optim}, $\vw^{\pi^k}_{M^k}\ge \vw^{\pi^*}_M$ with high probability. 
 %This means that with high probability, $\vw^{\pi^*}_M- \vw^{\pi^k}_{M^k}\le \vzero$.
-In consequence, \Eqref{eq:rg_model_conc} implies that the regret of UCRL2 is smaller than ${\sum_{k=1}^K\sum_{s\in\gS}\rho(s)[\Delta_{conc}^k(s)]}$ with high probability.
+In consequence, \Eqref{eq:rg_model_conc} implies that the regret of UCRL2 is smaller than ${\sum_{k}\sum_{s}\rho(s)[\Delta_{conc}^k(s)]}$ with high probability.
 Using Bellman evaluation equations, the term $\Delta_{conc}^k(s)$ can be rewritten as
 \begin{align}
     w^{\pi^k}_{M^k,1:H}(s_1) -w^{\pi^k}_{M,1:H}(s_1)
@@ -464,8 +462,8 @@ So, we get
     \Delta_{conc}^k(s_1)\le\sum_{t=1}^{H} \abs{r^k(s_t,a_t)-r(s_t,a_t)}{+}H\norm{\vp^k(\cdot\mid s_t,a_t)-\vp(\cdot\mid s_t,a_t)}_{\ell_1} +d_t
 \end{equation}
 where $d_{t-1}=\vp(\cdot\mid s_{t{-}1},a_{t{-}1})\Bigl(\vw^{\pi^k}_{M^k,t:H} {-}\vw^{\pi^k}_{M,t:H}\Bigr) {-}\Bigl(w^{\pi^k}_{M^k,t:H}(s_{t}) -w^{\pi^k}_{M,t:H}(s_{t})\Bigr)$.
-So, $\{d_t\}_{1\le t\le H}$ is a martingale difference sequence, each term upper bounded by $H$.
-The sum $\sum_{k=1}^K\sum_{t=1}^Hd_t$ can be bounded using Azuma-Hoeffding's inequality.
+So, $\{d_t\}_{t\ge 1}$ is a martingale difference sequence, each term upper bounded by $H$.
+The sum $\sum_{t\ge1}d_t$ can be bounded using Azuma-Hoeffding's inequality.
 Moreover, if the unknown $M$ belongs to the plausible set $\sM^k$, then $\abs{r^k-r}$ and $\norm{\vp^k-\vp}_{\ell_1}$ can be bounded by the confidence bonuses $\beta_r^k$ and $\beta_p^k$ respectively.
 So, the regret of UCRL2 is bounded.
 
@@ -500,7 +498,7 @@ The confidence sets for reward are defined by: for all state-action pair $(s,a)$
 \begin{align*}
     \sB_r^k(s,a,h)&:=\Bigl\{u\in[0,h] : \abs{u-\hat{r}^k(s,a)}\le\beta^k_r(s,a,h)\Bigr\}
 \end{align*}
-where $\beta_r^k(s,a,h)=\displaystyle h\sqrt{\frac{c_r\ln(SAt^k)}{2\max\Bigl(1,n^k(s,a)\Bigr)}}$ is the confidence bonus, and $c_r$ is a constant to be chosen accordingly before the learning.
+where $\beta_r^k(s,a,h)=\displaystyle h\sqrt{\frac{c_r\ln(SAt^k)}{2\max\Bigl(1,N^k(s,a)\Bigr)}}$ is the confidence bonus, and $c_r$ is a constant to be chosen accordingly before the learning.
 
 %That is, at the start of episode $k$, UCBVI compute $M^k$ and $\pi^k$ such that \eqref{ch:rl:eq:optim} holds where
 %\begin{align*}
@@ -510,7 +508,7 @@ where $\beta_r^k(s,a,h)=\displaystyle h\sqrt{\frac{c_r\ln(SAt^k)}{2\max\Bigl(1,n
 %The confidence bonus for reward is computed by $\beta_r^k(s,a)=\displaystyle H\sqrt{\frac{c_r\ln(\abs{\gS}\abs{\gA}t^k)}{2\max\Bigl(1,n^k(s,a)\Bigr)}}$ where $c_r$ is a constant to be chosen accordingly before the learning.
 %The set $\sM^k$ contains the unknown $M$ with high probability. So, $\vw^{\pi^*}_M- \vw^{\pi^k}_{M^k}\le \vzero$ holds with high probability.
 It is shown in \cite{azar2017minimax} that $\vw^{\pi^*}_M- \vw^{\pi^k}_{M^k}\le \vzero$ holds with high probability.
-By \Eqref{eq:rg_model_conc}, the regret of UCBVI is bounded by ${\sum_{k=1}^K\sum_{s\in\gS}\rho(s)[\Delta_{conc}^k(s)]}$ with high probability.
+By \Eqref{eq:rg_model_conc}, the regret of UCBVI is bounded by ${\sum_{k}\sum_{s}\rho(s)[\Delta_{conc}^k(s)]}$ with high probability.
 The theoretical novelty in UCBVI is to efficiently deal with the term $(\hat{\vp}^k-\vp)\vw^{\pi^k}_{M^k}$ when rewriting the right term of \eqref{eq:decom} as shown in UCRL2 technique.
 Indeed, $(\hat{\vp}^k-\vp)\vw^{\pi^k}_{M^k}$ is also rewritten as $(\hat{\vp}^k-\vp)(\vw^{\pi^k}_{M^k}-\vw^{\pi^*}_{M}) +\vw^{\pi^*}_{M}(\hat{\vp}^k-\vp)$.
 Since $\vw^{\pi^*}_M$ is deterministic, the term $\vw^{\pi^*}_{M}(\hat{\vp}^k-\vp)$ can be bounded using Chernoff-Hoeffding's inequality on individual component $w^{\pi^*}_{M}(s')\Bigl(\hat{p}^k(s')-p(s')\Bigr)$.
