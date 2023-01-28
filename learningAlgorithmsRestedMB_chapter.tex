@@ -80,7 +80,7 @@ unstable in practice.
 \label{ch:rested:sec:bandits}
 
 
-We recall that a rested Markovian bandit is multi-armed bandit having $n\in\N^+$ arms. Each arm $\langle\gS_a,\vr_a,\mP_a\rangle$ for $a\in\{1,\dots, n\}=:[n]$ is a Markov
+We recall from Chapter~\ref{ch:mb} that a rested Markovian bandit is multi-armed bandit having $n\in\N^+$ arms. Each arm $\langle\gS_a,\vr_a,\mP_a\rangle$ for $a\in\{1,\dots, n\}=:[n]$ is a Markov
 reward process with a finite state space $\gS_a$ of size $S$. %Each arm has a mean reward vector, $\vr_a\in[0,1]^S$, and a transition matrix $\mP_a$. When Arm~$a$ is activated in state $s_a\in\gS_a$, it moves to state $s'_a\in\gS_a$ with probability $P_a(s_a,s'_a)$. This provides a reward whose expected value is $r_a(x_a)$.
 Without loss of generality, we assume
 that the state spaces of the arms are pairwise distinct:
