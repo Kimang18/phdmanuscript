@@ -25,13 +25,13 @@ To the best of our knowledge, there is no efficient general-purpose algorithm to
 Meanwhile, despite its desirable computational complexity compared the solutions of dynamic programming, there are very few RL algorithms that leverage index policy in learning with Markovian bandits.
 These raise two grand questions in this thesis:
 \begin{itemize}
-    \item {\color{myblue}\bfseries\large How to efficiently compute the indexability?}
+    \item {\color{myblue}\bfseries\large How to efficiently test the indexability and compute the Whittle index?}
     \item {\color{myblue}\bfseries\large Can index policy be a pillar for RL algorithms when learning in Markovian bandits?}
 \end{itemize}
 
 \section{Contributions}
 
-Inspired by the challenging questions above, this thesis has several goals that can be regrouped into two main parts: (1) indexability computation for Markovian bandits and (2) learning with efficiency in Markovian bandits.
+Inspired by the challenging questions above, this thesis has several goals that can be regrouped into two main parts: (1) efficiently test the indexability and compute the Whittle index for Markovian bandits and (2) learning with efficiency in Markovian bandits.
 
 %Markovian bandit can be viewed as a classical Markov decision process (MDP) embedded with a special structure.
 %Such MDPs suffer, however, from what is called ``the curse of dimensionality'', which basically says that the state size of the Markov process is exponential in the number of arms.
@@ -68,7 +68,7 @@ Inspired by the challenging questions above, this thesis has several goals that 
 %The recent algorithms from both approaches achieve a regret that is upper bounded linearly or sublinearly in the size of the MDP state space.  
 %So, directly applied to learning Markovian bandit problem, they suffer from the curse of dimensionality inflected by the state size of the Markovian bandit model.
 
-Firstly, we design an efficient single algorithm that computes indexability and the Whittle index for both discounted and undiscounted restless bandits as well as the Gittins index for discounted rested bandits.
+Firstly, we design an efficient single algorithm that tests indexability and computes the Whittle index for both discounted and undiscounted restless bandits as well as the Gittins index for discounted rested bandits.
 
 Secondly, we adapt some generic RL algorithms to Markovian bandit problem in order to remove the exponentiality from their regret.
 We study different aspects of the adapted RL algorithms depending on the nature of Markovian bandit: in discounted rested bandit, policy computation and regret are the focus and in undiscounted restless bandit, MDP's structure and its consequences on regret come under the spotlight.
@@ -96,10 +96,10 @@ In Chapter~\ref{ch:indexability}, we point out the possible ambiguities in the c
 This leads us to introduce a new notion of Bellman optimality in the MDP with average reward criterion.
 This new notion is then used in our definition of indexability that is thoroughly detailed in the chapter.
 Then, we give the corresponding definition of Whittle index accompanied by simple examples.
-We complete the chapter by studying the properties of the Bellman optimality that are useful for index and indexability computation.
+We complete the chapter by studying the properties of the Bellman optimality that are useful for indexability test and index computation.
 
 In Chapter~\ref{ch:index_computation}, we present our new algorithm to test indexability presented in the previous chapter and compute the Whittle index of any finite state restless arm.
-It is a single algorithm that computes indexability and the Whittle index in either discounted or undiscounted restless bandits as well as the Gittins index in discounted rested bandits.
+It is a single algorithm that tests indexability and computes the Whittle index in either discounted or undiscounted restless bandits as well as the Gittins index in discounted rested bandits.
 Moreover, to the best of our knowledge, this algorithm is the first algorithm to achieve subcubic theoretical computational complexity.
 That is, if the considered arm has $S$ states, then the best variant of our algorithm performs $\landauO(S^{2.5286})$ arithmetic operations\footnote{multiplications and additions of real numbers, regardless of their values.}.
 %That is, if the considered arm has $S$ states, then our algorithm perform $\landauO(S^3)$ (the constant for $S^3$ is explicit in the chapter) arithmetic operations\footnote{multiplications and additions of real numbers, regardless of their values.}.
