@@ -4,7 +4,7 @@
 \chapter{Learning in Average Reward Restless Markovian Bandits}
 \label{ch:learning_restless}
 
-\KK{change $n$ to $N$}
+\KK{Add in the intro somewhere that restless span in the regret differently from rested}
 
 In the previous chapter, we adapt a few learning algorithms to discounted rested Markovian bandits and showed that their regrets, which are upper bounded sublinearly in the number of arms, match the minimax Bayesian regret that we derived in the chapter.
 We also showed that any optimistic index policy that, relying on the confidence bonus on the transition of arms, computes optimistic index on each arm independently from the other arms does not guarantee the optimism in face of uncertainty (OFU) principle.
@@ -75,7 +75,7 @@ This inspires us to study the implication of structure of arms in the structure 
 
 In this chapter, we show that:
 \begin{itemize}
-    \item no matter how good a learning algorithm is and how many total steps it is allowed to learn, there always is a restless bandit, whose arms all are unichain, that makes the learner suffer an expected regret that is linear in total steps
+    \item no matter how good a learning algorithm is and how many total steps it is allowed to learn, there is a restless bandit, whose arms all are unichain, that makes the learner suffer an expected regret that is linear in total steps
     \item for restless bandits whose arms all are ergodic,
         \begin{itemize}
             \item there is a bandit that is multichain
@@ -99,15 +99,14 @@ Finally, we provide an overview of regret analysis when learning algorithm for g
 \section{Undiscounted restless Markovian bandit}
 \label{ch:restless:sec:restless}
 
-We consider a restless Markovian bandit having $n$ arms.
+We recall from Chapter~\ref{ch:mb} that a restless Markovian bandit is multi-armed bandit having $n>0$ arms.
 Each arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ is a MDP with finite state space $\gS_i$ of size $S$ and binary action space $\{0,1\}$ where $0$ denotes the action ``rest'' and $1$ denotes the action ``activate''.
 If arm $i$ is in state $s_i$ and the decision maker executes $a_i\in\{0,1\}$, the arm incurs a random reward with expected value $r_i(s_i,a_i)$ and transitions to state $s'_i\in\gS_i$ with probability $p_i(s'_i\mid s_i,a_i)$.
 Similarly to what is done in Chapter~\ref{ch:learning_rested}, we assume that the state space of the arms are pairwise distinct: $\gS_i\cap\gS_j=\emptyset$ for any $i\neq j$.
-So, we will drop the index $i$ from expected reward and transition if no confusion is possible: we denote them by $r(s_i,a_i)$ instead of $r_i(s_i,a_i)$ and by $p(s'_i\mid s_i,a_i)$ instead of $p_i(s'_i\mid s_i,a_i)$.
+So, we will drop the index $i$ from the expected reward and transition if no confusion is possible: we denote them by $r(s_i,a_i)$ instead of $r_i(s_i,a_i)$ and by $p(s'_i\mid s_i,a_i)$ instead of $p_i(s'_i\mid s_i,a_i)$.
 
-The sequential decision problem is presented as the following.
 At time step $1$, the state of all arms denoted by $\vs_1:=(s_{1,1},\dots,s_{1,n})$ is sampled according to some initial distribution $\rho$ over the state space $\gX:=\gS_1\times\dots\times\gS_n$.
-At time step $t\ge1$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates exactly $m$ arms encoded by action $\va_t:=(a_{t,1},\dots,a_{t,n})$ such that $\va_t\in\{0,1\}^n$ and $\sum_{i=1}^{n} a_{t,i}=m$ where $m\in[n]$ is constant over time.
+At time step $t\ge1$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates exactly $m$ arms encoded by action $\va_t:=(a_{t,1},\dots,a_{t,n})$ such that $\va_t\in\{0,1\}^n$ and $\sum_{i=1}^{n} a_{t,i}=m$ and $m\in[n]$ is constant over time.
 %The decision maker then receives a random reward $r_t=\sum_{i=1}^{n}r_{t,i}$ where $r_{t,i}$ is a random reward from arm $i$.
 Each arm $i$ incurs then a random reward $r_{t,i}$ and makes
 a transition to new state $s_{t+1,i}$ in function of $s_{t,i}$ and $a_{t,i}$ but independently from the other arms.
@@ -115,7 +114,7 @@ So, the restless Markovian bandit is a specific MDP -- that we denote by $M$ -- 
 We say \emph{global} to refer to the quantities related to the MDP $M$ and \emph{local} to refer the quantities related to the arms.
 Without loss of generality, we assume that for any global state $\vs\in\gX$ and global action $\va\in\gA(m)$, the expected reward is bounded like $\sum_{i=1}^{n}r(s_i,a_i)\in[0,r_{max}]$.
 
-The decision maker wants to compute a policy $\pi:\gX\mapsto\gA(m)$ that maximizes the gain as defined in Section~\ref{ch:mdp:sec:gain}: for any $\vs\in\gX$,
+The decision maker wants to compute a policy $\pi:\gX\mapsto\gA(m)$ that maximizes the gain as defined in Section~\ref{ch:mdp:sec:gain}: for any global state $\vs\in\gX$,
 \begin{equation}
     \label{ch:restless:eq:obj}
     g^\pi_M(\vs):=\lim_{T\to+\infty}\frac1T \E^\pi\left[ \sum_{t=1}^{T} \sum_{i=1}^nr_{t,i} \mid \vs_1=\vs\right].
@@ -138,14 +137,14 @@ However, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that compu
 
 We presented the classification of MDPs in Definition~\ref{ch:mdp:defn:mdp_class} of Chapter~\ref{ch:mdp}.
 We also divided the MDP space as presented in \figurename~\ref{ch:mdp:fig:mdp_class}.
-In addition, we say that a MDP is \emph{recurrent} if for all policy $\pi$, the matrix $\mP^\pi$ defines a Markov chain where all states are recurrent (equivalently, for all states $s$ and $s'$, a Markov chain starting in $s$ will visit $s'$ with probability $1$).
+In addition, we say that a MDP is \emph{recurrent} if for all policy $\pi$, the transition matrix $\mP^\pi$ defines a Markov chain where all states are recurrent (equivalently, for all states $s$ and $s'$, a Markov chain starting in $s$ will visit $s'$ with probability $1$).
 A recurrent or unichain MDP is called \emph{aperiodic} if all matrices $\mP^\pi$ are aperiodic.
 An equivalence of the definition of ergodic MDP in Definition~\ref{ch:mdp:defn:mdp_class} is that a MDP is \emph{ergodic} if it is recurrent and aperiodic.
 
 As mentioned in the beginning, there exist learning algorithms that rely on the mixing time of the MDPs.
 So, we provide the definition of mixing time below.
 Following \cite[Definition 5.1]{wei2020model},
-\begin{defn}
+\begin{defn}[The mixing time of ergodic MDP]
     \label{ch:restless:defn:mixing_time}
     The mixing time of an ergodic MDP with state space $\gS$ is defined as
     \begin{align*}
@@ -182,8 +181,8 @@ In the following, we study the structure of the bandit when the local arms all a
 To do so, we will provide a few simple examples and counter-examples.
 In those examples, the bandit always has two arms and exactly one arm is activated at each decision time.
 To ease the exposition, Arm $1$ is drawn in green color and Arm $2$ in blue.
-In each arm, the state transitions of action activate is drawn in back color and those of action rest is drawn in dashed red color.
-In the global MDP, the state transitions when activating Arm $1$ is drawn in green arrows and those when activating Arm $2$ is drawn in blue.
+In each arm, the state transitions of action activate are drawn in back color and those of action rest are drawn in dashed red color.
+In the global MDP, the state transitions when activating Arm $1$ are drawn in green arrows and those when activating Arm $2$ are drawn in blue.
 %The transitions under optimal action are drawn in double-head arrows.
 If applicable, the expected reward and probability of transition are noted along the transition arrows.
 However, if the transition is deterministic, \ie, the probability of transition is $1$, we only note the expected reward along the transition arrows.
@@ -193,14 +192,14 @@ However, if the transition is deterministic, \ie, the probability of transition 
 
 In general, the expected regret is frequently bounded based on the concentration inequalities. 
 These inequalities encode how well an unknown parameter is estimated.
-So, it should be safe to say that ``the regret is bounded if the unknown parameters of the MDP are well estimated''.
+So, it should be safe to say that ``if the unknown parameters of the MDP are well estimated, then the regret is bounded sublinearly in the total steps $T$''.
 Meanwhile, for a restless Markovian arm having $S$ states, there are at most $2S+2S^2$ parameters.
 This means that a restless bandit $M$ described above is a specific MDP in which there are $n(2S+2S^2)$ parameters instead of $\landauO(S^{n})$.
 Intuitively, if each arm visits all of its states frequently, then the $2S+2S^2$ unknown parameters should be well estimated as well as the $n(2S+2S^2)$ unknown parameters of the global MDP.
-Then, the expected regret in learning such a restless bandit should be bounded linearly in $n$.
+Then, the expected regret in learning such a restless bandit should be bounded not only linearly in $n$ but also sublinearly in the total steps $T$.
 Unfortunately, we show in this section that this reasoning is not always applicable. 
 
-\subsubsection{Non learnable restless bandit}
+\subsubsection{Non learnable restless bandit whose arms all are unichain}
 
 We show in the following theorem that the assumption that each arm is unichain and has a bounded local span of bias of any local policy is not enough to make a restless bandit learnable.
 
@@ -285,7 +284,8 @@ We show in the following theorem that the assumption that each arm is unichain a
     	    (B) edge[bend left, dashed, red]     node{$0$}	(A);
         \end{tikzpicture}
         \\
-            Arm $1^a$ & Arm $1^b$ & Arm $2$ 
+            Arm $1^a$ & Arm $1^b$ & Arm $2$  \\
+            \multicolumn{3}{c}{State transition is deterministic.}
         \end{tabular}
         \caption{
             Restless Markovian arms. Arm $1^a$ and Arm $1^b$ has 3 states and Arm $2$ has 2 states.
@@ -346,7 +346,8 @@ We show in the following theorem that the assumption that each arm is unichain a
             (F) edge[line width=0.4mm, black!45!green] node[below]{$0$} (D);
         \end{tikzpicture}
         \\
-            $M^a:=\{\text{Arm }1^a, \text{Arm }2\}$ & $M^b:=\{\text{Arm }1^b, \text{Arm }2\}$
+            $M^a:=\{\text{Arm }1^a, \text{Arm }2\}$ & $M^b:=\{\text{Arm }1^b, \text{Arm }2\}$ \\
+            \multicolumn{2}{c}{State transition is deterministic.}
         \end{tabular}
         \caption{
             Two restless bandits, each with two arms given in \figurename~\ref{fig:hard_local}.
@@ -374,25 +375,29 @@ We show in the following theorem that the assumption that each arm is unichain a
 
 The difference between \ref{it:non_learnable1} and \ref{it:non_learnable2} of Theorem~\ref{thm:non_learnable} is that the bandits in \ref{it:non_learnable1} do not depend on $T$ while the ones in \ref{it:non_learnable2} do.
 So, the result of \ref{it:non_learnable1} is stronger.
-The reason that \ref{it:non_learnable2} is proposed is because the global MDPs in \ref{thm:non_learnable1} are not weakly communicating.
+Yet, the reason that \ref{it:non_learnable2} is proposed is because the global MDPs in \ref{thm:non_learnable1} are not weakly communicating (see \figurename~\ref{ch:mdp:fig:mdp_class} for the MDP classification).
 According to Definition~\ref{ch:rl:defn:rg_infinite}, the regret is not defined in MDPs that are not weakly communicating.
 So, the regret in \ref{thm:non_learnable1} should be understood as the difference between the cumulative reward of an optimal policy and the cumulative reward of the learner. 
-For \ref{it:non_learnable2}, the bandits are weakly communicating and Definition~\ref{ch:rl:defn:rg_infinite} is used for regret.
+For \ref{it:non_learnable2}, the bandits are weakly communicating and Definition~\ref{ch:rl:defn:rg_infinite} is applied.
 
-Theorem~\ref{thm:non_learnable} inspires use to impose a more restrictive assumption on local arm.
+Theorem~\ref{thm:non_learnable} shows us that no matter how good a learning algorithm is and how many total steps it is allowed to learn, there is a restless bandit, whose arms all are unichain, that makes the learner suffer an expected regret that is linear in total steps.
+We prove this theorem by constructing a bandit such that one of its arms admits a local transient state (the state $3$ of Arm $1$ in \figurename~\ref{fig:hard_local}).
+The constructed bandit has then two global transient states (the states $(3,1)$ and $(3,2)$ in \figurename~\ref{fig:hard_global}).
+In fact, if a restless bandit has $n$ arms, each arm has $S$ states, and there exists one arm that admits one local transient state, then the bandit has $S^{n-1}$ global transient states.
+This inspires us to study the bandits whose arms all have no local transient state.
 %We should mention that the global MDPs used in the proof of Theorem~\ref{thm:non_learnable} are not weakly communicating. So, their diameter is infinite.
 %We will see in the following that there exists restless bandits whose diameter is exponential in the number of arms.
 
-\subsubsection{Hard to learn restless bandits whose arms all are ergodic}
+\subsubsection{Restless bandits whose arms all have no local transient state}
 
 The following theorem shows that a restless bandit, whose arms all are ergodic or all are recurrent, is not necessarily unichain.
 
 \begin{thm}[Multichain restless bandit]
     \label{thm:multichain}
-    For finite restless bandits,
     \begin{enumerate}[label=(\roman*)]
-        \item \label{thm:not_ergodic} there exists a restless bandit, whose arms all are recurrent, that is not weakly communicating % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
-        \item \label{thm:ergodic_arms_multichain_RB} there exists a restless bandit, whose arms all are ergodic, that is multichain.
+        \item[]
+        \item \label{thm:not_ergodic} Among restless bandits whose arms all  are recurrent, there is a bandit that is not weakly communicating. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
+        \item \label{thm:ergodic_arms_multichain_RB} Among restless bandits whose arms all are ergodic, there is a bandit that is multichain.
     \end{enumerate}
 \end{thm}
 
@@ -440,7 +445,8 @@ The following theorem shows that a restless bandit, whose arms all are ergodic o
                 (D) edge[bend right=80, RoyalBlue, line width=0.4mm] node[below]{$1$} (A);
         \end{tikzpicture}
         \\
-            Arm $1$ & Arm $2$ & Global MDP having four states.
+            Arm $1$ & Arm $2$ & Global MDP having four states. \\
+            \multicolumn{3}{c}{State transition is deterministic.}
         \end{tabular}
         \caption{
             A restless bandit with two arms and exactly one arm is activated at each decision time.
@@ -457,7 +463,7 @@ The following theorem shows that a restless bandit, whose arms all are ergodic o
     \medskip \\
     \textbf{Proof of \ref{thm:ergodic_arms_multichain_RB}} -- It is given by the following counter-example.
     Consider a restless bandit with two 8-state arms presented in \figurename~\ref{fig:ergodic_arm}.
-    Both arms are identical in term of state transition that is summarized in Table~\ref{tab:ergodic_arm}.
+    Both arms are identical in terms of state transition that is summarized in Table~\ref{tab:ergodic_arm}.
     We observe that when rest, state $1$ and $2$ have the same possible next states $2$ and $3$.
     Similarly, the pair $\{3,4\}$ has $\{4,5\}$, $\{5,6\}$ has $\{6,7\}$, and $\{7,8\}$ has $\{8,1\}$.
     Similar pattern is observed under action activate: $\{2,3\}$ has $\{3,4\}$, $\{4,5\}$ has $\{5,6\}$, $\{6,7\}$ has $\{7,8\}$, and $\{8,1\}$ has $\{1,2\}$.
@@ -470,7 +476,7 @@ The following theorem shows that a restless bandit, whose arms all are ergodic o
     \begin{align}
         &\text{Arm 1} : \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \{3,4\} \overset{R}{\to} \dots \overset{A}{\to} \{1,2\} \nonumber \\
         &\text{Arm 2} : \{4,5\} \overset{A}{\to} \{5,6\} \overset{R}{\to} \{6,7\} \overset{A}{\to} \dots \overset{R}{\to} \{4,5\} \nonumber \\
-        &\text{MDP} : \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix} \overset{2}{\to} \begin{pmatrix}2,6\\3,5\\3,6\end{pmatrix} \overset{1}{\to} \begin{pmatrix}3,7\\4,6\\4,7\end{pmatrix} \overset{2}{\to} \dots \overset{1}{\to} \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix} \label{eq:mdp_transition}
+        &\text{Bandit} : \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix} \overset{2}{\to} \begin{pmatrix}2,6\\3,5\\3,6\end{pmatrix} \overset{1}{\to} \begin{pmatrix}3,7\\4,6\\4,7\end{pmatrix} \overset{2}{\to} \dots \overset{1}{\to} \begin{pmatrix}1,5\\2,4\\2,5\end{pmatrix} \label{eq:mdp_transition}
     \end{align}
     where the symbol $\overset{i}{\to}$ in \Eqref{eq:mdp_transition} means the transition when Arm $i$ is activated.
     It means that any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the global MDP is in state $(s,s+4), (s+1,s+3)$, and $(s+1,s+4)$ induce a recurrent class $\gX^1$ as given in \figurename~\ref{fig:local_ergodic_multichain_RB} (note that for $s$ big enough, state $9$ is state $1$, $10$ is $2$, etc).
@@ -478,7 +484,7 @@ The following theorem shows that a restless bandit, whose arms all are ergodic o
     \begin{align*}
         &\text{Arm 1} : \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \{3,4\} \overset{R}{\to} \dots \overset{A}{\to} \{1,2\} \\
         &\text{Arm 2} : \{8,1\} \overset{A}{\to} \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \dots \overset{R}{\to} \{8,1\} \\
-        &\text{MDP} : \begin{pmatrix}1,1\\2,8\\2,1\end{pmatrix} \overset{2}{\to} \begin{pmatrix}2,2\\3,1\\3,2\end{pmatrix} \overset{1}{\to} \begin{pmatrix}3,3\\4,2\\4,3\end{pmatrix} \overset{2}{\to} \dots \overset{1}{\to} \begin{pmatrix}1,1\\2,8\\2,1\end{pmatrix}
+        &\text{Bandit} : \begin{pmatrix}1,1\\2,8\\2,1\end{pmatrix} \overset{2}{\to} \begin{pmatrix}2,2\\3,1\\3,2\end{pmatrix} \overset{1}{\to} \begin{pmatrix}3,3\\4,2\\4,3\end{pmatrix} \overset{2}{\to} \dots \overset{1}{\to} \begin{pmatrix}1,1\\2,8\\2,1\end{pmatrix}
     \end{align*}
     So, any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the bandit is in state $(s,s), (s+1,s+7)$, and $(s+1,s)$ induce the class $\gX^2$.
     All in all, any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the global MDP is in state $(s,s), (s+1,s+7), (s+1,s), (s,s+4), (s+1,s+3)$ and $(s+1,s+4)$ induce two recurrent classes $\gX^1$ and $\gX^2$.
@@ -497,7 +503,7 @@ The following theorem shows that a restless bandit, whose arms all are ergodic o
             $7$   & $8$ or $1$  &  $7$ or $8$ \\
             $8$   & $8$ or $1$  &  $1$ or $2$ \\ \hline
         \end{tabular}
-        \caption{State transition of arms in \figurename~\ref{fig:ergodic_arm}.}
+        \caption{State transition of arms in \figurename~\ref{fig:ergodic_arm}. Each transition happens with probability $0.5$}
         \label{tab:ergodic_arm}
     \end{table}
     %in \figurename~\ref{fig:local_ergodic_multichain_RB}.
@@ -593,13 +599,14 @@ The following theorem shows that a restless bandit, whose arms all are ergodic o
                 (H) edge[loop left] node{} (H)
                 edge[bend left=30]     node{}	(A);
             \end{tikzpicture} \\
-            Arm $1$ & Arm $2$
+            Arm $1$ & Arm $2$ \\
+            \multicolumn{2}{c}{Each transition happens with probability $0.5$.}
         \end{tabular}
         \caption{
             Two restless Markovian arms, each having $8$ states.
             Both arms are identical in term of transition structure.
             The black arrows show state transition of action activate and the dashed red one for action rest.
-            To ease the exposition, the expected reward is not shown.
+            To ease the exposition, the expected reward is not shown because it is not relevant to the analysis.
             Also, each state transition happens with probability $0.5$.
             %That is, each arm goes from states $1$ and $2$ to state $2$ or $3$, states $3$ and $4$ to state $4$ or $5$, etc, under action rest, and goes from states $1$ and $8$ to state $1$ or $2$, etc, under action activate.
             We provide a list of transition in Table~\ref{tab:ergodic_arm}.
@@ -649,7 +656,7 @@ The following theorem shows that a restless bandit, whose arms all are ergodic o
             (D) edge[black!30!green,line width=0.4mm]     node{}	(E)
     	    (F) edge[black!30!green,line width=0.4mm]     node{}	(G)
             (H) edge[black!30!green,line width=0.4mm]     node{}	(A);
-        \end{tikzpicture}
+        \end{tikzpicture} \\
         \end{tabular}
         \caption{
             State transition within two recurrent classes of a restless with 2 arms presented in \figurename~\ref{fig:ergodic_arm}.
@@ -664,23 +671,24 @@ The following theorem shows that a restless bandit, whose arms all are ergodic o
     \end{figure}
 \end{proof}
 
-Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the diameter or the mixing time of the global MDP are infinite or undefined.
-%That is, the global MDP is multichain and weakly communicating.
-%The following theorem shows that having the global MDP that is ergodic 
+Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the corresponding bandit is not necessarily ergodic.
+So, the mixing time in such a bandit is infinite.
 
+Finally, we provide a few results that show that the parameters of the bandit such as the diameter, the mixing time, and span of bias of any global policy can be arbitrarily large.
 \begin{thm}
-    For finite restless bandits,
+    \label{thm:parameters}
     \begin{enumerate}[label=(\roman*)]
-        \item \label{thm:diam} there exists a bandit having $n$ 2-state arms, each arm has the diameter bounded by $2$, that is ergodic and has a diameter bounded by $2^n$ % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
+        \item[]
+        \item \label{thm:diam} There is a restless bandit having $n$ 2-state arms, all arms have a diameter of size $2$, that is ergodic and has a diameter of size $2^n$. % the term noncommunicating is taken from [Puterman, 1994, page 353]. 
         %\item \label{thm:aperiodic_RB_ergo} There exists a Restless bandit whose arms are all ergodic that is not recurrent. 
-        \item \label{thm:mixing} there exists a bandit, whose arms all are ergodic with bounded mixing time, that is ergodic and has a mixing time in the same order of $\landauO(1/\varepsilon)$ for any $\varepsilon\in(0,1)$.
-        \item \label{thm:span} there exists a bandit, whose arms all have a bounded local span of bias of any local policy, that is communicating and has a global span of optimal bias in the same order of $\landauO(1/\varepsilon)$ for any $\varepsilon\in(0,1)$.
+        \item \label{thm:mixing} There is a constant $c>1$ such that for each constant $C>1$, there is a restless bandit, whose arms all are ergodic and have the local mixing time smaller than $c$, that is ergodic and has the global mixing time larger than $C$.
+        \item \label{thm:span} There is a constant $c>0$ such that for each constant $C>0$, there is a restless bandit, whose arms all have a local span of bias of any local policy upper bounded by $c$, that is communicating and has a global span of optimal bias lower bounded by $C$.
     \end{enumerate}
 \end{thm}
 \begin{proof}
     \textbf{Proof of \ref{thm:diam}} -- consider an example of $n$ arms, each arm is a MDP with state space $\{1,2\}$ and has $0.5$ probability of changing state under both actions.
     It should be clear the bandit is ergodic.
-    The probability that the bandit goes from state $(1,\dots,1)$ to state $(2,\dots,2)$ is $(1/2)^n$.
+    Indeed, any state of bandit can be reached from any other global states with probability $(1/2)^n$.
     Hence, the diameter of the bandit is $2^n$.
     \medskip \\
 
@@ -690,10 +698,10 @@ Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the di
     Note that we can specify $p_1$ and $p_2$ such that $t_{mix}$ is small.
     Let's denote the bandit having two arms $p_1$ and $p_2$ by $M$.
     We have seen that $M$ is multichain.
-    So the mixing time of $M$ is infinite.
+    So, by Definition~\ref{ch:restless:defn:mixing_time}, the mixing time of $M$ is infinite.
 
-    Now, consider two 8-state restless arms having transition functions $u_1$ and $u_2$ where $u_1$ and $u_2$ induce the same state transition: any state $s\in[8]$ transitions to any other state $s'\in[8]$ with probability $\frac18$ under either action rest or activate.
-    It is then clear that $u_1$ and $u_2$ are both ergodic and have the mixing time equals $1$.
+    Now, consider two 8-state restless arms having transition functions $u_1$ and $u_2$ where $u_1$ and $u_2$ induce the same state transition: any local state $s\in[8]$ transitions to any other lcaol state $s'\in[8]$ with probability $\frac18$ under either action rest or activate.
+    It is then clear that $u_1$ and $u_2$ are both ergodic and have a mixing time of size $1$.
     Any bandit having two arms $u_1$ and $u_2$ is an ergodic MDP.
 
     For any $\varepsilon\in(0,1)$, consider two 8-state restless arms having transition function $p'_1=(1-\varepsilon)p_1+\varepsilon u_1$ and $p'_2=(1-\varepsilon)p_2+\varepsilon u_2$.
@@ -703,7 +711,7 @@ Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the di
     So, $p'_1$ and $p'_2$ are both ergodic.
     We know that if $\varepsilon=0$, the mixing time of $p'_1$ and $p'_2$ is $t_{mix}$ and if $\varepsilon=1$, the mixing time is $1$.
     Then, there exists $\varepsilon_0>0$ such that the mixing time of $p'_1$ and $p'_2$ is $t_{mix}/2$.
-    For any $\varepsilon\in(0,\varepsilon_0]$, any bandit having two arms $p'_1$ and $p'_2$ is an ergodic MDP denoted by $M'(\varepsilon)$.
+    For any $\varepsilon\in(0,\varepsilon_0]$, any bandit having exactly two arms $p'_1$ and $p'_2$ is an ergodic MDP denoted by $M'(\varepsilon)$.
     The mixing time of $M'(\varepsilon)$ is then defined.
     However, when $\varepsilon\to0$, $M'(\varepsilon)\to M$.
     This is equivalent to say that when $\varepsilon\to0$, the mixing time of $M'(\varepsilon)$ tends to infinity.
@@ -715,12 +723,12 @@ Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the di
     As we mentioned above, for each arm, the local span of bias of any local policy is bounded in $[0,1]$ but the bandit $M$ is multichain.
     So, the global span of optimal bias is infinite.
 
-    Consider now two two-state arms with reward functions $r_1$ and $r_2$, and transition functions $u_1$ and $u_2$ that induce the same state transition: any state $s\in[2]$ transitions to any other state $s'\in[2]$ with probability $\frac12$.
+    Consider now two 2-state arms with reward functions $r_1$ and $r_2$, and transition functions $u_1$ and $u_2$ that induce the same state transition: any local state $s\in[2]$ transitions to any other local state $s'\in[2]$ with probability $\frac12$.
     So, $u_1$ and $u_2$ are both ergodic and the local span of bias of any local policy is bounded in $[0,1]$.
 
-    With the same technique above, for any $\varepsilon\in(0,1)$, consider two two-state arms having reward functions $r_1$ and $r_2$, and transition functions $p'_1=(1-\varepsilon)p_1+\varepsilon u_1$ and $p'_2=(1-\varepsilon)p_2+\varepsilon u_2$.
+    With the same technique above, for any $\varepsilon\in(0,1)$, consider two 2-state arms having reward functions $r_1$ and $r_2$, and transition functions $p'_1=(1-\varepsilon)p_1+\varepsilon u_1$ and $p'_2=(1-\varepsilon)p_2+\varepsilon u_2$.
     So, for any $\varepsilon\in(0,1)$, $p'_1$ and $p'_2$ are both ergodic and have the local span of bias of any local policy bounded in $[0,1]$.
-    We denote any bandit having two arms $(r_1,p'_1)$ and $(r_2,p'_2)$ by $M'(\varepsilon)$.
+    We denote any bandit having exactly two arms $(r_1,p'_1)$ and $(r_2,p'_2)$ by $M'(\varepsilon)$.
     We will see in Theorem~\ref{thm:aperiodic_RB_comm} that for any $\varepsilon\in(0,1)$, $M'(\varepsilon)$ is a communicating MDP.
     However, when $\varepsilon\to0$, $M'(\varepsilon)\to M$.
     This is equivalent to say that when $\varepsilon\to0$, the global span of optimal bias of $M'(\varepsilon)$ tends to infinity.
@@ -729,8 +737,8 @@ Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the di
 \subsection{Positive results}
 
 In this section, we show a few results in which the assumption on local arms implies ``desirable'' properties on the bandit.
-The term ``desirable'' refers to the fact that the properties frequently required by the learning algorithms for generic MDPs are satisfied.
-This term does not imply neither the learning algorithm has a regret bound sublinear in total steps nor its regret bound is explicitly linear in the number of arms.
+The term ``desirable'' refers to the fact that the properties frequently required by the general-purpose RL algorithms are satisfied.
+This term does not imply neither the learning algorithm has a regret bound sublinear in the total steps nor its regret bound is explicitly linear in the number of arms.
 
 \begin{thm}
     \label{thm:aperiodic_RB_comm} A restless bandit whose arms all are ergodic is a communicating MDP.
@@ -764,73 +772,18 @@ The following theorem also provides a positive result on the structure of global
     That concludes the proof.
 \end{proof}
 
-Last but not least, the following theorem shows how the assumption on the ergodicity coefficient of local arms affects the ergodicity coefficient of the bandit.
-\begin{thm}
-    \label{thm:ergodicity_coeff}
-    %Given a restless bandit $M$ 
-    Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
-    For each arm $i\in[n]$, the ergodicity coefficient $\gamma_i$ of the arm is defined by
-    \begin{align*}
-        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\}.
-    \end{align*}
-    Similarly, the ergodicity coefficient $\Gamma$ of the bandit $M$ is defined by
-    \begin{align*}
-        \Gamma = 1-\min_{\substack{\vs,\vs'\in\gX \\\va,\va'\in\gA(m)}} \sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}.
-    \end{align*}
-    If for any arm $i$, $\gamma_i<1$, then $\Gamma<1$.
-
-    Moreover, if there exists $\varepsilon>0$ such that for any arm $i\in[n]$,
-    \begin{equation}
-        \label{eq:gamma_ep}
-        %\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a), p(z_i \mid s'_i, a')\} \ge \varepsilon,
-        \gamma_i \le 1-\varepsilon,
-    \end{equation}
-    then $\Gamma \le 1-\varepsilon^n$.
-\end{thm}
-Hence, if \eqref{eq:gamma_ep} holds for all $i\in[n]$, then the global span of optimal bias in the bandit $M$ is bounded like 
-\begin{align}
-    sp(\vh^*_M)\le \frac{r_{max}}{\varepsilon^n} \label{eq:span_expo}
-\end{align}
-where $\vh^*_M$ is the optimal bias of the bandit $M$.
-Indeed, if \eqref{eq:gamma_ep} holds for all $i\in[n]$, then $\Gamma \le 1-\varepsilon^n$ and the bandit $M$ is unichain.
-Let $\pi^*$ be an optimal policy and $\vr^{\pi^*}$ and $\mP^{\pi^*}$ be the expected reward vector and transition matrix under policy $\pi^*$.
-For any global state $\vs\in\gX$, $r^{\pi^*}(\vs)\in[0,r_{max}]$.
-Then, the optimal gain $g^*_M$ is bounded in $[0, r_{max}]$.
-We recall that the Bellman evaluation equation for unichain policy $\pi^*$ in vector form is $\vh^*=\vr^{\pi^*} - g^*\vone +\mP^{\pi^*}\vh^*$.
-Then, $sp(\vh^*_M)\le r_{max} +sp(\mP^{\pi^*}\vh^*_M)\le r_{max} +\Gamma sp(\vh^*_M)$ because $sp(\mP^{\pi^*}\vh^*_M)\le \Gamma sp(\vh^*_M)$.
-So, $sp(\vh^*_M)\le r_{max}/\varepsilon^n$.
-
-\begin{proof}
-    For any two global states $\vs,\vs'\in\gX$ and any two actions $\va,\va'\in\gA(m)$, we have
-    \begin{align*}
-        \sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}
-        &= \sum_{\vz\in\gX} \min\left\{\prod_{i=1}^np(z_i \mid s_i, a_i), \prod_{i=1}^np(z_i \mid s'_i, a'_i)\right\} \\
-        &\ge \sum_{\vz\in\gX}\prod_{i=1}^n \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\} \\
-        &= \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}\right).
-    \end{align*}
-    %\KK{Add more detail about the second equality}
-    Since for any $i\in[n]$, $\gamma_i<1$, we have that
-    \begin{align*}
-        \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}
-        &\ge \min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\} \\
-        &= 1-\gamma_i >0.
-    \end{align*}
-    In consequences, ${\sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}{>}0}$.
-    We conclude that $\Gamma{<}1$.\\
-    Moreover, if there exists $\varepsilon>0$ such that \eqref{eq:gamma_ep} holds for any $i\in[n]$, then it follows that
-    \begin{align*}
-        \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}\right)
-        &\ge \varepsilon^n.
-    \end{align*}
-    We can conclude that $\Gamma\le 1-\varepsilon^n$ using its definition.
-\end{proof}
-
 
 %\subsection{Regret definition and required assumptions}
-\section{Restless bandit as a generic MDP}
+\section{Learning algorithms for restless bandits}
 \label{ch:restless:sec:generic}
 
-\KK{I have not found a better title yet.}
+For infinite-horizon RL problems, two of the most popular general-purpose RL algorithms are UCRL2 \cite{jaksch2010near} from OFU method and TSDE \cite{ouyang2017learning} from Bayesian method.
+Similarly to we have seen in Chapter~\ref{ch:learning_rested}, the regret bound of both algorithms when directly applied to restless bandit $M$ described in Section~\ref{ch:restless:sec:restless} is $\landauO\Bigl(DS^n\sqrt{{n \choose m}T}\Bigr)$ where $D$ is the global diameter of the bandit $M$. This regret bound, which is exponential in the number of arms $n$, follows from Table~\ref{ch:rl:tab:infinite} and the fact the state and action sizes of $M$ are $S^n$ and ${n \choose m}$ respectively.
+There are two issues in this regret bound.
+One noticeable problem is the term $S^n$ that is the state size of $M$.
+And the other implicit problem is te global diameter of $M$. 
+As we have seen in Theorem~\ref{thm:parameters}, it is perfectly possible that there is a bandit with a diameter that exponential in the number of arms.
+%TODO
 
 By Definition~\ref{ch:rl:defn:rg_infinite}, the regret of a learning algorithm $\gL$ after $T$ time steps in a restless bandit $M$ that is weakly communicating is given by
 \begin{align}
@@ -1001,5 +954,72 @@ In particular, we showed that no learning algorithms can perform uniformly well 
 We also discussed about the conditions to assume in order to design a learning algorithm with regret guarantee.
 Yet, in learning restless Markovian bandit, we believe that the exponentiality in the number of arms in the regret bound of the learning algorithm is not settled yet.
 The chapter terminates here.
+
+
+\KK{Include back the following}
+
+Last but not least, the following theorem shows how the assumption on the ergodicity coefficient of local arms affects the ergodicity coefficient of the bandit.
+\begin{thm}
+    \label{thm:ergodicity_coeff}
+    %Given a restless bandit $M$ 
+    Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
+    For each arm $i\in[n]$, the ergodicity coefficient $\gamma_i$ of the arm is defined by
+    \begin{align*}
+        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\}.
+    \end{align*}
+    Similarly, the ergodicity coefficient $\Gamma$ of the bandit $M$ is defined by
+    \begin{align*}
+        \Gamma = 1-\min_{\substack{\vs,\vs'\in\gX \\\va,\va'\in\gA(m)}} \sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}.
+    \end{align*}
+    If for any arm $i$, $\gamma_i<1$, then $\Gamma<1$.
+
+    Moreover, if there exists $\varepsilon>0$ such that for any arm $i\in[n]$,
+    \begin{equation}
+        \label{eq:gamma_ep}
+        %\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a), p(z_i \mid s'_i, a')\} \ge \varepsilon,
+        \gamma_i \le 1-\varepsilon,
+    \end{equation}
+    then $\Gamma \le 1-\varepsilon^n$.
+\end{thm}
+Hence, if \eqref{eq:gamma_ep} holds for all $i\in[n]$, then the global span of optimal bias in the bandit $M$ is bounded like 
+\begin{align}
+    sp(\vh^*_M)\le \frac{r_{max}}{\varepsilon^n} \label{eq:span_expo}
+\end{align}
+where $\vh^*_M$ is the optimal bias of the bandit $M$.
+Indeed, if \eqref{eq:gamma_ep} holds for all $i\in[n]$, then $\Gamma \le 1-\varepsilon^n$ and the bandit $M$ is unichain.
+Let $\pi^*$ be an optimal policy and $\vr^{\pi^*}$ and $\mP^{\pi^*}$ be the expected reward vector and transition matrix under policy $\pi^*$.
+For any global state $\vs\in\gX$, $r^{\pi^*}(\vs)\in[0,r_{max}]$.
+Then, the optimal gain $g^*_M$ is bounded in $[0, r_{max}]$.
+We recall that the Bellman evaluation equation for unichain policy $\pi^*$ in vector form is $\vh^*=\vr^{\pi^*} - g^*\vone +\mP^{\pi^*}\vh^*$.
+Then, $sp(\vh^*_M)\le r_{max} +sp(\mP^{\pi^*}\vh^*_M)\le r_{max} +\Gamma sp(\vh^*_M)$ because $sp(\mP^{\pi^*}\vh^*_M)\le \Gamma sp(\vh^*_M)$.
+So, $sp(\vh^*_M)\le r_{max}/\varepsilon^n$.
+
+\begin{proof}
+    For any two global states $\vs,\vs'\in\gX$ and any two actions $\va,\va'\in\gA(m)$, we have
+    \begin{align*}
+        \sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}
+        &= \sum_{\vz\in\gX} \min\left\{\prod_{i=1}^np(z_i \mid s_i, a_i), \prod_{i=1}^np(z_i \mid s'_i, a'_i)\right\} \\
+        &\ge \sum_{\vz\in\gX}\prod_{i=1}^n \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\} \\
+        &= \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}\right).
+    \end{align*}
+    %\KK{Add more detail about the second equality}
+    Since for any $i\in[n]$, $\gamma_i<1$, we have that
+    \begin{align*}
+        \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}
+        &\ge \min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\} \\
+        &= 1-\gamma_i >0.
+    \end{align*}
+    In consequences, ${\sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}{>}0}$.
+    We conclude that $\Gamma{<}1$.\\
+    Moreover, if there exists $\varepsilon>0$ such that \eqref{eq:gamma_ep} holds for any $i\in[n]$, then it follows that
+    \begin{align*}
+        \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}\right)
+        &\ge \varepsilon^n.
+    \end{align*}
+    We can conclude that $\Gamma\le 1-\varepsilon^n$ using its definition.
+\end{proof}
+
+
+
 
 \endgroup
