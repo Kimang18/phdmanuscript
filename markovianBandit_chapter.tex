@@ -346,12 +346,12 @@ These questions are discussed in Chapter~\ref{ch:learning_rested} of Part~\ref{p
 Similarly to rested bandit, in restless bandit having $n$ arms and $S$ states per arm, there are only $2nS$ real values to be estimated for expected reward and $2nS^2$ for transition probability.
 It is then equally interesting to analyze the performance of RL algorithms when the environment is an unknown restless bandit with no discounts.
 However, in infinite horizon average reward model, the structure of the MDP must be taken into account in learning.
-Since the size of state space $\gX$ is exponential in the number of arms $n$, analyzing the structure of the global MDP is hard.
+Since the size of state space $\gX$ is exponential in the number of arms $n$, analyzing the structure of the global MDP is computationally hard.
 In consequence, we are interested in the following questions.
 \begin{itemize}
-    \item How does the structure of arms translate in the structure of global MDP?
-    \item Is there any RL algorithms that achieve a regret upper bounded linearly in $n$ in learning undiscounted restless Markovian bandit?
-    \item Although Whittle index policy has a complexity linear in $n$, this index policy is not optimal in general. So, how can Whittle index policy be utilized for learning purpose?
+    \item How does the structure of arms translate in the structure of the bandit?
+    \item Is there any RL algorithms that achieve a regret upper bounded linearly in $n$ in learning restless Markovian bandit with average reward criterion?
+    \item Although Whittle index policy has a computational complexity linear in $n$, this index policy does not always exist and is not optimal in general. So, how can Whittle index policy be utilized for learning purpose?
 \end{itemize}
 These questions will be addressed in Chapter~\ref{ch:learning_restless} of Part~\ref{part:learning}.
 

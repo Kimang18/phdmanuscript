@@ -24,7 +24,7 @@ The reader can skip this chapter and go directly to Chapter~\ref{ch:mb} and Part
 \subsection{Models and paradigms of learning}
 
 Fundamentally, a RL problem consists of a learner interacting with an environment modeled by an MDP $M=\langle\gS,\gA,r,p\rangle$.
-The state and action spaces $\gS$ and $\gA$ are known to the learner but the expected value of reward $r$ and state transition probabilities $p$ are \textbf{unknown}.
+The state and action spaces $\gS$ and $\gA$ are known to the learner but the expected value of reward $r$ and state transition probability $p$ are \textbf{unknown}.
 So, we say that the MDP $M$ is unknown to the learner.
 The goal of the learner is to identify an optimal policy $\pi^*$ by interacting with the unknown MDP.
 
@@ -34,19 +34,19 @@ The goal of the learner is to identify an optimal policy $\pi^*$ by interacting 
 %While $\pi^*$ is ultimately identified, two learning mechanisms are defined:
 In the literature of RL, there are mainly two distinguishable learning models:
 \begin{enumerate}[label=(\roman*)]
-    \item \textbf{Generative model}: the learner chooses the state of the unknown MDP $M$ at desire
-    \item \textbf{Navigating model}: the learner has no control over the state of $M$.
+    \item \emph{Generative model}: the learner chooses the state of the unknown MDP $M$ at desire
+    \item \emph{Navigating model}: the learner has no control over the state of $M$.
 \end{enumerate}
 With the generative model, the learner picks any state-action pair $(s,a)$ and the MDP $M$ incurs a random reward $u$ whose expected value is $r(s,a)$ and the next state $s'\in\gS$ with probability $p(s'\mid s,a)$.
 The learner collects the sample $\{u,s'\}$ related to the pair $(s,a)$ and the process is repeated.
-This mechanism is used in \textbf{offline learning paradigm} (see  \eg, \cite{lange2012batch, levine2020offline}) in which the learner starts by collecting samples until a budget resource fixed by the setting is exhausted (it can be a time resource, sample resource or approximation error). Then, the learner plans a policy based on the collected samples and follows the policy.
+This mechanism is used in \emph{offline learning paradigm} (see  \eg, \cite{lange2012batch, levine2020offline}) in which the learner starts by collecting samples until a budget resource fixed by the setting is exhausted (it can be a time resource, sample resource or approximation error). Then, the learner plans a policy based on the collected samples and follows the policy.
 No more policy update is made thereafter.
 
 With the navigating model, the learner observes the current state $s$ of the MDP $M$ and executes an action $a$ and the MDP $M$ incurs a random reward with expected value $r(s,a)$ and transitions to state $s'$ with probability $p(s'\mid s,a)$.
 The learner cannot force the MDP to restart in any state.
 If the learner wants the MDP to be in a certain state, it has to go along the trajectory that brings the MDP from its current state to the desired state.
 In some settings like finite horizon or infinite horizon with discount, the MDP $M$ can restart, but the learner has no control over the restart such as when and in which state to restart.
-This mechanism is used in \textbf{online learning paradigm} in which the learner keeps updating its policy based on the observations it collects via the interaction with the MDP $M$ (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax, ouyang2017learning,zanette2019tighter}).
+This mechanism is used in \emph{online learning paradigm} in which the learner keeps updating its policy based on the observations it collects via the interaction with the MDP $M$ (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax, ouyang2017learning,zanette2019tighter}).
 The policy update can be done in every decision time --known as real-time update--, periodically or when some conditions are met --known as \emph{episodic update}.
 
 \subsection{Classification of learning algorithms}
@@ -55,21 +55,21 @@ The policy update can be done in every decision time --known as real-time update
 %For both paradigms, an optimal policy $\pi^*$ is computed via two different ways
 In either paradigm described above, there are two types of learning
 \begin{itemize}
-    \item \textbf{model-free}: the learner tries to infer the value functions in the MDP;
-    \item \textbf{model-based}: the learner tries to infer the unknown parameters $r$ and $p$ of the MDP.
+    \item \emph{model-free}: the learner tries to infer the value functions in the MDP;
+    \item \emph{model-based}: the learner tries to infer the unknown parameters $r$ and $p$ of the MDP.
 \end{itemize}
 The typical algorithm for model-free methods is \textbf{Q-learning} \cite{watkins1989learning} that tries to infer the optimal state-action value function via stochastic approximation. 
 Model-free method is very appealing when the MDP has a large or even continuous state and action spaces (see \eg, \cite{mnih2015human, bellemare2017distributional, dabney2018distributional}).
 However, model-free methods are generally slower than model-based ones in learning an optimal policy.
 
-Model-based algorithms input the estimates of $r$ and $p$ to a planning method described in the previous chapter such as backward induction, policy or value iterations and follows the policy output by the planning method (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax}).
+Model-based algorithms infer the value of $r$ and $p$. The algorithms input the estimates of $r$ and $p$ to a planning method described in the previous chapter such as backward induction, policy or value iterations and follows the policy output by the planning method (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax}).
 The main difference within model-based algorithms is the way $r$ and $p$ are estimated at each planning phase.
 Model-based algorithms are costly for MDPs with large or continuous state and action spaces but when applicable, they are usually faster than model-free algorithms.
 
 Last but not least, for both model-free and model-based methods, statistical inference provides two perspectives on the unknown MDP:
 \begin{itemize}
-    \item \textbf{frequentist perspective}, in which all quantities related to the unknown MDP such as $r$, $p$, value function, etc, are seen as \textbf{unknown deterministic} quantities,
-    \item \textbf{Bayesian perspective}, in which all quantities related to the unknown MDP such as $r$, $p$, value function, etc, are seen as realization of \textbf{random variables}.
+    \item \emph{frequentist perspective}, in which all quantities related to the unknown MDP such as $r$, $p$, value function, etc, are seen as \textbf{unknown deterministic} quantities,
+    \item \emph{Bayesian perspective}, in which all quantities related to the unknown MDP such as $r$, $p$, value function, etc, are seen as realization of \textbf{random variables}.
 \end{itemize}
 In frequentist school, the planning is decided before the learning begins, and the observations collected during the learning are used to controlled \textbf{the probability that the plan is correct} (see \eg, \cite{jaksch2010near, azar2017minimax, jin2018q, shi2022pessimistic}).
 In Bayesian school, the observations collected during the learning are used to \textbf{update the posterior of the random variables}.
@@ -81,7 +81,7 @@ The planning is then done based on the posterior belief (see \eg, \cite{osband20
 \label{sec:intro_learning}
 
 %We focus on \textbf{model-based} algorithms in online learning with \textbf{episodic policy update}.
-In this thesis, the learner interacts with an MDP $M=\langle\gS,\gA,r,p\rangle$ where the state space $\gS$ of size $\abs{\gS}=S$ and action space $\gA$ of size $\abs{\gA}=A$ are known but the expected value of reward $r$ and state transition probabilities $p$ are unknown.
+In this thesis, the learner interacts with an MDP $M=\langle\gS,\gA,r,p\rangle$ where the state space $\gS$ of size $S$ and action space $\gA$ of size $A$ are known but the expected value of reward $r$ and state transition probability $p$ are unknown.
 Also, for any state-action pair $(s,a)$, the expected reward is bounded\footnote{in general, the expected reward is bounded in $[0, r_{max}]$ where $r_{max}\ge1$ but the interval can be simply scaled down to $[0,1]$.} $r(s,a)\in[0,1]$.
 %That is, the parameters $r$ and $p$ are unknown to the learner.
 At time step $t\ge1$, the MDP is in state $s_t$ and the learner executes an action $a_t$.
@@ -98,7 +98,7 @@ The initial state $s_1$ of $M$ can be drawn from some categorical distribution o
 Then, state $s_1$ is revealed to the learning algorithm.
 The algorithm computes a policy $\pi^1$ and episode $1$ begins.
 During episode $k\ge1$, the algorithm executes action $a_t=\pi^k(s_t)$ and collects observations $\{r_t, s_{t+1}\}$.
-This process repeats until some specific condition depending on the setting is met.
+This process repeats until some specific conditions depending on the setting are met.
 The episode $k$ then terminates.
 The algorithm computes a new policy $\pi^{k+1}$ based on its observations and episode $k+1$ begins.
 
@@ -149,7 +149,7 @@ The algorithm computes a new policy $\pi^{k+1}$ based on its observations and ep
 \section{Regret definition}
 
 In online RL, there are at least two performance metrics: (1) probably approximately correct (PAC) bounds on the sample complexity (see \eg, \cite{brafman2002r, kearns2002near, kakade2003sample, dann2015sample, jiang2018open, wang2020long}) and (2) regret (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax, jin2018q, zanette2019tighter, zhang2019regret}).
-However, it is shown that both metrics are ``equivalent'': PAC bounds imply regret bounds and regret bounds imply PAC bounds \cite{osband2016deep}.
+However, it is shown that both metrics are ``equivalent'': PAC bounds imply regret bounds and regret bounds imply PAC bounds \cite[Section~2.2.2]{osband2016deep}.
 Hence, the recent works often discuss both metrics (see \eg, \cite{he2021nearly, zhang2021reinforcement}).
 
 In this thesis, we measure the performance of the learner using a notion of \emph{regret} that compares the expected cumulative reward of an optimal policy $\pi^*$ to the cumulative reward of the learner. 
@@ -167,7 +167,7 @@ The terminal condition in Line~\ref{ch:rl:line:end_cond} of Algorithm~\ref{algo:
 In such a setting, $H$ is called \emph{horizon} and it is bounded in $\N^+$.
 At the beginning of each episode $k\ge1$, the initial state of the MDP $s_{t^k}\sim\rho$ is revealed to the learner who computes a policy $\pi^k$ based on its collected observations and follows the policy $\pi^k$ during the episode.
 %After $H$ time steps, the state of the MDP is reset according to a distribution $\rho$ and revealed to the learner who computes a policy $\pi^k$ based on its collected observations and rollouts the policy $\pi^k$ during the episode.
-Following the definition in Section~\ref{ch:mdp:sec:finite}, we denote by $w^{\pi^k}_{1:H}(s):=\E^{\pi^k}[\sum_{t=1}^{H}r_t \mid s_1=s]$ the expected cumulative reward from state $s$ over time steps $1$ to $H$.
+Following the definition in Section~\ref{ch:mdp:sec:finite}, we denote by $w^{\pi^k}_{1:H}(s):=\E^{\pi^k}[\sum_{t=1}^{H}r_t \mid s_1=s]$ the expected cumulative reward from state $s$ over time steps $1$ to $H$ when following policy $\pi$.
 The regret is defined by the following.
 \begin{defn}
     If a learner $\gL$ interacts with an unknown MDP $M$ over $K$ episodes, each episode ends in $H\in\N^+$ time steps, then its regret is
@@ -180,7 +180,7 @@ The regret is defined by the following.
 Since $H$ is bounded, we derive from Definition~\ref{ch:rl:defn:rg_finite} that a ``good'' learner has an expected regret sublinear in the number of episodes $K$, $\ex{\Reg(\gL, M, K)}=\landauo(K)$ when $K\to+\infty$.
 
 \subsection{Infinite horizon average reward criterion}
-For this setting, there is no reset on MDP state but the unknown MDP $M$ is assumed to be \emph{weakly communicating}.
+For this setting, there is no reset on MDP state, but the unknown MDP $M$ is assumed to be \emph{weakly communicating}.
 This assumption is required so that the optimal gain in $M$ is state independent.
 The learner interacts with $M$ over $T$ time steps and collects a sequence of rewards $\{r_t\}_{1\le t\le T}$.
 The terminal condition at Line~\ref{ch:rl:line:end_cond} of Algorithm~\ref{algo:generics} is specified by the learner depending on how often it wants to update its policy.

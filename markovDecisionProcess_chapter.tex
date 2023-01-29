@@ -15,7 +15,7 @@ An MDP models a discrete-time decision problem where the decision maker executes
 In such problem, the decision maker seeks to maximize the expected cumulative rewards by identifying a sequence of actions that produces such effect.
 
 %The reader who is familiar with MDP can go directly to Section~\ref{ch:mdp:sec:bell} which is a pillar of our contribution in Chapter~\ref{ch:index_computation}.
-In Section~\ref{ch:mdp:sec:defn}, we lay out the notation about MDP's parameter and the dynamic of the decision process.
+In Section~\ref{ch:mdp:sec:defn}, we lay out the notation of MDP's parameters and the dynamic of the decision process.
 In Section~\ref{ch:mdp:sec:finite}, we give a brief presentation of finite horizon setting.
 Similarly, we present classical settings for infinite horizon in Sections~\ref{ch:mdp:sec:discounted} and \ref{ch:mdp:sec:gain}.
 %Finally, we introduce a new notion of optimality for infinite horizon setting in Section~\ref{ch:mdp:sec:bell}.
@@ -89,7 +89,7 @@ In the next sections, we specify the objective function of the decision problem.
 %The time-dependent or not depending on the objective function of the decision problem.
 %We talk more about this in the following sections.
 
-\section{Finite horizon problems}
+\section{Finite horizon problem}
 \label{ch:mdp:sec:finite}
 
 %This section describes the \emph{finite horizon setting} and contains a brief presentation of optimality criterion in the setting.
@@ -103,7 +103,7 @@ Formally, the decision maker want to find a policy that satisfies
     \sup_{\pi\in\Pi}\sum_{s\in\gS}\rho(s)w_{1:H}^\pi(s).
 \end{equation}
 %From \cite[Chapter~4]{puterman2014markov}, there always exists a sequence of \emph{optimal} policies $\{\pi_1^*,\pi_2^*,\dots,\pi^*_H\}$ that maximizes \Eqref{eq:finite_obj} for any $\rho$ and such that for all $1\le t\le H$, $d_t^*$ is a deterministic Markovian decision rule and independent of the initial state distribution.
-From \cite[Chapter~4]{puterman2014markov}, there always exists an \emph{optimal} policy $\pi^*=\{\pi_1^*,\pi_2^*,\dots,\pi^*_H\}$ that maximizes \Eqref{eq:finite_obj} for any $\rho$ and such that for all $1\le t\le H$, $\pi_t^*:\gS\mapsto\gA$ is a deterministic decision rule and independent of the initial state distribution.
+From \cite[Chapter~4]{puterman2014markov}, there always exists an \emph{optimal} policy $\pi^*=\{\pi_1^*,\pi_2^*,\dots,\pi^*_H\}$ that maximizes \Eqref{eq:finite_obj} for any $\rho$ and such that for all $1\le h\le H$, $\pi_h^*:\gS\mapsto\gA$ is a deterministic decision rule and independent of the initial state distribution.
 For each state $s$, we denote the \emph{optimal} expected cumulative reward from $s$ over time steps $h$ to $H$ by $w_{h:H}^{*}(s){:=}\max_{\pi\in\Pi}w_{h:H}^\pi(s)$.
 The maximum value of \Eqref{eq:finite_obj} is given by $\sum_{s\in\gS}\rho(s)w_{1:H}^*(s)$.
 
@@ -155,12 +155,12 @@ where the ties are broken arbitrarily.
 
 %\KK{Add Bellman evaluation equations}
 
-Finally, from \cite[Chapter~4]{puterman2014markov} the value function also satisfies the Bellman \emph{evaluation} equations: given policy $\pi$, for $1\le h\le H$ and $s\in\gS$,
+Finally, from \cite[Chapter~4]{puterman2014markov} the value function also satisfies the Bellman \emph{evaluation} equations: given a policy $\pi$, for $1\le h\le H$ and $s\in\gS$,
 \begin{equation}
     \label{eq:finite_be_eval}
     w_{h:H}^\pi(s) = \displaystyle r\Big(s, \pi_h(s)\Big) +\sum_{s'\in\gS}p\Bigl(s' \mid s, \pi_h(s)\Bigr)w_{h+1:H}^\pi(s')
 \end{equation}
-with $w_{H+1:H}^\pi(s)=0$ (or in matrix notation $\vw_{H+1:H}^\pi=\vzero$).
+with $w_{H+1:H}^\pi(s)=0$.
 %\section{Infinite horizon problems}
 %
 %Similar the previous section, we describe two settings for infinite horizon and provide detail about the optimality criteria in this section.
@@ -181,7 +181,7 @@ The decision maker wants to find a policy that satisfies
 From \cite[Chapter~6]{puterman2014markov}, there always exists a stationary optimal policy $\pi^*:\gS\mapsto\gA$ that maximizes \Eqref{eq:discount_obj} for any initial distribution $\rho$.
 %For a given stationary policy $\pi:\gS\mapsto\gA$, the expectation in \Eqref{eq:discount_obj} is known as the \emph{value} of state $s$ under policy $\pi$ and denoted by $v^\pi(s)$.
 For any $s$, since $0\le\gamma<1$, $v_\gamma^\pi(s)$ is a geometric series that converges.
-So, $v^\pi_\gamma(s)$ exists and well-defined for any state $s$ and any policy $\pi\in\Pi$.
+So, $v^\pi_\gamma(s)$ exists and is well-defined for any state $s$ and any policy $\pi\in\Pi$.
 The value function of policy $\pi$ satisfies the following Bellman evaluation equations: for each $s\in\gS$
 \begin{equation}
     \label{eq:discount_be_eval}
@@ -203,7 +203,7 @@ This requires the optimal value function $\vv^*_\gamma$ which is approximated by
     \item initialize $v_\gamma^0(s)=0$ for all $s\in\gS$
     \item iterate over $k$: $v^{k+1}_\gamma(s) = \max_{a\in\gA_s}\Big(r(s,a)+\gamma\sum_{s'\in\gS}p(s'\mid s,a)v_{\gamma}^k(s')\Big)$ for all $s\in\gS$, then update $k=k+1$ and repeat until $\norm{\vv^{k+1}_\gamma-\vv^k_\gamma}\le(1-\gamma)\varepsilon/\gamma$
 \end{itemize}
-where $\norm{\cdot}$ can be the maximum norm or span semi-norm on $\R^{\abs{\gS}}$ and $\varepsilon$ is the accuracy of the approximation.
+where $\norm{\cdot}$ can be the maximum norm or span semi-norm on $\R^{S}$ and $\varepsilon$ is the accuracy of the approximation.
 From \cite[Chapter~6]{puterman2014markov}, this iterative schema always converges: $\lim_{k\to\infty}\vv^k_\gamma=\vv^*_\gamma$.
 That is, this schema stops after a finite number of iterations $K$ where $\norm{\vv^K_\gamma-\vv^*_\gamma}\le \varepsilon$ (see \cite[Theorem~6.3.1]{puterman2014markov}). 
 %\begin{algorithm}[ht]
@@ -238,7 +238,7 @@ where the expectation of the fourth term integrates over the randomness of the h
 \section{Infinite horizon average reward criterion}
 \label{ch:mdp:sec:gain}
 
-In some problems, the decision maker is more interested in the average reward per decision time than the expected cumulative discounted reward.
+In some problems, the decision maker is more interested in the long-term average reward per decision time than the expected cumulative discounted reward.
 We focus on this criterion in this section.
 
 \subsection{Gain and bias}
@@ -275,7 +275,7 @@ In consequence, if $\pi$ and $\pi'$ are two stationary policies such that $g^\pi
 %$\E^\pi\left[\sum_{t=1}^H r_t\mid s_1{=}s\right]\le \E^{\pi'}\left[\sum_{t=1}^H r_t\mid s_1{=}s\right]$ and $\E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right]\le \E^{\pi'}\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right]$.
 
 The gain of a stationary policy captures the average reward obtained in \emph{steady regime} (or \emph{asymptotic regime}).
-Another quantity associated to stationary policy $\pi$ is its \emph{bias function} that is defined by: for each $s\in\gS$
+Another quantity associated to a stationary policy $\pi$ is its \emph{bias function} that is defined by: for each $s\in\gS$
 \begin{equation}
     \label{eq:bias_defn}
     h^\pi(s) :=\Clim_{T\to+\infty} \E^\pi\left[ \sum_{t=1}^{T} r_t -g^\pi(s_t) \mid s_1=s\right].
@@ -327,9 +327,9 @@ We classify the MDPs according to the following definition.
         \item \textbf{weakly communicating} if the state space can be partitioned into two subsets $\gS^{\gC}$ and $\gS^{\gT}$ (with $\gS^{\gT}$ possibly empty), such that for every pair of states $(s,s')\in\gS^{\gC}$, there exists a stationary policy under which $s'$ is accessible from $s$ in finite time with non-zero probability, and all states in $\gS^{\gT}$ are transient under all stationary policies.
     \end{enumerate}
 \end{defn}
-With this definition, ergodic MDPs are special cases of unichain MDPs and weakly communicating MDPs generalize communicating MDPs. 
-Moreover, ergodic MDPs are communicating and unichain MDPs are weakly communicating.
-Figure~\ref{fig:mdp_class} summarizes this relation.
+With this definition, ergodic MDPs are special cases of unichain MDPs, and weakly communicating MDPs generalize communicating MDPs. 
+Moreover, ergodic MDPs are communicating, and unichain MDPs are weakly communicating.
+Figure~\ref{ch:mdp:fig:mdp_class} summarizes this relation.
 
 \begin{figure}[ht]
     \centering
@@ -358,7 +358,7 @@ Figure~\ref{fig:mdp_class} summarizes this relation.
     \label{ch:mdp:fig:mdp_class}
 \end{figure}
 
-Testing if a Markov chain is unichain can be done in $\landauO(\abs{\gS}^2)$ using Tarjan's strongly connected component algorithm.
+Testing if a Markov chain is unichain can be done in $\landauO(S^2)$ using Tarjan's strongly connected component algorithm.
 Testing if an MDP is unichain is, however, NP-hard \cite{tsitsiklis2007np}.
 %For the pattern of states that are accessible from each other, we can check if a MDP is communicating or weakly communicating in $\landauO(\abs{\gS}^2)$ by leveraging \cite[Proposition~8.3.1]{puterman2014markov}:
 %we construct a stochastic matrix $\mP^{\#}$ such that for all $s,s'\in\gS$, $P^{\#}(s,s'):=\displaystyle\frac1{\abs{\gA_s}}\sum_{a\in\gA_s}p(s'\mid s,a)$.
