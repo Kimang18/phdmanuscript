@@ -425,7 +425,7 @@ In contrast, the following lemma clarifies this question for Bellman optimal pol
 %An interesting question to ask is whether a Bellman optimal policy satisfies \eqref{eq:bias_opt} on all states for any $\vh$ a solution of \eqref{eq:bias_opt}.
 
 \begin{lem}
-    \label{ch:mbp:lem:equi_bias}
+    \label{ch:idx:lem:equi_bias}
     Suppose that two policies $\pi$ and $\theta$ are Bellman optimal, unichain and have at least one common recurrent state: $\Phi^\pi\cap\Phi^\theta\neq\emptyset$.
     
     Then for any $\vh^\pi$ and $\vh^\theta$ solutions of Bellman evaluation equation \eqref{eq:bias_eval} for $\pi$ and $\theta$ respectively, there exists a constant $c$ such that for all state $i\in[n]$: $h^\pi_i -h^\theta_i =c$. Moreover, in this case, ${B_i^{\theta_i}(\vg^*, \vh^\pi)=B_i^{\pi_i}(\vg^*, \vh^\theta)=0}$ for all state $i$.
@@ -469,12 +469,12 @@ So, the following lemma shows a condition which can be used to verify if a given
 
 \begin{proof}
     Let $\theta\neq\pi$ be another Bellman optimal policy.
-    Since $\theta$ is gain optimal and $\vh^\pi$ satisfies the optimality equation \eqref{eq:bias_opt}, Lemma~\ref{ch:mbp:lem:opt_pol}~\ref{it:opt_pol1} implies that $B_i^{\theta_i}(\vg^*,\vh^\pi) =0$ for any $i\in\Phi^\theta$.
+    Since $\theta$ is gain optimal and $\vh^\pi$ satisfies the optimality equation \eqref{eq:bias_opt}, Lemma~\ref{ch:idx:lem:opt_pol}~\ref{it:opt_pol1} implies that $B_i^{\theta_i}(\vg^*,\vh^\pi) =0$ for any $i\in\Phi^\theta$.
     If there exists $i\in\Phi^\theta$ such that $\theta_i\neq\pi_i$, then the proof is concluded.
     Otherwise, $\theta_i=\pi_i$ for any state $i\in\Phi^\theta$.
     This show that $\theta$ and $\pi$ coincide for all recurrent states of $\theta$ and that $\Phi^\theta=\Phi^\pi$.
     Moreover, as $\pi$ is unichain, $\theta$ is also unichain.
-    Hence, Lemma~\ref{ch:mbp:lem:equi_bias} implies that $B_i^{\theta_i}(\vg^*, \vh^\pi)=0$ for all state $i$.
+    Hence, Lemma~\ref{ch:idx:lem:equi_bias} implies that $B_i^{\theta_i}(\vg^*, \vh^\pi)=0$ for all state $i$.
     Since $\theta\neq\pi$, there exists at least one state $i\in[n]$ such that $\theta_i\neq\pi_i$.
 \end{proof}
 Lemma~\ref{ch:idx:lem:unicity_BO} implies that a Bellman optimal and unichain policy $\pi$ is the unique one if and only if $B_i^a(\vg^*, \vh^\pi)<0$ for all action $a\neq\pi_i$ and all state $i$.
