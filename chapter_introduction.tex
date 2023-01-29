@@ -132,11 +132,16 @@ These experiments are reproducible by following this link \url{https://gitlab.in
 While acknowledging that posterior sampling has a weaker regret guarantee, we conclude that this approach has an upper hand in terms of problem adaptability when compared to OFU method.
 This is vital when working with the problems having a special structure such as weakly coupled MDPs.
 
-In Chapter~\ref{ch:learning_restless}, we move on to a RL problem in which the unknown environment is restless Markovian bandit with average reward criterion.
-We study how the structure of arms translate in the structure of restless bandit model.
-This allows us to...
-
-\KK{Chapter8 is not done yet}
+In Chapter~\ref{ch:learning_restless}, we consider the RL problems in which the unknown environment is restless Markovian bandit with average reward criterion.
+We study how the structure of arms translate in the structure of restless bandit.
+In particular, we show that no RL algorithms can perform uniformly well in restless bandits whose arms all are unichain and have a bound span of bias of any local policy.
+This inspires us to study the restless bandit whose arms all have no local transient state.
+We provide examples that show that a restless bandit, whose arms all are ergodic, is not necessarily ergodic.
+Also, an ergodic restless bandit can have an arbitrarily large mixing time although its arms all are ergodic and have an upper bounded mixing time.
+We also provide a piece positive result showing that if all arms are ergodic, then the restless bandit is communicating.
+Moreover, if all arms have an ergodicity coefficient smaller than $1$, then the corresponding restless bandit also has an ergodicity coefficient smaller than $1$.
+Finally, we discuss a few issues such as which baseline policy to use in regret definition when learning in general restless bandit.
+All of our arguments imply that defining a subclass of restless bandits having desirable properties for learning is important but difficult.
 
 \section{Organization of the thesis}
 
