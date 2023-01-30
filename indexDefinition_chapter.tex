@@ -6,7 +6,7 @@
 \label{ch:indexability}
 
 In the previous chapter, we gave the formalism of Markovian bandits and recalled two index policies: Gittins and Whittle index policies.
-In this chapter, we discuss the existence of the Whittle index of undiscounted restless Markovian arm and provide a few main contributions to characterize such an existence.
+In this chapter, we discuss the existence of the Whittle index in undiscounted restless Markovian arm and provide a few main contributions to characterize such an existence.
 
 We present our main contributions in Section~\ref{ch:idx:sec:contrib}. The notations and $\lambda$-penalized MDP that is the basis to define the indexability are described in Section~\ref{ch:idx:sec:notation}.
 After that, we cover the ambiguities of classical definition of indexability accompanied by simple examples in Section~\ref{ch:idx:sec:classic_idx}.
@@ -24,7 +24,9 @@ In this chapter, we discuss the definition of indexability and present two main 
 
 Our first contribution is to propose a univocal definition of indexability. This definition clarifies ambiguities that exist in the classical definitions: Classical definitions assume that an arm is indexable if the optimal set of active states is a non-increasing function of some penalty term $\lambda$. While this definition works for most practical cases, it is not always precise enough because the optimal set is in general not unique. In our definition, we specify the notion of increasingness that should be used. Our definition guarantees the uniqueness of Whittle indices.
 
-Last but not least, we introduce a new notion of Bellman optimality for MDPs with average reward criterion. This notion is more restrictive than the classical gain optimality, but it is rich enough to allow us to redefine the indexability in undiscounted restless Markovian bandits. We also study the characterization of gain optimal and Bellman optimal policies. In particular, we provide a checkable condition for the unicity of a given Bellman optimal policy. This is a new contribution in the vast literature of MDP.
+Last but not least, we introduce a new notion of Bellman optimality for MDPs with average reward criterion. This notion is more restrictive than the classical gain optimality, but it is rich enough to allow us to redefine the indexability in undiscounted restless Markovian bandits. We also study the characterization of gain optimal and Bellman optimal policies. In particular, we provide a checkable condition for the unicity of a given Bellman optimal policy.
+This condition is useful for index computation in the chapter that follows.
+This is a new contribution to the vast literature of MDP and Markovian bandit.
 
 \section{Notations and problem formulation}
 \label{ch:idx:sec:notation}
@@ -32,7 +34,7 @@ Last but not least, we introduce a new notion of Bellman optimality for MDPs wit
 Since index policies require computation on each arm individually, we will focus only on a single arm.
 Also, this chapter and the next chapter concern the computational complexity.
 So, we redefine some notations that was done in the previous chapter.
-This redefinition is uniquely for Part~\ref{part:idx}.
+These redefined notations are used uniquely for Part~\ref{part:idx}.
 
 \subsection{Restless bandit arm}
 
@@ -75,7 +77,7 @@ Yet, we argue that this definition has two problems:
 The most problematic choice is the notion of increasingness that applies to both discounted and undiscounted restless arm: Interpretation $(\exists)$ is more permissive: For instance, consider an arm with two states and assume that the optimal policy is $\{1,2\}$ for $\lambda<0$ and is either $\{1\}$ or $\emptyset$ for $\lambda>0$.
 Interpretation $(\exists)$ says that the arm is indexable while interpretation ($\forall$) says that this arm is not indexable.
 If the arm is indexable, what should be the index of state $1$?
-Any choice $\lambda_1\in[0,+\infty]$ seems reasonable.
+Any choice of $\lambda_1\in[0,+\infty]$ seems reasonable.
 Saying that the arm is not indexable clarifies the situation.
 So, we will choose interpretation ($\forall$) in our new definition of indexability in Section~\ref{ch:idx:sec:idx}.
 
@@ -88,7 +90,7 @@ Yet, it is reasonable that this example is indexable and the index of state $1$ 
 We argue that it is not the interpretation~$(\forall)$ to blame for the non-indexability of this example but the optimality criterion.
 That is, for $\lambda<0$, the policy $\{2\}$ is gain optimal, but it rests the arm in state $1$ and gets a reward of $1$ while it is ``better'' to activate the arm in state $1$ and get a reward of $1-\lambda$. 
 The reason that policy $\{2\}$ is gain optimal is that state $1$ is a transient state and state $2$ is the recurrent state.
-So, ``acting optimally'' in the recurrent states ``leads to'' gain optimality.
+So, ``acting optimally'' in the recurrent states ``leads to'' gain optimality (we will talk about this in Section~\ref{ch:idx:ssec:gain_bell}).
 The same discussion goes for policy $\{1\}$ when $\lambda>0$.
 This inspires us to introduce a new notion of optimality for policy $\{1,2\}$ when $\lambda<0$ and policy $\emptyset$ when $\lambda>0$.
 
@@ -126,8 +128,8 @@ This inspires us to introduce a new notion of optimality for policy $\{1,2\}$ wh
 Given a policy $\pi$, we denote by $g^\pi_i$ the gain of state $i$ when following policy $\pi$ in $\lambda$-penalized MDP.
 Let $g^*_i=\max_\pi g^\pi_i$ be the maximal gain starting from state $i$.
 As mentioned in Section~\ref{ch:mdp:ssec:gain}, the optimal gain $\vg^*$ is uniquely defined.
-Recall that a policy $\pi$ is \emph{gain optimal} if $g^\pi_i=g^*_i$ for all state $i$.
-Also, recall that the vector $\vg^*$ is the optimal gain if and only if there exists a vector $\vh^*$, called \emph{optimal bias} vector that satisfies the Bellman \emph{optimality} equations:  for all $i\in[n]$,
+We recall from Section~\ref{ch:mdp:ssec:gain} that a policy $\pi$ is \emph{gain optimal} if $g^\pi_i=g^*_i$ for all state $i$.
+Also, the vector $\vg^*$ is the optimal gain if and only if there exists a vector $\vh^*$, called \emph{optimal bias} vector that satisfies the Bellman \emph{optimality} equations:  for all $i\in[n]$,
 \begin{align}
     g^*_i &= \max_{a\in\{0,1\}} \Bigl(\sum_{j=1}^n P^{a}_{ij}g^*_j \Bigr) \nonumber \\%\label{eq:gain_opt} \\
     g^*_i + h^*_i &= \max_{a\in\{0,1\}} \Big( r^{a}_i -\lambda a_i+ \sum_{j=1}^n P^{a}_{ij}h^*_j \Big).  \label{ch:idx:eq:bias_opt}
@@ -158,7 +160,7 @@ With this definition, in \figurename~\ref{fig:ambiguous_example}, policy $\{2\}$
 The Bellman optimality is very natural, and we say that it is new because, to the best of our knowledge, the definition is never introduced the literature of MDP.
 Note that the distinction between gain optimal and Bellman optimal disappears in infinite horizon discounted problems or in ergodic MDPs with average reward criterion.
 
-In general MDP, a Bellman optimal policy can be obtained using \emph{Multichain Policy Iteration} algorithm.
+In general MDPs, a Bellman optimal policy can be obtained using \emph{Multichain Policy Iteration} algorithm.
 We refer to \cite[Section~9.2.1]{puterman2014markov} for more detail about this algorithm.
 
 We stay focus on the indexability of restless bandit on the progression of this chapter and will discuss more about the Bellman optimality at the end of the chapter.
@@ -189,8 +191,9 @@ As we show next, Definition~\ref{ch:idx:defn:idx} guarantees that the Whittle in
     \end{enumerate}
 \end{lem}
 
-We should stress that the Whittle index $\lambda_i$ can either be finite or infinite. When we say that ``a policy $\pi$ is optimal for the penalty $+\infty$'', this means ``there exists a penalty $\bar{\lambda}$ such that $\pi$ is optimal for all $\lambda\ge\bar{\lambda}$''.
 With this lemma, the indices in Figure~\ref{fig:ambiguous_example} are $\lambda_1=\lambda_2=0$.
+We should stress that, by Lemma~\ref{ch:idx:lem:idx}, the Whittle index $\lambda_i$ can either be finite or infinite. When we say that ``a policy $\pi$ is optimal for the penalty $+\infty$'', this means ``there exists a penalty $\bar{\lambda}$ such that $\pi$ is optimal for all $\lambda\ge\bar{\lambda}$''.
+Similarly, when we say that ``a policy $\pi$ is optimal for the penalty $-\infty$'', this means ``there exists a penalty $\underline{\lambda}$ such that $\pi$ is optimal for all $\lambda\le\underline{\lambda}$''.
 
 \begin{proof}
     The lemma is a direct consequence of the definition of indexability.
@@ -215,7 +218,7 @@ Meanwhile, the second and only remaining ambiguity of classical indexability is 
 We solve this by using the notion of Bellman optimality because we believe that this notion is the most natural one.
 %It coincides with the notion of optimality in infinite-horizon discounted MDPs.
 This allows the example of \figurename~\ref{fig:ambiguous_example} to be indexable.
-However, we must recognize that this new definition still does not cover all the problem of indexability.
+However, we must recognize that this new definition still does not cover all the problem of indexability in undiscounted restless bandits.
 Indeed, let us consider the two examples in \figurename~\ref{fig:ambiguous_example2}.
 
 \begin{figure}[ht]
@@ -260,7 +263,7 @@ Indeed, let us consider the two examples in \figurename~\ref{fig:ambiguous_examp
 
 For example (a), the Bellman optimal and gain optimal policies are identical: policies $\{1,2\}$ and $\{2\}$ for $\lambda<0$, and $\{1\}$ and $\emptyset$ for $\lambda>0$.
 Hence, example (a) is not indexable according to Definition~\ref{ch:idx:defn:idx}.
-However, the intuition would suggest that the index for this problem should be $\lambda_1=\lambda_2=0$. This is what would have happened if we had used the notion of \emph{bias optimal} policy that is stronger than the notion of Bellman optimal policy. Yet, this would not solve the ambiguity of example (b) for which the index of state $1$ is not clear unless one would use an even  stronger notion of optimality (such as the notion of \emph{Blackwell optimality} discussed in \cite[Chapter~10]{puterman2014markov}). In this thesis, we do not use these stronger definitions because computing a Blackwell-optimal policy in a $n$-state MDP is, to the best of our knowledge, not computable in $O(n^3)$ (the complexity of computing Blackwell-optimal policies is unknown to this date). Hence, in this thesis we use the notion of Bellman optimality that we believe to be the best tradeoff between expressiveness and computability. We discuss more about the Bellman optimality in the following section.
+However, the intuition would suggest that the index for this problem should be $\lambda_1=\lambda_2=0$. This is what would have happened if we had used the notion of \textbf{bias optimality} that is stronger than the notion of Bellman optimality. Yet, this would not solve the ambiguity of example (b) for which the index of state $1$ is not clear unless one would use an even  stronger notion of optimality (such as the notion of \textbf{Blackwell optimality} discussed in \cite[Chapter~10]{puterman2014markov}). In this thesis, we do not use these stronger definitions because computing a Blackwell-optimal policy in a $n$-state MDP is, to the best of our knowledge, not computable in $O(n^3)$ (the complexity of computing Blackwell-optimal policies is unknown to this date). Hence, in this thesis we use the notion of Bellman optimality that we believe to be the best trade-off between expressiveness and computability. We discuss more about the Bellman optimality in the following section.
 
 \section{Properties of Bellman optimal policies}
 \label{ch:idx:sec:prop_bell}
@@ -299,7 +302,7 @@ an optimal action $a$ for state $i$ satisfies both $\sum_{j\in[n]}P^a_{ij}g^*_j 
     \ref{it:opt_bm2} $\Rightarrow$ \ref{it:opt_bm1}: By definition of advantage function, $B^a_i(\vg^*,\vh)\le0$ for all action $a\in\{0,1\}$ and all state $i\in[n]$ if and only if $\vh$ satisfies the optimality equation \eqref{eq:bias_opt}.
     Moreover, if $\vh$ satisfies the evaluation equation \eqref{eq:bias_eval} for $\pi$ with $\vg^*$, then $B^{\pi_i}_i(\vg^*,\vh)=0$ for all state $i\in[n]$.
 
-    \ref{it:opt_bm0} $\Rightarrow$ \ref{it:opt_bm2} is a direct consequence of Definition~\ref{ch:idx:defn:bell} and the definition of \eqref{eq:bias_eval}.
+    \ref{it:opt_bm0} $\Rightarrow$ \ref{it:opt_bm2} is a direct consequence of Definition~\ref{ch:idx:defn:bell} and \eqref{eq:bias_eval}.
 \end{proof}
 
 \subsection{Difference between gain and Bellman optimalities}
@@ -320,10 +323,12 @@ The following lemma shows that a policy is gain optimal if and only if it achiev
     \end{enumerate}
 \end{lem}
 \begin{proof}
-    First, given a policy $\pi$, we define the \emph{limiting matrix} $\bar{\mP}^\pi{:=}\displaystyle\Clim_{t\to+\infty}{(\mP^\pi)^t}$ (\cite[Appendix~A.4]{puterman2014markov}). % which describes the state transition in steady regime under policy $\pi$. That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
+    First, given a policy $\pi$, let $\vr^\pi$ be the reward vector induced by $\pi$, $r^\pi_i=r^{\pi_i}_i$ for any $i\in[n]$.
+    Also, let $\mP^\pi$ be the transition matrix of the Markov chain induced by $\pi$, $P^\pi_{ij}=P^{\pi_i}_{ij}$ for any $i,j\in[n]$.
+    Next, we define the \emph{limiting matrix} $\bar{\mP}^\pi{:=}\displaystyle\Clim_{t\to+\infty}{(\mP^\pi)^t}$ (\cite[Appendix~A.4]{puterman2014markov}). % which describes the state transition in steady regime under policy $\pi$. That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
     Since the MDP has finite state space, $\bar{\mP}^\pi$ always exists and well-defined for any stationary policy $\pi$.
     It describes the state transition in steady regime under policy $\pi$.
-    That is, $\bar{P}^\pi_{ij}$ is the probability that the arm transitions from state $i$ to $j$ in steady regime.
+    That is, $\bar{P}^\pi_{ij}$ is the probability that the arm transitions from state $i$ to $j$ in the steady regime of under $\pi$.
     %We denote by $\Phi^\pi$ the set of recurrent states under policy $\pi$.
     From \cite[Section~A.4]{puterman2014markov}, we have
     \begin{itemize}
@@ -481,7 +486,7 @@ Lemma~\ref{ch:idx:lem:unicity_BO} implies that a Bellman optimal and unichain po
 %While this lemma provides a characterization of unicity for Bellman optimal policy in average reward criterion, the Bellman optimality coincides with the classical optimality in infinite-horizon discounted MDPs.
 %So, the lemma can be equally used to characterize unicity of optimal policy in discounted MDPs.
 To the best of our knowledge, this lemma is a new contribution to the literature of MDP.
-Also, it will play in an important in the indexability computation in the next chapter.
+Also, it will play an important role in the indexability testing and index computation in the next chapter.
 
 Note that if a weakly communicating MDP has a single Bellman optimal policy, the policy must be unichain.
 Indeed, suppose that in a given weakly communicating MDP, there exists a Bellman optimal policy that is multichain with two recurrent classes $\Phi^1$ and $\Phi^2$.
@@ -494,7 +499,7 @@ Finally, since the original Bellman optimal policy is multichain, it is possible
 Both $\pi^1$ and $\pi^2$ become then Bellman optimal.
 %These handmade unichain policies are Bellman optimal.
 
-However, in MDPs that are not weakly communicating (see \figurename~\ref{ch:mdp:fig:mdp_class} and Definition~\ref{ch:mdp:defn:mdp_class}), it is possible that the unique Bellman optimal policy is multichain as given in \figurename~\ref{fig:unique_mutichain}.
+In MDPs that are not weakly communicating (see \figurename~\ref{ch:mdp:fig:mdp_class} and Definition~\ref{ch:mdp:defn:mdp_class}), it is possible that the unique Bellman optimal policy is multichain as given in \figurename~\ref{fig:unique_mutichain}.
 \begin{figure}[ht]
     \centering
     \begin{tabular}{cc}
@@ -526,10 +531,10 @@ However, in MDPs that are not weakly communicating (see \figurename~\ref{ch:mdp:
 \section{Conclusion}
 \label{ch:idx:sec:conc}
 
-To sum up, we have presented the ambiguities in the classical definition of indexability and proposed a new definition that clarifies those ambiguities.
-Along this new definition of indexability, we also gave the corresponding definition of the Whittle index.
-We introduced a new notion of Bellman optimality for average reward criterion MDP and derived a technical lemma to check if a given Bellman optimal policy is the unique one.
-This unicity property will play in a crucial role in computing the Whittle index.
+In conclusion, we present the ambiguities in the classical definition of indexability and proposed a new definition that clarifies those ambiguities.
+Along with this new definition of indexability, we give the corresponding definition of the Whittle index.
+We introduce a new notion of Bellman optimality for MDPs with average reward criterion and derive a technical lemma to check if a given Bellman optimal policy is the unique one.
+This unicity property will play a crucial role in computing the Whittle index.
 
 This chapter about indexability terminates here.
 In the next chapter, we will present our unified algorithm that can compute the Whittle index in both discounted and undiscounted restless Markovian bandit as well as the Gittins index in discounted rested bandit.
