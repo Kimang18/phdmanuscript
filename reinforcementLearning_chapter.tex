@@ -150,7 +150,7 @@ The algorithm computes a new policy $\pi^{k+1}$ based on its observations and ep
 
 In online RL, there are at least two performance metrics: (1) probably approximately correct (PAC) bounds on the sample complexity (see \eg, \cite{brafman2002r, kearns2002near, kakade2003sample, dann2015sample, jiang2018open, wang2020long}) and (2) regret (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax, jin2018q, zanette2019tighter, zhang2019regret}).
 However, it is shown that both metrics are ``equivalent'': PAC bounds imply regret bounds and regret bounds imply PAC bounds \cite[Section~2.2.2]{osband2016deep}.
-Hence, the recent works often discuss both metrics (see \eg, \cite{he2021nearly, zhang2021reinforcement}).
+Hence, the recent works often provide performance guarantee in terms of both metrics (see \eg, \cite{he2021nearly, zhang2021reinforcement}).
 
 In this thesis, we measure the performance of the learner using a notion of \emph{regret} that compares the expected cumulative reward of an optimal policy $\pi^*$ to the cumulative reward of the learner. 
 
@@ -208,7 +208,7 @@ So, a learner is ``good'' if its expected regret is sublinear in the total numbe
 
 %We compare the exploration-exploitation performance of good learners by how fast their regret tends to zero.
 We compare the performance of good learners by how fast their regret tends to zero.
-\cite{jaksch2010near} has proven that no learners can perform better than a certain baseline for all MDPs $M$.
+\cite{jaksch2010near} has proven that no learners can perform better than a certain baseline regret for all MDPs.
 We will give this baseline below, but first we need to introduce the notion of diameter of an MDP.
 \begin{defn}
     The diameter of an MDP is defined by
@@ -219,7 +219,7 @@ We will give this baseline below, but first we need to introduce the notion of d
     where $\tau(s'):=\inf\{t\ge2 : s_t=s'\}$ is the first time step when $s'$ is reached.
     \label{ch:rl:defn:diameter}
 \end{defn}
-So, the diameter of an MDP is the length of the \textbf{longest shortest path} in the MDP where the distance between any pair of vertices is $2$.
+So, the diameter of an MDP is the length of the \textbf{longest shortest path} in the MDP where the distance between any pair of vertices is $1$.
 In other words, it is the expected number of vertices along the shortest path between two states that are the \textbf{most distant} from each other.
 From Definition~\ref{ch:mdp:defn:mdp_class} and \cite[Proposition~8.3.1]{puterman2014markov}, it is clear that the diameter $D$ is finite if and only if the MDP is communicating.
 
@@ -247,7 +247,7 @@ In recent work of \cite{zhang2019regret}, the proposed algorithm, albeit no effi
 This result suggests that the minimax bound in Proposition~\ref{prop:minimax_rg_lb} cannot be improved.
 
 For finite horizon setting, the diameter of the MDP or the upper bound on span of optimal bias is replaced with the horizon of an episode.
-So, the minimax bound can be immediately deduced from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst-case MDP with $S$ states and $A$ actions such that after $K$ episodes, each of horizon\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}} $H$, the learner suffers a regret\footnote{In time-inhomogeneous finite horizon setting, the minimax bound is $\landauOmega(H\sqrt{HSAK})$ (see, \eg, \cite{jin2018q, domingues2021episodic}).} $\landauOmega(H\sqrt{SAK})$.
+So, the minimax bound can be immediately derived from Proposition~\ref{prop:minimax_rg_lb}: for any learner, it is always possible to construct a worst-case MDP with $S$ states and $A$ actions such that after $K$ episodes, each of horizon\footnote{For stochastic bandit, we have $H=1, S=1$ and $K=T$. So, the minimax bound is $\landauOmega(\sqrt{AT})$ as given in \cite{bubeck2012regret}} $H$, the learner suffers a regret\footnote{In time-inhomogeneous finite horizon setting, the minimax bound is $\landauOmega(H\sqrt{HSAK})$ (see, \eg, \cite{jin2018q, domingues2021episodic}).} $\landauOmega(H\sqrt{SAK})$.
 
 
 \section{Algorithms with regret guarantee}
@@ -258,7 +258,7 @@ To get enough information for deriving $\pi^*$, the learner needs to \emph{explo
 However, too much exploration equalizes the performance of the learner with one that blindly chooses action at random.
 So, the regret is linear in the total number of time steps.
 A good learner should then \emph{exploit} the gathered information as soon as possible.
-Unfortunately, untimely exploitation leads to suboptimal policy, thus a regret that is linear in $T$. This is the famous “exploration versus exploitation dilemma”.
+Unfortunately, untimely exploitation leads to suboptimal policy, thus a regret that is linear in $T$. This is the famous “exploration versus exploitation dilemma” in RL problem.
 
 To manage exploration-exploitation dilemma, the two perspectives from statistical inference that we mentioned in Section~\ref{ch:rl:ssec:class_algo} are adopted. % in the following way:
 %\begin{enumerate}
@@ -267,9 +267,9 @@ To manage exploration-exploitation dilemma, the two perspectives from statistica
 %\end{enumerate}
 In frequentist perspective, the learner $\gL$ that maximizes the expected cumulative reward over $T$ time steps equivalently minimizes its expected regret $\E\bigg[\Reg(\gL, M, T)\bigg]$.
 To achieve this goal, a common strategy in frequentist paradigm is to apply \emph{optimism in face of uncertainty} (OFU) principle: the learner maintains a confidence set for the unknown MDP $M$ and executes an optimal policy of the
-“best” MDP in the confidence set (it is the best in terms of gain, or value function, etc), \eg, \cite{jaksch2010near, filippi2010optimism, bartlett2012regal, azar2017minimax, fruit2017regret, jin2018q, fruit2018efficient, fruit2018near, zanette2019tighter, zhang2019regret, bourel2020tightening, ortner2020regret}.
+“best” MDP in the confidence set (it is the best in terms of gain, or value function, etc.), \eg, \cite{jaksch2010near, filippi2010optimism, bartlett2012regal, azar2017minimax, fruit2017regret, jin2018q, fruit2018efficient, fruit2018near, zanette2019tighter, zhang2019regret, bourel2020tightening, ortner2020regret}.
 
-In Bayesian perspective, we say the unknown MDP $M$ is drawn from a probability distribution (prior or posterior) $\phi$ to mean that $r$ is drawn from a dedicated probability distribution (prior or posterior) and $p$ is drawn from another dedicated probability distribution (prior or posterior).
+In Bayesian perspective, we say that the unknown MDP $M$ is drawn according to a probability distribution (prior or posterior) $\phi$. % to mean that $r$ is drawn from a dedicated probability distribution (prior or posterior) and $p$ is drawn from another dedicated probability distribution (prior or posterior).
 The learner minimizes a similar notion of regret known as \emph{Bayesian regret} (or Bayes risk) defined by
 \begin{equation}
     \label{eq:bayes_rg}
@@ -281,10 +281,10 @@ In Bayesian paradigm, an efficient exploration-exploitation trade-off can be don
 
 We summarize several existing results about minimizing the regret in Table~\ref{ch:rl:tab:finite} for finite horizon setting and Table~\ref{ch:rl:tab:infinite} for infinite horizon average reward criterion.
 %The results in Table~\ref{ch:rl:tab:finite} are fewer than those in Table~\ref{ch:rl:tab:infinite} because 
-The results in Table~\ref{ch:rl:tab:finite} are few because the minimax lower bound in the presented finite horizon setting is achieved quite early (ignoring the logarithmic terms).
-However, there are a lot of works for finite horizon model such as  \cite{jin2018q, domingues2021episodic, li2021breaking} in which the reward and state transition also depend on the time step (also known as time-inhomogeneous, or non-stationary MDP) or \cite{zanette2019tighter, zhang2021reinforcement} in which the total reward over $H$ time steps is bounded by $1$.
+The results in Table~\ref{ch:rl:tab:finite} are few because the minimax lower bound in the finite horizon setting is achieved quite early (ignoring the logarithmic terms).
+However, there are a lot of works for finite horizon model such as  \cite{jin2018q, domingues2021episodic, li2021breaking} in which the reward and state transition depend on the time step (also known as time-inhomogeneous, or non-stationary MDP) or \cite{zanette2019tighter, zhang2021reinforcement} in which the total reward over $H$ time steps is bounded by $1$.
 
-The quest to minimax regret lower bound for infinite horizon is longer compared to finite horizon setting.
+The quest to minimax regret lower bound for the infinite horizon setting is longer compared to the finite horizon setting.
 With average reward criterion, the structure of the unknown MDP is vital.
 So, the works in Table~\ref{ch:rl:tab:infinite} make different assumption on the MDP in function of the nature of the proposed algorithms.
 In addition, policy computation is also an important aspect for infinite horizon setting.
@@ -294,9 +294,8 @@ So, we say that they are intractable.
 However, the algorithms that use value iteration, extended value iteration or modified extended value iteration are implementable, and their computational complexity is $\landauO(S^2A)$ \cite{jaksch2010near}.
 Last but not least, Bayesian algorithms like PSRL and TSDE use planning methods described in Chapter~\ref{ch:mdp} for policy computation.
 It might seem that these algorithms are computationally ``efficient'' but they are ``easily implementable'' if the conjugate prior has a closed-form expression.
-Otherwise, a sophisticated implementation might be required.
-
-\begin{table}[ht]
+Otherwise, a sophisticated implementation might be required for sampling method such as Markov Chain Monte Carlo \cite{andrieu2003introduction}, Sequential Monte Carlo \cite{doucet2009tutorial}, and Variational Inference \cite{blei2017variational}.
+\begin{table}[htbp]
     \centering
 \begin{tabular}{|l|l|}
 \hline
@@ -328,7 +327,7 @@ UCRL-V \cite{tossou2019near}         & $\tilde{\landauO}(\sqrt{DSAT})$ & comm.  
 Lower bound & $\landauOmega(\sqrt{DSAT})$ \cite{jaksch2010near} &                              &                               \\ \hline
 \end{tabular}
 \caption{The quest to minimax regret lower bound for model-based RL algorithms in infinite horizon average reward model with $S$ states, $A$ actions, and $T$ steps.
-$D$ is the diameter of the MDP, $H\ge sp(\vh^*)$ is the upper bound on the span of the optimal bias, $t_{mix}$ is the mixing time of the MDP and $\Gamma$ is the upper bound on the number of next possible states.
+$D$ is the diameter of the MDP, $H\ge sp(\vh^*)$ is the upper bound on the span of the optimal bias function, $t_{mix}$ is the mixing time of the MDP and $\Gamma$ is the upper bound on the number of next possible states.
 EVI stands for Extended value iteration \cite{jaksch2010near}, VI for value iteration, assump. for assumption, comm. for communicating, and comp. for computation.
 Intractable here means that there is no efficient implementations.
 }
@@ -351,9 +350,6 @@ For both optimism and posterior sampling methods, computing a new policy at Line
     \item compute an optimal policy $\pi^k$ of $M^k$.
 \end{enumerate}
 We will say that $M^k$ is the imagined version of the unknown $M$ for episode $k$.
-%at the beginning of episode $k\ge1$, the learner computes a new policy denote by $\pi^k$ that is optimal in an imagined MDP denote by $M^k=\langle\gS,\gA,r^k,p^k\rangle$.
-%The learning process is summarized in Algorithm~\ref{algo:generics}.
-
 Since an optimal policy can be computed in a deterministic manner given the MDP, the ``high-level'' difference between both approaches lies in Step~\ref{it:new_mdp} at which the imagined MDP $M^k$ is constructed: chosen ``optimistically'' by OFU method or chosen randomly by posterior sampling according to its belief (or the posterior distribution).
 
 %\begin{algorithm}[ht]
@@ -378,11 +374,11 @@ In the following, we provide an overview of regret analysis in the finite horizo
 The analysis will involve value function associated to different MDPs.
 So, we extend the notation in Chapter~\ref{ch:mdp} as the following
 \begin{itemize}
-    \item the expected cumulative reward from the unknown MDP $M$ between time steps $h$ and $H$ is denoted by $w^{\pi^*}_{M,h:H}$ respectively where $\pi^*$ is an optimal policy in $M$;
-    \item the expected cumulative reward from the imagined MDP $M^k$ between time steps $h$ and $H$ is denoted by $w^{\pi^k}_{M^k,h:H}$ respectively where $\pi^k$ is an optimal policy in $M^k$.
+    \item the optimal expected cumulative reward from the unknown MDP $M$ between time steps $h$ and $H$ is denoted by $w^{\pi^*}_{M,h:H}$ where $\pi^*$ is an optimal policy in $M$;
+    \item the optimal expected cumulative reward from the imagined MDP $M^k$ between time steps $h$ and $H$ is denoted by $w^{\pi^k}_{M^k,h:H}$ where $\pi^k$ is an optimal policy in $M^k$.
 \end{itemize}
 
-By Definition~\ref{ch:rl:defn:rg_finite}, the regret of a learner $\gL$ after $K$ episodes in an unknown MDP $M$ can be written
+By Definition~\ref{ch:rl:defn:rg_finite}, the regret of a learner $\gL$ after $K$ episodes in an unknown MDP $M$ is
 \begin{align*}
     \Reg(\gL, M, K) &= \sum_{k=1}^K\sum_{s\in\gS}\rho(s)[w^{\pi^*}_{M,1:H}(s) -w^{\pi^k}_{M,1:H}(s)].
                     %&= \sum_{k=1}^K \sum_{s\in\gS}\rho(s) [w^{\pi^*}_{M,1:H}(s) -w^{\pi^k}_{M^k,1:H}(s)] +\sum_{k=1}^K \sum_{s\in\gS}\rho(s) [w^{\pi^k}_{M^k,1:H}(s) -w^{\pi^k}_{M,1:H}(s)]
@@ -395,7 +391,7 @@ The term $\vw^{\pi^*}_M -\vw^{\pi^k}_M$ can be rewritten as
 The first term $\Delta_{model}^k$ is the difference between the real but \textbf{unknown} optimal value function and the \textbf{imagined} optimal value function.
 It is also understood as the error due to model misspecification.
 Since $M$ and $\pi^*$ are unknown, this first term is hard to be analyzed.
-However, we will see in the following that the term is non-positive for \textbf{optimism} or zero in expectation for \textbf{posterior sampling}.
+However, we will see in the following that the term is \textbf{non-positive} for the optimism or \textbf{zero in expectation} for posterior sampling methods.
 
 The second term $\Delta_{conc}^k$ can be interpreted as the ``dissimilarity'' between the \textbf{unknown} MDP $M$ and the \textbf{imagined} MDP $M^k$ along the trajectory induced by the policy $\pi^k$.
 In other words, it is the discordance between the value from $M^k$ and the value from $M$ for policy $\pi^k$.
@@ -405,7 +401,7 @@ Since $M^k$ and $\pi^k$ are chosen by the learner, this second term can be analy
 
 In this section, we revisit three algorithms: UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, which rely on OFU method, and PSRL \cite{osband2013more}, which is a posterior sampling algorithm.
 We give the sketch of proof for their regret upper bound in finite horizon setting although UCRL2 is originally design for infinite horizon average reward criterion.
-We will give a detail proof in Chapter~\ref{ch:learning_rested} when we derive the three algorithms for Markovian bandit problem.
+We will give a detail proof in Chapter~\ref{ch:learning_rested} when we adapt the three algorithms to Markovian bandit problem.
 
 \subsection{Upper confidence bound reinforcement learning (UCRL2) \texorpdfstring{\cite{jaksch2010near}}{[JOA10]}.}
 As mentioned above, UCRL2 was originally design for infinite horizon setting.
@@ -455,7 +451,7 @@ Using Bellman evaluation equations, the term $\Delta_{conc}^k(s)$ can be rewritt
 \end{align}
 where $a_1=\pi^k_1(s_1)$ and $a_t=\pi^k_t(s_t)$ for any $1\le t\le H$.
 The term $\vp^k\vw^{\pi^k}_{M^k}-\vp\vw^{\pi^k}_M$ equals $(\vp^k-\vp)\vw^{\pi^k}_{M^k} +\vp(\vw^{\pi^k}_{M^k}-\vw^{\pi^k}_M)$.
-Since $w^{\pi^k}_{M^k,h:H}(s)\in [0,H]$ for any $h\le H$ and $s\in\gS$ is not deterministic, the term $(\vp^k-\vp)\vw^{\pi^k}_{M^k}$ is bounded using Hölder's inequality.
+Since for any $h\le H$ and $s\in\gS$, $w^{\pi^k}_{M^k,h:H}(s)\in [0,H]$ is not deterministic, the term $(\vp^k-\vp)\vw^{\pi^k}_{M^k}$ is bounded using Hölder's inequality.
 So, we get
 \begin{equation}
     \label{ch:rl:eq:delta_conc}
@@ -486,9 +482,9 @@ Differently from UCRL2 that chooses only one copy of expected reward, UCBVI exec
     \item set $w^{\pi^k}_{H+1:H,M^k}(s)=0$ for all $s$,
     \item for $h$ from $H$ to $1$
         \begin{itemize}
-            \item choose $r'(s,a)\in\sB^k_r(s,a,h)$ for all $(s,a)$ such that for all $s$,
+            \item choose $r'(s,a)\in\sB^k_r(s,a)$ for all $(s,a)$ such that for all $s$,
             \begin{align}
-                w^{\pi^k}_{h:H,M^k}(s) &=\max_{a\in\gA}\Big(r'(s,a)+\sum_{s'\in\gS}\hat{p}^k(s'\mid s,a)w_{h+1:H,M^k}^{\pi^k}(s')\Big) \label{ch:rl:eq:ucbvi_max}
+                w^{\pi^k}_{h:H,M^k}(s) &=\min\{H, \max_{a\in\gA}\Big(r'(s,a)+\sum_{s'\in\gS}\hat{p}^k(s'\mid s,a)w_{h+1:H,M^k}^{\pi^k}(s')\Big)\} \label{ch:rl:eq:ucbvi_max}
                 %\pi^k_h(s) &=\argmax_{a\in\gA}\Big(r'(s,a)+\sum_{s'\in\gS}\hat{p}^k(s'\mid s,a)w_{h+1:H,M^k}^{\pi^k}(s')\Big)
             \end{align}
             \item set $\pi^k_h(s)=a_h$ where $a_h$ is one of the actions that achieve the maximum of \eqref{ch:rl:eq:ucbvi_max}.
@@ -496,9 +492,9 @@ Differently from UCRL2 that chooses only one copy of expected reward, UCBVI exec
 \end{itemize}
 The confidence sets for reward are defined by: for all state-action pair $(s,a)$ and all time step $1\le h\le H$,
 \begin{align*}
-    \sB_r^k(s,a,h)&:=\Bigl\{u\in[0,h] : \abs{u-\hat{r}^k(s,a)}\le\beta^k_r(s,a,h)\Bigr\}
+    \sB_r^k(s,a)&:=\Bigl\{u\in[0,H] : \abs{u-\hat{r}^k(s,a)}\le\beta^k_r(s,a)\Bigr\}
 \end{align*}
-where $\beta_r^k(s,a,h)=\displaystyle h\sqrt{\frac{c_r\ln(SAt^k)}{2\max\Bigl(1,N^k(s,a)\Bigr)}}$ is the confidence bonus, and $c_r$ is a constant to be chosen accordingly before the learning.
+where $\beta_r^k(s,a)=\displaystyle H\sqrt{\frac{c_r\ln(SAt^k)}{2\max\Bigl(1,N^k(s,a)\Bigr)}}$ is the confidence bonus, and $c_r$ is a constant to be chosen accordingly before the learning.
 
 %That is, at the start of episode $k$, UCBVI compute $M^k$ and $\pi^k$ such that \eqref{ch:rl:eq:optim} holds where
 %\begin{align*}
@@ -532,10 +528,10 @@ The advanced version UCBVI-BF that enjoys a regret bound $\tilde{\landauO}(\sqrt
 
 \subsection{Posterior sampling for reinforcement learning (PSRL) \texorpdfstring{\cite{osband2013more}}{[ORV13]}.}
 
-PSRL designed for finite horizon setting is a posterior sampling algorithm which starts by choosing prior distributions $\phi_r$ and $\phi_p$ such that the unknown $r$ is assumed to be drawn from $\phi_r$ and the unknown $p$ from $\phi_p$.
-To ease the exposition, we will say that a MDP $M'=\langle\gS,\gA,r',p'\rangle$ is sampled from $\phi$ when $r'$ is sampled from $\phi_r$ and $p'$ is sampled from $\phi_p$.
-When updating its policy, PSRL use the collected observations and Bayes' theorem to derive the posterior distribution of the unknown MDP.
-After that, an MDP is sampled from the posterior and PSRL computes an optimal policy in the sampled MDP.
+PSRL designed for finite horizon setting is a posterior sampling algorithm which starts by choosing prior distributions $\phi_r$ and $\phi_p$ such that the unknown $r$ is assumed to be drawn according to $\phi_r$ and the unknown $p$ according to $\phi_p$.
+To ease the exposition, we will say that an MDP $M'=\langle\gS,\gA,r',p'\rangle$ is sampled according to $\phi$ when $r'$ is sampled according to $\phi_r$ and $p'$ is sampled according to $\phi_p$.
+When updating its policy, PSRL uses the collected observations and Bayes' theorem to derive the posterior distribution of the unknown MDP.
+After that, an MDP is sampled according to the posterior and PSRL computes an optimal policy in the sampled MDP.
 That is, at time step $t^k$, PSRL uses the observations $o_{t^k}$ to update the posterior $\phi\bigl(\cdot\mid o_{t^k}\bigr)$.
 Then, Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{algo:generics} is performed by sampling an MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$ and computing an optimal policy $\pi^k$ in $M^k$.
 The policy $\pi^k$ is then used during the episode $k$ to collect more observations.
