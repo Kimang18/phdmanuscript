@@ -10,12 +10,12 @@ We also showed that there was no index definition such that, relying on the conf
 In this chapter, we consider the learning problem in restless Markovian bandit with average reward criterion.
 Such a bandit is an MDP that suffers from the curse of dimensionality and general-purpose learning algorithms are not efficient when directly applied. Recently, a few learning algorithms have been specifically designed to work for restless bandits. Yet, they most often work only for very particular subclasses of restless bandits, or they hold under conditions that are very hard to verify.
 Hence, in this chapter, we provide some arguments to explain why those conditions are needed when learning in restless bandits. We show that the properties of the local arms (like ergodic or small diameter) do not, in general, imply similar properties for the bandit. This implies that defining a class of restless bandit that has desirable properties (like small diameter) is difficult. 
-Finally, we discuss a few issues when learning in general class of restless bandits and present RB-TSDE \cite{akbarzadeh2022learning} and its regret analysis under a few technical assumptions.
+Finally, we discuss a few issues when learning in general class of restless bandits and present RB-TSDE \cite{akbarzadeh2022learning} along with its regret analysis under a few technical assumptions.
 
-In Section~\ref{ch:restless:contribute}, we provide the context of learning in restless bandit problems and present our contribution in this chapter.
-We discuss the existing works in reinforcement learning (RL) with generic MDPs and with restless bandit problems in Section~\ref{ch:restless:related}
+In Section~\ref{ch:restless:contribute}, we provide the context of learning in restless bandit problems and present our contributions.
+We discuss the existing works in reinforcement learning (RL) with restless bandit problems in Section~\ref{ch:restless:related}.
 We then recall the notations and the problem formulation of the undiscounted restless bandit in Section~\ref{ch:restless:sec:restless}.
-Section~\ref{ch:restless:sec:example} accumulates examples and counter-examples that respectively show desirable and non-desirable properties of restless bandit when its arms all have desirable properties.
+Section~\ref{ch:restless:sec:example} accumulates examples and counter-examples that respectively show ``desirable'' and ``non-desirable'' properties of restless bandit when its arms all have ``desirable'' properties.
 In Section~\ref{ch:restless:sec:generic}, we discuss the requirement when using Whittle index policy as the baseline policy in regret definition.
 We also present an overview of regret analysis of RB-TSDE \cite{akbarzadeh2022learning}, a modified version of TSDE \cite{ouyang2017learning} for learning in restless bandits.
 Section~\ref{ch:restless:sec:conclude} concludes this chapter.
@@ -29,7 +29,7 @@ The obvious effect of the curse is that the bandit's state size is exponential i
 
 For learning generic MDPs with average reward criterion, the current best algorithms have a regret over $T$ time steps bounded by $\tilde{\landauO}(\sqrt{HSAT})$ in the unknown weakly communicating MDP with state size $S$, action size $A$, and an upper bound on the span of the optimal bias function $H$ (see Table~\ref{ch:rl:tab:infinite} for more algorithms with regret guarantee).
 %This regret bound is valid for communicating MDPs.
-To what we have observed, the parameters of the MDP that appear in regret upper bound are:
+To what we have observed, the MDP parameters that appear in regret upper bound are:
 \begin{itemize}
     \item the diameter $D$, defined by Definition~\ref{ch:rl:defn:diameter}, in \eg, \cite{jaksch2010near, fruit2020improved, tossou2019near}
     \item the upper bound on span of the optimal bias function $H\ge sp(\vh^*)$ in \eg, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret}
@@ -42,14 +42,14 @@ Then, applying these algorithms to learn restless Markovian bandits with average
     \item the diameter $D$ (if defined), the mixing time $t_{mix}$ (if defined), or the upper bound on span of the optimal bias $H$ may also be exponential in the number of arms
     \item compute an optimal policy in restless bandit is PSPACE-hard \cite{papadimitriou1994complexity}, let alone the computation of optimistic policy
 \end{itemize}
-So, the regret bound of those general-purpose algorithms is not scalable with the number of arms.
+So, the regret bound of those general-purpose RL algorithms is not scalable with the number of arms.
 A few algorithms that are specifically designed for restless bandits successfully eliminate the exponentiality in the number of arms from the state size of bandit in their regret bound (see \eg, \cite{ortner2012regret, jung2019thompson, akbarzadeh2022learning}).
 Yet, no clear dependency between the diameter, the mixing time, or the upper bound on span of the optimal bias that appear in their regret bound and number of arms are given.
 This calls for the definition of subclass of restless bandits whose MDP parameters can be expressed explicitly polynomially in the number of arms.
 In this chapter, we provide a few results that support this argument and study how the assumption on arms' structure translates in the structure of the bandit.
 We show that:
 \begin{itemize}
-    \item no matter how good a learning algorithm is and how many total steps it is allowed to learn, there is a restless bandit, whose arms all are unichain, that makes the learner suffer an expected regret that is linear in total steps
+    \item no matter how good a learning algorithm is and how many total steps it is allowed to learn, there is a restless bandit, all of whose arms are unichain, that makes the learner suffer an expected regret that is linear in total steps
     \item for restless bandits all of whose arms are ergodic,
         \begin{itemize}
             \item there is a bandit that is multichain
@@ -61,7 +61,7 @@ We show that:
 We also provide a piece of positive result related to the ergodicity coefficient of the bandit.
 Finally, we provide a discussion on model-based RL algorithms that use Whittle index policy as the baseline policy in regret definition and provide an overview of regret analysis of RB-TSDE \cite{akbarzadeh2022learning} when learning in restless bandits.
 All of our results suggest that the MDP parameters of restless bandit can be exponential in the number of arms in general class of restless bandit.
-This calls for work to design a subclass of restless bandits whose MDP parameters can expressed polynomially in the number of arms.
+This calls for work to design subclasses of restless bandits whose MDP parameters can be expressed polynomially in the number of arms.
 Another direction of work is to design algorithms that directly learns the Whittle index of the unknown restless bandit in model-free style.
 
 %These parameters are finite for MDPs with specific structure.
@@ -90,12 +90,12 @@ The second direction is to design a model-based learning algorithm with theorect
 For partially observed restless bandit, the work of \cite{ortner2012regret} derives colored-UCRL algorithm, a modified version of UCRL2, that achieves a regret bounded proportionally to $\sqrt{T}$ where $T$ is the total steps.
 Colored-UCRL ``successfully'' removes the exponentiality in the number of arms from the state size of the bandit in its regret bound.
 However, the mixing time parameter appears in the bound and the dependency between the mixing time and the number of arms is unclear.
-The same discussion goes to the work of \cite{jung2019thompson} that adapts TSDE to the setting of restless bandit and assumes a condition similar to \cite{ortner2012regret}.
+The same discussion goes to the work of \cite{jung2019thompson} that adapts TSDE \cite{ouyang2017learning} to the learning setting of restless bandit and assumes a condition similar to \cite{ortner2012regret}.
 To the best of our knowledge, Restless-UCB of \cite{wang2020restless} is the first algorithm that has a regret bounded explicitly linearly in the number of arms for partially observed restless bandit.
 Yet, we must mention that their regret bound is proportional to $T^{2/3}$ and their result is valid for a very restrictive class of restless bandits in which each arm is a birth-death Markov reward process.
 Also, Restless-UCB requires a generative model to be able to uniformly explore the dynamic of each arm before committing on its optimistic planning.
 All of these works also assume an oracle that knows how to compute an optimal policy given a restless bandit.
-The work of \cite{akbarzadeh2022learning} adapts TSDE to the fully observed restless bandit problem and ``successfully'' removes the exponentiality in the number of arms from the state size of the bandit in the Bayesian regret bound of RB-TSDE, the modified version of TSDE.
+The work of \cite{akbarzadeh2022learning} adapts TSDE \cite{ouyang2017learning} to the fully observed restless bandit problem and ``successfully'' removes the exponentiality in the number of arms from the state size of the bandit in the Bayesian regret bound of RB-TSDE, the modified version of TSDE.
 However, the ergodicity coefficient of the global MDP appears in the regret bound and the dependency between such a coefficient and the number of arms is unclear.
 It may be useful to note that the ergodicity coefficient provides an upper bound on the mixing time and the span of bias function of the MDP.
 
@@ -226,7 +226,7 @@ We show in the following theorem that the assumption that each arm is unichain a
     \medskip \\
 
 
-    \begin{figure}[hp]
+    \begin{figure}[hb]
         \centering
         \begin{tabular}{ccc}
         \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
@@ -384,7 +384,7 @@ The following theorem shows that a restless bandit, all of whose arms are ergodi
     \textbf{Proof of \ref{thm:not_ergodic}} -- It is given by the counter-example in which the restless bandit has two arms as given by \figurename~\ref{fig:recur_non_communicate} and exactly one arm is activated at each decision time.
     For each arm, both ``activate'' and ``rest'' actions induce the same state transition.
     In such example, the restless bandit is a multichain and not weakly communicating MDP because there are two recurrent classes under any policy: one composed of $\{(1,1), (2,2)\}$ and the other one is $\{(1,2), (2,1)\}$.
-    \begin{figure}[ht]
+    \begin{figure}[htbp]
         \centering
         \begin{tabular}{ccc}
         \begin{tikzpicture}[on grid, state/.style={circle,draw}, >= stealth', auto, prob/.style = {inner sep=1pt,font=\scriptsize}]
@@ -460,11 +460,13 @@ The following theorem shows that a restless bandit, all of whose arms are ergodi
     where the symbol $\overset{i}{\to}$ in \Eqref{eq:mdp_transition} means the transition when Arm $i$ is activated.
     It means that any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the global MDP is in state $(s,s+4), (s+1,s+3)$, and $(s+1,s+4)$ induce a recurrent class $\gX^1$ as given in \figurename~\ref{fig:local_ergodic_multichain_RB} (note that for $s$ big enough, state $9$ is state $1$, $10$ is $2$, etc.).
     The recurrent class $\gX^2$ in \figurename~\ref{fig:local_ergodic_multichain_RB} is constructed by simply changing the sequence of Arm 2's state in the arrangement above and adapting the state of the bandit accordingly:
+
     \begin{align*}
         &\text{Arm 1} : \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \{3,4\} \overset{R}{\to} \dots \overset{A}{\to} \{1,2\} \\
         &\text{Arm 2} : \{8,1\} \overset{A}{\to} \{1,2\} \overset{R}{\to} \{2,3\} \overset{A}{\to} \dots \overset{R}{\to} \{8,1\} \\
         &\text{Bandit} : \begin{pmatrix}1,1\\2,8\\2,1\end{pmatrix} \overset{2}{\to} \begin{pmatrix}2,2\\3,1\\3,2\end{pmatrix} \overset{1}{\to} \begin{pmatrix}3,3\\4,2\\4,3\end{pmatrix} \overset{2}{\to} \dots \overset{1}{\to} \begin{pmatrix}1,1\\2,8\\2,1\end{pmatrix}
     \end{align*}
+
     So, any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the bandit is in state $(s,s), (s+1,s+7)$, and $(s+1,s)$ induce the class $\gX^2$.
     All in all, any policies that activate Arm $2$ for any odd $s\in[8]$ and rest Arm $2$ for any even $s\in[8]$ when the global MDP is in state $(s,s), (s+1,s+7), (s+1,s), (s,s+4), (s+1,s+3)$ and $(s+1,s+4)$ induce two recurrent classes $\gX^1$ and $\gX^2$.
     That concludes the proof.
@@ -750,19 +752,186 @@ The following theorem also provides a positive result on the structure of bandit
     That concludes the proof.
 \end{proof}
 
-Finally, the following theorem shows how the assumption on the ergodicity coefficient of local arms affects the ergodicity coefficient of the bandit.
+We will come back to this result when we discuss the regret analysis of RB-TSDE \cite{akbarzadeh2022learning} in the sections below.
+
+%\subsection{Regret definition and required assumptions}
+\section{Learning algorithms for restless bandits}
+\label{ch:restless:sec:generic}
+
+\subsection{Discussion on using Whittle index policy as a baseline in regret definition}
+\label{ch:restless:discuss_policy}
+
+%Restless bandits are the MDPs with the curse of dimensionality.
+In Chapter~\ref{ch:learning_rested}, we use Gittins index policy as the baseline policy for evaluating the regret of learning algorithms in discounted rested bandit because this index policy is optimal.
+Yet, Whittle index policy is only asymptotically optimal under some technical conditions \cite{weber1990index} and suboptimal in general.
+This brings two options to the discussion.
+\begin{enumerate}[label=(\roman*)]
+    \item Shall we compare the algorithm to an oracle that knows an optimal policy of any restless bandit?
+    \item \label{it:second_baseline} Shall we use Whittle index policy as a baseline policy?
+\end{enumerate}
+%We will then focus the discussion on the second option.
+
+Assuming an oracle is what is done in \cite{ortner2012regret, jung2019thompson, wang2020restless} when learning in restless bandits and in \cite{osband2014near, rosenberg2020oracle, xu2020reinforcement} when learning in factored-MDPs.
+The authors then solely interest in the statistical aspect of the learning algorithms.
+
+We now focus on the second option \ref{it:second_baseline}.
+First, if the bandit is indexable, then Whittle index policy is defined.
+Also, regret definition requires that the gain of baseline policy is state-independent.
+%since Whittle index policy is not optimal, the gain under this policy can be.
+So, a possible assumption to use Whittle index policy as the baseline policy is that the unknown bandit is indexable and Whittle index policy is unichain, \ie, the Markov chain induced by Whittle index policy has a single recurrent class.
+%Regarding the computational complexity, from Chapter~\ref{ch:index_computation}, checking the indexability of bandit $M$ costs only $\landauO(nS^3)$ but checking if the global Markov chain is unichain costs $\landauO(S^{2n})$ based on Tarjan's strongly connected component algorithm.
+%So, the assumption on the global structure of bandit $M$ is computationally hard to verify once again due the global state size.
+
+For the optimism, we have shown in Chapter~\ref{ch:learning_rested} that optimistic algorithms that apply confidence bonus on arm's transition cannot leverage index policy to choose an imagined bandit $M^k$ with index policy $\pi^k$ that guarantees the optimism at episode $k$.
+Worse yet, there is no guarantee that the optimistic restless bandit $M^k$ is indexable, let alone the optimism.
+%So, an assumption that there exists an oracle that knows how to choose $M^k$ that is indexable
+%So, we believe that using the Whittle index policy as a baseline is not computationally practical for the optimism.
+
+For posterior sampling, we need the imagined bandit $M^k$ to be indexable and the corresponding Whittle index policy $\pi^k$ to induce state-independent gain.
+This can be done by making an assumption on the support of the prior distribution.
+That is, any bandit drawn from the support of the prior distribution is indexable and admits unichain Whittle index policy.
+We will see in the following that this is what is done in the work of \cite{akbarzadeh2022learning}.
+
+\subsection{Algorithms with regret guarantee}
+
+Similarly to what we have seen in Chapter~\ref{ch:learning_rested}, the current best general-purpose RL algorithms have a the regret bound $\tilde{\landauO}\Bigl(\sqrt{HS^n{n \choose m}T}\Bigr)$ in the restless bandit $M$ described in Section~\ref{ch:restless:sec:restless} where $H$ is the upper bound on the span of global bias function, and $S^n$ and ${n \choose m}$ are the state and action sizes of the bandit $M$ respectively.
+There are two issues in this regret bound.
+\begin{enumerate}[label=(\alph*)]
+    \item \label{it:state_exponential} One noticeable problem is the term $S^n$ that is the state size of $M$. This problem is resolved in the work of \cite{ortner2012regret, jung2019thompson, akbarzadeh2022learning}.
+    \item \label{it:diameter_exponential} The other problem is the implicit dependency between the upper bound $H$ and the number of arms $n$. As we have seen in Theorem~\ref{thm:parameters}, it is perfectly possible that a bandit has the span of global bias function as big as we want.
+\end{enumerate}
+
+%To make the discussion more precise, we provide a sketch of proof of RB-TSDE \cite{akbarzadeh2022learning} in the following.
+%To make the discussion more precise, in the following, we provide an overview of regret analysis of algorithms that are UCRL2-like or TSDE-like and talk about the techniques of \cite{ortner2012regret, jung2019thompson, akbarzadeh2022learning} to solve the issue \ref{it:state_exponential}.
+%The readers who are convinced by the two issues \ref{it:state_exponential} and \ref{it:diameter_exponential} can skip the following and go to the conclusion of the chapter.
+
+In the following, we provide a sketch of proof of the regret bound of RB-TSDE \cite{akbarzadeh2022learning}, that is a modified version of TSDE \cite{ouyang2017learning} to restless Markovian bandit, and a discussion on their result.
+
+%This definition implicitly requires that the unknown MDP $M$ is weakly communicating and the reward is bounded.
+
+\subsubsection{Overview of regret analysis of RB-TSDE {\cite{akbarzadeh2022learning}}}
+
+In this section, we start by presenting how RB-TSDE \cite{akbarzadeh2022learning} works and the assumptions needed in \cite{akbarzadeh2022learning}. Next, we provide an overview of regret analysis of RB-TSDE under the assumptions. We finish the section with a discussion on their result.
+
+RB-TSDE is a Bayesian learning algorithm for restless Markovian bandits with average reward criterion.
+Extended from TSDE \cite{ouyang2017learning}, RB-TSDE updates its policy episodically as the following.
+Let $t^k$ be the time step at which the episode $k$ begins with the convention $t^1:=1$.
+For each arm $i\in[n]$, let $N_t(s_i,a_i)$ be the number of times up to time step $t$ that the learner executes action $a_i$ when arm $i$ is in state $s_i$.
+RB-TSDE terminates episode $k\ge1$ at time step $t> t^k$ and updates its policy if
+\begin{equation}
+    \label{ch:restless:eq:update_crit}
+    t-t^{k-1}>2t^k \text{ or } N_t(s_i,a_i) > 2N_{t^k}(s_i,a_i) \text{ for some }(s_i,a_i).
+\end{equation}
+RB-TSDE exploits the structure of restless bandit by choosing a prior distribution $\phi_i$ for each unknown arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ before the learning.
+At the beginning of episode $k\ge1$, RB-TSDE uses the collected observations $o_{t^k}$ to derive a posterior $\phi_i(\cdot\mid o_{t^k})$, and draws a sample $(r^k_i,p^k_i)$ according to $\phi_i(\cdot\mid o_{t^k})$ for each arm $i$.
+The samples $\{(r^k_i,p^k_i)\}_{i\in[n]}$ is then used to compute the Whittle index policy $\pi^k$.
+
+RB-TSDE computes Whittle index policy $\pi^k$ of the sampled bandit $M^k$ because Whittle index policy $\pi^*$ of the unknown bandit $M$ is used as the baseline policy for evaluating the regret of RB-TSDE.
+So, the work of \cite{akbarzadeh2022learning} assume three conditions: Let $\mathrm{supp}(\phi_i)$ be the support of prior distribution $\phi_i$ for each arm $i$.
+Let $\phi$ be the joint prior distibution of all arms and $\mathrm{supp}(\phi):=\bigotimes_{i=1}^n\mathrm{supp}(\phi_i)$ be the support of the joint prior $\phi$.
+\begin{asmp}
+    \label{asmp:indexable}
+    For any $i\in[n]$ and $(r'_i,p'_i)\in\mathrm{supp}(\phi_i)$, the arm $\langle\gS_i,\{0,1\},r'_i,p'_i\rangle$ is indexable.
+\end{asmp}
+\begin{asmp}
+    \label{asmp:unichain}
+    Any bandit $M'\in\mathrm{supp}(\phi)$ admits Whittle index policy $\pi'$ that is unichain.
+\end{asmp}
+\begin{asmp}
+    \label{asmp:ergodic}
+    There exists $\beta^*<1$ such that any bandit $M'\in\mathrm{supp}(\phi)$ admits an ergodicity coefficient $\beta_{M'}\le \beta^*$ where
+    \begin{align}
+        \label{eq:ergodic_M}
+        \beta_{M'} = 1-\min_{\substack{\vs,\vs'\in\gX \\\va,\va'\in\gA(m)}} \sum_{\vz\in\gX} \min\{p'(\vz \mid \vs, \va), p'(\vz \mid \vs', \va')\}.
+    \end{align}
+    %For any $i\in[n]$ and $(r'_i,p'_i)\in\mathrm{supp}(\phi_i)$, the arm $\langle\gS_i,\{0,1\},r'_i,p'_i\rangle$ is indexable.
+\end{asmp}
+The reasons why Assumptions~\ref{asmp:indexable} and \ref{asmp:unichain} are needed are already discussed in Section~\ref{ch:restless:discuss_policy}.
+The Assumption~\ref{asmp:ergodic} allows us to bound the span of global bias function in function of $\beta^*$.
+In addition, we should mention that by our Theorem~\ref{thm:unichain}, Assumption~\ref{asmp:ergodic} actually implies Assumption~\ref{asmp:unichain}.
+
+Assume that the unknown bandit $M$ is drawn from $\mathrm{supp}(\phi)$.
+By Definition~\ref{ch:rl:defn:rg_infinite}, the regret of RB-TSDE after $T$ steps is given by
+\begin{align}
+    \Reg(\textnormal{RB-TSDE},M,T) := Tg^*_M - \sum_{t=1}^{T} \sum_{i=1}^nr_{t,i}. \label{ch:restless:eq:regret}
+\end{align}
+Its Bayesian regret is given by \eqref{eq:bayes_rg}.
+
+Now, we focus on bounding the regret of RB-TSDE.
+Let $K_T$ be the total number of episodes up to time $T$.
+Then,
+\begin{align}
+    \Reg(\textnormal{RB-TSDE},M,T) 
+    &= \sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \Bigl(g^*_M -\sum_{i=1}^{n}r(s_{t,i},a_{t,i})\Bigr) \label{ch:restless:eq:regret1}\\
+    &\qquad +\underbrace{\sum_{i=1}^{n}\Bigl(r(s_{t,i},a_{t,i})-r_{t,i}\Bigr)}_{\Delta_{t,0}} \nonumber
+\end{align}
+
+%The algorithm $\gL$ updates its policy in an episodic manner. %using doubling trick.
+%Let $M^k$ be the imagined bandit of the algorithm for episode $k$ and $\pi^k$ be the Whittle index policy of $M^k$.
+Recall $\pi^k$ is the Whittle index policy of the imagined bandit $M^k$.
+Under Assumption~\ref{asmp:indexable}, $\pi^k$ is well-defined and under Assumption~\ref{asmp:unichain}, the gain of $\pi^k$ is state-independent.
+Then, the Bellman evaluation equation for $\pi^k$ in $M^k$ gives: for global state $\vs_t\in\gX$, $\va_t=\pi^k(\vs_t)$,
+\begin{equation}
+    \label{eq:be_imagined}
+    0 =  \sum_{i=1}^nr^k(s_{t,i}, a_{t,i}) -g^{\pi^k}_{M^k} +\sum_{\vs'\in\gX}p^k(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs') -h^{\pi^k}_{M^k}(\vs_t).
+\end{equation}
+Then, adding \Eqref{eq:be_imagined} and $0=h^{\pi^k}_{M^k}(\vs_{t+1})-h^{\pi^k}_{M^k}(\vs_{t+1})$ to \Eqref{ch:restless:eq:regret1}, and regrouping terms give
+\begin{align*}
+    \Reg(\textnormal{RB-TSDE},M,T)
+    &=\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \underbrace{(g^*_M{-}g^{\pi^k}_{M^k})}_{\Delta_{t,1}} {+}\underbrace{\sum_{i=1}^n\Bigl(r^k(s_{t,i},a_{t,i}){-}r(s_{t,i},a_{t,i})\Bigr)}_{\Delta_{t,2}} \\
+    &\quad {+}\underbrace{\sum_{\vs'\in\gX}\Bigl(p^k(\vs' \mid \vs_t, \va_t){-}p(\vs' \mid \vs_t, \va_t)\Bigr)h^{\pi^k}_{M^k}(\vs')}_{\Delta_{t,3}} {+}\underbrace{h^{\pi^k}_{M^k}(\vs_{t+1}){-}h^{\pi^k}_{M^k}(\vs_{t})}_{\Delta_{t,4}} \\
+    &\quad {+}\underbrace{\sum_{\vs'\in\gX} p(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs')-h^{\pi^k}_{M^k}(\vs_{t+1})}_{\Delta_{t,5}} +\Delta_{t,0}.
+\end{align*}
+The six quantities are bounded as the following. % according to the approach used.
+
+\begin{itemize}
+    \item The terms $\Delta_{t,0}$ and $\Delta_{t,5}$ are martingale difference terms whose expected value is zero.
+    \item The expected value of $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1}\Delta_{t,1}$ is bounded by $r_{max} K_T$ \cite[Appendix~A.2]{akbarzadeh2022learning}
+    \item The term $\Delta_{t,2}$ is bounded by Hoeffding's inequality (or simply zero if the rewards are deterministic).
+    \item The telescopic sum $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \Delta_{t,4}$ is bounded by $\sum_{k=1}^{K_T} sp(\vh^{\pi^k}_{M^k})$.
+\end{itemize}
+
+The term $\Delta_{t,3}$ is bounded by $sp(\vh^{\pi^k}_{M^k})\norm{\vp^k(\cdot\mid \vs_t,\va_t)-\vp(\cdot\mid \vs_t,\va_t)}_{\ell_1}$.
+In general MDPs, the concentration of global transition $\sum_{\vs'\in\gX} \abs{p^k(\vs'\mid \vs,\va) -p(\vs'\mid \vs,\va)}$ is bounded proportionally to $\sqrt{\abs{\gX}}$ (see \cite{qian2020concentration}).
+However, restless bandit is a well-structure MDP.
+The work of \cite{akbarzadeh2022learning} exploits this structure as the following:
+For any global state $\vs\in\gX$ and global action $\va\in\gA(m)$, it follows from \cite[Lemma~13]{jung2019thompson} that
+\begin{align*}
+    \sum_{\vs'\in\gX} \abs{p^k(\vs'\mid \vs,\va) -p(\vs'\mid \vs,\va)}
+    \le \sum_{i=1}^{n} \sum_{s'_i\in\gS_i} \abs{p^k(s'_i\mid s_i,a_i) -p(s'_i\mid s_i,a_i)}
+\end{align*}
+where $\sum_{s'_i\in\gS_i} \abs{p^k(s'_i\mid s_i,a_i) -p(s'_i\mid s_i,a_i)}$ is the concentration of local transition which is bounded proportionally to $\sqrt{S}$ using Weissman's inequality.
+
+Using the doubling trick \eqref{ch:restless:eq:update_crit}, \cite[Lemma~A.1]{akbarzadeh2022learning} gives $K_T\le2\sqrt{nST\ln(T)}$. So, what is left to bound is the span of global bias function $sp(\vh^{\pi^k}_{M^k})$.
+By \cite[Lemma~5.1]{akbarzadeh2022learning}, for any $k\ge1$, $sp(\vh^{\pi^k}_{M^k})\le \displaystyle\frac{2r_{max}}{1-\beta^*}$.
+
+In summary, RB-TSDE enjoys the following Bayesian regret bound.
+\begin{prop}[{\cite[Theorem~4.1]{akbarzadeh2022learning}}]
+    Assume that $M\in\mathrm{supp}(\phi)$.
+Under Assumptions~\ref{asmp:indexable}-\ref{asmp:ergodic}, 
+    \begin{equation}
+        \label{eq:rb_tsde_rg}
+        \BayReg(\textnormal{RB-TSDE},\phi,T) < 40\frac{r_{max}}{1-\beta^*}nS\sqrt{T\ln(T)}
+    \end{equation}
+\end{prop}
+This result presents an exponential improvement compared to the current best general-purpose RL algorithms whose regret bound is $\tilde{\landauO}\displaystyle\Bigl(\sqrt{HS^n{n \choose m}T}\Bigr)$.
+
+However, the upper bound on the span of global bias function $H:=\displaystyle\frac{2r_{max}}{1-\beta^*}$ in \eqref{eq:rb_tsde_rg} has no explicit dependency with the number of arms $n$.
+
+In the following section, we provide our last result that shows the dependency between $\beta^*$ and $n$ under Assumption~\ref{asmp:ergodic}.
+
+\subsubsection{Local and global ergodicity coefficients in restless Markovian bandit}
+
+Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
+%, the following theorem shows how the assumption on the ergodicity coefficient of local arms affects the ergodicity coefficient of the bandit.
 
 \begin{thm}[Local and global ergodicity coefficients]
-    Consider bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
     For each arm $i\in[n]$, the ergodicity coefficient $\gamma_i$ of the arm is defined by
     \begin{align*}
         \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\}.
     \end{align*}
-    Similarly, the ergodicity coefficient $\beta_M$ of the bandit $M$ is defined by
-    \begin{align}
-        \label{eq:ergodic_M}
-        \beta_M = 1-\min_{\substack{\vs,\vs'\in\gX \\\va,\va'\in\gA(m)}} \sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}.
-    \end{align}
+    Similarly, the ergodicity coefficient $\beta_M$ of the bandit $M$ is defined in the same manner as \eqref{eq:ergodic_M}.
+
     If for any arm $i$, $\gamma_i<1$, then $\beta_M<1$.
 
     Moreover, if there exists $\varepsilon>0$ such that for any arm $i\in[n]$,
@@ -797,172 +966,11 @@ Finally, the following theorem shows how the assumption on the ergodicity coeffi
     \end{align*}
     We can conclude that $\beta_M\le 1-\varepsilon^n$ using its definition.
 \end{proof}
-We will come back to this result when we discuss the regret analysis of RB-TSDE \cite{akbarzadeh2022learning} in the sections below.
 
-%\subsection{Regret definition and required assumptions}
-\section{Learning algorithms for restless bandits}
-\label{ch:restless:sec:generic}
-
-\subsection{Discussion on using Whittle index policy as a baseline in regret definition}
-\label{ch:restless:discuss_policy}
-
-%Restless bandits are the MDPs with the curse of dimensionality.
-In Chapter~\ref{ch:learning_rested}, we use Gittins index policy as the baseline policy for evaluating the regret of learning algorithms in discounted rested bandit because this index policy is optimal.
-Yet, Whittle index policy is only asymptotically optimal under some technical conditions \cite{weber1990index} and suboptimal in general.
-This brings two options to the discussion.
-\begin{enumerate}[label=(\roman*)]
-    \item Shall we compare the algorithm to an oracle that knows an optimal policy of any restless bandit?
-    \item \label{it:second_baseline} Shall we use Whittle index policy as a baseline policy?
-\end{enumerate}
-%We will then focus the discussion on the second option.
-
-Assuming an oracle is what is done in \cite{ortner2012regret, jung2019thompson, wang2020restless} when learning in restless bandits and in \cite{osband2014near, rosenberg2020oracle, xu2020reinforcement} when learning in factored-MDPs.
-The authors then solely interest in the statistical aspect of the learning algorithms.
-
-We now focus on the second option \ref{it:second_baseline}.
-First, Whittle index policy is defined only if the bandit is indexable.
-Also, regret definition requires the baseline gain to be state-independent.
-%since Whittle index policy is not optimal, the gain under this policy can be.
-So, a possible assumption for this baseline policy is that the unknown bandit is indexable and Whittle index policy is unichain, \ie, the Markov chain induced by Whittle index policy has a single recurrent class.
-Regarding the computational complexity, from Chapter~\ref{ch:index_computation}, checking the indexability of bandit $M$ costs only $\landauO(nS^3)$ but checking if the global Markov chain is unichain costs $\landauO(S^{2n})$ based on Tarjan's strongly connected component algorithm.
-%So, the assumption on the global structure of bandit $M$ is computationally hard to verify once again due the global state size.
-
-For the optimism, we have shown in Chapter~\ref{ch:learning_rested} that optimistic algorithms that apply confidence bonus on arm's transition cannot leverage index policy to choose an imagined bandit $M^k$ with index policy $\pi^k$ that guarantees the optimism at episode $k$.
-Aggravatingly, there is no guarantee that the optimistic restless bandit $M^k$ is indexable, let alone the optimism.
-%So, an assumption that there exists an oracle that knows how to choose $M^k$ that is indexable
-%So, we believe that using the Whittle index policy as a baseline is not computationally practical for the optimism.
-
-For posterior sampling, we need the imagined bandit $M^k$ to be indexable and the corresponding Whittle index policy $\pi^k$ to induce state-independent gain.
-This can be done by making an assumption on the support of the prior distribution.
-That is, any bandit drawn from the support of the prior distribution is indexable and admits unichain Whitle index policy.
-This is what is done in the work of \cite{akbarzadeh2022learning}.
-
-\subsection{Algorithms with regret guarantee}
-
-Similarly to what we have seen in Chapter~\ref{ch:learning_rested}, the current best general-purpose RL algorithms have a the regret bound $\tilde{\landauO}\Bigl(\sqrt{HS^n{n \choose m}T}\Bigr)$ in the restless bandit $M$ described in Section~\ref{ch:restless:sec:restless} where $H$ is the upper bound on the span of global bias function, and $S^n$ and ${n \choose m}$ are the state and action sizes of the bandit $M$ respectively.
-There are two issues in this regret bound.
-\begin{enumerate}[label=(\alph*)]
-    \item \label{it:state_exponential} One noticeable problem is the term $S^n$ that is the state size of $M$. This problem is resolved in the work of \cite{ortner2012regret, jung2019thompson, akbarzadeh2022learning}.
-    \item \label{it:diameter_exponential} The other problem is the implicit dependency between the upper bound $H$ and the number of arms $n$. As we have seen in Theorem~\ref{thm:parameters}, it is perfectly possible that a bandit has the span of global bias function as big as we want.
-\end{enumerate}
-
-%To make the discussion more precise, we provide a sketch of proof of RB-TSDE \cite{akbarzadeh2022learning} in the following.
-%To make the discussion more precise, in the following, we provide an overview of regret analysis of algorithms that are UCRL2-like or TSDE-like and talk about the techniques of \cite{ortner2012regret, jung2019thompson, akbarzadeh2022learning} to solve the issue \ref{it:state_exponential}.
-%The readers who are convinced by the two issues \ref{it:state_exponential} and \ref{it:diameter_exponential} can skip the following and go to the conclusion of the chapter.
-
-In the following, we provide a sketch of proof of the regret bound of RB-TSDE \cite{akbarzadeh2022learning}, that is modified version of TSDE to restless Markovian bandit and a few comments on their result.
-
-%This definition implicitly requires that the unknown MDP $M$ is weakly communicating and the reward is bounded.
-
-\subsubsection{Overview of regret analysis of RB-TSDE {\cite{akbarzadeh2022learning}}}
-
-In this section, we start by presenting how RB-TSDE works and the assumptions needed in \cite{akbarzadeh2022learning}. Next, we provide an overview of regret analysis of RB-TSDE under the assumptions. We finish the section with a discussion on their result.
-
-RB-TSDE is a Bayesian learning algorithm for restless Markovian bandits with average reward criterion.
-Extended from TSDE, RB-TSDE updates its policy episodically as the following.
-Let $t^k$ be the time step at which the episode $k$ begins with the convention $t^1:=1$.
-For each arm $i\in[n]$, let $N_t(s_i,a_i)$ be the number of times up to time step $t$ that the learner executes action $a_i$ when arm $i$ is in state $s_i$.
-RB-TSDE terminates episode $k\ge1$ at time step $t> t^k$ and updates its policy if
-\begin{equation}
-    \label{ch:restless:eq:update_crit}
-    t-t^{k-1}>2t^k \text{ or } N_t(s_i,a_i) > 2N_{t^k}(s_i,a_i) \text{ for some }(s_i,a_i).
-\end{equation}
-RB-TSDE exploits the structure of restless bandit by choosing a prior distribution $\phi_i$ for each unknown arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ before the learning.
-At the beginning of episode $k\ge1$, RB-TSDE uses the collected observations $o_{t^k}$ to derive a posterior $\phi_i(\cdot\mid o_{t^k})$, and draws a sample $(r^k_i,p^k_i)$ according to $\phi_i(\cdot\mid o_{t^k})$ for each arm $i$.
-The samples $\{(r^k_i,p^k_i)\}_{i\in[n]}$ is then used to compute the Whittle index policy $\pi^k$.
-
-RB-TSDE computes Whittle index policy $\pi^k$ of the sampled bandit $M^k$ because Whittle index policy $\pi^*$ of the unknown bandit $M$ is used as the baseline policy for evaluating the regret of RB-TSDE.
-So, the work of \cite{akbarzadeh2022learning} assume three conditions: Let $\mathrm{supp}(\phi_i)$ be the support of prior distribution $\phi_i$ for each arm $i$.
-Let $\phi$ be the joint prior distibution of all arms and $\mathrm{supp}(\phi):=\bigotimes_{i=1}^n\mathrm{supp}(\phi_i)$ be the support of the joint prior $\phi$.
-\begin{asmp}
-    \label{asmp:indexable}
-    For any $i\in[n]$ and $(r'_i,p'_i)\in\mathrm{supp}(\phi_i)$, the arm $\langle\gS_i,\{0,1\},r'_i,p'_i\rangle$ is indexable.
-\end{asmp}
-\begin{asmp}
-    \label{asmp:unichain}
-    Any bandit $M'\in\mathrm{supp}(\phi)$ admits Whittle index policy $\pi'$ that is unichain.
-\end{asmp}
-\begin{asmp}
-    \label{asmp:ergodic}
-    There exists $\beta^*<1$ such that any bandit $M'\in\mathrm{supp}(\phi)$ admits an ergodicity coefficient $\beta_{M'}\le \beta^*$ where
-    \begin{align*}
-        \beta_{M'} = 1-\min_{\substack{\vs,\vs'\in\gX \\\va,\va'\in\gA(m)}} \sum_{\vz\in\gX} \min\{p'(\vz \mid \vs, \va), p'(\vz \mid \vs', \va')\}.
-    \end{align*}
-    %For any $i\in[n]$ and $(r'_i,p'_i)\in\mathrm{supp}(\phi_i)$, the arm $\langle\gS_i,\{0,1\},r'_i,p'_i\rangle$ is indexable.
-\end{asmp}
-The reasons why Assumptions~\ref{asmp:indexable} and \ref{asmp:unichain} are needed are already discussed in Section~\ref{ch:restless:discuss_policy}.
-The Assumption~\ref{asmp:ergodic} allows us to bound the span of global bias function in function of $\beta^*$.
-In addition, we should mention that by our Theorem~\ref{thm:unichain}, Assumption~\ref{asmp:ergodic} actually implies Assumption~\ref{asmp:unichain}.
-
-Assume that the unknown bandit $M$ is drawn from $\mathrm{supp}(\phi)$.
-By Definition~\ref{ch:rl:defn:rg_infinite}, the regret of RB-TSDE after $T$ steps is given by
-\begin{align}
-    \Reg(\textnormal{RB-TSDE},M,T) := Tg^*_M - \sum_{t=1}^{T} \sum_{i=1}^nr_{t,i}. \label{ch:restless:eq:regret}
-\end{align}
-Its Bayesian regret is given by \eqref{eq:bayes_rg}.
-
-Now, we focus on bounding the regret of RB-TSDE.
-Let $K_T$ be the total number of episodes (or policy updates) up to time $T$.
-Then,
-\begin{align}
-    \Reg(\textnormal{RB-TSDE},M,T) 
-    &= \sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \Bigl(g^*_M -\sum_{i=1}^{n}r(s_{t,i},a_{t,i})\Bigr) \label{ch:restless:eq:regret1}\\
-    &\qquad +\underbrace{\sum_{i=1}^{n}\Bigl(r(s_{t,i},a_{t,i})-r_{t,i}\Bigr)}_{\Delta_{t,0}} \nonumber
-\end{align}
-
-%The algorithm $\gL$ updates its policy in an episodic manner. %using doubling trick.
-Let $M^k$ be the imagined bandit of the algorithm for episode $k$ and $\pi^k$ be the Whittle index policy of $M^k$.
-Under Assumption~\ref{asmp:indexable}, $\pi^k$ is well-defined and under Assumption~\ref{asmp:unichain}, the gain of $\pi^k$ is state-independent.
-Then, the Bellman evaluation equation for $\pi^k$ in $M^k$ gives: for global state $\vs_t\in\gX$, $\va_t=\pi^k(\vs_t)$,
-\begin{equation}
-    \label{eq:be_imagined}
-    0 =  \sum_{i=1}^nr^k(s_{t,i}, a_{t,i}) -g^{\pi^k}_{M^k} +\sum_{\vs'\in\gX}p^k(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs') -h^{\pi^k}_{M^k}(\vs_t).
-\end{equation}
-Let $K_T$ be the total number of episodes (or policy updates) up to time $T$.
-Then, adding \Eqref{eq:be_imagined} and $0=h^{\pi^k}_{M^k}(\vs_{t+1})-h^{\pi^k}_{M^k}(\vs_{t+1})$ to \Eqref{ch:restless:eq:regret1}, and regrouping terms give
-\begin{align*}
-    \Reg(\textnormal{RB-TSDE},M,T)
-    &=\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \underbrace{(g^*_M{-}g^{\pi^k}_{M^k})}_{\Delta_{t,1}} {+}\underbrace{\sum_{i=1}^n\Bigl(r^k(s_{t,i},a_{t,i}){-}r(s_{t,i},a_{t,i})\Bigr)}_{\Delta_{t,2}} \\
-    &\quad {+}\underbrace{\sum_{\vs'\in\gX}\Bigl(p^k(\vs' \mid \vs_t, \va_t){-}p(\vs' \mid \vs_t, \va_t)\Bigr)h^{\pi^k}_{M^k}(\vs')}_{\Delta_{t,3}} {+}\underbrace{h^{\pi^k}_{M^k}(\vs_{t+1}){-}h^{\pi^k}_{M^k}(\vs_{t})}_{\Delta_{t,4}} \\
-    &\quad {+}\underbrace{\sum_{\vs'\in\gX} p(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs')-h^{\pi^k}_{M^k}(\vs_{t+1})}_{\Delta_{t,5}} +\Delta_{t,0}.
-\end{align*}
-The six quantities are bounded as the following. % according to the approach used.
-
-\begin{itemize}
-    \item The terms $\Delta_{t,0}$ and $\Delta_{t,5}$ are martingale difference terms whose expected value is zero.
-    \item The expected value of $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1}\Delta_{t,1}$ is bounded by $r_{max} K_T$ \cite[Appendix~A.2]{akbarzadeh2022learning}
-    \item The term $\Delta_{t,2}$ is bounded by Hoeffding's inequality (or simply zero if the rewards are deterministic).
-    \item The telescopic sum $\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \Delta_{t,4}$ is bounded by $\sum_{k=1}^{K_T} sp(\vh^{\pi^k}_{M^k})$.
-\end{itemize}
-
-The term $\Delta_{t,3}$ is bounded by $sp(\vh^{\pi^k}_{M^k})\norm{\vp^k(\cdot\mid \vs_t,\va_t)-\vp(\cdot\mid \vs_t,\va_t)}_{\ell_1}$.
-In general MDPs, the concentration of global transition $\sum_{\vs'\in\gX} \abs{p^k(\vs'\mid \vs,\va) -p(\vs'\mid \vs,\va)}$ is bounded proportionally to $\sqrt{\abs{\gX}}$ (see \cite{qian2020concentration}).
-However, restless bandit a well-structure MDP.
-\cite{akbarzadeh2022learning} exploit this structure as the following:
-For any global state $\vs\in\gX$ and global action $\va\in\gA(m)$, it follows from \cite[Lemma~13]{jung2019thompson} that
-\begin{align*}
-    \sum_{\vs'\in\gX} \abs{p^k(\vs'\mid \vs,\va) -p(\vs'\mid \vs,\va)}
-    \le \sum_{i=1}^{n} \sum_{s'_i\in\gS_i} \abs{p^k(s'_i\mid s_i,a_i) -p(s'_i\mid s_i,a_i)}
-\end{align*}
-where $\sum_{s'_i\in\gS_i} \abs{p^k(s'_i\mid s_i,a_i) -p(s'_i\mid s_i,a_i)}$ is the concentration of local transition which is bounded proportionally to $\sqrt{S}$.
-
-Using the doubling trick \eqref{ch:restless:eq:update_crit}, \cite[Lemma~A.1]{akbarzadeh2022learning} gives $K_T\le2\sqrt{nST\ln(T)}$. So, what is left to bound is the span of global bias function $sp(\vh^{\pi^k}_{M^k})$.
-By \cite[Lemma~5.1]{akbarzadeh2022learning}, for any $k\ge1$, $sp(\vh^{\pi^k}_{M^k})\le \displaystyle\frac{2r_{max}}{1-\beta^*}$.
-
-In summary, RB-TSDE enjoys the following Bayesian regret bound.
-\begin{prop}[{\cite[Theorem~4.1]{akbarzadeh2022learning}}]
-    Assume that $M\in\mathrm{supp}(\phi)$.
-Under Assumptions~\ref{asmp:indexable}-\ref{asmp:ergodic}, 
-    \begin{equation}
-        \label{eq:rb_tsde_rg}
-        \BayReg(\textnormal{RB-TSDE},\phi,T) < 40\frac{r_{max}}{1-\beta^*}nS\sqrt{T\ln(T)}
-    \end{equation}
-\end{prop}
-This result presents an exponential improvement compared to the current best general-purpose RL algorithms whose regret bound is $\tilde{\landauO}\Bigl(\sqrt{HS^n{n \choose m}T}\Bigr)$.
-
-However, the upper bound on the span of global bias function $H=\displaystyle\frac{2r_{max}}{1-\beta^*}$ has no explicit dependency with the number of arms.
-In fact, if any bandit $M'\in\mathrm{supp}(\phi)$ satisfies the condition \eqref{eq:gamma_ep} of our Theorem~\ref{thm:ergodicity_coeff}, then $\beta^*=1-\varepsilon^n$.
-This implies that $H=\displaystyle\frac{2r_{max}}{\varepsilon^n}$ which is exponential in $n$.
+With Theorem~\ref{thm:ergodicity_coeff}, Assumption~\ref{asmp:ergodic} implies that there exists $\varepsilon>0$ such that any bandit $M'\in\mathrm{supp}(\phi)$ satisfies the condition \eqref{eq:gamma_ep} of Theorem~\ref{thm:ergodicity_coeff}, and $\beta^*=1-\varepsilon^n$.
+%where $\varepsilon>0$ is usually very small.
+The latter implies that $H:=\displaystyle\frac{2r_{max}}{1-\beta^*}=\displaystyle2r_{max}\left(\frac{1}{\varepsilon}\right)^n$ which means that \eqref{eq:rb_tsde_rg} remains exponential in $n$.
+However, this certainly does not cancel the exponential improvement in the regret bound of RB-TSDE \cite{akbarzadeh2022learning} over the general-purpose RL algorithms in learning restless Markovian bandit problems.
 
 %For instance, if the conditions in Theorem~\ref{thm:thm:ergodicity_coeff} are satisfied, the global span of optimal bias is bounded exponentially in the number of arms as given in \eqref{eq:span_expo}.
 
@@ -977,10 +985,10 @@ We also present a few results such as if all arms are ergodic, then the correspo
 We discuss the requirement when using Whittle index policy as the baseline policy in regret definition for learning restless bandits and provides an overview of regret analysis of RB-TSDE \cite{akbarzadeh2022learning}, a modified version of TSDE \cite{ouyang2017learning}, whose regret bound provides an exponential improvement over the current best general-purpose RL algorithms.
 
 We believe that it is challenging to derive the upper bound on the span of global bias function $H$ or the global diameter $D$ of $M$ that are explicitly polynomially in $n$.
-In fact, it is impossible to do so for general restless bandits as we have seen in this chapter that the parameters of some bandits such as the diameter, the mixing time, or the span of global bias function can be exponential in the number of arms.
+In fact, it is impossible to do so for general restless bandits as we have seen in this chapter that the MDP parameters of some bandits such as the global diameter, or the span of global bias function can be exponential in the number of arms.
 This calls for restrictive assumptions on bandits in order to to design an algorithm with a regret bound explicitly polynomially in the number of arms.
-This also calls for algorithms that directly learns Whittle index of the unknown bandit in the direction of \cite{fu2019towards, gibson2021novel, nakhleh2021neurwin, avrachenkov2022whittle}.
-The chapter terminates here.
+This also calls for model-free algorithms that directly learns Whittle index of the unknown restless bandit in the direction of \cite{fu2019towards, gibson2021novel, nakhleh2021neurwin, avrachenkov2022whittle}.
+
 
 %\subsubsection{UCRL2 algorithm}
 %
