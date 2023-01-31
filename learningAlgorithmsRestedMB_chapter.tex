@@ -22,7 +22,7 @@ Section~\ref{ch:rested:scale} contains our discussion on the scalability of each
 We report numerical evidences about the learning performance and the runtime of each algorithm in Section~\ref{ch:rested:sec:numerical}.
 Section~\ref{ch:rested:sec:conclusion} summarizes the theoretical and numerical results of the modified algorithms and concludes the chapter.
 
-\section{Contribution}
+\section{Contributions}
 \label{ch:rested:sec:contribute}
 
 We consider an episodic setting with geometrically distributed episode length, in which the optimal strategy for a decision maker who knows all parameters of the system is to use Gittins index policy. We study a specialization of PSRL \cite{osband2013more} to Markovian bandits, that we call Markovian bandit posterior sampling (MB-PSRL) that consists in using PSRL with a prior tailored to Markovian bandits. We show that the Bayesian regret of MB-PSRL is sublinear in the number of episodes and arms. We also provide an expected regret guarantee for two optimistic algorithms that we call MB-UCRL2 and MB-UCBVI, and that are based respectively on UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}. They both use modified  confidence bounds adapted to Markovian bandit problems. The upper bound for their regret is similar to the bound for MB-PSRL. This shows that in terms of regret, the Bayesian approach (MB-PSRL) and the optimistic approach (MB-UCRL2 and MB-UCBVI) scale well with the number of arms. We also provide a Bayesian minimax regret lower bound for any learning algorithm in rested Markovian bandit problems with the aforementioned setting, which shows that the regret bounds that we obtain for the three algorithms are close to optimal.
