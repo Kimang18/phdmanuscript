@@ -9,10 +9,10 @@ In this chapter, we study the scalability of model-based algorithms learning the
 %In this chapter, 
 We construct variants of three algorithms specially tailored to Markovian bandits (MB) that we call MB-PSRL, MB-UCRL2, and MB-UCBVI. We consider an episodic setting with geometrically distributed episode length, and measure the performance of the algorithm in terms of regret (Bayesian regret for MB-PSRL and expected regret for MB-UCRL2 and MB-UCBVI). We prove that, for this setting, all algorithms have a low regret in $\tilde{\landauO}(S\sqrt{nK})$ -- where $K$ is the number of episodes, $n$ is the number of arms and $S$ is the number of states of each arm. Up to a factor $\sqrt{S}$, these regrets match the Bayesian minimax regret lower bound of $\Omega(\sqrt{SnK})$ that we also derive.
 
-Even if their theoretical regrets are comparable, the \emph{time complexities} of these algorithms vary greatly: We show that MB-UCRL2, as well as all optmistic algorithms that use confidence bonuses on transition matrices have a {time} complexity that grows exponentially in $n$. In contrast, MB-UCBVI does not use bonuses on transition matrices, and we show that  it can be implemented efficiently, with a time complexity linear in $n$. Our numerical experiments show, however, that its empirical regret is large. Our Bayesian algorithm, MB-PSRL, enjoys the best of both worlds: its running time is linear in the number of arms and its empirical regret is the smallest of all algorithms.
+Even if their theoretical regrets are comparable, the \emph{time complexities} of these algorithms vary greatly: We show that MB-UCRL2, as well as all optimistic algorithms that use confidence bonuses on transition matrices have a {time} complexity that grows exponentially in $n$. In contrast, MB-UCBVI does not use bonuses on transition matrices, and we show that  it can be implemented efficiently, with a time complexity linear in $n$. Our numerical experiments show, however, that its empirical regret is large. Our Bayesian algorithm, MB-PSRL, enjoys the best of both worlds: its running time is linear in the number of arms and its empirical regret is the smallest of all algorithms.
 This is a new addition in the understanding of the power of Bayesian algorithms, that can often be  tailored to the structure of the problems to learn.
 
-In Section~\ref{ch:rested:sec:contribute}, we summarize our result in learning with rested Markovian bandit with discount.
+In Section~\ref{ch:rested:sec:contribute}, we summarize our results in learning with rested Markovian bandit with discount.
 Section~\ref{ch:rested:related} describes the work in learning with structured MDPs such as factored MDPs, and rested bandit with no discount.
 We recall the formulation of rested bandit problem with discount in Section~\ref{ch:rested:sec:bandits}.
 Section~\ref{ch:rested:sec:problem} contains the episodic learning setup in which the episode length is geometrically distributed.
@@ -147,7 +147,7 @@ We now consider an extension of Problem~\ref{pb:problem_1} in which the decision
 nor the rewards. Our goal is to design a reinforcement learning algorithm that
 learns the optimal policy from past observations.  Similarly to what is done
 for finite-horizon reinforcement learning with deterministic horizon -- see
-\eg, \cite{zanette2019tighter,jin2018q,azar2017minimax,osband2013more} --
+Section~\ref{ch:rl:ssec:finite} --
 we consider a decision maker that faces a sequence of independent replicas of
 the same rested bandit problem, where the transitions and the rewards 
 are drawn independently for each episode.
@@ -159,7 +159,8 @@ $t^k:=1{+}\sum_{i=1}^{k-1}H^i$ be the starting time of the $k$th episode.
 The observations made prior and up to episode \(k\) is denoted \(o_{t^{k}}:=\{\vs_1,a_1,r_1,\dots,\vs_{t^k-1},a_{t^k-1},r_{t^k-1},s_{t^k}\}\).
 An \emph{Episodic Learning
 Algorithm} \(\gL\) is a function that maps observations \(o_{t^k}\) to
-\(\gL(o_{t^k})\), a probability distribution whose support is $\Pi$. At the
+\(\gL(o_{t^k})\), a probability distribution whose support is $\Pi$.
+We recall from Algorithm~\ref{ch:rl:algo:generics} that at the
 beginning of episode $k$, the algorithm samples \(\pi^k\sim\gL(o_{t^k})\)
 and uses this policy during the whole $k$th episode. Note that one could also
 design algorithms where learning takes place inside each episode. We will see
@@ -192,7 +193,7 @@ In what follows, we present three algorithms having a regret that grows like $\t
     \For{episodes $k=1,2,\dots$}{
         Compute a new policy $\pi^k$ (using posterior sampling or optimism). \;\label{line:new_policy}
         Set $t^{k} \gets 1+\sum_{i=1}^{k-1}H^i$, sample $\vs_{t^k}\sim \rho$ and $H^k\sim \mathrm{Geom}(1-\gamma)$.\;
-        \For{$t\gets t^k$ {\bfseries to} $t^{k}+H^k-1$}{
+        \For{$t\gets t^k$ {\bfseries to} $t^{k}+H^k$}{
             Activate arm  $a_t=\pi^k(\vs_t)$. \;
             Observe $r_t$ and $\vs_{t+1}$. \;
         }
@@ -226,12 +227,12 @@ is in $\sM^k$ if for all $a\in[n]$ and $s_a\in\gS_a$:
     \abs{r'(s_a) - \hat{r}^{k}(s_a)} \le \beta_r^{k}(s_a) \text{ and }
     \norm{{\mP'}(s_a,\cdot) - \hat{\mP}^{k}(s_a,\cdot)}_{\ell_1} \le \beta_P^{k}(s_a).            
 \end{align}
-MB-UCRL2 then chooses a policy $\pi^k$ that is optimal for the most optimistic problem $M^k\in\sM^k$:
+MB-UCRL2 then chooses a policy $\pi^k$ that is optimal for the optimistic problem $M^k\in\sM^k$:
 \begin{align}
     \pi^k \in \argmax_{\pi} \max_{M'\in\sM^k}v^{\pi}_{M'}(\rho).
     \label{eq:EVI}
 \end{align}
-Note that as we explain later in Section~\ref{ch:rested:scale}, we believe that there is no  efficient algorithm to compute the optimistic policy $\pi^k$ of Equation~\eqref{eq:EVI} unless there is an oracle that gives the most optimistic problem $M^k$.
+Note that as we explain later in Section~\ref{ch:rested:scale}, we believe that there is no  efficient algorithm to compute the optimistic policy $\pi^k$ of Equation~\eqref{eq:EVI} unless there is an oracle that gives the optimistic problem $M^k$.
 
 Compared to a vanilla implementation of UCRL2, MB-UCRL2 uses the structure of the Markovian bandit problem: The constraints Equation~\eqref{eq:conf_rq} are on $\mP$ whereas vanilla UCRL2 uses constraints on the full transition $p$ (defined in Equation~\eqref{eq:defP}). This leads MB-UCRL2 to use the bonus term that scales as $\sqrt{S/N^{k}(s_a)}$ whereas vanilla UCRL2 would use the term in $\sqrt{S^n/N^{k}(\vs, a)}$.
 
@@ -253,9 +254,9 @@ In this section, we first present upper bounds on the expected regret of the thr
 
 The theorem below provides upper bounds on the regret of the three algorithms presented in Section~\ref{ch:rested:sec:learning_algorithms}. %Note that since MB-PSRL is a Bayesian algorithm, we consider its \emph{Bayesian regret}, that is the expectation over all possible models as defined in \Eqref{eq:bayes_rg}. More precisely, if the unknown MDP $M$ is drawn from a prior distribution $\phi$, the \textit{Bayesian regret} of a learning algorithm $\gL$ is $\BayReg(K,\gL,\phi) = \ex{\Reg(K,\gL,M)}$, where the expectation is taken over all possible values of $M \sim \phi$ and all possible runs of the algorithm. The expected regret $\ex{\Reg(K,\gL,M)}$ is defined by taking the expectation over all possible runs of the algorithm.
 
-\begin{thm}
+\begin{thm}[Regret upper bounds]
     \label{thm:regret_upper_bound}
-    Let $f(S,n,K,\gamma)=Sn\left(\ln K/(1{-}\gamma)\right)^{2}{+} \sqrt{SnK}\bigl(\ln K/(1{-}\gamma)\bigr)^{3/2}$. There exists universal constants $C, C'$ and $C''$ independent of the model (i.e., that do not depend on $S$, $n$, $K$ and $\gamma$) such that:
+    Let $f(S,n,K,\gamma)=Sn\Bigl(\ln K/(1{-}\gamma)\Bigr)^{2}{+} \sqrt{SnK}\Bigl(\ln K/(1{-}\gamma)\Bigr)^{3/2}$. There exists universal constants $C, C'$ and $C''$ independent of the model (i.e., that do not depend on $S$, $n$, $K$ and $\gamma$) such that:
     \begin{itemize}
         \item For any prior distribution $\phi$:
         \begin{align*}
@@ -330,7 +331,7 @@ This requires the use of $v$ and not $W$, and it is used to show that the expect
 
 After obtaining upper bounds on the regret, a natural question is: can we do better? Or in other terms, does there exist a learning algorithm with a smaller regret? As we explained in Chapter~\ref{ch:rl}, this question is addressed by the notion of minimax regret lower bound: for a given set of parameters $(S,n,K,\gamma)$, a minimax lower bound is a lower bound on the quantity 
 $\inf_{\gL}\sup_{M}\Reg(\gL,M,K)$,  where the supremum is taken among all possible models that have parameters $(S,n,K,\gamma)$ and the infimum is taken over all possible learning algorithms. The next theorem provides a lower bound on the Bayesian regret. It is therefore stronger than a minimax bound for two reasons: First, the Bayesian regret is an average over models, which means that there exists at least one model that has a larger regret than the Bayesian lower bound; And second,  in Theorem~\ref{thm:lower_bound}, we allow the algorithm to depend on the prior distribution $\phi$ and to use this information.
-\begin{thm}[Lower bound]
+\begin{thm}[Minimax Bayesian regret lower bound]
     \label{thm:lower_bound}
     For any state size $S$, number of arms $n$, discount factor $\gamma$ and number of episodes $K\ge 16S$, there is a prior distribution $\phi$ on rested bandit problems with parameters $(S,n,K,\gamma)$ such that, for any learning algorithm $\gL$:
     \begin{align}
@@ -361,10 +362,10 @@ If one excludes the simulation of the MDP, the computational cost of MB-PSRL and
 While MB-UCRL2 has a regret equivalent to the one of MB-PSRL, its computational complexity, and in particular the complexity of computing an \emph{optimistic} policy that maximizes \Eqref{eq:EVI} does not scale with $n$. Such a policy can be computed by using \emph{extended value iteration} \cite{jaksch2010near}. This computation is polynomial in the number of states of the global MDP and is therefore exponential in the number of arms, precisely $O(nS^{2n})$.
 For MB-PSRL (or MB-UCBVI), the computation is easier because the sampled (optimistic) MDP is a rested bandit problem. Hence, using Proposition~\ref{ch:mb:prop:gidx_defn}, computing the optimal policy can be done by computing local indices. In the following, we show that it is not possible to solve \Eqref{eq:EVI} by using local indices. This suggests that MB-UCRL2 (nor any of the modifications of UCRL2's variants that would use extended value iteration) cannot be implemented efficiently.
 
-More precisely, to find an optimistic policy (that satisfies \Eqref{eq:optimism}), UCRL2 and its variants, \eg, KL-UCRL \cite{filippi2010optimism}, compute a policy $\pi^k$ that is optimal for the most optimistic MDP in $\sM^k$. This is done by using extended value iteration. We now show that this cannot be replaced by the computation of local indices.
+More precisely, to find an optimistic policy (that satisfies \Eqref{eq:optimism}), UCRL2 and its variants, \eg, KL-UCRL \cite{filippi2010optimism}, compute a policy $\pi^k$ that is optimal for the optimistic MDP in $\sM^k$. This is done by using extended value iteration. We now show that this cannot be replaced by the computation of local indices.
 
 Let us consider that the estimates and confidence bonus for a given arm $a$ are $\hatB_a:=(\hat{\vr}_a,\hat{\mP}_a,\beta_{r},\beta_{P})$. We say that an algorithm computes indices locally for Arm $a$ if for each $s_a\in\gS_a$, it computes an index $I^{\hatB_a}(s_a)$ by using only $\hatB_a$ but not $\hatB_{b}$ for any $b\ne a$. We denote by $\pi^{I(\hatB)}$ the index policy that uses index $I^{\hatB_a}$ for arm $a$ and by $\sM(\hatB)$ the set of rested bandits $M'$ that satisfy \Eqref{eq:conf_rq}.
-\begin{thm}
+\begin{thm}[Optimistic arms do not form optimistic bandit]
     \label{thm:no_OFU}
     For any algorithm that computes indices locally, there exists a rested bandit $M$, an initial state $\vs$ and estimates $\hatB_a:=(\hat{\vr}_a,\hat{\mP}_a, \beta_r, \beta_P)$ such that $M\in\sM(\hatB)$ and
     \begin{align*}
@@ -380,7 +381,7 @@ Note that for any set $\sM$ such that $M \in \sM$, there still exists an index p
 \begin{align*}
   \sup_{M'\in\sM}V^{\pi^{\mathrm{ind}}}_{M'} \ge \sup_\pi V^{\pi}_{M}.
 \end{align*}
-This means that restricting to index policies is not a restriction for the optimism. What Theorem~\ref{thm:no_OFU} shows is that an optimistic index policy can be defined only after the most optimistic MDP $M'\in\sM$ is computed and computing optimistic policy and $M'$ simultaneously depends on the confidence bonuses of all arms.
+This means that restricting to index policies is not a restriction for the optimism. What Theorem~\ref{thm:no_OFU} shows is that an optimistic index policy can be defined only after the optimistic MDP $M'\in\sM$ is computed and computing optimistic policy and $M'$ simultaneously depends on the confidence bonuses of all arms.
 
 Therefore, we  believe that UCRL2 and its variants cannot compute optimistic  policy locally: they should all require the joint knowledge of all $\{\hatB_a\}_{a\in[n]}$.
 
@@ -441,7 +442,7 @@ The broad implication of this work is that, on the one hand, if a weakly coupled
     \bfseries \Large Appendix of the chapter
 \end{center}
 
-The section is organized as follows:
+The appendix is organized as follows:
 \begin{itemize}
     \item In Appendix~\ref{apx:proof_thm1}, we prove Theorem~\ref{thm:regret_upper_bound}. 
     \item In Appendix~\ref{apx:sketch_of_proof_lower}, we obtain a Bayesian minimax regret lower bound for any reinforcement learning algorithm in rested bandits (Theorem~\ref{thm:lower_bound}).
@@ -491,7 +492,7 @@ We are then left with $\ex{\Delta_{conc}^k \ind{\gE^{k}_\text{Algo}}}$. To do so
 \end{align}
 where ${\norm{\mP^{k}(s_a,\cdot)-\mP(s_a,\cdot)}_{\ell_1}=\sum_{s'_a}\abs{P^{k}(s_a,s'_a)-P(s_a,s'_a)}}$. 
 For an arm $a$ and a state $s_a\in\gS_a$, we denote\footnote{In the paper, we use the notation $\ind{E}$ to denote a random variable that equals $1$ if $E$ is true and $0$ otherwise. For instance, $\ind{Y_i=y}=1$ if $Y_i=y$ and $0$ otherwise.} by $N^{k}(s_a){=} \sum_{t=1}^{t^{k}-1} \ind{s_{t,a_t}=s_a}$ the number of times that Arm~$a$ is activated before episode $k$ while being in state $s_a$. \Eqref{eq:proof2} relates the performance gap to the distance between the reward functions and transition matrices of the MDPs $M$ and $M^k$. 
-With $L^K{=}\sqrt{2\ln\frac{4SnK^2\ln K}{1-\gamma}}$, the event $\gE^{k}_\text{Algo}$ guarantees that for all $a, s_a$ and $ k\ge1$, 
+With $L^K{=}\sqrt{2\ln\frac{2SnK^2\ln K^2}{1-\gamma}}$, the event $\gE^{k}_\text{Algo}$ guarantees that for all $a, s_a$ and $ k\ge1$, 
 \begin{align}
     \label{eq:concentration}
     \abs{r^k(s_a){-}r(s_a)} {\le} \frac{L^K}{\sqrt{\max\{1,N^{k}(s_a)\}}} \text{ and }
