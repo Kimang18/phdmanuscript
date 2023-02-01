@@ -6,23 +6,23 @@
 
 \section{Topic of the thesis}
 
-Markov decision processes (MDPs) are powerful models to solve stochastic optimization problems. They suffer, however, from what is called the \emph{curse of dimensionality}, which basically says that the state size of a Markov process is exponential in the number of system components. This implies that the complexity of computing an optimal policy is, in general, exponential in the number of system components. The same holds for general-purpose reinforcement learning (RL) algorithms: they all have a regret and a runtime exponential in the number of components, so they also suffer from the same curse.
+Markov decision processes (MDPs) are powerful models for solving stochastic optimization problems. They suffer, however, from what is called the \emph{curse of dimensionality}, which basically says that the state size of a Markov process is exponential in the number of system components. This implies that the complexity of computing an optimal policy is generally exponential in the number of system components. The same holds for general-purpose reinforcement learning (RL) algorithms: they all have a regret and a runtime exponential in the number of components, so they also suffer from the same curse.
 
-Very few MDPs are known to escape from this curse of dimensionality. One of the most famous examples is the Markovian bandit problem in which a decision maker faces $n$ MDPs (the $n$ components, that we will call the $n$ arms in the rest of the thesis), and must decide which arms to activate at each decision epoch.
+Very few MDPs are known to escape from this curse of dimensionality. One of the most famous examples is the Markovian bandit problem in which a decision maker faces $n$ MDPs (the $n$ components, which we will call the $n$ arms in the rest of the thesis) and must decide which arms to activate at each decision epoch.
 Markovian bandits have been applied to many resource allocations and scheduling problems such as wireless communication \cite{raghunathan2008index, liu2010indexability, aalto2019whittle}, web crawling \cite{nino2014dynamic, avrachenkov2022whittle}, congestion control \cite{avrachenkov2013congestion, avrachenkov2018impulsive}, queueing systems \cite{glazebrook2009index, aalto2009gittins, archibald2009indexability, aalto2011properties, larranaga2015asymptotically, borkar2017whittle, scully2018soap}, and clinical trials \cite{villar2015multi}.
 
 Markovian bandits are well-structured MDPs.
-They form a subclass of multi-armed bandit problems in which each arm has an internal state that evolves over time in a Markovian manner, as a function of the decision maker’s actions.
-In such a problem, at each decision time, the decision maker observes the state of all arms and chooses which one to activate.
+They form a subclass of multi-armed bandit problems in which each arm has an internal state that evolves in a Markovian manner as a function of the decision maker’s actions.
+In such a problem, the decision maker observes the state of all arms at each decision time and chooses which to activate.
 When the state of an arm evolves only when this arm is chosen, one falls into the category of \emph{rested} Markovian bandits.
 When the state of an arm can also evolve when the arm is not chosen, the problem is called a \emph{restless} bandit problem.
-It has been shown over the years that index policy, a strategy that requires computation load linearly in number of arms, performs extremely well in Markovian bandit problems \cite{glazebrook2002index, ansell2003whittle, glazebrook2006some, avrachenkov2013congestion, akbarzadeh2019restless}.
+It has been shown over the years that index policy, a strategy that requires computation load linearly in number of arms, performs exceptionally well in Markovian bandit problems \cite{glazebrook2002index, ansell2003whittle, glazebrook2006some, avrachenkov2013congestion, akbarzadeh2019restless}.
 Moreover, there is a subclass of Markovian bandits in which index policy is shown to be optimal \cite{gittins1979bandit}.
 
 Two celebrated index definitions are \emph{Gittins index} \cite{gittins1979bandit} for rested bandits and \emph{Whittle index} \cite{whittle1988restless} for restless bandits.
 Yet, as mentioned in \cite[Chapter~14]{whittle1996optimal}, the existence of Whittle index is guaranteed only for restless bandits that satisfy a so-called indexability property.
 To the best of our knowledge, there is no efficient general-purpose algorithm to test the indexability in restless bandits.
-Meanwhile, despite its desirable computational complexity compared to the solutions of dynamic programming, there are very few RL algorithms that leverage index policy in learning with Markovian bandits.
+Meanwhile, few RL algorithms that leverage index policy in learning with Markovian bandits despite its desirable computational complexity compared to dynamic programming solutions, .
 These raise two grand questions in this thesis:
 \begin{itemize}
     \item {\color{myblue}\bfseries\large How to efficiently test the indexability and compute the Whittle index?}
@@ -31,7 +31,7 @@ These raise two grand questions in this thesis:
 
 \section{Contributions}
 
-Inspired by the challenging questions above, this thesis has several goals that can be regrouped into two main parts: (1) efficiently test the indexability and compute the Whittle index for Markovian bandits and (2) learning with efficiency in Markovian bandits.
+Inspired by the challenging questions above, this thesis has several goals that can be regrouped into two main parts: (1) efficiently test the indexability and compute the Whittle index for Markovian bandits and (2) learn with efficiency in Markovian bandits.
 
 %Markovian bandit can be viewed as a classical Markov decision process (MDP) embedded with a special structure.
 %Such MDPs suffer, however, from what is called ``the curse of dimensionality'', which basically says that the state size of the Markov process is exponential in the number of arms.
@@ -68,10 +68,10 @@ Inspired by the challenging questions above, this thesis has several goals that 
 %The recent algorithms from both approaches achieve a regret that is upper bounded linearly or sublinearly in the size of the MDP state space.  
 %So, directly applied to learning Markovian bandit problem, they suffer from the curse of dimensionality inflected by the state size of the Markovian bandit model.
 
-Firstly, we design an efficient single algorithm that tests indexability and computes the Whittle index for both discounted and undiscounted restless bandits as well as the Gittins index for discounted rested bandits.
+Firstly, we design an efficient single algorithm that tests indexability and computes the Whittle index for both discounted and undiscounted restless bandits and the Gittins index for discounted rested bandits.
 
-Secondly, we adapt some generic RL algorithms to Markovian bandit problem in order to remove the exponentiality from their regret.
-We study different aspects of the adapted RL algorithms depending on the nature of Markovian bandit: in discounted rested bandit, policy computation and regret are the focus and in undiscounted restless bandit, the implication of the structure of arms in the structure of bandit and in regret come under the spotlight.
+Secondly, we adapt some generic RL algorithms to Markovian bandit problems to remove the exponentiality from their regret.
+We study different aspects of the adapted RL algorithms depending on the nature of Markovian bandit. In discounted rested bandit, policy computation and regret are the focus. In undiscounted restless bandit, the implication of the structure of arms in the structure of bandit and regret come under the spotlight.
 
 To make these contributions explicit, we divide this thesis into three parts.
 
