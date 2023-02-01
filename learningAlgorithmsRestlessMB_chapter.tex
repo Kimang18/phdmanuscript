@@ -44,16 +44,19 @@ Then, applying these algorithms to learn restless Markovian bandits with average
 \end{itemize}
 So, the regret bound of those general-purpose RL algorithms is not scalable with the number of arms.
 A few algorithms that are specifically designed for restless bandits successfully eliminate the exponentiality in the number of arms from the state size of bandit in their regret bound (see \eg, \cite{ortner2012regret, jung2019thompson, akbarzadeh2022learning}).
-Yet, no clear dependency between the diameter, the mixing time, or the upper bound on span of the optimal bias that appears in their regret bound and the number of arms is given.
-This calls for the definition of subclass of restless bandits whose MDP properties can be expressed explicitly polynomially in the number of arms.
+Yet, no clear dependency between the diameter, the mixing time, or the upper bound on span of the optimal bias function that appears in their regret bound and the number of arms is given.
+This calls for the definition of subclass of restless bandits whose MDP properties can be expressed polynomially in the number of arms.
+
 In this chapter, we provide a few results that support this argument and study how the assumptions on arms' structure translates in the structure of the bandit.
-We show that no matter how good a learning algorithm is, there is a restless bandit, all of whose arms are unichain, that makes the algorithm suffer an expected regret linear in the total steps regardless of the total steps the algorithm wants to learn.
+We show that no matter how good a learning algorithm is, there is a restless bandit, all of whose arms are unichain, that makes the algorithm suffer an expected regret linear in the total steps regardless of how many total steps the algorithm wants to learn.
 This implies that no RL algorithms can perform uniformly well over the general class of restless bandits all of whose arms are unichain. 
+
+Furthermore, we study the restless bandits having richer arms' structure.
+We give an example showing that a restless bandit can be multichain even though all of its arms are ergodic.
 Moreover, we also show that:
 \begin{itemize}
     \item for restless bandits all of whose arms are ergodic,
         \begin{itemize}
-            \item there is a bandit that is multichain;
             \item there is an ergodic bandit whose diameter is exponential in the number of arms;
             \item there is an ergodic bandit whose mixing time can be as big as we want;
         \end{itemize}
