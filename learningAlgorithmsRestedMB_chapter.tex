@@ -360,12 +360,12 @@ If one excludes the simulation of the MDP, the computational cost of MB-PSRL and
 \label{ssec:no-OFU}
 
 While MB-UCRL2 has a regret equivalent to the one of MB-PSRL, its computational complexity, and in particular the complexity of computing an \emph{optimistic} policy that maximizes \Eqref{eq:EVI} does not scale with $n$. Such a policy can be computed by using \emph{extended value iteration} \cite{jaksch2010near}. This computation is polynomial in the number of states of the global MDP and is therefore exponential in the number of arms, precisely $O(nS^{2n})$.
-For MB-PSRL (or MB-UCBVI), the computation is easier because the sampled (optimistic) MDP is a rested bandit problem. Hence, using Proposition~\ref{ch:mb:prop:gidx_defn}, computing the optimal policy can be done by computing local indices. In the following, we show that it is not possible to solve \Eqref{eq:EVI} by using local indices. This suggests that MB-UCRL2 (nor any of the modifications of UCRL2's variants that would use extended value iteration) cannot be implemented efficiently.
+For MB-PSRL (or MB-UCBVI), the computation is easier because the sampled (or optimistic) MDP is a rested bandit problem. Hence, using Proposition~\ref{ch:mb:prop:gidx_defn}, computing the optimal policy can be done by computing local indices. In the following, we show that it is not possible to solve \Eqref{eq:EVI} by using local indices. This suggests that MB-UCRL2 (nor any of the modifications of UCRL2's variants that would use extended value iteration) cannot be implemented efficiently.
 
 More precisely, to find an optimistic policy (that satisfies \Eqref{eq:optimism}), UCRL2 and its variants, \eg, KL-UCRL \cite{filippi2010optimism}, compute a policy $\pi^k$ that is optimal for the optimistic MDP in $\sM^k$. This is done by using extended value iteration. We now show that this cannot be replaced by the computation of local indices.
 
 Let us consider that the estimates and confidence bonus for a given arm $a$ are $\hatB_a:=(\hat{\vr}_a,\hat{\mP}_a,\beta_{r},\beta_{P})$. We say that an algorithm computes indices locally for Arm $a$ if for each $s_a\in\gS_a$, it computes an index $I^{\hatB_a}(s_a)$ by using only $\hatB_a$ but not $\hatB_{b}$ for any $b\ne a$. We denote by $\pi^{I(\hatB)}$ the index policy that uses index $I^{\hatB_a}$ for arm $a$ and by $\sM(\hatB)$ the set of rested bandits $M'$ that satisfy \Eqref{eq:conf_rq}.
-\begin{thm}[Optimistic arms do not form optimistic bandit]
+\begin{thm}[Optimistic bandit requires knowledge of all arms' bonuses]
     \label{thm:no_OFU}
     For any algorithm that computes indices locally, there exists a rested bandit $M$, an initial state $\vs$ and estimates $\hatB_a:=(\hat{\vr}_a,\hat{\mP}_a, \beta_r, \beta_P)$ such that $M\in\sM(\hatB)$ and
     \begin{align*}
@@ -381,7 +381,7 @@ Note that for any set $\sM$ such that $M \in \sM$, there still exists an index p
 \begin{align*}
   \sup_{M'\in\sM}V^{\pi^{\mathrm{ind}}}_{M'} \ge \sup_\pi V^{\pi}_{M}.
 \end{align*}
-This means that restricting to index policies is not a restriction for the optimism. What Theorem~\ref{thm:no_OFU} shows is that an optimistic index policy can be defined only after the optimistic MDP $M'\in\sM$ is computed and computing optimistic policy and $M'$ simultaneously depends on the confidence bonuses of all arms.
+This means that restricting to index policies is not a restriction for the optimism. What Theorem~\ref{thm:no_OFU} shows is that an optimistic index policy can be defined only after the optimistic MDP $M'\in\sM$ is computed (take MB-UCBVI, for example -- it computes the Gittins index of its optimistic MDP) and computing optimistic policy and $M'$ simultaneously depends on the confidence bonuses of all arms.
 
 Therefore, we  believe that UCRL2 and its variants cannot compute optimistic  policy locally: they should all require the joint knowledge of all $\{\hatB_a\}_{a\in[n]}$.
 
@@ -535,7 +535,7 @@ and $\hat{P}^{k}(s_a,s'_a)$ is the fraction of times that arm $a$ moved from $s_
 
 We design confidence sets similar to \cite{jaksch2010near,bartlett2012regal}.
 
-\begin{lem}
+\begin{lem}[High probability events based on concentration argument]
     \label{lem:concentration}
     For any $k\le K$, let $L^{k}=\sqrt{2\ln\left(2SnKk\frac{\ln(Kk)}{1-\gamma}\right)}$. Let
     \begin{align}
@@ -626,7 +626,7 @@ For Bayesian algorithms, $M^k$ is sampled from posterior distribution while for 
 The algorithms follow the policy $\pi^k$ that is optimal for $M^k$.
 Recall that $W^{\pi^k}_{M,1:H^k}(\vs)$ is the expected reward of the MDP $M$ under policy $\pi^k$, starts in state $\vs$ and lasts for $H^k$ time steps and the expected cumulative discounted reward in $M$ starting from state $\vs$ under policy $\pi^k$ is $v_{M}^{\pi^k}(\vs){=}\mathbb{E}[W^{\pi^k}_{M, 1:H^k}(\vs)]$ where $H^k\sim \mathrm{Geom}(1-\gamma)$ is the horizon of episode $k$.
 
-\begin{lem}
+\begin{lem}[Gap of concentration]
     \label{lem:regret_decomposition}
     For episode $k$, let $B^k\in\R^+$ be an upper bound\footnote{We will use $B^k=H^k$ for MB-PSRL and MB-UCRL2, and $B^k=H^kL^{k}/(2(1-\gamma))$ for MB-UCBVI.} of $W_{M^k,1:H^k}^{\pi^k}(\vs)$, i.e., a constant $B^k$ such that for any $\vs\in\gX$, $W_{M^k,1:H^k}^{\pi^k}(\vs)\le B^k$. We have,
     \begin{align}
@@ -698,7 +698,7 @@ Now, by Cauchy-Schwartz inequality, and because $\sum_{a,s_a}\tilde{N}_{t^{K{+}1
 
 \subsubsection{Bound on the expectation of $\ex{\max_{k\le K}H^k}$}
 
-\begin{lem}
+\begin{lem}[Bound on the expectation of the maximum random horizon]
     \label{lem:moment}
     Let $\alpha\in[1,2.5]$. Then,
     \begin{align}
@@ -749,7 +749,7 @@ We decompose the analysis of PSRL in three steps:
 We will use the same proof structure for MB-UCRL2 and MB-UCBVI. 
 
 Before doing the proof, we start by a first lemma that essentially formalizes the fact that the distribution of $M$ given $o_{t^k}$ is the same as the distribution of the sampled MDP $M^{k}$ conditioned on $o_{t^k}$. 
-\begin{lem}
+\begin{lem}[Expectation identity]
     \label{lem:bayesian}
     Assume that the MDP $M$ is drawn according to the prior $\phi$ and that $M^k$ is drawn according to the posterior $\phi(\cdot \mid o_{t^k})$. Then, for any $o_{t^k}$-measurable function $g$, one has:
     \begin{align}
@@ -767,9 +767,9 @@ Before doing the proof, we start by a first lemma that essentially formalizes th
 
 %%%%%%%%%%%%%%
 %%%%%%%%%%%%%%
-\subsubsection{Definition of the high-probability event $\gE_\text{PSRL}^{k}$}
+\subsubsection{Definition of the high probability event $\gE_\text{PSRL}^{k}$}
 
-\begin{lem}
+\begin{lem}[High probability event for MB-PSRL]
     \label{lem:concentration_psrl}
     At episode $k$, the event
     \begin{align*}
@@ -861,7 +861,7 @@ The proof follows the same steps as for MB-PSRL. While the high probability even
 
 \subsubsection{Definition of the high probability event} 
 
-\begin{lem}
+\begin{lem}[High probability event for MB-UCRL2]
     \label{lem:concentration_ucrl}
     At episode $k$, the event
     \begin{align*}
@@ -925,7 +925,7 @@ We start by defining the high probability event. Then, we prove the optimistic p
 
 \subsubsection{Definition of the high-probability event}
 
-\begin{lem}
+\begin{lem}[High probability event for MB-UCBVI]
     \label{lem:concentration_ucbvi}
     The event
     \begin{align*}
@@ -950,7 +950,7 @@ The following lemma guarantees that $\ex{\Delta_{model}^k \ind{\gE^{k}_\text{UCB
     \ex{\Delta_{model}^k\ind{\gE^{k}_\text{UCBVI}}} &= \ex{\ex{\Delta_{model}^k\mid o_{t^k}}\ind{\gE^{k}_\text{UCBVI}}}\\
     &=\ex{(v_M^{\pi^*}(\vs_{t^k}) - v_{M^k}^{\pi^k}(\vs_{t^k}))\ind{\gE^{k}_\text{UCBVI}}} \le 0.
 \end{align*}
-\begin{lem}
+\begin{lem}[Optimism of MB-UCBVI]
     \label{lem:ucbvi_optim}
    If $\gE^{k}_\text{UCBVI}$ holds, then for any $\vs\in\gX$, we have
    \begin{align*}
