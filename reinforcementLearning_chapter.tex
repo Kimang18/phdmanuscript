@@ -92,7 +92,7 @@ The objective of the learner is to maximize the expected cumulative reward $\ex{
 When the context is clear, we will use the term ``algorithm'' to mean the learner.
 
 We focus on \textbf{model-based} algorithms in online learning with \textbf{episodic policy update}.
-We present the fundamental structure of episodic learning algorithms in Algorithm~\ref{algo:generics}.
+We present the fundamental structure of episodic learning algorithms in Algorithm~\ref{ch:rl:algo:generics}.
 Basically, the algorithm takes the state space $\gS$ and action space $\gA$ of MDP $M$ as input.
 The initial state $s_1$ of $M$ can be drawn from some categorical distribution over the state space $\gS$.
 Then, state $s_1$ is revealed to the learning algorithm.
@@ -121,7 +121,7 @@ The algorithm computes a new policy $\pi^{k+1}$ based on its observations and ep
         }
     }
     \caption{Episodic learning algorithms}
-    \label{algo:generics}
+    \label{ch:rl:algo:generics}
 \end{algorithm}
 
 
@@ -161,8 +161,10 @@ The formal definition of regret depends on the setting of learning problem.
 In this section, we recall the definition in two settings: finite horizon and infinite horizon average reward criterion.
 
 \subsection{Finite horizon setting}
+\label{ch:rl:ssec:finite}
+
 In this setting, the learner interacts with the unknown MDP $M$ over $K\in\N^+$ episodes, each episode lasts in $H\in\N^+$ time steps (so the total time steps is $T=KH$) and the state of $M$ is reset according to a distribution $\rho$.
-The terminal condition in Line~\ref{ch:rl:line:end_cond} of Algorithm~\ref{algo:generics} is simply $t-t^k=H$.
+The terminal condition in Line~\ref{ch:rl:line:end_cond} of Algorithm~\ref{ch:rl:algo:generics} is simply $t-t^k=H$.
 %That is, episode $k$ terminates after the learner interacts for $H$ time steps.
 In such a setting, $H$ is called \emph{horizon} and it is bounded in $\N^+$.
 At the beginning of each episode $k\ge1$, the initial state of the MDP $s_{t^k}\sim\rho$ is revealed to the learner who computes a policy $\pi^k$ based on its collected observations and follows the policy $\pi^k$ during the episode.
@@ -183,7 +185,7 @@ Since $H$ is bounded, we derive from Definition~\ref{ch:rl:defn:rg_finite} that 
 For this setting, there is no reset on MDP state, but the unknown MDP $M$ is assumed to be \emph{weakly communicating}.
 This assumption is required so that the optimal gain in $M$ is state independent.
 The learner interacts with $M$ over $T$ time steps and collects a sequence of rewards $\{r_t\}_{1\le t\le T}$.
-The terminal condition at Line~\ref{ch:rl:line:end_cond} of Algorithm~\ref{algo:generics} is specified by the learner depending on how often it wants to update its policy.
+The terminal condition at Line~\ref{ch:rl:line:end_cond} of Algorithm~\ref{ch:rl:algo:generics} is specified by the learner depending on how often it wants to update its policy.
 The regret is defined by the following.
 \begin{defn}
     If a learner $\gL$ interacts with an unknown MDP $M$ which is weakly communicating, then its regret after $T$ time steps is
@@ -341,10 +343,10 @@ Intractable here means that there is no efficient implementations.
 
 %From now on, a learner is an algorithm for the learning problem.
 As mentioned in Section~\ref{sec:intro_learning}, we consider \textbf{model-based} algorithms with \textbf{episodic policy update}.
-Algorithm~\ref{algo:generics} shows how episodic algorithms work during the learning.
+Algorithm~\ref{ch:rl:algo:generics} shows how episodic algorithms work during the learning.
 %The two approaches compute an optimal policy of an ``imagined MDP'' that they believe to be the unknown MDP $M=\langle\gS,\gA,r,p\rangle$.
 %Precisely, for both approaches, Line~\ref{line:new_policy} of Algorithm~\ref{algo:generics} can be broken down into two steps
-For both optimism and posterior sampling methods, computing a new policy at Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{algo:generics} can be broken down into two steps
+For both optimism and posterior sampling methods, computing a new policy at Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{ch:rl:algo:generics} can be broken down into two steps
 \begin{enumerate}[label=(\roman*)]
     \item \label{it:new_mdp} compute an estimate $M^k=\langle\gS,\gA,r^k,p^k\rangle$ of the unknown MDP $M$;
     \item compute an optimal policy $\pi^k$ of $M^k$.
@@ -412,7 +414,7 @@ Here, we adapt UCRL2 to finite horizon setting.
 When updating the policy, UCRL2 constructs confidence sets $\sB_r$ and $\sB_p$ for $r$ and $p$ respectively based on high probability confidence bounds.
 We denote by $\sM$ the set of plausible MDPs whose reward function lives in $\sB_r$ and state transition lives in $\sB_p$.
 UCRL2 chooses the MDP that incurs the highest optimal value among the MDPs in $\sM$ and computes an optimal policy of the chosen MDP.
-That is, at Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{algo:generics}, UCRL2 computes a new policy $\pi^k$ such that
+That is, at Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{ch:rl:algo:generics}, UCRL2 computes a new policy $\pi^k$ such that
 \begin{equation}
     \label{ch:rl:eq:optim}
     \vw_{M^k}^{\pi^k} \ge \max_{\pi\in\Pi}\max_{M'\in\sM^k} \vw_{M'}^\pi
@@ -427,7 +429,7 @@ To do so, UCRL2 uses extended value iteration (EVI).
 This is because EVI is designed such that \eqref{ch:rl:eq:optim} holds.
 We refer to \cite{jaksch2010near} for the detail about EVI and its convergence proof.
 
-Let $t^k$ be the time step when the episode $k$ begins and $t^1:=1$ (see Algorithm~\ref{algo:generics}).
+Let $t^k$ be the time step when the episode $k$ begins and $t^1:=1$ (see Algorithm~\ref{ch:rl:algo:generics}).
 The observations up to time $t^k$ is denoted by $o_{t^k}{:=}\{s_1,a_1,r_1,\dots,s_{t^k-1},a_{t^k-1},r_{t^k-1},s_{t^k}\}$.
 For all state-action pair $(s,a)$, let $N^k(s,a)$ be the number of times up to $t^k$ that the algorithm executes action $a$ when the MDP is in state $s$.
 At time step $t^k$, UCRL2 uses the observations $o_{t^k}$ to compute $\hat{r}^k$ and $\hat{p}^k$, the empirical means of $r$ and $p$ respectively.
@@ -477,7 +479,7 @@ Compare to Proposition~\ref{prop:minimax_rg_lb}, the upper bound in Proposition~
 \subsection{Upper confidence bound value iteration (UCBVI) \texorpdfstring{\cite{azar2017minimax}}{[AOM17]}.}
 UCBVI is an optimistic algorithm designed for finite horizon setting.
 The algorithm keeps track of the emprical mean $\hat{p}$ of $p$ and only constructs confidence set $\sB_r$ for $r$ based on high probability confidence bound.
-Differently from UCRL2 that chooses only one copy of expected reward, UCBVI executes Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{algo:generics} by choosing $H$ copies in the following manner:
+Differently from UCRL2 that chooses only one copy of expected reward, UCBVI executes Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{ch:rl:algo:generics} by choosing $H$ copies in the following manner:
 \begin{itemize}
     \item set $w^{\pi^k}_{H+1:H,M^k}(s)=0$ for all $s$,
     \item for $h$ from $H$ to $1$
@@ -533,7 +535,7 @@ To ease the exposition, we will say that an MDP $M'=\langle\gS,\gA,r',p'\rangle$
 When updating its policy, PSRL uses the collected observations and Bayes' theorem to derive the posterior distribution of the unknown MDP.
 After that, an MDP is sampled according to the posterior and PSRL computes an optimal policy in the sampled MDP.
 That is, at time step $t^k$, PSRL uses the observations $o_{t^k}$ to update the posterior $\phi\bigl(\cdot\mid o_{t^k}\bigr)$.
-Then, Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{algo:generics} is performed by sampling an MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$ and computing an optimal policy $\pi^k$ in $M^k$.
+Then, Line~\ref{ch:rl:line:new_policy} of Algorithm~\ref{ch:rl:algo:generics} is performed by sampling an MDP $M^k$ from $\phi\bigl(\cdot\mid o_{t^k}\bigr)$ and computing an optimal policy $\pi^k$ in $M^k$.
 The policy $\pi^k$ is then used during the episode $k$ to collect more observations.
 
 The performance of PSRL is measured by the Bayesian regret given in \eqref{eq:bayes_rg}.
