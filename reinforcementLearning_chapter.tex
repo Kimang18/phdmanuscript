@@ -172,12 +172,12 @@ At the beginning of each episode $k\ge1$, the initial state of the MDP $s_{t^k}\
 Following the definition in Section~\ref{ch:mdp:sec:finite}, we denote by $w^{\pi^k}_{1:H}(s):=\E^{\pi^k}[\sum_{t=1}^{H}r_t \mid s_1=s]$ the expected cumulative reward from state $s$ over time steps $1$ to $H$ when following policy $\pi$.
 The regret is defined by the following.
 \begin{defn}
+    \label{ch:rl:defn:rg_finite}
     If a learner $\gL$ interacts with an unknown MDP $M$ over $K$ episodes, each episode ends in $H\in\N^+$ time steps, then its regret is
     \begin{equation}
         \label{eq:rg_finite}
         \Reg(\gL, M, K):= \sum_{k=1}^K\sum_{s\in\gS}\rho(s)[w^*_{1:H}(s) -w^{\pi^k}_{1:H}(s)].
     \end{equation}
-    \label{ch:rl:defn:rg_finite}
 \end{defn}
 Since $H$ is bounded, we derive from Definition~\ref{ch:rl:defn:rg_finite} that a ``good'' learner has an expected regret sublinear in the number of episodes $K$, $\ex{\Reg(\gL, M, K)}=\landauo(K)$ when $K\to+\infty$.
 
@@ -188,13 +188,13 @@ The learner interacts with $M$ over $T$ time steps and collects a sequence of re
 The terminal condition at Line~\ref{ch:rl:line:end_cond} of Algorithm~\ref{ch:rl:algo:generics} is specified by the learner depending on how often it wants to update its policy.
 The regret is defined by the following.
 \begin{defn}
+    \label{ch:rl:defn:rg_infinite}
     If a learner $\gL$ interacts with an unknown MDP $M$ which is weakly communicating, then its regret after $T$ time steps is
     \begin{equation}
         \label{eq:rg_infinite}
         \Reg(\gL, M, T):= Tg^* -\sum_{t=1}^Tr_t
     \end{equation}
     where $g^*$ is the optimal gain of $M$ (see its definition in Section~\ref{ch:mdp:sec:gain}).
-    \label{ch:rl:defn:rg_infinite}
 \end{defn}
 So, a learner is ``good'' if its expected regret is sublinear in the total number of time steps $T$, \ie, $\E\Big[\Reg(\gL, M, T)\Big]= \landauo(T)$ when $T\to+\infty$.
 
@@ -213,13 +213,13 @@ We compare the performance of good learners by how fast their regret tends to ze
 \cite{jaksch2010near} has proven that no learners can perform better than a certain baseline regret for all MDPs.
 We will give this baseline below, but first we need to introduce the notion of diameter of an MDP.
 \begin{defn}
+    \label{ch:rl:defn:diameter}
     The diameter of an MDP is defined by
     \begin{equation}
         \label{eq:diameter}
         D := \max_{s,s'\in\gS}\min_{\pi:\gS\mapsto\gA} \E^\pi[\tau(s') \mid s_1=s] -1
     \end{equation}
     where $\tau(s'):=\inf\{t\ge2 : s_t=s'\}$ is the first time step when $s'$ is reached.
-    \label{ch:rl:defn:diameter}
 \end{defn}
 So, the diameter of an MDP is the length of the \textbf{longest shortest path} in the MDP where the distance between any pair of vertices is $1$.
 In other words, it is the expected number of vertices along the shortest path between two states that are the \textbf{most distant} from each other.

@@ -169,10 +169,10 @@ We stay focus on the indexability of restless bandit on the progression of this 
 \label{ch:idx:sec:idx}
 
 To solve the ambiguities in classical definition of indexability presented above, we use the following definition.  
-\begin{defn}
+\begin{defn}[Indexability]
+    \label{ch:idx:defn:idx}
     Given a finite-state arm, let $\Pi^*(\lambda)$ be the set of all Bellman optimal policies for a penalty $\lambda$.
     We say that the arm is indexable if for all $\lambda<\lambda'$, and all policies $\pi\in\Pi^*(\lambda)$ and $\pi'\in\Pi^*(\lambda')$, then $\pi\supseteq\pi'$.
-    \label{ch:idx:defn:idx}
 \end{defn}
 This definition says that the function $\pi^*(\lambda)\supseteq\pi^*(\lambda')$ regardless of the choice of Bellman optimal policies.
 With this definition, the example in \figurename~\ref{fig:ambiguous_example} is indexable.
