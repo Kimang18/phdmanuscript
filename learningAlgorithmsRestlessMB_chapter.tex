@@ -1,9 +1,9 @@
 \begingroup
+
 \let\clearpage\relax
 
 \chapter{Learning in Average Reward Restless Markovian Bandits}
 \label{ch:learning_restless}
-
 
 In the previous chapter, we adapted a few learning algorithms to discounted rested Markovian bandits and showed that their regrets, which were upper bounded sub-linearly in the number of arms, matched the minimax Bayesian regret that we derived in the chapter.
 We also showed that there was no index definition such that, relying on the confidence bonuses on arms' transition, computing optimistic index on each arm independently of the other arms guaranteed the optimism in face of uncertainty (OFU) principle in general discounted rested bandits.
@@ -29,11 +29,11 @@ The obvious effect of the curse is that the bandit's state size is exponential i
 
 For learning generic MDPs with average reward criterion, the current best algorithms have a regret over $T$ time steps bounded by $\tilde{\landauO}(\sqrt{HSAT})$ in the unknown weakly communicating MDP with state size $S$, action size $A$, and an upper bound on span of the optimal bias function $H$ (see Table~\ref{ch:rl:tab:infinite} for more algorithms with regret guarantee).
 %This regret bound is valid for communicating MDPs.
-To what we have observed, the MDP parameters that appear in regret upper bound are:
+To what we have observed, the MDP properties that appear in regret upper bound are:
 \begin{itemize}
-    \item the diameter $D$, defined by Definition~\ref{ch:rl:defn:diameter}, in \eg, \cite{jaksch2010near, fruit2020improved, tossou2019near}
-    \item the upper bound on span of the optimal bias function $H\ge sp(\vh^*)$ in \eg, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret}
-    \item the mixing time $t_{mix}$, defined by Definition~\ref{ch:restless:defn:mixing_time}, in \eg, \cite{ortner2020regret}.
+    \item the diameter $D$ (defined by Definition~\ref{ch:rl:defn:diameter}) used in \eg, \cite{jaksch2010near, fruit2020improved, tossou2019near}
+    \item the upper bound on span of the optimal bias function $H\ge sp(\vh^*)$ used in \eg, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret}
+    \item the mixing time $t_{mix}$ (defined by Definition~\ref{ch:restless:mixing}) used in \eg, \cite{ortner2020regret}.
 \end{itemize}
 Then, applying these algorithms to learn restless Markovian bandits with average reward criterion provokes a few critical issues:
 \begin{itemize}
@@ -45,7 +45,7 @@ Then, applying these algorithms to learn restless Markovian bandits with average
 So, the regret bound of those general-purpose RL algorithms is not scalable with the number of arms.
 A few algorithms that are specifically designed for restless bandits successfully eliminate the exponentiality in the number of arms from the state size of bandit in their regret bound (see \eg, \cite{ortner2012regret, jung2019thompson, akbarzadeh2022learning}).
 Yet, no clear dependency between the diameter, the mixing time, or the upper bound on span of the optimal bias that appears in their regret bound and the number of arms is given.
-This calls for the definition of subclass of restless bandits whose MDP parameters can be expressed explicitly polynomially in the number of arms.
+This calls for the definition of subclass of restless bandits whose MDP properties can be expressed explicitly polynomially in the number of arms.
 In this chapter, we provide a few results that support this argument and study how the assumptions on arms' structure translates in the structure of the bandit.
 We show that no matter how good a learning algorithm is, there is a restless bandit, all of whose arms are unichain, that makes the algorithm suffer an expected regret linear in the total steps regardless of the total steps the algorithm wants to learn.
 This implies that no RL algorithms can perform uniformly well over the general class of restless bandits all of whose arms are unichain. 
@@ -61,8 +61,8 @@ Moreover, we also show that:
 \end{itemize}
 We also provide a piece of positive result related to the ergodicity coefficient of the bandit.
 Finally, we provide a discussion on model-based RL algorithms that use Whittle index policy as the baseline policy in regret definition and provide an overview of regret analysis of RB-TSDE \cite{akbarzadeh2022learning} when learning in restless bandits.
-All of our results suggest that the MDP parameters of restless bandit can be exponential in the number of arms in general class of restless bandits.
-This calls for work to design subclasses of restless bandits whose MDP parameters can be expressed polynomially in the number of arms.
+All of our results suggest that the MDP properties of restless bandit can be exponential in the number of arms in general class of restless bandits.
+This calls for work to design subclasses of restless bandits whose MDP properties can be expressed polynomially in the number of arms.
 Another direction of work is to design algorithms that directly learns the Whittle index of the unknown restless bandit in model-free style.
 
 %These parameters are finite for MDPs with specific structure.
@@ -135,7 +135,7 @@ By \cite[Appendix A]{jaksch2010near}, the diameter of bandit $M$ is lower bounde
 \begin{equation*}
     \log_{|\gA(m)|}|\gX| -3 = \sum_{i=1}^{n}\log_{|\gA(m)|}|\gS_i| -3 =n\log_{{n \choose m}}S -3.
 \end{equation*}
-This lower bound is not exponential in $n$, which inspires us to study the diameter of restless bandit and to remove the exponentiality in $n$ from the regret bound of general-purpose algorithms.
+This lower bound is not exponential in $n$, which inspires us to study the diameter of restless bandit, and which gives us hope to remove the exponentiality in $n$ from the regret bound of general-purpose algorithms.
 
 \subsection{Additional structural properties of MDP}
 \label{ssec:mdp_params}
@@ -150,15 +150,15 @@ As mentioned in the beginning, there exist learning algorithms that rely on the 
 So, we provide the definition of mixing time below.
 Following \cite[Definition 5.1]{wei2020model},
 \begin{defn}[The mixing time of ergodic MDP]
-    \label{ch:restless:defn:mixing_time}
     The mixing time of an ergodic MDP with state space $\gS$ is defined as
     \begin{align*}
         t_{mix} := \max_{\pi}\min\left\{ t\ge1 : \norm{(\mP^\pi)^t(s,\cdot) - \mu^\pi}_{\ell_1} \le \frac14, \forall s\in\gS\right\}.
     \end{align*}
+    \label{ch:restless:mixing}
 \end{defn}
-By Definition~\ref{ch:restless:defn:mixing_time}, the mixing time is the maximum time required for any policy starting at any initial state to make the state distribution $\frac14$-close (in $\ell_1$ norm) to the stationary distribution, the state distribution in steady regime.
+By Definition~\ref{ch:restless:mixing}, the mixing time is the maximum time required for any policy starting at any initial state to make the state distribution $\frac14$-close (in $\ell_1$ norm) to the stationary distribution, the state distribution in steady regime.
 
-\section{Examples and counter-examples}
+\section{Local and global structures in restless bandits}
 \label{ch:restless:sec:example}
 
 In the following, we study the structure of the bandit when all the local arms are well-structured.
@@ -493,14 +493,13 @@ The following theorem shows that a restless bandit, all of whose arms are ergodi
 
 \end{proof}
 
-Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the corresponding bandit is not necessarily ergodic.
-So, the mixing time in such a bandit is infinite.
-This result is not very intuitive, and it is very important because assuming that all arms are ergodic is a popular condition in learning restless bandits (see \eg, \cite{ortner2012regret, jung2019thompson}).
+Theorem~\ref{thm:multichain} means that even though all arms are ergodic, the corresponding bandit is not necessarily ergodic and its mixing time can be infinite.
+This result is ``not very intuitive'', and it is very important because assuming that all arms are ergodic is a popular condition in learning restless bandits (see \eg, \cite{ortner2012regret, jung2019thompson}).
 
-Theorem~\ref{thm:multichain} shows that a restless bandit all whose arms are ergodic can have an infinite mixing time.
-This is because the bandit itself is multichain.
-The following theorem will show that with an additional assumption that the bandit is also ergodic, the global mixing time can still be as big as we want.
-That is, we show that the MDP parameters of bandit such as the diameter, mixing time, and span of global bias function can be arbitrarily large.
+%Theorem~\ref{thm:multichain} shows that a restless bandit all whose arms are ergodic can have an infinite mixing time.
+%This is because the bandit itself is multichain.
+To go further, the following theorem will show that even with an additional assumption that the bandit itself is also ergodic, the global mixing time can still be as big as we want.
+That is, we show that the MDP properties of bandit such as the diameter, the mixing time, and the span of global bias function can be arbitrarily large.
 
 \begin{figure}[ht]
     \centering
@@ -667,7 +666,7 @@ That is, we show that the MDP parameters of bandit such as the diameter, mixing 
 
 %\medskip
 
-\begin{thm}[MDP parameters of restless bandit]
+\begin{thm}[MDP properties of restless bandit]
     \label{thm:parameters}
     \begin{enumerate}[label=(\roman*)]
         \item[]
@@ -690,7 +689,7 @@ That is, we show that the MDP parameters of bandit such as the diameter, mixing 
     Note that we can specify $p_1$ and $p_2$ such that $t_{mix}$ is small.
     Let's denote the bandit having two arms $p_1$ and $p_2$ by $M$.
     By Theorem~\ref{thm:multichain}, $M$ is multichain.
-    So, by Definition~\ref{ch:restless:defn:mixing_time}, the mixing time of $M$ is infinite.
+    So, by Definition~\ref{ch:restless:mixing}, the mixing time of $M$ is infinite.
 
     Now, consider two 8-state restless arms having transition functions $u_1$ and $u_2$ where $u_1$ and $u_2$ induce the same state transition: any local state $s\in[8]$ transitions to any other local state $s'\in[8]$ with probability $\frac18$ under either action rest or activate.
     It is then clear that $u_1$ and $u_2$ are both ergodic and have a local mixing time of size $1$.
@@ -726,8 +725,8 @@ That is, we show that the MDP parameters of bandit such as the diameter, mixing 
     This is equivalent to say that when $\varepsilon\to0$, the span of global bias function of $M'(\varepsilon)$ tends to infinity.
 \end{proof}
 
-With Theorem~\ref{thm:parameters}, the curse of dimensionality in restless bandits manifests not only in the state size but also in the MDP parameters of the bandit.
-Hence, it is equally important to take into account the dependency between the number of arms and the MDP parameters of the restless bandits when deriving the regret bound of RL algorithms.
+With Theorem~\ref{thm:parameters}, the curse of dimensionality in restless bandits manifests not only in the state size but also in the MDP properties of the bandit.
+Hence, it is equally important to take into account the dependency between the number of arms and the MDP properties of the restless bandits when deriving the regret bound of RL algorithms.
 
 \subsection{Positive results}
 
@@ -749,7 +748,8 @@ The following theorem also provides a positive result on the structure of bandit
 
 \begin{thm}[Unichain restless bandit]
     \label{thm:unichain}
-    For restless bandits with a finite number of arms, if all arms are unichain with at least one local state reachable in one step from any other local states under both rest and activate actions, then the corresponding bandit is also unichain with at least one global state reachable in one step from any other global states under any policies.
+    A restless bandit all of whose arms are unichain with at least one local state reachable in one step from any other local states under both rest and activate actions is unichain with at least one global state reachable in one step from any other global states under any policies.
+    %For restless bandits with a finite number of arms, if all arms are unichain with at least one local state reachable in one step from any other local states under both rest and activate actions, then the corresponding bandit is also unichain with at least one global state reachable in one step from any other global states under any policies.
 \end{thm}
 \begin{proof}
     Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
@@ -990,15 +990,15 @@ However, this certainly does not cancel the exponential improvement in the regre
 \section{Conclusion}
 \label{ch:restless:sec:conclude}
 
-In this chapter, we provide different examples that show that defining a class of restless bandits that have desirable global properties by relying on the assumption on local arms is difficult.
-In particular, we show that no RL algorithms can perform uniformly well over the general class of restless bandits all whose arms are unichain.
-We also present a few results such as if all arms are ergodic, then the corresponding bandit is communicating, etc.
+In this chapter, we provide different examples that show that no RL algorithms can perform uniformly well over the general class of restless bandits all of whose arms are unichain. Moreover, they show that defining a class of restless bandits that have desirable global properties by relying on the assumption on local arms is difficult.
+In particular, a restless bandit can be multichain even though all of its arms are ergodic.
+We also present a few results such as a restless bandit is communicating if all arms are ergodic.
 We discuss the requirement when using Whittle index policy as the baseline policy in regret definition for learning restless bandits and provides an overview of regret analysis of RB-TSDE \cite{akbarzadeh2022learning}, a modified version of TSDE \cite{ouyang2017learning}, whose regret bound provides an exponential improvement over the current best general-purpose RL algorithms.
 
 We believe that it is challenging to derive an upper bound on the span of global bias function or the global diameter of restless bandit that is polynomially in the number of arms.
-In fact, it is impossible to do so for general restless bandits as we have seen in this chapter that the MDP parameters of some restless bandits such as the global diameter, or the span of global bias function can be exponential in the number of arms.
+In fact, it is impossible to do so for general restless bandits as we have seen in this chapter that the MDP properties of some restless bandits such as the global diameter, or the span of global bias function can be exponential in the number of arms.
 This calls for restrictive assumptions on bandits in order to to design an algorithm with a regret bound explicitly polynomially in the number of arms similarly to the work of \cite{wang2020restless}.
-This also calls for model-free algorithms that directly learns Whittle index of the unknown restless bandit in the direction of \cite{fu2019towards, gibson2021novel, nakhleh2021neurwin, avrachenkov2022whittle}.
+This also calls for model-free algorithms that directly learn Whittle index of the unknown restless bandit in the direction of \cite{fu2019towards, gibson2021novel, nakhleh2021neurwin, avrachenkov2022whittle}.
 
 %\subsubsection{UCRL2 algorithm}
 %
