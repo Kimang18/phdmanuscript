@@ -9,15 +9,15 @@
 
 %\minitoc
 
-In this chapter, we define the notion of Markov decision process (MDP) which is a generic model to solve Markovian bandit problem that we will describe in Chapter~\ref{ch:mb}.
-MDP is also used to mathematically describe the environment in Reinforcement learning (RL) framework.
-An MDP models a discrete-time decision problem where the decision maker executes available ``action'' over time steps and receives immediate incentive known as ``reward'' for each time step.
-In such problem, the decision maker seeks to maximize the expected cumulative rewards by identifying a sequence of actions that produces such effect.
+In this chapter, we define the notion of Markov decision process (MDP), a generic model to solve Markovian bandit problem that we will describe in Chapter~\ref{ch:mb}.
+MDP is also used to mathematically describe the environment in the Reinforcement learning (RL) framework.
+An MDP models a discrete-time decision problem where the decision maker executes available ``action'' over time steps and receives an immediate incentive known as ``reward'' for each time step.
+In such a problem, the decision maker seeks to maximize the expected cumulative rewards by identifying a sequence of actions that produce such an effect.
 
 %The reader who is familiar with MDP can go directly to Section~\ref{ch:mdp:sec:bell} which is a pillar of our contribution in Chapter~\ref{ch:index_computation}.
 In Section~\ref{ch:mdp:sec:defn}, we lay out the notation of MDP's parameters and the dynamic of the decision process.
-In Section~\ref{ch:mdp:sec:finite}, we give a brief presentation of finite horizon setting.
-Similarly, we present classical settings for infinite horizon in Sections~\ref{ch:mdp:sec:discounted} and \ref{ch:mdp:sec:gain}.
+Then, in Section~\ref{ch:mdp:sec:finite}, we briefly present the finite-horizon setting.
+Similarly, we present the classical settings for the infinite horizon in Sections~\ref{ch:mdp:sec:discounted} and \ref{ch:mdp:sec:gain}.
 %Finally, we introduce a new notion of optimality for infinite horizon setting in Section~\ref{ch:mdp:sec:bell}.
 
 
@@ -33,11 +33,9 @@ We essentially follow the notations of \cite{puterman2014markov}.
 A Markov decision process $M$ is defined as a $4$-tuple $M:=\langle\gS, \gA, r, p\rangle$.
 $\gS$ and $\gA:=\cup_{s\in\gS}\gA_s$ denote the \emph{state} and \emph{action} space of the MDP.
 When the MDP is in state $s\in\gS$, the decision maker can execute one of the available actions in $\gA_s$.
-As a result of executing action $a\in\gA_s$ in state $s$, the MDP incurs a random \emph{reward} with \emph{expected value} $r(s,a)$ and then transitions to new state $s'\in\gS$ with probability $p(s'\mid s, a)\in[0,1]$ where $\sum_{s'\in\gS}p(s'\mid s,a)=1$.
+As a result of executing action $a\in\gA_s$ in state $s$, the MDP incurs a random \emph{reward} with the \emph{expected value} $r(s,a)$ and then transitions to a new state $s'\in\gS$ with probability $p(s'\mid s, a)\in[0,1]$, where $\sum_{s'\in\gS}p(s'\mid s,a)=1$.
 The name \emph{Markov} comes from the fact that the random reward and the next state depend only on state $s$ and action $a$ and are independent of anything else.
-In this thesis, we consider the MDPs with \emph{finite} state and action spaces, $\abs{\gS}=:S\in\sN$, and $\abs{\gA}=:A\in\sN$.
-%Also, we assume that all random rewards are bounded and lie in $[0,1]$.
-%We provide an example of an MDP with two states and two actions per state in \figurename~\ref{fig:MDP_example}.
+This thesis considers the MDPs with \emph{finite} state and action spaces, $\abs{\gS}=:S\in\sN$, and $\abs{\gA}=:A\in\sN$.
 
 %\begin{figure}[ht]
 %    \centering
@@ -58,9 +56,9 @@ In this thesis, we consider the MDPs with \emph{finite} state and action spaces,
 
 In this thesis, the decision maker executes actions at \emph{discrete} time steps.
 We denote a decision time by $t\in\N^+$ where $\N^+:=\N\setminus\{0\}$ is the set of positive natural numbers.
-At time step $t\ge1$, the MDP is in state $s_t$ and the decision maker executes an action $a_t$.
-The MDP incurs a (random) reward denoted by $r_t$ and transitions to next state denoted by $s_{t+1}$.
-This mechanism is repeated and one obtains a sequence of the form $\{s_1,a_1,r_1,s_2,\dots,s_t,a_t,r_t,s_{t+1},\dots\}$ that is called \emph{observations} (also known as a ``trajectory'').
+At time step $t\ge1$, the MDP is in state $s_t$, and the decision maker executes an action $a_t$.
+The MDP incurs a (random) reward denoted by $r_t$ and transitions to the next state denoted by $s_{t+1}$.
+This mechanism is repeated, and one obtains a sequence of the form $\{s_1,a_1,r_1,s_2,\dots,s_t,a_t,r_t,s_{t+1},\dots\}$ that is called \emph{observations} (also known as a ``trajectory'').
 %We denote the observations up to time $t\ge1$ by
 %\begin{align*}
 %    O_t:=\{s_1,a_1,r_1,s_2,\dots,s_{t-1},a_{t-1},r_{t-1},s_t\}
@@ -78,26 +76,19 @@ We denote the set of all policies by $\Pi$.
 We say that a policy is \emph{stationary} when the decision rules are invariant over time step, $\pi_t=\pi$ for all $t\ge1$ and $\pi:\gS\mapsto\gA$.
 %By abuse of notation, we will write $d$ and $\pi$ \emph{interchangeably} in the rest of the thesis when policy $\pi=\{d, d,...\}$ is stationary.
 
-The state of the MDP at time step $1$ is called \emph{initial state} and generally drawn from a probability distribution $\rho$ such that $\sum_{s\in\gS}\rho(s)=1$.
+The state of the MDP at time step $1$ is called the \emph{initial state} and is generally drawn from a probability distribution $\rho$ such that $\sum_{s\in\gS}\rho(s)=1$.
 Given the initial state $s_1$, a policy $\pi\in\Pi$ incurs a sequence $\{s_1,a_1,r_1,\dots,s_t,a_t,r_t,\dots\}$ which is a \emph{stochastic process} with a well-defined probability distribution \cite[Section~2.1.6]{puterman2014markov}.
 We will denote by $\sP^\pi(\cdot\mid s_1)$ the \emph{probability measure} associated with this stochastic process and denote by $\mathbb{E}^\pi[\cdot \mid s_1]$ the corresponding \emph{expectation}.
 
-In the next sections, we specify the objective function of the decision problem.
-
-%The policies that vary over time steps are called \emph{non-stationary} policies denoted by $\pi_t$ where $\pi_t(\gO_t)\in\gA_{s_t}$.
-%The policies that do not vary over time steps are known as \emph{stationary} (or ``time-homogeneous'') policies.
-%The time-dependent or not depending on the objective function of the decision problem.
-%We talk more about this in the following sections.
+In the following sections, we specify the objective function of the decision problem.
 
 \section{Finite horizon problem}
 \label{ch:mdp:sec:finite}
 
-%This section describes the \emph{finite horizon setting} and contains a brief presentation of optimality criterion in the setting.
-
-In finite horizon setting, the decision maker can collect rewards from an MDP $M$ over a \emph{fixed} number of time steps $H\in\N^+$ called the \emph{horizon}.
+In the finite-horizon setting, the decision maker can collect rewards from an MDP $M$ over a \emph{fixed} number of time steps $H\in\N^+$ called the \emph{horizon}.
 We call the expected cumulative reward when following a policy $\pi$ as the \emph{value function}.
 That is, the value of state $s$ when starting at time step $1\le h\le H$ and following policy $\pi$ is given by $w_{h:H}^\pi(s){:=}\E^\pi\Bigl[\sum_{t=h}^H r_t\mid s_h{=}s\Bigr]$.
-Formally, the decision maker want to find a policy that satisfies
+Formally, the decision maker wants to find a policy that satisfies
 \begin{equation}
     \label{eq:finite_obj}
     \sup_{\pi\in\Pi}\sum_{s\in\gS}\rho(s)w_{1:H}^\pi(s).
@@ -168,7 +159,7 @@ with $w_{H+1:H}^\pi(s)=0$.
 \section{Infinite horizon discounted problem}
 \label{ch:mdp:sec:discounted}
 
-In some problems, the decision maker can collect rewards over an infinite number of time steps and the immediate reward incurred by the MDP is more important than those rewards in the future time steps.
+In some problems, the decision maker can collect rewards over an infinite number of time steps, and the immediate reward incurred by the MDP is more critical than those rewards in the future time steps.
 To capture this aspect, one can introduce a discount factor denoted by $\gamma$ where $\gamma\in[0,1)$.
 If $\gamma=0$, the decision maker is solely interested in the immediate reward from the current state of the MDP.
 The value of state $s$ when following a policy $\pi$ is defined by $v^\pi_{\gamma}(s):=\E^\pi\Bigl[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1=s\Bigr]$.
@@ -182,14 +173,14 @@ From \cite[Chapter~6]{puterman2014markov}, there always exists a stationary opti
 %For a given stationary policy $\pi:\gS\mapsto\gA$, the expectation in \Eqref{eq:discount_obj} is known as the \emph{value} of state $s$ under policy $\pi$ and denoted by $v^\pi(s)$.
 For any $s$, since $0\le\gamma<1$, $v_\gamma^\pi(s)$ is a geometric series that converges.
 So, $v^\pi_\gamma(s)$ exists and is well-defined for any state $s$ and any policy $\pi\in\Pi$.
-The value function of policy $\pi$ satisfies the following Bellman evaluation equations: for each $s\in\gS$
+The value function of policy $\pi$ satisfies the following Bellman evaluation equation: for each $s\in\gS$
 \begin{equation}
     \label{eq:discount_be_eval}
     v^\pi_\gamma(s) =r\bigl(s,\pi(s)\bigr) +\gamma\sum_{s'\in\gS}p\bigl(s'\mid s,\pi(s)\bigr)v^\pi_\gamma(s').
 \end{equation}
 The \emph{optimal} value function is defined by $v^*_\gamma(s):=\max_{\pi\in\Pi}v^\pi_\gamma(s)$ for all $s\in\gS$.
 By \cite[Theorem~6.2.5]{puterman2014markov}, the optimal value function $\vv^*_\gamma\in\R^{S}$ is unique: any optimal policies induce the same value function.
-Moreover, $\vv^*_\gamma$ satisfies the Bellman optimality equations: for each $s\in\gS$
+Moreover, $\vv^*_\gamma$ satisfies the Bellman optimality equation: for each $s\in\gS$
 \begin{equation}
     \label{eq:discount_be_opt}
      v^*_\gamma(s)= \max_{a\in\gA_s}\Big(r(s, a) +\gamma\sum_{s'\in\gS}p(s'\mid s,a)v^*_\gamma(s')\Big).
@@ -197,15 +188,15 @@ Moreover, $\vv^*_\gamma$ satisfies the Bellman optimality equations: for each $s
 So, the maximum value of \Eqref{eq:discount_obj} is given by $\sum_{s\in\gS}\rho(s)v^*_\gamma(s)$.
 %It is well-known that an optimal policy can be constructed using iterative algorithms such as Value Iteration given in Algorithm~\ref{algo:discounted_vi}.
 
-It is well-known that an optimal policy can be constructed as the following: for all state $s$, $\pi^*(s)=\argmax_{a\in\gA_s}\Big(r(s, a) +\gamma\sum_{s'\in\gS}p(s'\mid s,a)v^*_\gamma(s')\Big)$ where the ties are broken arbitrarily.
-This requires the optimal value function $\vv^*_\gamma$ which is approximated by iterative algorithms such as value iteration:
+It is well-known that an optimal policy can be constructed as the following: for all state $s$, $\pi^*(s)=\argmax_{a\in\gA_s}\Big(r(s, a) +\gamma\sum_{s'\in\gS}p(s'\mid s,a)v^*_\gamma(s')\Big)$, where the ties are broken arbitrarily.
+This requires the optimal value function $\vv^*_\gamma$, which is approximated by iterative algorithms such as value iteration:
 \begin{itemize}
     \item initialize $v_\gamma^0(s)=0$ for all $s\in\gS$
     \item iterate over $k$: $v^{k+1}_\gamma(s) = \max_{a\in\gA_s}\Big(r(s,a)+\gamma\sum_{s'\in\gS}p(s'\mid s,a)v_{\gamma}^k(s')\Big)$ for all $s\in\gS$, then update $k=k+1$ and repeat until $\norm{\vv^{k+1}_\gamma-\vv^k_\gamma}\le(1-\gamma)\varepsilon/\gamma$
 \end{itemize}
-where $\norm{\cdot}$ can be the maximum norm or span semi-norm on $\R^{S}$ and $\varepsilon$ is the accuracy of the approximation.
+where $\norm{\cdot}$ can be the maximum norm or span semi-norm on $\R^{S}$, and $\varepsilon$ is the accuracy of the approximation.
 From \cite[Chapter~6]{puterman2014markov}, this iterative schema always converges: $\lim_{k\to\infty}\vv^k_\gamma=\vv^*_\gamma$.
-That is, this schema stops after a finite number of iterations $K$ where $\norm{\vv^K_\gamma-\vv^*_\gamma}\le \varepsilon$ (see \cite[Theorem~6.3.1]{puterman2014markov}). 
+Precisely, this schema stops after a finite number of iterations $K$, where $\norm{\vv^K_\gamma-\vv^*_\gamma}\le \varepsilon$ (see \cite[Theorem~6.3.1]{puterman2014markov}). 
 %\begin{algorithm}[ht]
 %    \DontPrintSemicolon
 %    \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
@@ -225,12 +216,12 @@ That is, this schema stops after a finite number of iterations $K$ where $\norm{
 %
 %Similar to backward induction, Algorithm~\ref{algo:discounted_vi} has $\landauO(\abs{\gS}^2\abs{\gA})$ computational complexity where $\landauO(\cdot)$ hides the total number of iterations.
 
-This setting with discount factor $\gamma$ can be seen as a finite horizon setting whose horizon is randomly sampled from \emph{geometric distribution} with parameter $(1-\gamma)$.
-That is, at each time step, the decision maker can stop interacting with the MDP with probability $(1-\gamma)$.
+This setting with a discount factor $\gamma$ can be seen as a finite-horizon setting whose horizon is randomly sampled from a \emph{geometric distribution} with parameter $(1-\gamma)$.
+Precisely, the decision maker can stop interacting with the MDP with probability $(1-\gamma)$ at each time step.
 So, the value of state $s$ under stationary policy $\pi$ is the expected sum of rewards over the random horizon:
 \begin{equation}
     \label{eq:discount_finite}
-    v^\pi_\gamma(s) :=\E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right] {=}\ex{\E^\pi\bigg[\sum_{t=1}^H r_t\mid H, s_1{=}s\bigg]} =\ex{W^\pi_{1:H}(s)}
+    v^\pi_\gamma(s) :=\E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right] {=}\ex{\E^\pi\bigg[\sum_{t=1}^H r_t\mid H, s_1{=}s\bigg]} =\ex{W^\pi_{1:H}(s)},
 \end{equation}
 where the expectation of the fourth term integrates over the randomness of the horizon $H$ whose expected value is $1/(1-\gamma)$.
 
@@ -239,7 +230,7 @@ where the expectation of the fourth term integrates over the randomness of the h
 \label{ch:mdp:sec:gain}
 
 In some problems, the decision maker is more interested in the long-term average reward per decision time than the expected cumulative discounted reward.
-We focus on this criterion in this section.
+Therefore, we focus on this criterion in this section.
 
 \subsection{Gain and bias}
 
@@ -255,7 +246,7 @@ Concretely, it is defined by
     \label{eq:gain_defn}
     g^\pi(s) := \lim_{T\to+\infty}\frac1T \E^\pi\left[ \sum_{t=1}^{T} r_t \mid s_1=s\right].
 \end{equation}
-This notion generalizes both finite and discounted settings when $H\to+\infty$ or $\gamma\to1$ because it is shown (see \cite[Sections~8.2.1 and 8.2.2]{puterman2014markov}) that 
+This notion generalizes both the finite horizon and the discounted settings when $H\to+\infty$ or $\gamma\to1$ because it is shown (see \cite[Sections~8.2.1 and 8.2.2]{puterman2014markov}) that 
 %\begin{align*}
 %    \E^\pi\left[\sum_{t=1}^H r_t\mid s_1{=}s\right] \underset{H\to+\infty}{\sim} Hg^\pi(s) \text{ and }
 %    \E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right] \underset{\gamma\to1}{\sim}
@@ -274,18 +265,18 @@ This notion generalizes both finite and discounted settings when $H\to+\infty$ o
 In consequence, if $\pi$ and $\pi'$ are two stationary policies such that $g^\pi(s)< g^{\pi'}(s)$, then for $H$ big enough and $\gamma$ close enough to $1$, $w_{1:H}^\pi(s)< w_{1:H}^{\pi'}(s)$ and $v^\pi_\gamma(s)< v^{\pi'}_\gamma(s)$.
 %$\E^\pi\left[\sum_{t=1}^H r_t\mid s_1{=}s\right]\le \E^{\pi'}\left[\sum_{t=1}^H r_t\mid s_1{=}s\right]$ and $\E^\pi\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right]\le \E^{\pi'}\left[\sum_{t=1}^{+\infty} \gamma^{t-1}r_t \mid s_1{=}s\right]$.
 
-The gain of a stationary policy captures the average reward obtained in \emph{steady regime} (or \emph{asymptotic regime}).
-Another quantity associated to a stationary policy $\pi$ is its \emph{bias function} that is defined by: for each $s\in\gS$
+The gain of a stationary policy captures the average reward obtained in the \emph{steady regime} (or \emph{asymptotic regime}).
+Another quantity associated with a stationary policy $\pi$ is its \emph{bias function}, defined by: for each $s\in\gS$
 \begin{equation}
     \label{eq:bias_defn}
     h^\pi(s) :=\Clim_{T\to+\infty} \E^\pi\left[ \sum_{t=1}^{T} r_t -g^\pi(s_t) \mid s_1=s\right].
 \end{equation}
-The \emph{Cesaro-limit} denoted by $\mathrm{C}$-$\mathrm{lim}$ is used because it is well-defined for any stationary policies albeit the ``classical'' limit may not exist for stationary policy that induces a stochastic process governed by \emph{periodic} Markov chain.
-The bias function captures the expected total difference between the reward and the average reward in steady regime. 
+The \emph{Cesaro-limit} denoted by $\mathrm{C}$-$\mathrm{lim}$ is used because it is well-defined for any stationary policies, albeit the ``classical'' limit may not exist for a stationary policy that induces a stochastic process governed by a \emph{periodic} Markov chain.
+The bias function captures the expected total difference between the reward and the average reward in the steady regime. 
 The difference of bias values $h^\pi(s)-h^\pi(s')$ captures the (dis-)advantage of starting at state $s$ rather than $s'$ when following policy $\pi$.
 We denote by $sp(\vh^\pi):=\max_{s\in\gS}h^\pi(s) -\max_{s\in\gS}h^\pi(s)$ the range or \emph{span} of the bias function of policy $\pi$.
 
-Any stationary policy $\pi$ induces a Markov reward process (MRP) where the reward function and state transition are respectively encoded by vector $\vr^\pi$ and stochastic matrix $\mP^\pi$ such that for any $s,s'\in\gS$, $r^\pi(s):=r\big(s,\pi(s)\big)$ and $P^\pi(s,s'):=p\big(s'\mid s,\pi(s)\big)$.
+Any stationary policy $\pi$ induces a Markov reward process (MRP), where the reward function and state transition are encoded by vector $\vr^\pi$ and stochastic matrix $\mP^\pi$ such that for any $s,s'\in\gS$, $r^\pi(s):=r\big(s,\pi(s)\big)$ and $P^\pi(s,s'):=p\big(s'\mid s,\pi(s)\big)$.
 %We define the \emph{limiting matrix} $\bar{\mP}^\pi:=\Clim_{t\to+\infty}{(\mP^\pi)^t}$ (\cite[Appendix~A.4]{puterman2014markov}). % which describes the state transition in steady regime under policy $\pi$. That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
 %Since the MDP has finite state space, $\bar{\mP}^\pi$ always exists and well-defined for any stationary policy $\pi$.
 %It describes the state transition in steady regime under policy $\pi$. That is, $\bar{P}^\pi(s,s')$ is the probability that the MDP transitions from state $s$ to $s'$ in steady regime.
@@ -305,15 +296,15 @@ The gain and bias can be computed using Bellman evaluation equations given in Pr
     %Finally, if $\bar{\mP}^\pi\vh=\vzero$, then $\vh^\pi=\vh$.
 \end{prop}
 Equations~\eqref{eq:gain_eval} and \eqref{eq:bias_eval} uniquely define $\vg$ and determine $\vh$ up to an element of the null space of $(\mI-\mP^\pi)$ where $\mI$ is the identity matrix of size $S\times S$.
-If $\mP^\pi$ is unichain\footnote{we provide more explanation about unichain in \ref{it:unichain} of Definition~\ref{ch:mdp:defn:mdp_class}.}, then we say that policy $\pi$ is unichain and its gain is state independent: $g^\pi(s)=g^\pi(s')$ for any $s,s'\in\gS$.
-So, for unichain policy $\pi$, we just denote its gain by $g^\pi$.
-Moreover, if $\pi$ is unichain, its bias $\vh^\pi$ is defined up to a constant vector (see \cite[Chapter 8]{puterman2014markov}).
+If $\mP^\pi$ is unichain\footnote{we provide more explanation about unichain in \ref{it:unichain} of Definition~\ref{ch:mdp:defn:mdp_class}.}, then we say that policy $\pi$ is unichain, and its gain is state independent: $g^\pi(s)=g^\pi(s')$ for any $s,s'\in\gS$.
+So, for any policy $\pi$ that is unichain, we just denote its gain by $g^\pi$.
+Moreover, if $\pi$ is unichain, its bias vector $\vh^\pi$ is defined up to a constant vector (see \cite[Chapter 8]{puterman2014markov}).
 
-\subsection{Classification of Markov decision process}
-Since \Eqref{eq:avg_obj} compares policies based on their average reward in steady regime, we need to take into account the chain structure induced by the policies.
+\subsection{Classification of Markov decision processes}
+Since \Eqref{eq:avg_obj} compares policies based on their average reward in the steady regime, we need to take into account the chain structure induced by the policies.
 %We assume that the reader is familiar with the notion of \emph{transient} and (positive) \emph{recurrent} states and/or class of a Markov chain (see \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov} for more detail) and classify the MDPs according to the following definition.
-In an MDP with finite state space, the states are either \emph{transient} or \emph{recurrent}.
-A state is \emph{transient} if it is never visited in steady regime.
+In an MDP with a finite state space, the states are either \emph{transient} or \emph{recurrent}.
+A state is \emph{transient} if it is never visited in the steady regime.
 For more formal definition, the reader may refer to \cite[Appendix~A]{puterman2014markov} or \cite{levin2017markov}.
 We classify the MDPs according to the following definition.
 \begin{defn}[Classification of MDPs]
@@ -323,7 +314,7 @@ We classify the MDPs according to the following definition.
         \item \textbf{ergodic} if the Markov chain induced by any stationary policy has a single recurrent class that equals the state space (\ie, all states are visited infinitely often with probability $1$ independently of initial state);
         \item \label{it:unichain} \textbf{unichain} if the Markov chain induced by any stationary policy is \emph{unichain}, \ie, it has a single recurrent class plus a --possibly empty-- set of transient states;
         \item \textbf{multichain} if it is not unichain;
-        \item \textbf{communicating} if for every pair of states $(s,s')\in\gS$, there exists a stationary policy under which $s'$ is accessible from $s$ in finite time with non-zero probability
+        \item \textbf{communicating} if for every pair of states $(s,s')\in\gS$, there exists a stationary policy under which $s'$ is accessible from $s$ in a finite number of time steps with non-zero probability
         \item \textbf{weakly communicating} if the state space can be partitioned into two subsets $\gS^{\gC}$ and $\gS^{\gT}$ (with $\gS^{\gT}$ possibly empty), such that for every pair of states $(s,s')\in\gS^{\gC}$, there exists a stationary policy under which $s'$ is accessible from $s$ in finite time with non-zero probability, and all states in $\gS^{\gT}$ are transient under all stationary policies.
     \end{enumerate}
 \end{defn}
@@ -350,7 +341,7 @@ Figure~\ref{ch:mdp:fig:mdp_class} summarizes this relation.
         \node[text width=2cm,align=center] at (3,1.9) {Ergodic};
         \draw[line width=0.7pt, dashed] (-1,2.5) -- (7,2.5);%  (-2,1) -- (6.5,1);
     \end{tikzpicture}
-    \caption{MDP space: the portion of rectangle below the dashed line represents the set of unichain MDPs and the portion above the dashed line represents the set of multichain MDPs.
+    \caption{MDP space: the portion of rectangle below the dashed line represents the set of unichain MDPs, and the portion above the dashed line represents the set of multichain MDPs.
         The blue rectangle is the set of weakly communicating MDPs.
         The red rectangle on top of the blue one is the set of communicating MDPs.
         Finally, the green rectangle on top of the red one is the set of ergodic MDPs.
@@ -372,7 +363,7 @@ Testing if an MDP is unichain is, however, NP-hard \cite{tsitsiklis2007np}.
 \label{ch:mdp:ssec:gain}
 
 Similarly to the discounted setting, in MDPs with finite state and action spaces, there always exists an optimal stationary policy $\pi^*$ that satisfies \Eqref{eq:avg_obj} for any initial distribution $\rho$ (see \cite[Theorem~9.1.8]{puterman2014markov}).
-Such an optimal policy $\pi^*$ induces the \emph{optimal gain} denoted by $\vg^*$ and the value of \Eqref{eq:avg_obj} is given by $\sum_{s\in\gS} \rho(s)g^*(s)$.
+Such an optimal policy $\pi^*$ induces the \emph{optimal gain} denoted by $\vg^*$, and the value of \Eqref{eq:avg_obj} is given by $\sum_{s\in\gS} \rho(s)g^*(s)$.
 From \cite[Chapter~9]{puterman2014markov}, the optimal gain $\vg^*$ satisfies the following system of Bellman \emph{optimality} equations: for each $s\in\gS$,
 \begin{align}
     g(s) &= \max_{a\in\gA_s} \sum_{s'\in\gS}p(s'\mid s,a)g(s') \label{eq:gain_opt} \\
