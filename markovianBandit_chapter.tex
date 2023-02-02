@@ -5,65 +5,65 @@
 \label{ch:mb}
 
 A multi-armed bandit problem is a sequential decision problem in which, at each time step, the decision maker chooses one among a set of available actions and obtains some incentive.
-The goal of the decision maker is to maximize the total incentive by a sequence of actions.
-Fundamentally, there are at least \textbf{three types} of bandit problem depending on the nature of the incentive: stochastic, adversarial, and Markovian.
+The decision maker's goal is to maximize the total incentive by a sequence of actions.
+Fundamentally, there are at least \textbf{three types} of bandit problems depending on the nature of the incentive: stochastic, adversarial, and Markovian.
 In this thesis, we focus on Markovian bandits.
-We refer to \cite{bubeck2012regret} for more detail discussion about stochastic and adversarial bandits.
+We refer to \cite{bubeck2012regret} for more a detailed discussion about stochastic and adversarial bandits.
 
 In this chapter, we recall the existing formulizations of Markovian bandit in Section~\ref{ch:mb:sec:summary}.
-We present rested Markovian bandit problem in Section~\ref{ch:mb:sec:rested}.
+Then, we present the rested Markovian bandit problem in Section~\ref{ch:mb:sec:rested}.
 In discounted rested bandit problem, it is well-known that Gittins index policy is optimal.
 So, we recall its definition in Section~\ref{ch:mb:ssec:gittins_idx}.
-We present restless Markovian bandit problem in Section~\ref{ch:mb:sec:restless}.
-There are two possible criteria for restless bandit depending on whether the reward is discounted or not.
+Next, we present the restless Markovian bandit problem in Section~\ref{ch:mb:sec:restless}.
+There are two possible criteria for restless bandits depending on whether the reward is discounted or not.
 For both criteria, Whittle index policy is a popular heuristic thanks to its simplicity and strong empirical performance.
 So, we recall its definition in Section~\ref{ch:mb:ssec:whittle_idx}.
-In Section~\ref{ch:mb:sec:studied}, we point out the questions that arise in rested and restless bandit problems and that will be treated in Part~\ref{part:idx}.
-We also outline the questions that we are passionated about when learning with rested and restless bandit model.
+Finally, in Section~\ref{ch:mb:sec:studied}, we point out the questions that arise in the rested and restless bandit problems, and that will be treated in Part~\ref{part:idx}.
+We also outline the questions we are passionate about when learning with the rested and restless bandit model.
 These questions will be treated in Part~\ref{part:learning}.
 
 \section{A brief summary of Markovian bandit formulizations}
 \label{ch:mb:sec:summary}
 
-Markovian bandits form a subclass of multi-armed bandit problems in which each arm has an internal state that evolves over time in a Markovian manner, as a function of the decision maker’s actions.
+Markovian bandits form a subclass of multi-armed bandit problems in which each arm has an internal state that evolves in a Markovian manner, as a function of the decision maker’s actions.
 %There are \textbf{two setups} depending on whether the random obtained by the decision maker is discounted over time or not.
 %The decision maker aims at maximizing the expected cumulative discounted reward in discounted setting and the long-term average reward in undiscounted setting.
 %In such a problem, at each time step, the decision maker observes the state of all arms and chooses which one to activate.
 
 In \emph{rested} Markovian bandit, each arm is modeled by a finite Markov reward process. At each time step, the decision maker observes the current state of each arm and activates one arm.
-The activated arm incurs a random reward and transitions to new state in a Markovian fashion.
+The activated arm incurs a random reward and transitions to new a state in a Markovian fashion.
 Meanwhile, the unchosen arms remain in the same state.
 The name ``rested'' is adopted because the unchosen arms make no state transitions and incur no rewards.
 Rested bandit is also known as \emph{restful} bandit or a \emph{family of alternative bandit processes} (see \eg, \cite{gittins1979bandit,katehakis1987multi,duff1995q,tekin2010online,gittins2011multi}).
 %The objective of this problem is to find a policy, mapping from problem state to an arm, that maximizes .
 
 In \cite{whittle1988restless}, Whittle extended the rested Markovian bandit to a \emph{restless} case in which
-the unchosen arms also make state transition and incur some reward (possibly always zero).
-Up to the current literature, two setups are made for restless bandit: (1) \textbf{partially observed} setup and (2) \textbf{fully observed} setup.
+the unchosen arms also make a state transition and incur some reward (possibly always zero).
+Up to the current literature, two setups are made for restless bandits: (1) \textbf{partially observed} setup and (2) \textbf{fully observed} setup.
 
-In partially observed restless bandit, each arm is a finite Markov reward process.
+For partially observed restless bandits, each arm is a finite Markov reward process.
 At each time step, the decision maker activates one arm and observes its current state.
-The chosen arm incurs a random reward in function of its current state.
+The chosen arm incurs a random reward in a function of its current state.
 After that, all arms make a state transition.
-The decision maker only observes the current state of activated arm.
+The decision maker only observes the current state of the activated arm.
 That is why the term ``partially observed'' is used.
 This setting is considered, for example, in \cite{ahmad2009multi,ortner2012regret, jung2019regret, akbarzadeh2019dynamic, wang2020restless}.
 
-In fully observed restless bandit, each arm is a finite MDP with binary action space.
+For fully observed restless bandits, each arm is a finite MDP with binary action space.
 At each time step, the decision maker observes the current state of all arms and activates multiple arms.
-The activated arms incur random reward and change state according to their active Markov reward process.
+The activated arms incur random rewards and change state according to their active Markov reward process.
 The unchosen arms also incur random reward (possibly always zero) and change state according to their passive Markov reward process.
 This model is considered, for example, in \cite{whittle1996optimal,akbarzadeh2019restless,gast2020exponential,dahiya2022scalable}.
 
-Lastly, an even more general model of fully observed restless bandit is the case where each arm is a finite MDP with multiple actions.
+Lastly, an even more general model of the fully observed restless bandit is the case where each arm is a finite MDP with multiple actions.
 At each time step, the decision maker has to decide which action to be executed on each arm without violating the resource constraint.
-This kind of model is known in the literature as \emph{restless multi-armed multi-action bandit} (see \eg, \cite{hodge2015asymptotic,killian2021beyond}).
+This kind of model is known in the literature as a \emph{restless multi-armed multi-action bandit} (see \eg, \cite{hodge2015asymptotic,killian2021beyond}).
 
 \subsection*{Markovian bandit models in this thesis}
 
-We consider only \textbf{rested} and \textbf{fully observed restless} Markovian bandits.
-For fully observed restless bandit, we consider the setup with binary action space and will simply call it ``restless bandit''.
-For both bandits, we consider the \textbf{infinite horizon} model: the decision maker collects rewards over an infinite number of time steps.
+We consider only \textbf{rested} and the \textbf{fully observed restless} Markovian bandits.
+For fully observed restless bandits, we consider the setup with binary action space and will simply call it ``restless bandit''.
+For both bandits, we consider the \textbf{infinite horizon} setting: the decision maker collects rewards over an infinite number of time steps.
 %In each formulation, the bandit has $n\in\N^+$ arms.
 %We denote the set of discrete numbers $\{1,\dots,n\}$ by $[n]$.
 
@@ -78,13 +78,14 @@ For both bandits, we consider the \textbf{infinite horizon} model: the decision 
 
 A rested Markovian bandit is a multi-armed bandit having $n\in\N^+$ arms.
 Each arm $\langle\gS_i, \vr_i, \mP_i\rangle$ for $i\in[n]$ is a Markov reward process with a finite state space $\gS_i$ of size $S_i$, a mean reward vector $\vr_i\in[0,1]^{S_i}$ and a stochastic matrix $\mP_i$.
-In state $s_i\in\gS_i$, the arm $i$ incurs a random reward with expected value $r_i(s_i)$ and transitions to next state $s'_i$ with probability $P_i(s_i,s'_i)$.
+In state $s_i\in\gS_i$, the arm $i$ incurs a random reward with the expected value $r_i(s_i)$ and transitions to a new state $s'_i$ with a probability $P_i(s_i,s'_i)$.
 
-The sequential decision problem is the following: At time step $1$, the state of all arms denoted by $\vs_1:=(s_{1,1},\dots,s_{1,n})$ is sampled according to some initial distribution $\rho$ over the state space $\gX:=\gS_1\times\dots\times\gS_n$.
+The sequential decision problem is the following.
+At time step $1$, the state of all arms denoted by $\vs_1:=(s_{1,1},\dots,s_{1,n})$ is sampled according to some initial distribution $\rho$ over the state space $\gX:=\gS_1\times\dots\times\gS_n$.
 At time step $t\ge1$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates one arm $i\in[n]$.
-The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1]$ is the discount factor.
+The activated arm incurs a random reward discounted like $\gamma^{t-1}r_t$ where $\gamma\in(0,1]$ is a discount factor.
 %and $r_t$ is drawn from some distribution on $[0,1]$ with expected value $r(x_{t,a_t})$.
-After that, the activated arm transitions to new state. %$s_{t+1,a_t}$ with probability $P(s_{t,a_t}, s_{t,a_t})$.
+After that, the activated arm transitions to a new state. %$s_{t+1,a_t}$ with probability $P(s_{t,a_t}, s_{t,a_t})$.
 The other arms incur no rewards and make no state transitions.
 The decision maker acts using a policy $\pi:\gX\mapsto[n]$. 
 
@@ -94,7 +95,7 @@ The decision maker acts using a policy $\pi:\gX\mapsto[n]$.
 %    g^\pi(\vs) := \lim_{T\to+\infty}\frac1T \E^\pi\left[ \sum_{t=1}^{T} r_t \mid \vs_1=\vs\right].
 %\end{equation}
 %The decision maker wants to find an optimal policy $\pi^*$ that maximizes the average reward of all states: $g^{\pi^*}(\vs)=\max_{\pi}g^{\pi}(\vs)$ for any $\vs\in\gX$.
-In rested bandit with no discount $\gamma=1$, the decision maker wants to find an optimal policy that maximizes the long-term average reward of any initial state.
+In rested bandit with no discount $\gamma=1$, the decision maker wants to find an optimal policy that maximizes the average reward of any initial state.
 This setting is well treated in the literature \cite{anantharam1987asymptotically, tekin2010online}.
 With the assumption that each arm is ergodic, an optimal policy is immediately derived: let $\mu_i\in\Delta^{S_i}$ be the state distribution of arm $i$ in its \textbf{steady regime}.
 It is optimal to always activate arm $i^*$ where $i^*\in\argmax_{i\in[n]}\sum_{s_i\in\gS_i}r_i(s_i)\mu_i(s_i)$ \cite{tekin2010online}.
@@ -107,7 +108,7 @@ It is optimal to always activate arm $i^*$ where $i^*\in\argmax_{i\in[n]}\sum_{s
 %\end{equation}
 
 In rested bandit with discount $\gamma\in(0,1)$, the decision maker wants to find an optimal policy $\pi^*$ that maximizes the expected cumulative discounted reward of any initial state.
-This is an infinite horizon discounted problem, presented in Section~\ref{ch:mdp:sec:discounted}, in which the rested Markovian bandit is a specific MDP whose state space is $\gX$ and action space is $\gA:=[n]$.
+This is an infinite horizon discounted problem, presented in Section~\ref{ch:mdp:sec:discounted}, in which the rested Markovian bandit is a structured MDP.
 We discuss more about this setting in the following section.
 
 %Without loss of generality, we assume that the state space of the arms are pairwise distinct: $\gS_i\cap\gS_j=\emptyset$ for any $i\neq j$.
@@ -133,7 +134,7 @@ We discuss more about this setting in the following section.
 
 Since a rested bandit can be cast as an MDP, it is then possible to find an optimal policy using iterative algorithms such as value iteration in the MDP.
 However, those algorithms have a computational complexity that is exponential in the number of arms.
-This makes them prohibitive for rested bandit with large number of arms.
+This makes them prohibitive for rested bandits with a large number of arms.
 %If the local parameters $\{\vr_i,\mP_i\}$ of arm $i$ are known for all $i\in[n]$, then the global parameters $r$ and $p$ of the corresponding MDP $M$ are also known.
 %Since each arm has finite state space, the MDP $M$ also has finite state space.
 %Consequently, an optimal policy $\pi^*$ such that for all $\vs\in\gX, v_\gamma^{\pi^*}(\vs)=\max_{\pi}v_\gamma^\pi(\vs)$ exists and is deterministic (see Section~\ref{ch:mdp:sec:discounted}).
@@ -142,25 +143,28 @@ This makes them prohibitive for rested bandit with large number of arms.
 %That is, if each arm has $S$ states, then the MDP $M$ has $S^n$ states.
 %Value iteration then computes $\pi^*$ in $\landauO(S^{2n}n)$.
 %This is prohibitive for rested Markovian bandits with large number of arms. $\gX:=\gS_1\times\dots\times\gS_n$
-So, efficiently compute an optimal policy $\pi^*$ in rested bandit with discount was an open-problem from 1940s to 1970s \cite{whittle1996optimal}.
+So, efficiently computing an optimal policy $\pi^*$ in rested bandits with discount was an open problem from the 1940s to 1970s \cite{whittle1996optimal}.
 However, \cite{gittins1979bandit} had solved the problem in about 1970 by proposing an index policy.
 \begin{prop}[{\cite[Theorem~14.3.3]{whittle1996optimal}}]
     \label{ch:mb:prop:gidx_defn}
-    In any rested Markovian bandit with discount factor $\gamma\in(0,1)$ and $n\in\N^+$ arms, each with state space $\gS_i$ for $i\in[n]$, there exists an index function that associates each state $s_i\in\gS_i$ of each arm $i\in[n]$ with a real number $\gidx(s_i)$ where
+    In any rested Markovian bandit with a discount factor $\gamma\in(0,1)$ and $n\in\N^+$ arms, each with state space $\gS_i$ for $i\in[n]$, there exists an index function that associates each state $s_i\in\gS_i$ of each arm $i\in[n]$ with a real number $\gidx(s_i)$ where
     \begin{equation}
         \label{ch:mb:eq:gidx_defn}
         \gidx(s_i):=\sup_{\tau>0}\frac{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}r_t \mid s_{1,i}=s_i}}{\ex{\sum_{t=1}^{\tau}\gamma^{t-1}\mid s_{1,i}=s_i}}, 
     \end{equation}
-    and $\{r_t\}_{1\le t\le\tau}$ is the sequence of rewards incurred uniquely from arm $i$ when it makes state transitions over time steps $1$ to $\tau$.
+    and $\{r_t\}_{1\le t\le\tau}$ is the sequence of rewards incurred uniquely by arm $i$ when it makes state transitions over time steps $1$ to $\tau$.
 
-    The policy $\pi:\gS_1\times\dots\times\gS_n\mapsto[n]$ such that for all $\vs\in\gX, \pi(\vs)\in\argmax_{i\in[n]}\gidx(s_i)$ is an optimal policy.
+    The policy $\pi:\gS_1\times\dots\times\gS_n\mapsto[n]$ where for all $\vs\in\gX$
+    \begin{equation*}
+        \pi(\vs)\in\argmax_{i\in[n]}\gidx(s_i)
+    \end{equation*} is an optimal policy.
 \end{prop}
-The index of state $s_i$ is now called Gittins index and the policy in Proposition~\ref{ch:mb:prop:gidx_defn} is called Gittins index policy.
+The index of state $s_i$ is now called Gittins index, and the policy in Proposition~\ref{ch:mb:prop:gidx_defn} is called Gittins index policy.
 Gittins index policy from \cite{gittins1979bandit} is a breakthrough because the index value of state $s_i\in\gS_i$ given in \eqref{ch:mb:eq:gidx_defn} depends only on the local parameters $\{\vr_i,\mP_i\}$ of arm $i$.
-Thus, the computational complexity of Gittins index policy is linear in the number of arms and solving discounted rested bandit problem is broken down into computing Gittins index of each state of each arm.
+Thus, the computational complexity of Gittins index policy is linear in the number of arms, and solving discounted rested bandit problem is broken down into computing Gittins index of each state of each arm.
 
 Note that Gittins index policy is optimal when exactly one arm is activated at each time step.
-This index policy is suboptimal when the decision maker activates more than one arm at each time step or when the decision maker can only interact over a finite horizon \cite{gittins2011multi}.
+This index policy is suboptimal when the decision maker activates more than one arm at each time step or when the decision maker interact with the bandit over a finite horizon \cite{gittins2011multi}.
 
 %\subsection{Gittins index computation}
 %Several numerical methods to compute Gittins index are presented in \cite{chakravorty2014multi} such as state elimination, and fast-pivoting algorithms.
@@ -185,28 +189,28 @@ This index policy is suboptimal when the decision maker activates more than one 
 \label{ssec:restless_formul}
 
 A restless Markovian bandit is a multi-armed bandit having $n$ arms.
-Each arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ is an MDP with finite state space $\gS_i$ of size $S_i$ and binary action space $\{0,1\}$ where $0$ denotes the action ``rest'' and $1$ denotes the action ``activate''.
-If arm $i$ is in state $s_i$ and the decision maker executes $a_i\in\{0,1\}$, the arm incurs a random reward with expected value $r_i(s_i,a_i)$ and transitions to state $s'_i\in\gS_i$ with probability $p_i(s'_i\mid s_i,a_i)$.
+Each arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ is an MDP with a finite state space $\gS_i$ of size $S_i$ and a binary action space $\{0,1\}$, where $0$ denotes the action ``rest'' and $1$ denotes the action ``activate''.
+If arm $i$ is in state $s_i$ and the decision maker executes $a_i\in\{0,1\}$, the arm incurs a random reward with the expected value $r_i(s_i,a_i)$ and transitions to a new state $s'_i\in\gS_i$ with a probability $p_i(s'_i\mid s_i,a_i)$.
 
 The sequential decision problem is presented as the following.
 At time step $1$, the state of all arms denoted by $\vs_1:=(s_{1,1},\dots,s_{1,n})$ is sampled according to some initial distribution $\rho$ over the state space $\gX:=\gS_1\times\dots\times\gS_n$.
-At time step $t\ge1$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates exactly $m$ arms encoded by action $\va_t:=(a_{t,1},\dots,a_{t,n})$ such that $\va_t\in\{0,1\}^n$ and $\sum_{i=1}^{n} a_{t,i}=m$ where $m\in[n]$ is constant over time.
+At time step $t\ge1$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates exactly $m$ arms encoded by action $\va_t:=(a_{t,1},\dots,a_{t,n})$, such that $\va_t\in\{0,1\}^n$ and $\sum_{i=1}^{n} a_{t,i}=m$, where $m\in[n]$ is constant over time.
 %The decision maker then receives a random reward $r_t=\sum_{i=1}^{n}r_{t,i}$ where $r_{t,i}$ is a random reward from arm $i$.
-Each arm $i$ incurs then a random reward discounted like $\gamma^{t-1}r_{t,i}$ where $\gamma\in(0,1]$ is the discount factor and makes
-a transition to new state $s_{t+1,i}$ in function of $s_{t,i}$ and $a_{t,i}$ but independently of the other arms.
+Each arm $i$ incurs then a random reward discounted like $\gamma^{t-1}r_{t,i}$, where $\gamma\in(0,1]$ is a discount factor, and makes
+a transition to a new state $s_{t+1,i}$ in function of $s_{t,i}$ and $a_{t,i}$ but independently of the other arms.
 %The decision maker wants to compute a policy $\pi$ that maximizes the average reward earned over an infinite number of time steps as defined in Section~\ref{ch:mdp:sec:gain}: for any $\vs\in\gX$,
 %\begin{equation}
 %    \label{ch:mb:eq:gain_defn}
 %    g^\pi(\vs) := \lim_{T\to+\infty}\frac1T \E^\pi\left[ \sum_{t=1}^{T} r_t \mid \vs_1=\vs\right].
 %\end{equation}
 
-Similarly to rested case, restless Markovian bandit is a specific MDP -- that we denote by $M$ -- whose state space is $\gX$ and action space is $\gA(m):=\{\va\in\{0,1\}^n : \sum_{i=1}^{n}a_i =m\}$.
-We say that $M$ is the global MDP.
+Similarly to rested case, the restless Markovian bandits are a specific MDP -- that we denote by $M$ -- whose state space is $\gX$, and action space is $\gA(m):=\{\va\in\{0,1\}^n : \sum_{i=1}^{n}a_i =m\}$.
+We say that $M$ is the \emph{global} MDP.
 There are two possible criteria.
 In discounted restless bandit, the decision maker wants to find an optimal policy $\pi^*$ that maximizes the expected cumulative discounted reward of any initial state (see \eg, \cite{nino2007dynamic, fu2019towards, akbarzadeh2020conditions, nino2020fast}). 
 In undiscounted case, the maximization criterion is the long-term average reward (see \eg, \cite{whittle1988restless, whittle1996optimal, papadimitriou1994complexity, gibson2021novel, avrachenkov2022whittle}).
 As mentioned in Section~\ref{ch:mdp:sec:gain}, the average reward criterion is a generalization of discounted criterion (see \Eqref{ch:mdp:eq:equi_gain_value}).
-So, we will discuss only the undiscounted criterion here.
+So, we will only discuss the undiscounted criterion here.
 
 In undiscounted restless bandit, the average reward or gain of policy $\pi$ is defined by: for any $\vs\in\gX$,
 \begin{equation}
@@ -217,10 +221,10 @@ In undiscounted restless bandit, the average reward or gain of policy $\pi$ is d
 %As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ such that for all $\vs\in\gX, g^{\pi^*}(\vs)=\max_{\pi}g^{\pi}(\vs)$ exists and is deterministic.
 As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ that maximizes \eqref{ch:mb:eq:gain_defn} for any $\vs\in\gX$ exists and is deterministic.
 However, due to the curse of dimensionality, computing such an optimal policy is notoriously difficult as its complexity grows exponentially with the number of arms.
-In fact, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that computing an optimal policy in undiscounted restless bandit is PSPACE-hard.
-In about 1980, Peter Whittle proposed a heuristic in the form of the largest index rule, later known as \emph{Whittle index policy}, for undiscounted restless bandit problem.
-The computational complexity of this heuristic is linear in the number of arms which makes it scalable for problems with large number of arms.  
-We discuss more about this index policy in the following section.
+In fact, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that computing an optimal policy in the undiscounted restless bandit is PSPACE-hard.
+In about 1980, Peter Whittle proposed a heuristic in the form of the largest index rule, later known as \emph{Whittle index policy}, for the undiscounted restless bandit problem.
+The computational complexity of this heuristic is linear in the number of arms making it scalable for problems with a large number of arms.  
+We discuss this index policy more in the following section.
 %Similar to what is done in Section~\ref{ssec:rested_formul}, we assume that the state space of the arms are pairwise distinct: $\gS_i\cap\gS_j=\emptyset$ for any $i\neq j$.
 %So, we will drop the index $i$ from expected reward and transition if no confusion is possible: we denote them by $r(s_i,a_i)$ instead of $r_i(s_i,a_i)$ and by $p(s'_i\mid s_i,a_i)$ instead of $p_i(s'_i\mid s_i,a_i)$.
 %In consequence, for any global state-action pair $(\vs,\va)$ with $\vs\in\gX$ and $\va\in\gA$, the expected reward from the MDP $M$ is given by $r(\vs,\va)=\sum_{i=1}^{n}r(s_i,a_i)$.
@@ -232,7 +236,7 @@ We discuss more about this index policy in the following section.
 \label{ch:mb:ssec:whittle_idx}
 
 
-In his seminar paper \cite{whittle1988restless}, Whittle proposes the following heuristic: \textit{if all arms verify a technical condition known as indexability, then each state $s_i$ of each arm $i$ is associated with a real number $\widx(s_i)$, that is now known as the Whittle index of state $s_i$.
+In his seminal paper \cite{whittle1988restless}, Whittle proposes the following heuristic: \textit{if all arms verify a technical condition known as indexability, then each state $s_i$ of each arm $i$ is associated with a real number $\widx(s_i)$, which is now known as the Whittle index of state $s_i$.
 At each time step, the decision maker activates $m$ arms whose Whittle index of their current state are the $m$ greatest indices}.
 This heuristic performs extremely well in practice, see \eg, \cite{glazebrook2002index, ansell2003whittle, glazebrook2006some}.
 In fact, Whittle index policy has been shown to be asymptotically optimal as the number of arms grows to infinity under certain technical assumptions \cite{weber1990index, lott2000optimality, verloop2016asymptotically}.
@@ -244,7 +248,7 @@ Following Whittle's development \cite{whittle1988restless}, the hard constraint 
 %The constraint can then be added to \eqref{ch:mb:eq:gain_defn}:
 The Lagrangian relaxation of maximizing \eqref{ch:mb:eq:gain_defn} under the hard constraint is then written:
 \begin{align}
-    \lim_{T\to+\infty}\frac1T \E^\pi\left[\sum_{i=1}^n \sum_{t=1}^{T} (r_{t,i} -\lambda a_{t,i}) \mid \vs_1=\vs\right] +\lambda m \label{ch:mb:eq:relax_defn}
+    \lim_{T\to+\infty}\frac1T \E^\pi\left[\sum_{i=1}^n \sum_{t=1}^{T} (r_{t,i} -\lambda a_{t,i}) \mid \vs_1=\vs\right] +\lambda m, \label{ch:mb:eq:relax_defn}
 \end{align}
 where $\lambda$ is a Lagrangian multiplier associated to the constraint.
 Finding a policy $\pi$ that maximizes \eqref{ch:mb:eq:relax_defn} can be done by working on $n$ independent local problems:
@@ -255,21 +259,21 @@ for arm $i$, the optimal actions for state $s_i$ must satisfy the Bellman optima
 where $g^*(s_i)$ and $h^*(s_i)$ are the optimal gain and bias of state $s_i$ of arm $i$ respectively (see Section~\ref{ch:mdp:sec:gain} for their formal definitions).
 In economical perspective, the term $\lambda$ can be viewed as a ``tax for activation'', adjusted to ensure that $m$ arms are activated on average.
 A negative tax would be viewed as a ``subsidy''.
-We will use the term ``tax'' or ``penalty''.
-From \cite{whittle1988restless,whittle1996optimal}, if arm $i$ is indexable, then the Whittle index of state $s_i$ is the critical value $\widx(s_i)$ such that action rest and activate are equivalent in \eqref{ch:mb:eq:bellman}:
+We will use the term ``penalty'' is the sense of tax.
+From \cite{whittle1988restless,whittle1996optimal}, if arm $i$ is indexable, then the Whittle index of state $s_i$ is the critical value $\widx(s_i)$ where action rest and activate are equivalent in \eqref{ch:mb:eq:bellman}:
 \begin{align}
     r(s_i,0) +\sum_{s'_i\in\gS_i}p(s'_i\mid s_i,0)h^*(s'_i)
     =r(s_i,1)-\lambda(s_i) +\sum_{s'_i\in\gS_i}p(s'_i\mid s_i,1)h^*(s'_i). \label{ch:mb:eq:widx_defn}
 \end{align}
 So, the index is meaningful: the higher the tax needed to induce one to rest an arm, the more rewarding must it be to activate that arm.
 
-Note that Whittle indices can be defined in either discounted or undiscounted restless bandits.
+Note that Whittle indices can be defined for both discounted or undiscounted restless bandits.
 However, Whittle index policy is suboptimal in general.
-That is, under certain technical assumptions, Whittle index policy is asymptotically optimal in undiscounted restless bandit as the number of arms grows to infinity \cite{weber1990index}.
+Precisely, under certain technical assumptions, Whittle index policy is asymptotically optimal for the undiscounted restless bandit as the number of arms grows to infinity \cite{weber1990index}.
 
 Finally, there are efforts dedicated to studying asymptotically optimal policies in the finite-horizon setting.
-For example, \cite{hu2017asymptotically,brown2020index,zhang2021restless,gastGaujalYan-lpbased} use the relaxed version of the problem that shares some features in Whittle's relaxation, but that is adapted to the finite-horizon criteria.
-To the best of our knowledge, there is no generic method that achieve optimality in finite-horizon Markovian bandit, neither in the rested nor in the restless case.
+For example, \cite{hu2017asymptotically,brown2020index,zhang2021restless,gastGaujalYan-lpbased} use the relaxed version of the problem that shares some features in Whittle's relaxation but that is adapted to the finite-horizon criteria.
+To the best of our knowledge, there is no generic method that achieves the optimality in finite-horizon Markovian bandits, neither in the rested nor in the restless case.
 For instance, there exists a definition of Gittins index for finite-horizon rested problems, but they are known to be suboptimal. 
 
 %This shows that if the $n$ arms are all indexable, then we can efficiently derive an optimal policy by computing the Whittle indices of all arms.
@@ -287,16 +291,16 @@ For instance, there exists a definition of Gittins index for finite-horizon rest
 \subsection{Indexability}
 
 In discounted rested bandit, Gittins index is well-defined \cite{chakravorty2014multi}.
-This means that all arms are indexable in rested bandit with discount.
-However, the definition of indexability in restless bandit would seem unsettled:
+This means that all arms are indexable in the rested bandits with discount.
+However, the definition of indexability in the restless bandits would seem unsettled:
 In \cite[Chapter~14]{whittle1996optimal}, the undiscounted restless bandit is considered.
 An arm is said to be indexable if the set of states for which the arm is rested increases from empty set to the set of all states as $\lambda$ increases \cite[Page~280]{whittle1996optimal}.
-Yet, the criterion of optimality to rest an arm is not explicitly specified: the arm is rested simply if the gain is maximized?
-This question is important because from \cite{puterman2014markov}, there are multiple optimality criteria in average reward model.
+Yet, the optimality criterion to rest an arm is not explicitly specified: is the arm rested simply if the gain is maximized?
+This question is important because from \cite{puterman2014markov}, there are multiple optimality criteria in the average reward model.
 In addition, what could we say in the case where there are multiple sets of states that increase from empty set to the set of all states as $\lambda$ increases?
-Last but not least, if arm $i$ is indexable, then the Whittle index of state $s_i$ can be computed by \eqref{ch:mb:eq:widx_defn}.
+Lastly, if arm $i$ is indexable, then the Whittle index of state $s_i$ can be computed by \eqref{ch:mb:eq:widx_defn}.
 As we mentioned in Section~\ref{ch:mdp:sec:gain}, vector $\vh^*\in\R^{S_i}$ that satisfies Bellman optimality equation with the optimal gain $\vg^*$ is not uniquely determined in general.
-So, in an indexable arm, some states can have multiple values of index?
+So, in an indexable arm, some states can have multiple index values?
 
 These essential questions will be treated in Chapter~\ref{ch:indexability} of Part~\ref{part:idx}.
 
@@ -308,14 +312,14 @@ In \cite[Page~4]{nino2020fast}, the author claims that it is unlikely that the c
 
 For discounted restless bandits, fast-pivoting algorithm of \cite{nino2020fast} is the current best method to compute Whittle index.
 For an arm with $S$ states, the algorithm performs $(2/3)S^3+\landauO(S^2)$ arithmetic operations if the initialization phase is excluded from the count.
-This is done by using the parametric simplex method and exploiting the special structure of this linear system to reduce the complexity of simplex pivoting steps. This fast-pivoting algorithm is an efficient implementation of adaptive-greedy algorithm \cite{nino2007dynamic} which outputs Whittle index if and only if the arm satisfies a technical condition called partial conservation law (PCL), which is more restrictive than just being indexable.
+This is done by using the parametric simplex method and exploiting the special structure of this linear system to reduce the complexity of simplex pivoting steps. This fast-pivoting algorithm is an efficient implementation of adaptive-greedy algorithm \cite{nino2007dynamic}, which outputs Whittle index if and only if the arm satisfies a technical condition called partial conservation law (PCL), which is more restrictive than just being indexable.
 The work of \cite{akbarzadeh2020conditions} proposes another implementation of adaptive-greedy algorithm that computes Whittle index for general indexable arm and not just restricted to PCL-indexable.
 However, the implementation performs in $\landauO(S^3)$ and the constant in $\landauO(\cdot)$ for $S^3$ is not specified.
 %While the computational complexity of Whittle index policy is very appealing, the index is defined only if the arm is indexable.
-To the best of our knowledge, there is no efficient general purpose algorithm to test the indexability.
+To the best of our knowledge, there is no efficient general-purpose algorithm to test the indexability in both the discounted and undiscounted restless bandits.
 Also, there is no explicit algorithm for computing Whittle index in undiscounted restless bandit.
 
-To sum up, there are a few essential questions:
+In summary, there are a few essential questions:
 \begin{itemize}
     \item Is it possible to improve the complexity of computing Gittins index?
     \item Is testing the indexability computationally hard?
@@ -328,7 +332,7 @@ These questions will be answered in Chapter~\ref{ch:index_computation} of Part~\
 \subsection{Learning in rested Markovian bandit}
 
 Thanks to Gittins index policy, the discounted rested Markovian bandit is an MDP that escapes from the \textbf{curse of dimensionality} in terms of computational complexity.
-That is, although the state size of rested Markovian bandit is exponential in the number of arms $n$, Gittins index policy is an optimal policy computable linearly in $n$.
+Precisely, although the state size of the rested Markovian bandit is exponential in the number of arms $n$, Gittins index policy is an optimal policy that demands a computation linearly in $n$.
 It is then interesting to understand how the curse of dimensionality manifests in RL problems in which the environment is an unknown rested Markovian bandit.
 By Tables~\ref{ch:rl:tab:finite} and \ref{ch:rl:tab:infinite}, directly apply existing RL algorithms to such RL problems incurs a regret that is exponential in $n$.
 However, if the $n$ arms all have $S$ states, there are only $nS$ real values to be estimated for the expected reward and $nS^2$ for the state transition probability.
@@ -336,24 +340,24 @@ So, the minimax regret bound in both tables should be smaller for rested Markovi
 This raises the following questions.
 \begin{itemize}
     %\item can RL algorithms escape from the curse of dimensionality in learning rested Markovian bandits?
-    \item What is the baseline regret for RL algorithms in rested Markovian bandit with discount?
-    \item Gittins index policy has a very appealing computational complexity. Can OFU and Bayesian methods leverage this index policy to escape from the curse?
+    \item What is the baseline regret for RL algorithms in the rested Markovian bandits with discount?
+    \item Gittins index policy has a very appealing computational complexity. Can the OFU and Bayesian methods leverage this index policy to escape from the curse of dimensionality?
 \end{itemize}
 These questions are discussed in Chapter~\ref{ch:learning_rested} of Part~\ref{part:learning}.
 
 \subsection{Learning in restless Markovian bandit}
 
-Similarly to rested bandit, in restless bandit having $n$ arms and $S$ states per arm, there are only $2nS$ real values to be estimated for the expected reward and $2nS^2$ for the transition probability.
+Similarly to rested bandits, in restless bandits with $n$ arms and $S$ states per arm, there are only $2nS$ real values to be estimated for the expected reward and $2nS^2$ for the transition probability.
 It is then equally interesting to analyze the performance of RL algorithms when the environment is an unknown restless bandit with no discount.
-However, in the infinite horizon average reward model, the structure of the MDP must be taken into account in learning.
-That is, from Table~\ref{ch:rl:tab:infinite}, one needs to asssume some structures of the bandit.
-Yet, the size of state space $\gX$ is exponential in the number of arms $n$.
-So, testing the structure of the bandit is computationally hard and it is computationally better to make a few assumptions on the local arms.
+However, in the infinite horizon average reward model, the structure of the MDP must be taken into account in the learning.
+That is, from Table~\ref{ch:rl:tab:infinite}, one needs to assume some structures of the bandit.
+Yet, the size of the state space $\gX$ is exponential in the number of arms $n$.
+So, testing the structure of the bandit is computationally hard, and it is computationally better to derive a few assumptions of the local arms that imply desirable structures of the bandit.
 In consequence, we are interested in the following questions.
 \begin{itemize}
-    \item How does the structure of arms translate in the structure of the bandit?
-    \item Is there any RL algorithms whose regret upper is bounded linearly in $n$ in learning restless Markovian bandit with average reward criterion?
-    \item Although Whittle index policy has a computational complexity linear in $n$, this index policy does not always exist and is not optimal in general. So, how can Whittle index policy be utilized for learning purpose?
+    \item How do the arms' structure translate into the structure of the bandit?
+    \item Is there any RL algorithms whose regret is upper bounded linearly in $n$ in learning the general class of restless Markovian bandits with average reward criterion?
+    \item Although Whittle index policy has a computational complexity linear in $n$, this index policy is not defined when the restless bandit is not indexable. Worse yet, it is suboptimal in general. So, how can Whittle index policy be utilized for learning purpose?
 \end{itemize}
 These questions will be addressed in Chapter~\ref{ch:learning_restless} of Part~\ref{part:learning}.
 
