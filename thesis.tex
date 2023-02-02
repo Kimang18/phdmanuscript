@@ -366,11 +366,11 @@
 \iftotalcompilation
 \part{Background on Markov decision process, reinforcement learning, and Markovian bandit}
 \label{part:background}
-In this part, we recall the existing problem setups and results in the literature of Markov decision process, reinforcement learning, and Markovian bandit.
-This part serves as the basis to understand the whole thesis.
+In this part, we recall the existing problem setups and results in the literature on Markov decision process, reinforcement learning, and Markovian bandit.
+This part serves as the basis for understanding the whole thesis.
 In Chapter~\ref{ch:mdp}, we present the formalism of Markov decision process.
 In Chapter~\ref{ch:rl}, we recapitulate a few fundamental definitions and several existing results in reinforcement learning literature.
-In Chapter~\ref{ch:mb}, we present the formalism of Markovian bandits and existing results, and outline the questions that are discussed in the thesis.
+Finally, in Chapter~\ref{ch:mb}, we present the formalism of Markovian bandits and existing results and outline the questions discussed in the thesis.
 
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 \clearpage
@@ -387,11 +387,8 @@ In Chapter~\ref{ch:mb}, we present the formalism of Markovian bandits and existi
 \part{Indexability and Index Computation}
 \label{part:idx}
 
-In this part, we present our result about indexability testing and index computation in Markovian bandits.
-In Chapter~\ref{ch:indexability}, we discuss the ambiguities in the classical definition of indexability and propose a new definition that is univocal for any restless bandits.
-In Chapter~\ref{ch:index_computation}, we develop a unified algorithm that tests the indexability and computes the Whittle index in either discounted or undiscounted restless bandits as well as the Gittins index in discounted rested bandits.
-This algorithm has a subcubic theoretical computational complexity and, to the best of our knowledge, it is the first algorithm to achieve such complexity.
-These are our contributions to the computational side of Markovian bandits literature.
+
+This part presents our results about indexability testing and index computation in Markovian bandits. First, in Chapter~\ref{ch:indexability}, we discuss the ambiguities in the classical definition of indexability and propose a new univocal definition for any restless bandits. Then, in Chapter~\ref{ch:index_computation}, we develop a unified algorithm that tests the indexability and computes the Whittle index in either discounted or undiscounted restless bandits, and the Gittins index in discounted rested bandits. This algorithm has a subcubic theoretical computational complexity, and to the best of our knowledge, it is the first to achieve such complexity. These are our contributions to the computational side of Markovian bandits literature.
 
 Particularly, we redefine a few notations to ease the exposition.
 We also introduce new notations when developing our algorithm.
@@ -412,16 +409,7 @@ Those redefined and new notations are used exclusively in this part.
 \part{Learning in Markovian bandits}
 \label{part:learning}
 
-In this part, we focus on learning problems in Markovian bandits.
-We start by considering a learning problem in which the unknown environment is a rested bandit with discount.
-An efficient policy for such rested bandits is Gittins index policy.
-Hence, in Chapter~\ref{ch:learning_rested}, we show that MB-PSRL and MB-UCBVI, the modified versions of PSRL and UCBVI respectively for rested bandits, can leverage Gittins index policy to have a regret bound and runtime scalable in the number of arms.
-We also show that MB-UCRL2, a modified version of UCRL2, also has a regret upper bound scalable in the number of arms.
-Yet, we give an example showing that MB-UCRL2 and any modification of UCRL2's variants to rested bandit likely have a runtime exponential in the number of arms.
-In Chapter~\ref{ch:learning_restless}, we consider the learning problem in restless bandits with average reward criterion.
-In such a problem, the regret of learning algorithms depends heavily on the structure of restless bandit.
-So, we study the implication of the structure of local arms in the structure of the bandit.
-We provide a few examples showing that defining a subclass of restless bandits that have desirable structure for learning is difficult.
+In this part, we focus on learning problems in Markovian bandits. We start by considering a learning setting where the unknown environment is a rested bandit with a discount. An efficient policy for such rested bandits is Gittins index policy. Hence, in Chapter~\ref{ch:learning_rested}, we show that MB-PSRL and MB-UCBVI, the modified versions of PSRL and UCBVI for rested bandits, can leverage Gittins index policy to have a regret bound and runtime scalable in the number of arms. We show that MB-UCRL2, a modified version of UCRL2, also has a regret upper bound scalable in the number of arms. Yet, we give an example showing that MB-UCRL2 and any modification of UCRL2’s variants to rested bandit likely have a runtime exponential in the number of arms. Chapter~\ref{ch:learning_restless}, considers the learning problem in restless bandits with the average reward criterion. In such a problem, the regret of learning algorithms depends heavily on the structure of restless bandit. So, we study the implication of local arms' structure into the bandit's structure. We provide a few examples showing that defining a subclass of restless bandits with desirable structures for learning by relying on the assumptions of local arms is difficult.
 
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 \clearpage
@@ -436,7 +424,9 @@ We provide a few examples showing that defining a subclass of restless bandits t
 
 \bookmarksetup{startatroot}  % https://stackoverflow.com/questions/1483396/how-to-explicitly-end-a-part-in-latex-with-hyperref
 \addtocontents{toc}{\bigskip}
-\inputchapter{\includechapterconclusion}{chapter_conclusion.tex}
+
+%\inputchapter{\includechapterconclusion}{chapter_conclusion.tex}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
