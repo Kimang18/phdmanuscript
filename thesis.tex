@@ -361,7 +361,6 @@
 % main chapters go here
 \bookmarksetup{startatroot}
 \inputchapter{\includechapterintroduction}{chapter_introduction.tex}
-%TODO: should we put number for introduction and conclusion chapters?
 
 \iftotalcompilation
 \part{Background on Markov decision process, reinforcement learning, and Markovian bandit}
@@ -403,8 +402,6 @@ Those redefined and new notations are used exclusively in this part.
 
 \inputchapter{\includeindexComputationchapter}{indexComputation_chapter.tex}
 
-%need to add a conclusion
-
 \iftotalcompilation
 \part{Learning in Markovian bandits}
 \label{part:learning}
@@ -413,7 +410,6 @@ In this part, we focus on learning problems in Markovian bandits. We start by co
 
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 \clearpage
-%\KK{Motivate why this part should be read, what are essential to understand in this part}
 \fi
 
 %\bookmarksetup{startatroot}
@@ -425,7 +421,7 @@ In this part, we focus on learning problems in Markovian bandits. We start by co
 \bookmarksetup{startatroot}  % https://stackoverflow.com/questions/1483396/how-to-explicitly-end-a-part-in-latex-with-hyperref
 \addtocontents{toc}{\bigskip}
 
-%\inputchapter{\includechapterconclusion}{chapter_conclusion.tex}
+\inputchapter{\includechapterconclusion}{chapter_conclusion.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -434,14 +430,14 @@ In this part, we focus on learning problems in Markovian bandits. We start by co
 % --- BACK MATTER ----------------------
 
 \iftotalcompilation
-%\pdfbookmark[-1]{Back Matter}{Back Matter}
-%
-%\pagenumbering{arabic}  % arabic page numbering (e.g., 1 2 3), reset counter
-%\renewcommand*{\thepage}{A\arabic{page}}  % prepend A to appendix page number
-%\pagestyle{scrheadings}  % display header and footer
-%\addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
+\pdfbookmark[-1]{Back Matter}{Back Matter}
+
+\pagenumbering{arabic}  % arabic page numbering (e.g., 1 2 3), reset counter
+\renewcommand*{\thepage}{A\arabic{page}}  % prepend A to appendix page number
+\pagestyle{scrheadings}  % display header and footer
+\addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
 \fi
-%
+
 %\appendix
 %\inputchapter{\includechapterappendix}{chapter_appendix.tex}
 %\inputchapter{\includechapterappendixtwo}{chapter_appendixtwo.tex}
