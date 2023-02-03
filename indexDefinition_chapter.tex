@@ -8,13 +8,14 @@
 In the previous chapter, we gave the formalism of Markovian bandits and recalled two index policies: Gittins and Whittle index policies.
 In this chapter, we discuss the existence of the Whittle index in undiscounted restless Markovian arm and provide a few main contributions to characterize such an existence.
 
-We present our main contributions in Section~\ref{ch:idx:sec:contrib}. The notations and $\lambda$-penalized MDP that is the basis to define the indexability are described in Section~\ref{ch:idx:sec:notation}.
-After that, we cover the ambiguities of classical definition of indexability accompanied by simple examples in Section~\ref{ch:idx:sec:classic_idx}.
-These ambiguities inspire us to introduce a new notion of Bellman optimality for MDPs with average reward criterion in Section~\ref{ch:idx:sec:bell}.
-Based on this notion, we introduce our definition of indexability and of Whittle index in Section~\ref{ch:idx:sec:idx}.
-We extend the discussion about indexability in Section~\ref{ch:idx:sec:more_defn}.
-Section~\ref{ch:idx:sec:prop_bell} contains the properties of Bellman optimal policies.
-Finally, we conclude the chapter in Section~\ref{ch:idx:sec:conc} by summarizing the chapter and give a brief introduction to the next chapter.
+We present our main contributions in Section~\ref{ch:idx:sec:contrib}.
+Then, the notations and $\lambda$-penalized MDP that is the basis for defining the indexability are described in Section~\ref{ch:idx:sec:notation}.
+After that, we cover the ambiguities in the classical definition of indexability accompanied by simple examples in Section~\ref{ch:idx:sec:classic_idx}.
+These ambiguities inspire us to introduce a new notion of Bellman optimality for MDPs with the average reward criterion in Section~\ref{ch:idx:sec:bell}.
+Based on this notion, we introduce our definitions of indexability and Whittle index in Section~\ref{ch:idx:sec:idx}.
+Next, we extend the discussion about indexability in Section~\ref{ch:idx:sec:more_defn}.
+Then, Section~\ref{ch:idx:sec:prop_bell} contains the properties of Bellman optimal policies.
+Finally, we conclude the chapter in Section~\ref{ch:idx:sec:conc} by summarizing the chapter and giving a brief introduction to the next chapter.
 
 
 \section{Contributions}
@@ -22,9 +23,9 @@ Finally, we conclude the chapter in Section~\ref{ch:idx:sec:conc} by summarizing
 
 In this chapter, we discuss the definition of indexability and present two main contributions.
 
-Our first contribution is to propose a univocal definition of indexability. This definition clarifies ambiguities that exist in the classical definitions: Classical definitions assume that an arm is indexable if the optimal set of active states is a non-increasing function of some penalty term $\lambda$. While this definition works for most practical cases, it is not always precise enough because the optimal set is in general not unique. In our definition, we specify the notion of increasingness that should be used. Our definition guarantees the uniqueness of Whittle indices.
+Our first contribution is to propose a univocal definition of indexability. This definition clarifies the ambiguities in the classical definitions: Classical definitions assume that an arm is indexable if the optimal set of active states is a non-increasing function of some penalty term $\lambda$. While this definition works for most practical cases, it is not always precise enough because the optimal set is not unique in general. In our definition, we specify the notion of increasingness that should be used. Our definition guarantees the uniqueness of Whittle indices.
 
-Last but not least, we introduce a new notion of Bellman optimality for MDPs with average reward criterion. This notion is more restrictive than the classical gain optimality, but it is rich enough to allow us to redefine the indexability in undiscounted restless Markovian bandits. We also study the characterization of gain optimal and Bellman optimal policies. In particular, we provide a checkable condition for the unicity of a given Bellman optimal policy.
+Lastly, we introduce a new notion of Bellman optimality for MDPs with the average reward criterion. This notion is more restrictive than the classical gain optimality, but it is rich enough to allow us to redefine the indexability in undiscounted restless Markovian bandits. We also study the characterization of gain optimal and Bellman optimal policies. In particular, we provide a checkable condition for the unicity of a given Bellman optimal policy.
 This condition is useful for index computation in the chapter that follows.
 This is a new contribution to the vast literature of MDP and Markovian bandit.
 
@@ -33,12 +34,12 @@ This is a new contribution to the vast literature of MDP and Markovian bandit.
 
 Since index policies require computation on each arm individually, we will focus only on a single arm.
 Also, this chapter and the next chapter concern the computational complexity.
-So, we redefine some notations that was done in the previous chapter.
+So, we redefine some notations that were done in the previous chapter.
 These redefined notations are used uniquely for Part~\ref{part:idx}.
 
 \subsection{Restless bandit arm}
 
-An $n$-state restless bandit arm is a Markov decision process (MDP) with discrete state space $[n]:=\{1,\dots, n\}$ and binary action space $\{0, 1\}$, where $0$ denotes the action ``rest'' and $1$ denotes the action ``activate''. The time is discrete, and the evolution is Markovian: If the MDP is in state $i$ and action $a$ is chosen, the MDP incurs an instantaneous reward ${r}^a_i$ and transitions to a new state $j$ with probability ${P}^a_{ij}$. We denote this MDP by $\langle[n],\{0,1\},r,P\rangle$.
+An $n$-state restless bandit arm is a Markov decision process (MDP) with a discrete state space $[n]:=\{1,\dots, n\}$ and binary action space $\{0, 1\}$, where $0$ denotes the action ``rest'' and $1$ denotes the action ``activate''. The time is discrete, and the evolution is Markovian: If the MDP is in state $i$ and action $a$ is chosen, the MDP incurs an instantaneous reward ${r}^a_i$ and transitions to a new state $j$ with probability ${P}^a_{ij}$. We denote this MDP by $\langle[n],\{0,1\},r,P\rangle$.
 
 \subsection{\texorpdfstring{$\lambda$-p}{P}enalized MDP and policy structure}
 \label{ch:idx:sec:penal_mdp}
