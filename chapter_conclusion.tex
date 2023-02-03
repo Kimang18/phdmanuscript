@@ -1,6 +1,44 @@
-\chapter{Conclusion}
+\begingroup
+
+\let\clearpage\relax
+
+\chapter{Conclusions and Future Work}
 \label{chapter:conclusion}
 
-Your beautiful conclusion.
+\section{Summary}
 
-\lipsum[1-3]
+In Part~\ref{part:idx}, we investigated the indexability of restless Markovian arms.
+In Chapter~\ref{ch:indexability}, we proposed a new univocal indexability definition for restless Markovian arms.
+This definition guarantees the uniqueness of the Whittle index when the arm is indexable.
+
+In Chapter~\ref{ch:index_computation}, we derived an efficient algorithm for detecting the non-indexability and computing the Whittle index of all indexable unichain restless Markovian arms.
+Without any assumption on the arm's structure, our algorithm is able to test the indexability and compute the Whittle index of some multichain arms and remains efficient if it is able to do so.
+For an arm with $S$ states, our algorithm performs $(2/3)S^3+o(S^3)$ arithmetic operations for computing the Whittle indices and additional $(1/3)S^3+O(S^2)$ operations for testing the indexability.
+Moreover, leveraging the Sherman-Morrison formula and Coppersmith-Winograd algorithm for fast matrix multiplications, our algorithm has a $O(S^{2.5286})$ theoretical computational complexity.
+Finally, we implemented our algorithm in python programming language and our python package for Whittle index computation is installable via a terminal command line \texttt{pip install markovianbandit-pkg}.
+The implementation computes the Whittle indices of an arm with $15000$ states in just a few minutes.
+
+In Part~\ref{part:learning}, we studied the learning problems in which the unknown environment is a Markovian bandit.
+In Chapter~\ref{ch:learning_rested}, we proposed three learning algorithms, MB-PSRL, MB-UCRL2, and MB-UCBVI, for rested Markovian bandits with a discount.
+We showed that the three MB-* algorithms have a regret upper bound that scales like $\tilde{\landauO}(S\sqrt{nK})$, where $n$ is the number of arms, and $K$ is the number of episodes.
+MB-PSRL and MB-UCBVI can leverage Gittins index policy to have a runtime linear in $n$. Yet, we showed that MB-UCRL2 and any modification to UCRL2's variants for discounted restless bandits cannot leverage this index policy to have a runtime that scales in $n$.
+This is due to the fact that UCRL2 and its variants choose the optimistic bandit by requiring a joint knowledge of all the confidence bonuses of all arms.
+On this basis, if a structured MDP, such as a restless Markovian bandit, a weakly coupled MDP, or a factored MDP, can be solved efficiently when all the parameters, PSRL can be adapted to have efficient regret and runtime.
+On the contrary, solving the structured MDP efficiently when all the parameters are known does not imply that all optimistic learning algorithms are computationally efficient.
+
+In Chapter~\ref{ch:learning_restless}, we considered a learning setup when the unknown environment is a restless Markovian bandit, and the objective function is a long-term average reward. 
+We provided examples for showing that no RL algorithms can perform uniformly well over the general class of restless bandits whose arms are unichain.
+Moreover, our examples also show that the desirable properties of arms do not generally imply similar properties for the bandit.
+For instance, a restless bandit can be multichain even though all of its arm are ergodic.
+To conclude, this study established that defining a subclasses of restless bandits with desirable learning properties on the basis of arms' structure is essential but difficult. 
+
+\section{Future work}
+
+There are several directions to extend the work developed in this thesis. Some of them are outlined in the following.
+
+\paragraph{Computing the Whittle index of arms with sparse transition structure}
+The possibility of designing a Whittle index computation algorithm in restless Markovian arms with sparse transition matrix warrants further investigation.
+
+A natural direction for future research is to extend 
+
+\endgroup
