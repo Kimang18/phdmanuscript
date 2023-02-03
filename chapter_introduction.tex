@@ -86,7 +86,7 @@ So, the bandit has $S^n$ states in total.
 Given that Gittins index policy is optimal and computationally efficient when the bandit is known \cite{gittins1979bandit}, we compare the optimism in face of uncertainty (OFU) principle method with posterior sampling in terms of runtime and learning performance encoded by regret.
 To do so, we adapt UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}, two different algorithms from the OFU family, and PSRL \cite{osband2013more}, an algorithm from the posterior sampling family, to rested bandit with discount.
 The adapted versions are respectively called MB-UCRL2, MB-UCBVI, and MB-PSRL, where ``MB'' stands for Markovian bandit.
-We show that the three MB-* algorithms have a regret upper bounded like $\landauO(S\sqrt{nK})$, where $K$ is the number of episodes.
+We show that the three MB-* algorithms have a regret upper bounded like $\tilde{\landauO}(S\sqrt{nK})$, where $K$ is the number of episodes.
 This is an exponential improvement in terms of the number of arms $n$.
 We also derive the baseline regret for learning algorithms in rested bandit with discount.
 That is, any algorithm learning in discounted rested bandit suffers a regret that is at least $\Omega(\sqrt{SnK})$.
