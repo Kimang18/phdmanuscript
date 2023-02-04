@@ -6,29 +6,29 @@
 \label{ch:index_computation}
 
 %Whittle index is a generalization of Gittins index that provides very efficient allocation rules for restless multi-armed bandits.
-In the previous chapter, we introduced a new definition of indexability of a restless bandit arm and define the Whittle index accordingly.
-In this chapter, we develop an algorithm to test such the indexability and compute the Whittle indices of any finite-state restless bandit arm.
-This algorithm works in the discounted and undiscounted cases, and can compute Gittins index.
-Our algorithm will be built on three tools: (1) a careful characterization of Whittle index that allows one to recursively compute the $k$th smallest index from the $(k-1)$th smallest, and to test indexability, (2) the use of the Sherman-Morrison formula to make this recursive computation efficient, and (3) a sporadic use of the fastest matrix inversion and multiplication methods to obtain a subcubic complexity.
-We will show that an efficient use of the Sherman-Morrison formula leads to an algorithm that computes Whittle index in $(2/3)n^3 + o(n^3)$ arithmetic operations, where $n$ is the number of states of the arm. 
-The careful use of fast matrix multiplication leads to the first subcubic algorithm to compute Whittle or Gittins index: By using the current fastest matrix multiplication, the theoretical complexity of our algorithm is $O(n^{2.5286})$.
-We also develop an efficient implementation of our algorithm that can compute indices of Markov chains with several thousands of states in less than a few seconds.
+In the previous chapter, we introduced a new definition of indexability of a restless bandit arm and defined the Whittle index accordingly.
+In this chapter, we develop an algorithm for testing such indexability and computing the Whittle indices of any finite-state restless bandit arm.
+This algorithm works in discounted and undiscounted cases and can compute the Gittins index.
+Our algorithm will be built on three tools: (1) a careful characterization of Whittle index that allows one to recursively compute the $k$th smallest index from the $(k-1)$th smallest, and to test the indexability, (2) the use of the Sherman-Morrison formula to make this recursive computation efficient, and (3) a sporadic use of the fastest matrix inversion and multiplication methods to obtain a subcubic complexity.
+We will show that efficient use of the Sherman-Morrison formula leads to an algorithm that computes the Whittle index in $(2/3)n^3 + o(n^3)$ arithmetic operations, where $n$ is the number of states of the arm. 
+Furthermore, the careful use of fast matrix multiplication leads to the first subcubic algorithm to compute the Whittle or Gittins index: By using the current fastest matrix multiplication, the theoretical complexity of our algorithm is $O(n^{2.5286})$.
+We also develop an efficient implementation of our algorithm that compute indices of restless Markovian arms with several thousands of states in less than a few seconds.
 
 We present our contributions in Section~\ref{ch:cpt:sec:contribute} and summarize the related work in Section~\ref{ch:cpt:sec:related}.
 In Section~\ref{ch:cpt:sec:charac}, we provide a technical lemma to characterize an indexable arm.
 Section~\ref{sec:widx_compute} provides a general idea of how to compute the Whittle index of a finite-state arm.
-Then, we show, in Section~\ref{sec:formal_widx_algo}, how to use the Sherman-Morrison formula to compute the indices efficiently. We then show how to reduce the complexity of the algorithm by using fast matrix multiplication method in Section~\ref{sec:subcubic algorithm}. We compare the numerical result of different variants of our algorithm in Section~\ref{sec:numerical}. We show how to adapt this approach to the discounted case in Section~\ref{sec:discounted}.
-After that, in Section~\ref{ch:cpt:apx:comparison}, we provide a detail comparison between our algorithm and the algorithms of \cite{nino2020fast, akbarzadeh2020conditions} that are designed for discounted restless bandit.
+Then, in Section~\ref{sec:formal_widx_algo}, we show how to use the Sherman-Morrison formula to compute the indices efficiently. We then show how to reduce the algorithm's complexity by using the fast matrix multiplication method in Section~\ref{sec:subcubic algorithm}. We compare the numerical result of different variants of our algorithm in Section~\ref{sec:numerical}. Next, we show how to adapt this approach to the discounted case in Section~\ref{sec:discounted}.
+After that, in Section~\ref{ch:cpt:apx:comparison}, we provide a detailed comparison between our algorithm and the algorithms of \cite{nino2020fast, akbarzadeh2020conditions}, which are designed for discounted restless bandits.
 Finally, we conclude in Section~\ref{sec:conclusion}.
 
 \section{Contributions}
 \label{ch:cpt:sec:contribute}
 
-In this chapter, we investigate Whittle index computation in restless Markovian bandit problems and present three main contributions. 
+In this chapter, we investigate the Whittle index computation in restless Markovian bandit problems and present three main contributions. 
 
-Our first contribution is to propose a unified algorithm that computes the Whittle indices for both discounted and undiscounted restless bandits. Our algorithm, which can be viewed as a refinement of the algorithm in \cite{akbarzadeh2020conditions}, tests whether the input arm is indexable or not, and computes Whittle index if the arm is. As a byproduct, our algorithm can compute Gittins index in rested bandits which are a subclass of restless bandits.  This algorithm computes the indices in increasing order, and relies on an efficient use of the Sherman-Morrison formula to compute Whittle index in $(2/3)n^3 + O(n^2)$ plus subcubic time \cite{strassen1969gaussian} to solve a linear system of order $n$.
-Moreover, the algorithm can detect on the fly if a computed index violates the indexability condition, which adds an extra $(1/3)n^3+O(n^2)$ arithmetic operations. This test is optional: the complexity of our algorithm is $n^3+o(n^3)$ when testing indexability and $(2/3)n^3 +o(n^3)$ without the test. For discounted problems, our algorithm works for any finite-state arm regardless of its structure. For undiscounted problems, our algorithm takes as an input any arm and outputs three possibilities: the arm is (1) indexable, (2) non-indexable, or (3) multichain. % These three cases are not mutually exclusive.
-We show the correctness of the algorithm which proves that for unichain arms, our algorithm can fully characterize if the arm is indexable or not (that is, the output is either (1) indexable or (2) non-indexable). The possible outputs of our algorithm are summarized in Figure~\ref{fig:possible_outputs}.
+Our first contribution is to propose a unified algorithm that computes the Whittle indices for both discounted and undiscounted restless bandits. Our algorithm, which can be viewed as a refinement of the algorithm in \cite{akbarzadeh2020conditions}, tests whether an input arm is indexable and computes the Whittle index if the arm is. As a byproduct, our algorithm can compute the Gittins index in rested bandits, a subclass of restless bandits. This algorithm computes the indices in increasing order and relies on the efficient use of the Sherman-Morrison formula to compute the Whittle index in $(2/3)n^3 + O(n^2)$ plus a subcubic time \cite{strassen1969gaussian} to solve a linear system of order $n$.
+Moreover, the algorithm can detect on the fly if a computed index violates the indexability condition, adding an extra $(1/3)n^3+O(n^2)$ arithmetic operations. This test is optional: the complexity of our algorithm is $n^3+o(n^3)$ when testing the indexability and $(2/3)n^3 +o(n^3)$ without the test. For discounted problems, our algorithm works for any finite-state arm regardless of its structure. For undiscounted problems, our algorithm takes as input any arm and outputs three possibilities: the arm is (1) indexable, (2) non-indexable, or (3) multichain. % These three cases are not mutually exclusive.
+We show the correctness of the algorithm, which proves that for unichain arms, our algorithm can fully characterize if the arm is indexable or not (that is, the output is either (1) indexable or (2) non-indexable). The possible outputs of our algorithm are summarized in Figure~\ref{fig:possible_outputs}.
 
 \begin{figure}[ht]
     \centering
@@ -56,47 +56,47 @@ We show the correctness of the algorithm which proves that for unichain arms, ou
         \node[text width=2.3cm, align=center] at (9.5,2.5) {Undiscounted\\$\gamma=1$};
         \node[text width=3cm, align=center] at (8,0.2) {Discounted\\$\gamma<1$};
     \end{tikzpicture}
-    \caption{Possible outputs of our algorithm: For unichain or discounted problems, our algorithm tests indexability and returns the index if and only if the problem is indexable. For some multichain problems, the algorithm can test indexability. For the others, it only returns that the problem is multichain.}
+    \caption{Possible outputs of our algorithm: For unichain or discounted problems, our algorithm tests indexability and returns the index if and only if the problem is indexable. For some multichain problems, the algorithm can test the indexability and compute the Whittle index. For the others, it only returns that the problem is multichain.}
     \label{fig:possible_outputs}
 \end{figure}
 
-Our second contribution is to show how to reduce the complexity of the above algorithm to obtain the first subcubic algorithm to compute Whittle index. This improvement is made possible by the fact that a linear system can be solved in subcubic time. By carefully reordering the computations, we show that it is possible to reduce the use of the Sherman-Morrison formula at the price of solving more linear systems. The subcubic complexity comes by striking  a good balance between having too many or too few linear systems to solve. By using the current fastest matrix multiplication method, our algorithm can test indexability and compute Whittle index in $O(n^{2.5286})$. Our algorithm is also the first subcubic algorithm to compute Gittins index.
+Our second contribution is to show how to reduce the complexity of the above algorithm for obtaining the first subcubic algorithm to compute the Whittle index. This improvement is made possible by the fact that a linear system can be solved in subcubic time. By carefully reordering the computations, we show that it is possible to reduce the use of the Sherman-Morrison formula at the price of solving more linear systems. The subcubic complexity comes by striking a good balance between having too many or too few linear systems to solve. Using the current fastest matrix multiplication method, our algorithm can test indexability and compute the Whittle index in $O(n^{2.5286})$. Our algorithm is also the first subcubic algorithm to compute the Gittins index.
 
-Our last contribution is to provide an open-source implementation of our algorithm and present an empirical evaluation of the performance of our implementation. Our results show that the algorithm is very efficient in testing indexability and computing Whittle index. Moreover, our simulations indicate that the subcubic version of our algorithm not only has an asymptotically small complexity but is also, in practice, faster than our original $(2/3)n^3$ algorithm. Testing the indexability and computing indices takes less than one second for $n=1000$ states and less than $10$ minutes for $n=15000$ states. This is $15$ to $20$ times faster than the computation times reported in \cite{nino2020fast}.
+Our last contribution is to provide an open-source implementation of our algorithm and present an empirical evaluation of the performance of our implementation. Our results show that the algorithm is very efficient in testing the indexability and computing the Whittle index. Moreover, our simulations indicate that the subcubic version of our algorithm not only has an asymptotically small complexity but is also, in practice, faster than our original $(2/3)n^3$ algorithm. Testing the indexability and computing the index takes less than one second for $n=1000$ states and less than $10$ minutes for $n=15000$ states. This is $15$ to $20$ times faster than the computation times reported in \cite{nino2020fast}.
 
 \section{Related work}
 \label{ch:cpt:sec:related}
 
 The computation of Gittins index has received a lot of attention in the past, see for instance \cite{chen1986linear, katehakis1987multi, nino20072, sonin2008generalized} and the recent survey \cite{chakravorty2014multi}.
-For a $n$-state arm, the algorithms having the smallest complexity perform $(2/3)n^3+O(n^2)$ arithmetic operations \cite{chakravorty2014multi}.
-Note that in page $4$ of \cite{nino2020fast} the author claims that it is unlikely that this complexity can be improved.
+For an $n$-state arm, the algorithms having the smallest complexity perform $(2/3)n^3+O(n^2)$ arithmetic operations \cite{chakravorty2014multi}.
+Note that on page $4$ of \cite{nino2020fast}, the author claims that it is unlikely that this complexity can be improved.
 As we see later, we do improve upon this complexity. 
 
-Concerning Whittle index, to the best of our knowledge, there is no efficient general purpose algorithm to test indexability, and most papers studying Whittle index either assume that the studied model is indexable or focus on specific classes of restless bandits for which the structure of arms can be used to show indexability, see \emph{e.g.} \cite{aalto2011properties,akbarzadeh2019restless,akbarzadeh2021maintenance,borkar2017whittle}.
+Concerning the Whittle index, to the best of our knowledge, there is no efficient general-purpose algorithm to test indexability, and most papers studying the Whittle index either assume that the studied model is indexable or focus on specific classes of restless bandits for which the structure of arms can be used to show indexability, see, \ie, \cite{aalto2011properties,akbarzadeh2019restless,akbarzadeh2021maintenance,borkar2017whittle}.
 Assuming indexability, the computation of Whittle index has been considered by a few papers.
 
-For restless bandits with discount factor $\gamma\in(0,1)$, the most efficient algorithm to compute Whittle index was recently presented in \cite{nino2020fast}.
+For restless bandits with a discount factor $\gamma\in(0,1)$, the most efficient algorithm for computing the Whittle index was recently presented in \cite{nino2020fast}.
 This algorithm, called \emph{fast-pivoting} algorithm, performs $(2/3)n^3+O(n^2)$ arithmetic operations\footnote{multiplications and additions of real numbers, regardless of their values} if the initialization phase is excluded from the count.
-This is done by using the parametric simplex method and  exploiting the special structure of this linear system to  reduce the complexity of simplex pivoting steps.
-This fast-pivoting algorithm is an efficient implementation of adaptive-greedy algorithm \cite{nino2007dynamic} which outputs Whittle index if and only if the arm satisfies a technical condition called partial conservation law (PCL), which is more restrictive than just being indexable.
+This is done by using the parametric simplex method and  exploiting the special structure of this linear system to reduce the complexity of simplex pivoting steps.
+This fast-pivoting algorithm is an efficient implementation of the adaptive-greedy algorithm \cite{nino2007dynamic}, which outputs the Whittle index if and only if the arm satisfies a technical condition called partial conservation law (PCL), which is more restrictive than just being indexable.
 So, it is not applicable for all indexable restless bandits.
 %Also, the algorithm is only designed for discounted restless bandit and no explicit form of computations is given for non-discounted restless bandit, $\gamma=1$.
-Based on a geometric interpretation of Whittle index, the authors in \cite{akbarzadeh2020conditions} propose a refinement of the adaptive-greedy algorithm of \cite{nino2007dynamic} to compute Whittle indices of all indexable restless bandits.
-For a $n$-state arm, the refined algorithm achieves a $O(n^3)$ complexity by using the  Sherman-Morrison formula.
-The authors also propose a few checkable conditions to test indexability.
-However, those conditions are not necessary for indexability, which means that if an arm does not verify the conditions, we cannot conclude that the arm is non-indexable and an algorithm to check indexability is still needed.
-Also, no detailed description is given for adapting those conditions and their algorithm to restless bandit without discount.
+Based on a geometric interpretation of the Whittle index, the authors in \cite{akbarzadeh2020conditions} propose a refinement of the adaptive-greedy algorithm of \cite{nino2007dynamic} to compute the Whittle index of all indexable restless bandits.
+For an $n$-state arm, the refined algorithm of \cite{akbarzadeh2020conditions} achieves a $O(n^3)$ complexity by using the Sherman-Morrison formula.
+The authors also propose a few checkable conditions to test the indexability.
+However, those conditions are not necessary for indexability, which means that if an arm does not verify the conditions, we cannot conclude that the arm is non-indexable, and an algorithm to check indexability is still needed.
+Also, no detailed description is given for adapting those conditions and their algorithm to restless bandits without discount.
 A thorough comparison between our algorithm and \cite{akbarzadeh2020conditions,nino2020fast} will be given in this chapter. 
-While computing the Whittle indices of a known arm's model is still a challenge, there is interesting work in trying to learn Whittle index when only the arm's simulator is given and the arm's model is unknown.
+While computing the Whittle indices of a known arm's model is still a challenge, there is exciting work in trying to learn Whittle index when only the arm's simulator is given and the arm's model is unknown.
 For instance, \cite{gibson2021novel, avrachenkov2022whittle, fu2019towards} use Q-learning algorithm to estimate Whittle index as time evolves in finite-state restless bandits. Moreover,
-the work of \cite{nakhleh2021neurwin} uses deep reinforcement learning framework to estimate the Whittle indices of the arms with large state space or convoluted transition kernel, assuming a notion of strong indexability. 
+the work of \cite{nakhleh2021neurwin} uses a deep reinforcement learning framework to estimate the Whittle indices of arms with a large state space or convoluted transition kernel, assuming a notion of strong indexability. 
 
-For undiscounted restless bandit $\gamma=1$, the author of \cite{nino2020fast} only provides a brief description of how the fast-pivoting algorithm given in the discounted case can be adapted, although no explicit algorithm is given in that paper.
-For continuous-time $n$-state restless bandits, the work of \cite{ayesta2021computation} proposes an algorithm to check indexability and compute Whittle index with a complexity exponential in the number of states $n$ of each arm.
-According to Remark 4.1 of that paper, this complexity can be reduced to $O(n^5)$ if the restless bandit is known to be indexable and threshold-based policies are optimal.
+For undiscounted restless bandits $\gamma=1$, the author of \cite{nino2020fast} only provides a brief description of how the fast-pivoting algorithm developed for discounted case can be adapted, although no explicit algorithm is given in that paper.
+For continuous-time $n$-state restless bandits, the work of \cite{ayesta2021computation} proposes an algorithm checking the indexability and computing the Whittle index with a complexity exponential in the number of states $n$.
+According to Remark~{4.1} of that paper, this complexity can be reduced to $O(n^5)$ if the restless bandit is known to be indexable, and threshold-based policies are optimal.
 It is stated that their approach is not applicable for discounted restless bandits.
 For learning aspect, the work of \cite{gibson2021novel} shows as to learn Whittle index in undiscounted case by maintaining two Q-functions, updating them using Q-learning algorithm, and deducing the Whittle index from them when needed.
-The way that Whittle indices are computed is very close to our work but less efficient than our algorithm since the authors are more interested in learning the index. 
+The way the Whittle indices are computed is very close to our work but less efficient than our algorithm since the authors are more interested in learning the index. 
 
 \section{Characterization of indexability in undiscounted restless arm}
 \label{ch:cpt:sec:charac}
@@ -118,20 +118,20 @@ The following lemma proposes a characterization of any indexable arm, which we w
 \end{lem}
 
 In the above lemma, we use a subscript ``min'' in the penalties $\mu^{k}_{\min}$ in order to be consistent with the same quantities used in Algorithm~\ref{algo:whittle_informal} and \ref{algo:whittle_n3}.  The signification of this ``min'' is because it will be a minimum of values of the form $\mu^k_i$.
-We should stress that these quantities (as well as the Whittle index $\lambda_i$) can either be finite or infinite.
+We should stress that these quantities (and the Whittle index $\lambda_i$) can either be finite or infinite.
 We recall that when we say ``a policy $\pi$ is optimal for the penalty $+\infty$'', this means ``there exists a penalty $\bar{\lambda}$ such that $\pi$ is optimal for all $\lambda\ge\bar{\lambda}$''. 
 Symmetrically, when we say ``a policy $\pi$ is optimal for the penalty $-\infty$'', this means ``there exists a penalty $\underline{\lambda}$ such that $\pi$ is optimal for all $\lambda\le\underline{\lambda}$''.
 Also, the last part of the lemma implies that $\pi^k$ is the unique Bellman optimal policy for all penalty $\lambda\in(\mu^{k-1}_{\min}, \mu^{k}_{\min})$.
 
 \begin{proof}
-    The lemma is a consequence of the definition of indexability, namely Definition~\ref{ch:idx:defn:idx}.
+    The lemma is a consequence of the indexability's definition, namely Definition~\ref{ch:idx:defn:idx}.
 
     $(i)\Rightarrow(ii)$ -- Assume first that the arm is indexable.
-    By Lemma~\ref{ch:idx:lem:idx}, there exists a sequence $\{\widx_i\}_{i\in[n]}$ such that $\widx_i$ is the Whittle index of state $i$ and if $\pi\in\Pi^*(\lambda)$ is any Bellman optimal policy for the penalty $\lambda$, then $\pi_i=1$ if $\lambda<\lambda_i$ and $\pi_i=0$ if $\lambda>\lambda_i$.
+    By Lemma~\ref{ch:idx:lem:idx}, there exists a sequence $\{\widx_i\}_{i\in[n]}$ such that $\widx_i$ is the Whittle index of state $i$, and if $\pi\in\Pi^*(\lambda)$ is any Bellman optimal policy for the penalty $\lambda$, then $\pi_i=1$ if $\lambda<\lambda_i$, and $\pi_i=0$ if $\lambda>\lambda_i$.
     Now, let $\sigma^k$ be the state with the $k$th smallest index (where ties are broken arbitrarily).
-    Let $\mu^k_{\min}:=\lambda_{\sigma^k}$ be the index of the state $\sigma^k$ and let $\lambda\in(\mu^{k-1}_{\min},\mu^{k}_{\min}$).
-    Then, any Bellman optimal policy for the penalty $\lambda<\lambda_{\sigma^{k-1}}$ contains $\pi^{k}:=[n]\setminus\{\sigma^1,\dots, \sigma^{k-1}\}$.
-    Similarly, $\pi^{k}$ contains any Bellman optimal policy for the penalty $\lambda>\lambda_{\sigma^{k-1}}$.
+    Let $\mu^k_{\min}:=\lambda_{\sigma^k}$ be the index of the state $\sigma^k$, and let $\lambda\in(\mu^{k-1}_{\min},\mu^{k}_{\min}$).
+    Then, any Bellman optimal policy for a penalty $\lambda<\lambda_{\sigma^{k-1}}$ contains $\pi^{k}:=[n]\setminus\{\sigma^1,\dots, \sigma^{k-1}\}$.
+    Similarly, $\pi^{k}$ contains any Bellman optimal policy for all penalty $\lambda>\lambda_{\sigma^{k-1}}$.
     This implies that the policy $\pi^{k}$ is the unique Bellman optimal policy for all $\lambda\in(\mu^{k-1}_{\min},\mu^{k}_{\min})$. 
 
     $(ii)\Rightarrow(i)$ -- The property (ii) implies that $\pi^k$ is the unique Bellman optimal policy for all $\lambda\in(\mu^{k-1}_{\min},\mu^k_{\min})$. 
@@ -145,45 +145,45 @@ Also, the last part of the lemma implies that $\pi^k$ is the unique Bellman opti
 \section{Condition for indexability and basic algorithm}
 \label{sec:widx_compute}
 
-This section aims at providing a basic algorithm to detect whether an arm is indexable or not and if it is the case, to compute the Whittle index of all states.
+This section aims to provide a basic algorithm to detect whether an arm is indexable and, if so, compute the Whittle index of all states.
 This algorithm tries to construct a sequence of \emph{unichain} policies $\pi^1\supsetneq \pi^2\supsetneq\dots$ that satisfy the conditions of Lemma~\ref{ch:cpt:lem:idx}.
-We prove the correctness of our algorithm: if it can construct such a sequence, then the problem is indexable and the computed indices are correct.
-If the algorithm cannot compute such a sequence of policies, this is either because the arm is not indexable, or because the arm is multichain.
+We prove the correctness of our algorithm: if it can construct such a sequence, then the problem is indexable, and the computed indices are correct.
+On the contrary, if the algorithm cannot compute such a sequence of policies, this is either because the arm is not indexable or because the arm is multichain.
 
 \subsection{Condition for Bellman optimality}
 
 In this section, we provide two technical lemmas that we will use in our algorithm. %They provide conditions on the bias of a policy to verify whether this policy is Bellman optimal and if yes, whether it is the unique Bellman optimal policy. 
-They provide conditions to verify when a given unichain policy is Bellman optimal and if yes, when it is the unique Bellman optimal policy.
+They provide conditions to check whether a given unichain policy is Bellman optimal and, if so, whether it is the unique Bellman optimal policy.
 
-Since $\lambda$ is a variable, the gain and bias functions depend on $\lambda$ in $\lambda$-penalized MDP.
-We will write them as the functions of $\lambda$: For instance, given a policy $\pi$, its gain is $\vg^\pi(\lambda)$ and its bias is $\vh^\pi(\lambda)$. Also, the optimal gain is $\vg^*(\lambda)$.
+Since $\lambda$ is a variable, the gain and bias functions depend on $\lambda$ in the $\lambda$-penalized MDP.
+We will write them as the functions of $\lambda$: For instance, given a policy $\pi$, its gain is $\vg^\pi(\lambda)$, and its bias is $\vh^\pi(\lambda)$. Also, the optimal gain is $\vg^*(\lambda)$.
 
-Let $\pi\subseteq[n]$ be a unichain policy and $(g^\pi, \vh^\pi)$ be the solution of Bellman evaluation equation \eqref{eq:bias_eval} for $\pi$ (see Proposition~\ref{prop:be_eval}).
+Let $\pi\subseteq[n]$ be a unichain policy and $(g^\pi, \vh^\pi)$ satisfies the Bellman evaluation equation \eqref{eq:bias_eval} for $\pi$ (see Proposition~\ref{prop:be_eval}).
 %By , there exists a gain $g^\pi$ and a bias vector $\vh^\pi$ such that
 %\begin{equation}
 %    g^\pi(\lambda) + h^\pi_i(\lambda) = r^{\pi_i}_i -\lambda \pi_i + \sum_{j=1}^n P^{\pi_i}_{ij}h^\pi_j(\lambda).  \label{eq:bias_eval1}
 %\end{equation}
-Along the notion of advantage in Section~\ref{ch:idx:sec:bell}, we denote by $\alpha^{\pi}_i$ the \emph{active advantage} in state $i$ under policy $\pi$, which is the difference between the value in state $i$ of action activate and the one of action rest.
+Along with the notion of advantage in Section~\ref{ch:idx:sec:bell}, we denote by $\alpha^{\pi}_i$ the \emph{active advantage} in state $i$ under policy $\pi$, which is the difference between the value in state $i$ of action activate and the one of action rest.
 It is defined by:
 \begin{equation}
     \label{eq:advantage}
     \alpha^\pi_i(\lambda):=r^1_i -r^0_i -\lambda +\sum_{j=1}^n (P^1_{ij} -P^0_{ij})h^\pi_j(\lambda).
 \end{equation}
-For a unichain policy, the evaluation equation \eqref{eq:bias_eval} uniquely determines the vector $\vh^\pi$ up to an additive constant $c\mathbf{1}$ (see \cite[Chapter 8]{puterman2014markov}).
-Hence, the active advantage vector $\valpha^\pi$ is uniquely determined for a unichain policy $\pi$.
+For any unichain policy $\pi$, the evaluation equation \eqref{eq:bias_eval} uniquely determines the vector $\vh^\pi$ up to an additive constant $c\mathbf{1}$ (see \cite[Chapter 8]{puterman2014markov}).
+Hence, the active advantage vector $\valpha^\pi$ is uniquely determined for any unichain policy $\pi$.
 As we will see later, the function $\valpha^\pi(\lambda)$ is affine in $\lambda$.
 Note that despite the name ``advantage'', $\valpha^{\pi}(\widx)$ can be negative.
 
 Our algorithm computes the Whittle index in increasing order by trying to eliminate states one by one.
-The following lemma shows that to compute the next Bellman optimal policy, one should look at when the active advantage of a state is equal to $0$.
+The following lemma shows that to compute the next state to eliminate, one should look at when the active advantage of the active state equals $0$.
 In this lemma, $\pi\ominus\{i\}$ denotes the symmetric difference between $\pi$ and $\{i\}$, \emph{i.e.}, $\pi\ominus\{i\}=\pi\setminus\{i\}$ if $i\in\pi$ and $\pi\ominus\{i\}=\pi\cup\{i\}$ if $i\not\in\pi$.
-Also, the active advantage provides necessary and sufficient condition for a unichain policy to be Bellman optimal, and/or to be the unique Bellman optimal policy as shown in the following lemma.
+Also, the active advantage provides necessary and sufficient condition for a unichain policy to be Bellman optimal, and/or to be the unique Bellman optimal policy. % as shown in the following lemma.
 \begin{lem}
     \label{ch:cpt:lem:unicity_binary}
     In a finite-state arm, let $\pi$ be a unichain policy. Then, for any penalty $\lambda$:
     \begin{enumerate}[label=(\roman*)]
         \item \label{it:binary_opt1} Suppose that $\pi$ is gain optimal. Then, $\pi$ is Bellman optimal if and only if $\alpha^\pi_i(\lambda)\ge0$ for all $i\in\pi$ and $\alpha^\pi_i(\lambda)\le0$ for all $i\notin\pi$.
-        \item \label{it:binary_optX} Suppose that $\pi$ is Bellman optimal and $\alpha^\pi_i(\lambda)=0$. Then, $\pi\ominus\{i\}$ is also Bellman optimal. If, in addition, $\pi\ominus\{i\}$ is unichain, then $\valpha^\pi(\lambda)=\valpha^{\pi\ominus\{i\}}(\lambda)$.
+        \item \label{it:binary_optX} Suppose that $\pi$ is Bellman optimal and $\alpha^\pi_i(\lambda)=0$. Then, $\pi\ominus\{i\}$ is also Bellman optimal. In addition, if $\pi\ominus\{i\}$ is unichain, then $\valpha^\pi(\lambda)=\valpha^{\pi\ominus\{i\}}(\lambda)$.
         \item \label{it:binary_opt2} Suppose that $\pi$ is Bellman optimal. Then, $\pi$ is the unique Bellman optimal policy if and only if $\alpha^\pi_i(\lambda)>0$ for all $i\in\pi$ and $\alpha^\pi_i(\lambda)<0$ for all $i\notin\pi$.
     \end{enumerate}
 \end{lem}
@@ -204,7 +204,7 @@ Also, the active advantage provides necessary and sufficient condition for a uni
     Since $\pi$ is Bellman optimal, $\vh^\pi$ is one of the solutions of the optimality equation $\eqref{eq:bias_opt}$.
     So, $\pi\ominus\{i\}$ satisfies the second condition of \eqref{ch:idx:eq:bell}.
     We conclude that $\pi\ominus\{i\}$ is Bellman optimal.
-    Last but not least, if, in addition, $\pi\ominus\{i\}$ is unichain, then $\vh^\pi$ is a solution of the evaluation equations \eqref{eq:bias_eval} for policy $\pi\ominus\{i\}$. Consequently, $\valpha^\pi(\lambda)=\valpha^{\pi\ominus\{i\}}(\lambda)$.
+    In addition, if $\pi\ominus\{i\}$ is unichain, then $\vh^\pi$ is a solution of the evaluation equations \eqref{eq:bias_eval} for policy $\pi\ominus\{i\}$. Consequently, $\valpha^\pi(\lambda)=\valpha^{\pi\ominus\{i\}}(\lambda)$.
     
     Points~\ref{it:binary_opt1} and \ref{it:binary_optX} also show one direction of the equivalence of \ref{it:binary_opt2}: If policy $\pi$ is the unique Bellman optimal policy, then for all state $i$, $\alpha^\pi_i(\lambda)\ne0$. The non-trivial property is the other direction of the equivalence. This is a consequence of Lemma~\ref{ch:idx:lem:unicity_BO} that we proved in the previous chapter.
 \end{proof}
@@ -228,7 +228,7 @@ The proof of Lemma~\ref{ch:idx:lem:unicity_BO} that we did in the previous chapt
         \end{subfigure}            
     \end{tabular}
     \caption{
-        The active advantage as a function of penalty for two unichain examples, one is indexable (Figure~\ref{fig:illustrate_vf}) and the other is not (Figure~\ref{fig:illustrate_non_indexable}).
+        The active advantage as a function of penalty for two unichain examples, one is indexable (Figure~\ref{fig:illustrate_vf}), and the other is not (Figure~\ref{fig:illustrate_non_indexable}).
         The red dots mark where the lines change their slope.
         %The parameters of both examples are provided in Appendix \ref{apx:non_indexable_example}.
     }
@@ -279,7 +279,7 @@ For each model, we plot in Figure~\ref{fig:illustrate_indexability} the active a
 By Lemma~\ref{ch:cpt:lem:unicity_binary}, we know that an optimal policy should activate all states having a positive advantage and rest all states having a negative advantage.
 Combined with the characterization of Lemma~\ref{ch:cpt:lem:idx}, this shows that:
 \begin{itemize}
-    \item The model presented in Figure~\ref{fig:illustrate_vf} is indexable: the optimal policy is a non-increasing function of $\lambda$ and the indices are $\lambda_1\approx0.3$, $\lambda_2\approx0.8$ and $\lambda_3\approx0.7$.
+    \item The model presented in Figure~\ref{fig:illustrate_vf} is indexable: the optimal policy is a non-increasing function of $\lambda$, and the indices are $\lambda_1\approx0.3$, $\lambda_2\approx0.8$ and $\lambda_3\approx0.7$.
     \item The model presented in Figure~\ref{fig:illustrate_non_indexable} is not indexable: the optimal policy $\pi^*(0.7)=\{3\}$ is not included in $\pi^*(0.6)=\{1\}$. 
 \end{itemize}
 
@@ -287,7 +287,7 @@ Combined with the characterization of Lemma~\ref{ch:cpt:lem:idx}, this shows tha
 \subsection{Overview of the algorithm}
 \label{ssec:informal_widx_algo}
 
-Our algorithm computes Whittle index in increasing order by navigating through unichain Bellman optimal policies and using the characterization provided by Lemma~\ref{ch:cpt:lem:idx}.
+Our algorithm computes the Whittle index in increasing order by navigating through unichain Bellman optimal policies and using the characterization provided by Lemma~\ref{ch:cpt:lem:idx}.
 It follows the graphical construction given in Figure \ref{fig:illustrate_vf}. It uses the following facts:
 \begin{itemize}
     \item If policy $\pi^1:=[n]$ is unichain, then $\valpha^{\pi^1}$ is decreasing in $\lambda$
@@ -295,7 +295,7 @@ It follows the graphical construction given in Figure \ref{fig:illustrate_vf}. I
     \item For an indexable arm, computing the index can be done by a greedy algorithm that constructs a sequence of penalties $\mu^1_{\min}\le\mu^2_{\min}\le\dots\le\mu^n_{\min}$ and a sequence of unichain policies $\pi^1\supsetneq\dots\supsetneq\pi^{n}$ by looking at where $\alpha^{\pi^k}_i(\lambda)$ intersects horizontal axis for all $i\in\pi^k$.
     \item The arm is indexable if and only if for all $k$ such that $\mu^{k-1}_{\min}<\mu^{k}_{\min}$, the constructed $\pi^k$ is the largest Bellman optimal policy for the penalty $\mu^k_{\min}$.
 \end{itemize}
-In order to compute the Whittle index and test the indexability, our algorithm needs that all policies $\pi^k$ constructed by the algorithm to be unichain.
+In order to compute the Whittle index and test the indexability, our algorithm needs all policies $\pi^k$ to be unichain.
 It does not require the arm to be unichain. 
 
 This leads to Algorithm~\ref{algo:whittle_informal}, that we write in pseudocode.
@@ -362,10 +362,10 @@ These limits are well-defined because the functions $\alpha$s are affine in $\la
 
 \medskip
 
-To illustrate how the algorithm works, we plot in Figure~\ref{fig:illustrate_algo} the values computed by the algorithm for the two arms represented in Figure~\ref{fig:illustrate_indexability}. For both models (indexable and non-indexable), the algorithm starts with the policy $[n]$ for which the derivative of the active advantage with respect to $\lambda$ is $-1$ for all states. It then computes $\mu^1_{\min}$ which is the potential index of State~$\sigma^1=1$ for \ref{fig:illustrate_algo_ind} and of State~$\sigma^1=3$ for \ref{fig:illustrate_algo_nind}. The algorithm then moves to iteration 2 and computes $\mu^2_{\min}>\mu^1_{\min}$ for both models and observes that $\alpha^{\pi^2}_{\sigma^1}(\mu^2_{\min})<0$. Then the algorithm moves to iteration $3$ and computes $\mu^3_{\min}>\mu^2_{\min}$. There are now two cases: 
+To illustrate how the algorithm works, we plot in Figure~\ref{fig:illustrate_algo} the values computed by the algorithm for the two arms represented in Figure~\ref{fig:illustrate_indexability}. For both models (indexable and non-indexable), the algorithm starts with the policy $[n]$ for which the derivative of the active advantage with respect to $\lambda$ is $-1$ for all states. It then computes $\mu^1_{\min}$ which is the potential index of State~$\sigma^1=1$ for the example \ref{fig:illustrate_algo_ind} and of State~$\sigma^1=3$ for the example \ref{fig:illustrate_algo_nind}. The algorithm then moves to iteration 2 and computes $\mu^2_{\min}>\mu^1_{\min}$ for both models and observes that $\alpha^{\pi^2}_{\sigma^1}(\mu^2_{\min})<0$. Then the algorithm moves to iteration $3$ and computes $\mu^3_{\min}>\mu^2_{\min}$. There are now two cases: 
 \begin{itemize}
-    \item For \ref{fig:illustrate_algo_ind}, the algorithm verifies that $\pi^4:=\emptyset$ is unichain ($\alpha^{\emptyset}_i$ is decreasing in $\lambda$ for all $i$), and returns that the arm is indexable.
-    \item For \ref{fig:illustrate_algo_nind}, the algorithm realizes that $\alpha^{\pi^3}_{\sigma^1}(\mu^3_{\min})>0$ which shows that this model is not indexable. 
+    \item For the example in \ref{fig:illustrate_algo_ind}, the algorithm verifies that $\pi^4:=\emptyset$ is unichain ($\alpha^{\emptyset}_i$ is decreasing in $\lambda$ for all $i$), and returns that the arm is indexable.
+    \item For the example in \ref{fig:illustrate_algo_nind}, the algorithm realizes that $\alpha^{\pi^3}_{\sigma^1}(\mu^3_{\min})>0$, which shows that this model is not indexable. 
 \end{itemize}
 
 \noindent Note that for the indexable example of Figure~\ref{fig:illustrate_algo_ind}, the active advantage function is not a decreasing function of $\lambda$. Hence, this example is neither PCL-indexable (defined in \cite[Definition~3]{nino2020fast}) nor strongly-indexable (defined in \cite{nakhleh2021neurwin}). However, this does not prevent our algorithm from working. 
@@ -394,7 +394,7 @@ The required condition is that all Bellman optimal policies $\{\pi^k\}_{k\ge1}$ 
 In particular, there exist examples of arms that are multichain and indexable and for which the algorithm returns ``indexable''.
 Similarly, there exist examples of arms that are multichain and non-indexable and for which the algorithm returns ``non-indexable''.
 In fact, our algorithm works by exploring solely unichain policies. It does so because (in general) the bias vector of multichain policy is not unique up to a constant vector.
-The characterization of Bellman optimal policies is much more difficult for multichain models and the notion of indexability becomes more elusive (see the examples in \figurename~\ref{fig:ambiguous_example2} in the previous chapter).
+The characterization of Bellman optimal policies is much more difficult for multichain models, and the notion of indexability becomes more elusive (see the examples in \figurename~\ref{fig:ambiguous_example2} in the previous chapter).
 When Algorithm~\ref{algo:whittle_informal} returns ``multichain'', it means that the algorithm is unable to decide whether the arm is indexable or not (but the algorithm knows that the arm is multichain because it has just found a multichain policy).
 
 \begin{proof}[Proof of Theorem~\ref{thm:correct}]
@@ -416,12 +416,12 @@ When Algorithm~\ref{algo:whittle_informal} returns ``multichain'', it means that
     \begin{figure}[ht]
         \centering
             \includegraphics[width=.8\linewidth]{induction_demo}
-        \caption{Illustration of what happens when $\mu^{k-1}_{\min}<\mu^k_{\min}$ and when the test of Line~\ref{algo1:test1} is successful (recall that the function $\alpha^{\pi^{k}}_i(\lambda)$ is affine in $\lambda$). The black lines are the advantage functions $\alpha^{\pi^k}_i(\lambda)$ of active state $i\in\pi^k$. The dashed red lines are the advantage functions $\alpha^{\pi^k}_i(\lambda)$ of passive state $i\not\in\pi^k$.}
+        \caption{Illustration of what happens when $\mu^{k-1}_{\min}<\mu^k_{\min}$, and when the test of Line~\ref{algo1:test1} is successful (recall that the function $\alpha^{\pi^{k}}_i(\lambda)$ is affine in $\lambda$). The black lines are the advantage functions $\alpha^{\pi^k}_i(\lambda)$ of active state $i\in\pi^k$. The dashed red lines are the advantage functions $\alpha^{\pi^k}_i(\lambda)$ of passive state $i\not\in\pi^k$.}
         \label{fig:proof_algo}
     \end{figure}
 
     Suppose that the induction is true until iteration $k-1$ and that the algorithm completes iteration $k$.
-    If $\mu^{k-1}_{\min}=\mu^k_{\min}$, \ref{eq:induc1} is trivial and \ref{eq:induc2} is a direct consequence of the definition of $\mu^k_{\min}$ and of Lemma~\ref{ch:cpt:lem:unicity_binary}.
+    If $\mu^{k-1}_{\min}=\mu^k_{\min}$, \ref{eq:induc1} is trivial and \ref{eq:induc2} is a direct consequence of the definition of $\mu^k_{\min}$ and Lemma~\ref{ch:cpt:lem:unicity_binary}.
     Consider now that $\mu^{k-1}_{\min}<\mu^k_{\min}$ and observe what happens in Figure~\ref{fig:proof_algo}.
     By the induction hypothesis, $\pi^k$ is Bellman optimal for the penalty $\mu^{k-1}_{\min}$.
     Moreover, by the definition of $\mu^k_{\min}$, together with $\mu^{k-1}_{\min}<\mu^k_{\min}$, $\alpha^{\pi^k}_i(\mu^{k-1}_{\min})\ne0$ for all $i\in\pi^k$. Hence:
@@ -443,7 +443,7 @@ When Algorithm~\ref{algo:whittle_informal} returns ``multichain'', it means that
 
     This shows that the induction property is true for all $k\in[n]$.
     In particular, when $\pi^{n+1}:=\emptyset$ is unichain, $\alpha^{\pi^{n+1}}_i$ is decreasing in $\lambda$ as we prove later in \eqref{eq:b_pi_n1} that $\frac{\partial \alpha^{\pi^{n+1}}_i}{\partial \lambda} =-1$ for all $i\in[n]$.
-    Combine this with the fact that $\alpha^{\pi^{n+1}}_i(\mu^{n}_{\min}) =\alpha^{\pi^{n}}_i(\mu^{n}_{\min})\le0$ for all $i$, Lemma~\ref{ch:cpt:lem:unicity_binary} implies that $\pi^{n+1}$ is the unique Bellman optimal policy for $\lambda\in(\mu^n_{\min},\mu^{n+1}_{\min})$.
+    Combine this with the fact that $\alpha^{\pi^{n+1}}_i(\mu^{n}_{\min}) =\alpha^{\pi^{n}}_i(\mu^{n}_{\min})\le0$ for all $i$, Lemma~\ref{ch:cpt:lem:unicity_binary} implies that $\pi^{n+1}$ is the unique Bellman optimal policy for $\lambda>\mu^n_{\min}$.
     In summary, there are two cases for which the algorithm outputs that the arm is indexable:
     \begin{enumerate}
         \item if the algorithm goes until the end of iteration $n$, then the sequence of values $\{\mu^k_{\min}\}_{k\in[n+1]}$ and of policies $\{\pi^k\}_{k\in[n+1]}$ satisfies the conditions of Lemma~\ref{ch:cpt:lem:idx} (ii) and the arm is indexable.
@@ -486,7 +486,7 @@ We should note that by Line~\ref{algo1:sigma^k}, it is possible to have $\mu^k_{
 This happens when several states have the same value of Whittle index.
 This is not problematic because we are sure that $\sigma^k\neq\sigma^{k-1}$ by Line~\ref{algo1:pik}.
 
-In the proof of Theorem~\ref{thm:correct}~\ref{it:idx_proof}, we showed that when policy $[n]$ is unichain, the function $\alpha^{\pi^1}_{i}(\lambda)$ is decreasing in $\lambda$ which implies that it crosses the line $0$ at some finite value $\mu^1_{i}$. This implies that for an indexable arm, if $[n]$ is unichain then the Whittle index are all strictly larger than $-\infty$. A symmetric argument shows that if policy $\emptyset$ is unichain, then all Whittle index are strictly smaller than $+\infty$. This implies the following result. 
+In the proof of Theorem~\ref{thm:correct}~\ref{it:idx_proof}, we showed that when policy $[n]$ is unichain, the function $\alpha^{\pi^1}_{i}(\lambda)$ is decreasing in $\lambda$, which implies that it crosses the line $0$ at some finite value $\mu^1_{i}$. This implies that for an indexable arm, if $[n]$ is unichain then the Whittle index are all strictly larger than $-\infty$. A symmetric argument shows that if policy $\emptyset$ is unichain, then all Whittle index are strictly smaller than $+\infty$. This implies the following result. 
 \begin{cor}[Whittle index value of indexable unichain arm is finite]
     Given a unichain arm with $n$ states, if the arm is indexable, then the indices of the $n$ states are finite: $\lambda_i\not\in\{-\infty,+\infty\}$ for all $i\in[n]$.
 \end{cor}
@@ -523,7 +523,7 @@ Consider the two examples of Figure~\ref{fig:example_multichain}.
         (b) Our algorithm returns ``multichain''.
     \end{minipage}
     
-    \caption{Example of an indexable multichain problem with infinite Whittle index. Transitions are deterministic and labels on edges indicate rewards (for the $\lambda$-penalized arm). Solid black arrows correspond to action ``activate''  and dashed red ones to the action ``rest''.}
+    \caption{Example of an indexable multichain problem with infinite Whittle index. Transitions are deterministic, and labels on edges indicate rewards (for the $\lambda$-penalized arm). Solid black arrows correspond to action ``activate'', and dashed red ones to the action ``rest''.}
     \label{fig:example_multichain}
 \end{figure} 
 The examples are multichain because policy $\emptyset$ has two irreducible classes for example (a) and policy $\{1,2\}$ has two irreducible classes for example (b). These two problems are indexable:
@@ -635,7 +635,7 @@ Thus, $\alpha^{\pi^k}_i(\lambda)=0$ if and only if
     \label{eq:alpha_null}
     \alpha^{\pi^{k-1}}_i(\mu^{k-1}_{\min}) = (\lambda -\mu^{k-1}_{\min})(1 -\sum_{j=2}^n\Delta_{ij} d_j^{\pi^k}).
 \end{align}
-Recall that $\alpha^{\pi^{k-1}}_i(\mu^{k-1}_{\min})$ is non-negative for active state $i\in\pi^k$. The value $\mu^k_i$ is the smallest $\lambda\ge\mu^{k-1}_{\min}$ that satisfies Equation~\eqref{eq:alpha_null}. There are three cases: 
+Recall that $\alpha^{\pi^{k-1}}_i(\mu^{k-1}_{\min})$ is non-negative for any active state $i\in\pi^k$. The value $\mu^k_i$ is the smallest $\lambda\ge\mu^{k-1}_{\min}$ that satisfies Equation~\eqref{eq:alpha_null}. There are three cases: 
 \begin{enumerate}
     \item if $\alpha^{\pi^{k-1}}_i(\mu^{k-1}_{\min})=0$, then $\mu^k_i:=\mu^{k-1}_{\min}$;
     \item if $\alpha^{\pi^{k-1}}_i(\mu^{k-1}_{\min})>0$ and
@@ -674,7 +674,7 @@ Equation~\eqref{eq:mu_i_k_from_d} can be rewritten as
     \label{eq:mu^k_i_from_y}
 \end{align}
 The above equation can be used to compute $\mu_i^k$ and $\mu^k_{\min}$ easily from $y^k_i$ and $z^{k-1}_i$. 
-Indeed, from the previous section, we have $\alpha^{\pi^k}_i(\mu^k_{\min}) = \alpha^{\pi^{k-1}}_i(\mu^{k-1}_{\min}) -(\mu^k_{\min} -\mu^{k-1}_{\min})(1 -\sum_{j=2}^n\Delta_{ij}d_j^{\pi^k})$ which translates into
+Indeed, from the previous section, we have $\alpha^{\pi^k}_i(\mu^k_{\min}) = \alpha^{\pi^{k-1}}_i(\mu^{k-1}_{\min}) -(\mu^k_{\min} -\mu^{k-1}_{\min})(1 -\sum_{j=2}^n\Delta_{ij}d_j^{\pi^k})$, which translates into
 \begin{align}
     z^k_i &= z^{k-1}_i -(\mu^k_{\min} -\mu^{k-1}_{\min})(1 -y^k_i). \label{eq:z^k-i}
 \end{align}
@@ -723,7 +723,7 @@ Moreover, by \eqref{eq:h is linear}, one has
 \begin{align}
     \valpha^{\pi^1}(\lambda)
     &=\vdelta -\lambda\vone +\mDelta(\mA^{\pi^1})^{-1}\vr^{\pi^1} -\lambda\underbrace{\mDelta(\mA^{\pi^1})^{-1}\vpi^1}_{=:\vy^1} \nonumber\\
-    &=\vdelta -\lambda\vone +\mX^1\vr^{\pi^1}. \label{eq:b_pi_one}
+    &=\vdelta -\lambda\vone +\mDelta(\mA^{\pi^1})^{-1}\vr^{\pi^1}. \label{eq:b_pi_one}
 \end{align}
 Finally, for $\vpi^{n+1}=[0\ \dots\ 0]^\top$, one has
 \begin{equation}
@@ -814,7 +814,7 @@ This leads to Algorithm~\ref{algo:whittle_n3} that can be decomposed as follows:
         \end{itemize}
     \item Testing if $\pi^{n+1}$ is unichain can be done in $O(n^2)$ by Tarjan's strongly connected component algorithm.
 \end{enumerate}
-Hence, the total complexity of this algorithm is $n^3+o(n^3)$ if we test indexability and $(2/3)n^3+o(n^3)$ if we do not test indexability. Without testing the indexability, our algorithm has the same main complexity as \cite{nino2020fast}. However, the algorithm of \cite{nino2020fast} computes Whittle index only for an arm that is PCL-indexable. Hence, we can claim that our algorithm is the first algorithm that computes Whittle index with cubic complexity for all indexable undiscounted restless bandits. It is also the first algorithm with cubic complexity that detects non-indexability of restless bandits.
+Hence, the total complexity of this algorithm is $n^3+o(n^3)$ if we test indexability and $(2/3)n^3+o(n^3)$ if we do not test indexability. Without testing the indexability, our algorithm has the same main complexity as \cite{nino2020fast}. However, the algorithm of \cite{nino2020fast} computes Whittle index only for an arm that is PCL-indexable. Hence, we can claim that our algorithm is the first algorithm that computes Whittle index with $(2/3)n^3$ main complexity for all indexable undiscounted restless arms. It is also the first algorithm with cubic complexity that detects non-indexability of restless bandits.
 Note that the ties are broken arbitrarily for Lines~\ref{line:def_mu1} and \ref{line:def_muk}.
 
 
@@ -870,7 +870,7 @@ Here, we propose an alternative formulation which consists in recomputing the wh
     \label{algo:FMM}
 \end{subroutine}
 
-To see why this can be more efficient, we illustrate in Figure~\ref{fig:fast_mm} the pairs $(\ell,\sigma^{k-1})$ for which we compute the vector $\mX^{\ell}_{: \sigma^{k-1}}$, either for Subroutine~\ref{algo:update_X} or Subroutine~\ref{algo:FMM}.  In each case, a vertical blue line indicates that we recompute the whole matrix $\mX^k$ by solving a linear system.  The gray zone corresponds to the values $(\ell,\sigma^{k-1})$ for which we compute $\mX^\ell_{: \sigma^{k-1}}$ using Equation \eqref{eq:X^ell+1-i} and the red squares represent the vector $\mX^{k}_{: \sigma^{k-1}}$ used at Line~\ref{algo2:y^k} of Algorithm~\ref{algo:whittle_n3}. For Subroutine~\ref{algo:update_X}, we do one matrix inversion at the beginning and then compute for all $(\ell,\sigma^{k-1})$ with $\ell\le k$ because the red square at value $(k,\sigma^{k-1})$ is computed starting from the vertical blue line at value $(1,\sigma^{k-1})$. For Subroutine~\ref{algo:FMM}, we do $ \floor{n/K}$ (here $ \floor{n/K} =4$) full recalculation of $\mX^k$, which correspond to the vertical blue lines. We gain in terms of operations because the surface of the gray zone to compute is divided by $ \floor{n/K} $.
+To see why this can be more efficient, we illustrate in Figure~\ref{fig:fast_mm} the pairs $(\ell,\sigma^{k-1})$ for which we compute the vector $\mX^{\ell}_{: \sigma^{k-1}}$, either for Subroutine~\ref{algo:update_X} or Subroutine~\ref{algo:FMM}.  In each case, a vertical blue line indicates that we recompute the whole matrix $\mX^k$ by solving a linear system.  The gray zone corresponds to the values $(\ell,\sigma^{k-1})$ for which we compute $\mX^\ell_{: \sigma^{k-1}}$ using Equation \eqref{eq:X^ell+1-i}, and the red squares represent the vector $\mX^{k}_{: \sigma^{k-1}}$ used at Line~\ref{algo2:y^k} of Algorithm~\ref{algo:whittle_n3}. For Subroutine~\ref{algo:update_X}, we do one matrix inversion at the beginning and then compute for all $(\ell,\sigma^{k-1})$ with $\ell\le k$ because the red square at value $(k,\sigma^{k-1})$ is computed starting from the vertical blue line at value $(1,\sigma^{k-1})$. For Subroutine~\ref{algo:FMM}, we do $ \floor{n/K}$ (here $ \floor{n/K} =4$) full recalculation of $\mX^k$, which correspond to the vertical blue lines. We gain in terms of operations because the surface of the gray zone to compute is divided by $ \floor{n/K} $.
 
 \begin{figure}[ht]
     \centering
@@ -1301,8 +1301,8 @@ This  leads to the next fundamental  question: {why should the computation of Wh
 \section{Conclusion}
 \label{sec:conclusion}
 
-In this chapter, we present an algorithm that is efficient for detecting the non-indexability and computing the Whittle index of all indexable finite-state restless bandits whose arms are all unichain. Without any assumption on the arm's structure, this algorithm can still test the indexability and compute the Whittle index of some arms that are multichain and remains efficient if it is able to do so.
-Our algorithm is based on the efficient application of the Sherman-Morrison formula. This is a unified algorithm that works for both discounted and undiscounted restless bandits, and can be used for Gittins index computation.  We present a first version of our algorithm that runs in $n^3+o(n^3)$ arithmetic operations (or in $(2/3)n^3+o(n^3)$ if we do not test the indexability). So, we conclude that Whittle index is not harder to compute than Gittins index. The second version of our algorithm uses the fastest matrix multiplication method and has a complexity of $O(n^{2.5286})$. This makes it the first subcubic algorithm to compute Whittle index or Gittins index. We provide numerical simulations that show that our algorithm is very efficient in practice: it can test indexability and compute the index of an $n$-state restless bandit arm in less than one second for $n=1000$, and in a few minutes for $n=15000$. These numbers are provided for dense matrices. One might expect to have more efficient algorithms if the arm has a sparse structure. We leave this question for future work. 
+In this chapter, we presented an algorithm that was efficient for detecting the non-indexability and computing the Whittle index of all indexable finite-state restless bandits whose arms where all unichain. Without any assumption on the arm's structure, this algorithm can still test the indexability and compute the Whittle index of some arms that are multichain and remains efficient if it is able to do so.
+Our algorithm is based on the efficient application of the Sherman-Morrison formula. This is a unified algorithm that works for both discounted and undiscounted restless bandits, and can be used for Gittins index computation.  We presented the first version of our algorithm that runs in $n^3+o(n^3)$ arithmetic operations (or in $(2/3)n^3+o(n^3)$ if we do not test the indexability). So, we conclude that Whittle index is not harder to compute than Gittins index. The second version of our algorithm uses the fastest matrix multiplication method and has a theoretical complexity of $O(n^{2.5286})$. This makes it the first subcubic algorithm to compute Whittle index or Gittins index. We provided numerical simulations that show that our algorithm is very efficient in practice: it can test indexability and compute the index of an $n$-state restless bandit arm in less than one second for $n=1000$, and in a few minutes for $n=15000$. These numbers are provided for dense matrices. One might expect to have more efficient algorithms if the arm has a sparse structure. We leave this question for future work. 
 
 \newpage
 
