@@ -5,74 +5,79 @@
 \chapter{Learning Algorithms for Rested Markovian Bandits}
 \label{ch:learning_rested}
 
-In this chapter, we study the scalability of model-based algorithms learning the optimal policy of a discounted rested Markovian bandit problem with $n$ arms. % There are two categories of model-based reinforcement learning algorithms: Bayesian algorithms (like PSRL), and optimistic algorithms (like UCRL2 or UCBVI).
+In this chapter, we study the scalability of model-based algorithms learning the optimal policy of the discounted rested Markovian bandit problem with $n$ arms. % There are two categories of model-based reinforcement learning algorithms: Bayesian algorithms (like PSRL), and optimistic algorithms (like UCRL2 or UCBVI).
 %In this chapter, 
-We construct variants of three algorithms specially tailored to Markovian bandits (MB) that we call MB-PSRL, MB-UCRL2, and MB-UCBVI. We consider an episodic setting with geometrically distributed episode length, and measure the performance of the algorithm in terms of regret (Bayesian regret for MB-PSRL and expected regret for MB-UCRL2 and MB-UCBVI). We prove that, for this setting, all algorithms have a low regret in $\tilde{\landauO}(S\sqrt{nK})$ -- where $K$ is the number of episodes, $n$ is the number of arms and $S$ is the number of states of each arm. Up to a factor $\sqrt{S}$, these regrets match the Bayesian minimax regret lower bound of $\Omega(\sqrt{SnK})$ that we also derive.
+This study is published in Transactions on Machine Learning Research (TMLR) venue (\cite{gast2022learning}).
+We construct variants of three algorithms specially tailored to Markovian bandits (MB) that we call MB-PSRL, MB-UCRL2, and MB-UCBVI. We consider an episodic setting with geometrically distributed episode length and measure the performance of the algorithm in terms of regret (Bayesian regret for MB-PSRL, and expected regret for MB-UCRL2 and MB-UCBVI). For this setting, we prove that all algorithms have a low regret in $\tilde{\landauO}(S\sqrt{nK})$ -- where $K$ is the number of episodes, $n$ is the number of arms, and $S$ is the number of states of each arm. Up to a factor $\sqrt{S}$, these regrets match a Bayesian minimax regret lower bound of $\Omega(\sqrt{SnK})$ that we also derive.
 
-Even if their theoretical regrets are comparable, the \emph{time complexities} of these algorithms vary greatly: We show that MB-UCRL2, as well as all optimistic algorithms that use confidence bonuses on transition matrices have a {time} complexity that grows exponentially in $n$. In contrast, MB-UCBVI does not use bonuses on transition matrices, and we show that  it can be implemented efficiently, with a time complexity linear in $n$. Our numerical experiments show, however, that its empirical regret is large. Our Bayesian algorithm, MB-PSRL, enjoys the best of both worlds: its running time is linear in the number of arms and its empirical regret is the smallest of all algorithms.
-This is a new addition in the understanding of the power of Bayesian algorithms, that can often be  tailored to the structure of the problems to learn.
+Even if their theoretical regrets are comparable, the \emph{time complexities} of the three agorithms vary greatly: We show that the {time} complexity of MB-UCRL2 and all optimistic algorithms that use confidence bonuses on transition matrices grows exponentially in $n$. In contrast, MB-UCBVI does not use bonuses on transition matrices, and we show that it can be implemented efficiently, with a time complexity linear in $n$. Our numerical experiments show, however, that its empirical regret is large. Our Bayesian algorithm, MB-PSRL, enjoys the best of both worlds: its running time is linear in the number of arms, and its empirical regret is the smallest of all three algorithms.
+This is a new addition to understanding the power of Bayesian algorithms, which can often be tailored to the structure of the problems to learn.
 
-In Section~\ref{ch:rested:sec:contribute}, we summarize our results in learning with rested Markovian bandit with discount.
-Section~\ref{ch:rested:related} describes the work in learning with structured MDPs such as factored MDPs, and rested bandit with no discount.
-We recall the formulation of rested bandit problem with discount in Section~\ref{ch:rested:sec:bandits}.
+Section~\ref{ch:rested:related} describes the work in learning with structured MDPs such as factored MDPs and rested bandit with no discount.
+We recall the formulation of the rested bandit problem with the discount factor $\gamma$ in Section~\ref{ch:rested:sec:bandits}.
 Section~\ref{ch:rested:sec:problem} contains the episodic learning setup in which the episode length is geometrically distributed.
-We present the modification of PSRL, UCRL2, and UCBVI to rested bandit with discount in Section~\ref{ch:rested:sec:learning_algorithms}.
-We provide the analysis of their regret in Section~\ref{ch:rested:sec:analysis}.
+We present the modification of PSRL, UCRL2, and UCBVI to rested bandits with the discount factor $\gamma$ in Section~\ref{ch:rested:sec:learning_algorithms}.
+We provide an analysis of their regret in Section~\ref{ch:rested:sec:analysis}.
 Section~\ref{ch:rested:scale} contains our discussion on the scalability of each algorithm.
-We report numerical evidences about the learning performance and the runtime of each algorithm in Section~\ref{ch:rested:sec:numerical}.
+We report numerical evidence about each algorithm's learning performance and runtime in Section~\ref{ch:rested:sec:numerical}.
 Section~\ref{ch:rested:sec:conclusion} summarizes the theoretical and numerical results of the modified algorithms and concludes the chapter.
 
 \section{Contributions}
 \label{ch:rested:sec:contribute}
 
-We consider an episodic setting with geometrically distributed episode length, in which the optimal strategy for a decision maker who knows all parameters of the system is to use Gittins index policy. We study a specialization of PSRL \cite{osband2013more} to Markovian bandits, that we call Markovian bandit posterior sampling (MB-PSRL) that consists in using PSRL with a prior tailored to Markovian bandits. We show that the Bayesian regret of MB-PSRL is sublinear in the number of episodes and arms. We also provide an expected regret guarantee for two optimistic algorithms that we call MB-UCRL2 and MB-UCBVI, and that are based respectively on UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}. They both use modified  confidence bounds adapted to Markovian bandit problems. The upper bound for their regret is similar to the bound for MB-PSRL. This shows that in terms of regret, the Bayesian approach (MB-PSRL) and the optimistic approach (MB-UCRL2 and MB-UCBVI) scale well with the number of arms. We also provide a Bayesian minimax regret lower bound for any learning algorithm in rested Markovian bandit problems with the aforementioned setting, which shows that the regret bounds that we obtain for the three algorithms are close to optimal.
+We consider an episodic setting with a geometrically distributed episode length, in which the optimal strategy is the Gittins index policy. %for a decision maker who knows all parameters of the system is to use Gittins index policy.
+We study a specialization of PSRL \cite{osband2013more} to Markovian bandits.
+We call it Markovian bandit posterior sampling (MB-PSRL), which consists in using PSRL with a prior tailored to Markovian bandits.
+We show that the Bayesian regret of MB-PSRL is sublinear in the number of episodes and arms. We also provide an expected regret guarantee for two optimistic algorithms that we call MB-UCRL2 and MB-UCBVI.
+They are, respectively, a modification of UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax}.
+They use modified confidence bounds adapted to Markovian bandit problems. The upper bound for their regret is similar to the bound for MB-PSRL. This shows that in terms of regret, the Bayesian approach (MB-PSRL) and the optimistic approach (MB-UCRL2 and MB-UCBVI) scale well with the number of arms. We also provide a Bayesian minimax regret lower bound for any learning algorithm in the rested Markovian bandit problem with the aforementioned setting, which shows that the regret bounds that we obtain for the three algorithms are close to optimal.
 
-The situation is radically different when considering the processing time: the runtime of MB-PSRL is linear (in the number of arms), while the runtime of MB-UCRL2 is exponential. We show that this is not an artifact of our implementation of MB-UCRL2 by exhibiting a Markovian bandit problem for which being optimistic in each arm is not optimistic in the global MDP. This implies that UCRL2 and its variants \cite{bourel2020tightening,fruit2018efficient,talebi2018variance,filippi2010optimism} cannot be adapted to have efficient runtime in Markovian bandit problems unless an oracle gives the optimistic policy. We argue that this non-scalability of UCRL2 and its variants is not a limitation  of the optimistic approach but comes from the fact that UCRL2 relies on  extended value iteration \cite{jaksch2010near} needed to deal with  upper confidence bounds on the transition matrices.  We show that MB-UCBVI, an optimistic algorithm that does not add bonus on transition probabilities and hence does not rely on extended value iteration,  does not suffer from the same problem. Its  regret is  sublinear in the number of episodes, and arms (although larger than the regret of both MB-PSRL and MB-UCRL2), and its  runtime is linear in the number of arms.
+The situation is radically different when considering the processing time: the runtime of MB-PSRL is linear (in the number of arms), while the runtime of MB-UCRL2 is exponential. We show that this is not an artifact of our implementation of MB-UCRL2 by exhibiting a Markovian bandit problem for which being optimistic in each arm is not optimistic in the global MDP. This implies that UCRL2 and its variants \cite{bourel2020tightening,fruit2018efficient,talebi2018variance,filippi2010optimism} cannot be adapted to have efficient runtime in Markovian bandit problems unless an oracle gives the optimistic policy. We argue that this non-scalability of UCRL2 and its variants is not a limitation  of the optimistic approach but comes from the fact that UCRL2 relies on  extended value iteration \cite{jaksch2010near} needed to deal with  upper confidence bounds on the transition matrices.  We show that MB-UCBVI, an optimistic algorithm that does not add any bonus on transition probabilities and hence does not rely on extended value iteration,  does not suffer from the same problem. Its  regret is  sublinear in the number of episodes and arms (although larger than the regret of both MB-PSRL and MB-UCRL2), and its  runtime is linear in the number of arms.
 This allows us to conclude that, on the one hand, if a weakly coupled MDP or a factored MDP can be solved efficiently when all the parameters are known, then the Bayesian approach is efficient both in terms of learning and computation time. On the other hand, knowing how to solve a weakly coupled MDP or a factored MDP efficiently is not sufficient for all optimistic algorithms to be computationally efficient.
 
-We also conduct a series of numerical experiments to compare the performance of MB-PSRL,  MB-UCRL2 and MB-UCBVI.  They confirm the good behavior of MB-PSRL, both in terms of regret and computational complexity. These numerical experiments also show that the empirical regret of MB-UCBVI is larger than the regret of MB-PSRL and MB-UCRL2, confirming the comparisons between the upper bounds derived in Theorem \ref{thm:regret_upper_bound}. All this  makes MB-PSRL the better choice between the three learning algorithms.
+We also conduct a series of numerical experiments to compare the performance of MB-PSRL,  MB-UCRL2, and MB-UCBVI.  They confirm the good behavior of MB-PSRL, both in terms of regret and computational complexity. Furthermore, these numerical experiments also show that the empirical regret of MB-UCBVI is larger than the regret of MB-PSRL and MB-UCRL2, confirming the comparisons between the upper bounds derived in Theorem \ref{thm:regret_upper_bound}. All this  makes MB-PSRL the better choice between the three learning algorithms.
 
 \section{Related work}
 \label{ch:rested:related}
 
-Markovian bandits have been applied to many problems such as single-machine scheduling, choosing a job in  resource constraint problems  as well as other  industrial research problems. Many applications can be found in \cite[Section 3.6]{puterman2014markov} and \cite{gittins2011multi}. \cite{gittins1979bandit} shows that discounted rested Markovian bandit can be solved linearly in the number of arms using Gittins index policy. Therefore, several papers are   focused  on the complexity of  computing  Gittins index \cite{chakravorty2014multi,gast2022computing}.
-In this chapter, we focus on rested Markovian bandit problems with discount factor $\gamma<1$ where all
+Markovian bandits have been applied to many problems such as single-machine scheduling, choosing a job in  resource constraint problems  as well as other  industrial research problems. Many applications can be found in \cite[Section 3.6]{puterman2014markov} and \cite{gittins2011multi}. \cite{gittins1979bandit} shows that the discounted rested Markovian bandit can be solved linearly in the number of arms using Gittins index policy. Therefore, several papers are   focused  on the complexity of  computing  Gittins index \cite{chakravorty2014multi,gast2022computing}.
+
+In this chapter, we focus on the rested Markovian bandit problems with a discount factor $\gamma<1$ where all
 reward functions and transition matrices are unknown.
 A possible approach to learn under these conditions is to ignore the problem's structure and view the Markovian bandit problem as a generic MDP.
-As we have seen in Chapter~\ref{ch:rl}, there are two main families of model-based general-purpose RL algorithms with regret guarantee. The first one uses the \emph{optimism in face of uncertainty} (OFU) principle and the second family uses a Bayesian approach, the posterior sampling method introduced by \cite{thompson1933likelihood}.
-Yet, applied as-is to Markovian bandit problems, these bounds grow exponentially with the number of arms.
+As we have seen in Chapter~\ref{ch:rl}, there are two main families of model-based general-purpose reinforcement learning (RL) algorithms with a regret guarantee.
+The first one uses the \emph{optimism in face of uncertainty} (OFU) principle and the second uses a Bayesian approach, the posterior sampling method introduced by \cite{thompson1933likelihood}.
+Yet, applied as-is to Markovian bandit problems, the regret bound of these general-purpose algorithms grows exponentially with the number of arms.
 
-Our work is not the first attempt to exploit the structure of an MDP to improve
-learning.  Factored MDPs (the state space can be
-factored into $n\in\mathbb{N}^*$ components) are investigated in
-\cite{guestrin2003efficient}, where asymptotic convergence to
+Our work is not the first attempt to exploit the structure of an MDP to improve learning performance.
+Factored MDPs (the state space can be factored into $n\in\mathbb{N}^*$ components) are investigated in
+\cite{guestrin2003efficient}, where the asymptotic convergence to
 the optimal policy is proved to scale polynomially in the number of components.
-The regret of learning algorithms in factored MDP with a factored action space
-is considered by 
-\cite{tian2020towards,rosenberg2020oracle,xu2020reinforcement,osband2014near}. Our work differs substantially from these. 
-First, the Markovian bandit problem is not a factored MDP because the action
-space is global and cannot be factored. 
+The regret of learning algorithms in factored MDPs with a factored action space is considered by 
+\cite{tian2020towards,rosenberg2020oracle,xu2020reinforcement,osband2014near}.
+Our work differs substantially from these. 
+First, the Markovian bandit problem is not a factored MDP because the action space is global and cannot be factored. 
 Second, our reward is discounted over an infinite horizon while factored MDPs have been analyzed with no discount.
-Finally, and most importantly, the factored MDP framework assumes that the successive optimal policies are  computed by an unspecified solver (oracle). There is no guarantee that the time complexity of this solver scales linearly with the number of components, especially for OFU-based algorithms.
-For rested bandits with discount, we get an  additional leverage: when all parameters are known, the Gittins index policy is known to be an optimal policy and its computational complexity is linear in the number of arms. This reveals an interesting difference between Bayesian and extended value based algorithms (the former being scalable and not the latter in general). This difference is absent from the literature of factored MDPs because such papers do not consider the time complexity.
+Finally, and most importantly, the factored MDP framework assumes that the successive optimal policies are computed by an unspecified solver (oracle). There is no guarantee that the time complexity of this solver scales linearly with the number of components, especially for OFU-based algorithms.
+For rested bandits with discount, we get additional leverage: when all parameters are known, the Gittins index policy is optimal, and its computational complexity is linear in the number of arms. This reveals an interesting difference between Bayesian and extended value based algorithms (the former being scalable and not the latter in general). This difference is absent from the literature on factored MDPs because such papers do not consider the time complexity.
 
-For rested bandits, \cite{tekin2012online} consider a non-discounted setting, $\gamma=1$, and provide algorithms with logarithmic regret guarantee for \emph{rested}  as well as  \emph{restless} settings.
-However, they consider a notion of regret known as \emph{weak regret} that measures how fast the learning algorithm identifies the best arm in stationary regime. So, it ignores the learning behavior at the beginning of learning process.
-In contrast, we consider the discounted rested bandit setting in which the regret of \cite{tekin2012online} makes no more senses due to the discount factor, and we propose a regret definition that is frequently used in reinforcement learning (RL) literature and captures the performance of a learning algorithm during the whole learning process.
-In addition, \cite{ortner2012regret, jung2019regret, wang2020restless} consider a non-discounted restless bandit setting in which only the state of chosen arms are observed by the learner. \cite{ortner2012regret, wang2020restless} propose optimistic algorithms for infinite-horizon setting and provide regret bounds that are sublinear in time. Again the discounted case is not considered in these papers while it is particularly interesting  because learning algorithms can leverage the optimal Gittins index policy.
+For rested bandits, \cite{tekin2012online} consider a non-discounted setting, $\gamma=1$, and provide algorithms with a logarithmic regret guarantee for rested and restless settings.
+However, they consider a notion of regret known as \emph{weak regret}, which measures how fast the learning algorithm identifies the best arm in the stationary regime. So, it ignores the learning behavior at the beginning of the learning process.
+In contrast, we consider a discounted rested bandit setting in which the regret of \cite{tekin2012online} makes no more sense due to the discount factor, and we propose a regret definition similar to what is frequently used in RL literature.
+This regret captures the learning algorithm's performance during the whole learning process.
+In addition, \cite{ortner2012regret, jung2019regret, wang2020restless} consider a non-discounted restless bandit setting in which the learner observe only the state of chosen arms. \cite{ortner2012regret, wang2020restless} propose optimistic algorithms for the infinite-horizon setting and provide regret bounds that are sublinear in time. Again the discounted case is not considered in these papers, while it is particularly interesting because learning algorithms can leverage the optimal Gittins index policy.
 \cite{jung2019regret} propose a Bayesian algorithm in the episodic finite-horizon setting and also provide a regret bound that is sublinear in the number of episodes. However, the computational complexity is not studied in their work (the algorithm of \cite{ortner2012regret} is intractable while the ones of \cite{jung2019regret, wang2020restless} rely on an unspecified problem solver called \emph{oracle}).
-Contrarily, we provide both performance guarantee and computational complexity analysis of each algorithm that we consider in this chapter.
-Finally, \cite{killian2021beyond} consider a more general setting of restless bandits in which each arm is itself an MDP with multiple actions and the learner has to decide which arms to activate and which action to execute on each activated arm under a  global action constraint. The authors propose a Lagrangian suboptimal policy to solve the restless bandit problem with known parameters and a sampling algorithm to learn their Lagrangian policy when the parameters are unknown. Unfortunately, no performance guarantee is provided in their work.
+Contrarily, we provide both performance guarantee and computational complexity analysis of each algorithm we consider in this chapter.
+Finally, \cite{killian2021beyond} consider a more general setting of restless bandits in which each arm is an MDP with multiple actions. The learner has to decide which arms to activate and which action to execute on each activated arm under a global action constraint. The authors propose a suboptimal Lagrangian policy to solve the restless bandit problem with known parameters and a sampling algorithm to learn their Lagrangian policy when the parameters are unknown. Unfortunately, no performance guarantee is provided in their work.
 
-Since index policies  scale with the number of arms, using Q-learning approach
-to learn such a policy is also popular, see \emph{e.g.},
-\cite{avrachenkov2022whittle,fu2019towards,duff1995q}. \cite{duff1995q} addresses the same Markovian bandit
+Since index policies scale with the number of arms, using Q-learning approach to learn such a policy is also popular, see \emph{e.g.},
+\cite{avrachenkov2022whittle,fu2019towards,duff1995q}. \cite{duff1995q} address the same Markovian bandit
 problem as we do: their algorithm learns the optimal value in the
 restart-in-state MDP \cite{katehakis1987multi} for each
 arm and uses Softmax exploration to solve the exploration-exploitation
 dilemma. As mentioned on page $250$ of
 \cite{auer2002finite}, however, there exists no
-finite-time regret bounds for this algorithm. Furthermore, tuning
+finite-time regret bound for this algorithm. Furthermore, tuning
 its hyperparameters (learning rate and temperature) is rather delicate and
 unstable in practice. 
 
@@ -80,7 +85,7 @@ unstable in practice.
 \label{ch:rested:sec:bandits}
 
 
-We recall from Chapter~\ref{ch:mb} that a rested Markovian bandit is multi-armed bandit having $n\in\N^+$ arms. Each arm $\langle\gS_a,\vr_a,\mP_a\rangle$ for $a\in\{1,\dots, n\}=:[n]$ is a Markov
+We recall from Chapter~\ref{ch:mb} that a rested Markovian bandit is a multi-armed bandit having $n\in\N^+$ arms. Each arm $\langle\gS_a,\vr_a,\mP_a\rangle$ for $a\in\{1,\dots, n\}=:[n]$ is a Markov
 reward process with a finite state space $\gS_a$ of size $S$. %Each arm has a mean reward vector, $\vr_a\in[0,1]^S$, and a transition matrix $\mP_a$. When Arm~$a$ is activated in state $s_a\in\gS_a$, it moves to state $s'_a\in\gS_a$ with probability $P_a(s_a,s'_a)$. This provides a reward whose expected value is $r_a(x_a)$.
 Without loss of generality, we assume
 that the state spaces of the arms are pairwise distinct:
@@ -100,7 +105,7 @@ of all arms,
 $\vs_t=(s_{t,1}\ \dots\ s_{t,n})$, and chooses which arm $a_t$ to activate.
 This problem can be cast as an MDP -- that we denote by $M$ -- with state
 space $\gX$ and action space \([n]\). Let $a\in[n]$ and $\vs,\vs'\in\gX$. If the state at time $t$ is $\vs_t=\vs$, the chosen arm is $a_t=a$, then arm $a$ incurs a random reward $r_t$ drawn from some distribution on \([0,1]\) with
-mean \(r(s_a)\) and the MDP $M$ transitions to state $\vs_{t+1}=\vs'$ with probability \(p(\vs'\mid \vs,a)\) that satisfies:
+mean \(r(s_a)\) and the MDP $M$ transitions to a new state $\vs_{t+1}=\vs'$ with probability \(p(\vs'\mid \vs,a)\) that satisfies:
 \begin{align}
     \label{eq:defP}
     p(\vs' \mid \vs,a) 
