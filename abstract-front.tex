@@ -1,5 +1,8 @@
-%\addchap{Abstract / \foreignlanguage{french}{Résumé}}
-\addchap{Abstract}
+\begingroup
+\let\clearpage\relax
+
+\addchap[Abstract / \foreignlanguage{french}{Résumé}]{Abstract}
+%\addchap{Abstract}
 
 %\section*{Abstract}
 
@@ -8,10 +11,12 @@
 \clearpage
 % -----------------------------------------------------------------------------
 
-%\begin{otherlanguage}{french}
+\newpage
+\begin{otherlanguage}{french}
 %
-%\section*{Résumé}
+\section*{Résumé}
 %
-%\input{abstract-fr}
+\input{abstract-fr}
 
-%\end{otherlanguage}
+\end{otherlanguage}
+\endgroup

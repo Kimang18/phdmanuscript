@@ -1,1 +1,13 @@
-Le résumé en français.
+Les bandits markoviens sont une sous-classe de problèmes de bandits à bras multiples où l'on doit activer un sous-ensemble de bras à chaque instant de décision.
+Les bras activés évoluent de manière markovienne et active.
+Ceux qui ne sont pas activés (c'est-à-dire qui sont passifs) soit restent figés -- on entre alors dans la catégorie des bandits markoviens reposés -- soit évoluent de manière markovienne et passive – on parle alors de bandit markovien agité.
+De tels problèmes souffrent de le fléau de la dimension qui rend souvent la solution exacte prohibitive en termes de calcul.
+Il faut donc recourir à des heuristiques telles que la politique d'indice.
+Deux indices célèbres sont l'indice de Gittins et l'indice de Whittle.
+Cette thèse se concentre sur deux configurations : (1) le calcul d'indices lorsque tous les paramètres du modèle sont connus et (2) la conception d'algorithmes lorsque les paramètres sont inconnus.
+Pour le calcul de l'indice, nous soulignons les ambiguïtés de la définition classique de l'indexabilité et proposons une définition raffinée qui assure l'unicité de l'indice de Whittle dans les bras de bandits agités.
+Nous développons ensuite un algorithme testant l'indexabilité raffinée et calculant les indices de Whittle des bras agités.
+La complexité théorique de notre algorithme est $\landauO(S^{2.5286})$, où $S$ est le nombre d'états du bras.
+Pour l'apprentissage des bandits reposés, nous montrons que MB-PSRL et MB-UCBVI, des versions modifiées des algorithmes PSRL et UCBVI, peuvent tirer parti de la politique d'indice de Gittins pour avoir une garantie de regret et un temps d'exécution évolutif en nombre de bras.
+De plus, nous montrons que MB-UCRL2, une version modifiée de UCRL2, possède également une garantie de regret évolutive en nombre de bras.
+Cependant, MB-UCRL2 et toute modification des variantes d'UCRL2 pour le bandit reposé ont probablement un temps d'exécution exponentiel dans le nombre de bras. Lors de l'apprentissage de bandits agités, la garantie de regret dépend fortement de la structure du bandit. Ainsi, nous étudions comment la structure des bras se traduit dans la structure du bandit. Nous identifions une sous-classe de bandits agités qui n'est pas apprenable. Nous montrons également qu'il est difficile de définir une sous-classe de bandits agités avec une structure d'apprentissage souhaitable en ne faisant que des hypothèses sur les bras.

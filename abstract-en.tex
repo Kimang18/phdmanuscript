@@ -5,27 +5,31 @@ Those that are not activated (\ie, are passive) either remain frozen -- then one
 %The decision maker wants to maximize its cumulative reward over an infinite horizon of time.
 Such problems suffer from the curse of dimensionality that often makes the exact solution computationally prohibitive.
 So, one has to resort to heuristics such as index policy.
-Two celebrated indices are Gittins index for rested bandits and Whittle index for restless bandits.
+Two celebrated indices are Gittins index and Whittle index.
 
 This thesis focuses on two setups: (1) index computation when all model parameters are known and (2) algorithm design when the parameters are unknown.
 
-For index computation, we first cover the ambiguities in the classical condition that guarantees the existence of the Whittle index in restless bandits.
+%For index computation, we first cover the ambiguities in the classical condition that guarantees the existence of the Whittle index in restless bandits.
+For index computation, we point out the ambiguities in the classical indexability definition and propose a refined definition that assures the uniqueness of the Whittle index in restless bandit arms.
 %We then introduce a new univocal definition of indexability that assures the uniqueness of the Whittle index when it exists.
-We then refine this condition to assure the uniqueness of the index when it exists.
-We then develop an algorithm to test the refined condition and compute the Whittle indices of any restless bandit arm.
+%We then refine this condition to assure the uniqueness of the index when it exists.
+We then develop an algorithm testing the refined indexability and computing the Whittle indices of restless arms.
 %This algorithm can also compute the Gittins index.
 %Our algorithm is built on three tools: (1) a careful characterization of Whittle index that allows one to recursively compute the $k$th smallest index from the $(k-1)$th smallest, and to test indexability, (2) the use of the Sherman-Morrison formula to make this recursive computation efficient, and (3) a sporadic use of the fastest matrix inversion and multiplication methods to obtain a subcubic complexity.
 %We show that an efficient use of the Sherman-Morrison formula leads to an algorithm that computes Whittle index in $(2/3)S^3+o(S^3)$ arithmetic operations, where $S$ is the number of states of the arm.
 %Its index computation is done in $(2/3)S^3+o(S^3)$ arithmetic operations, where $S$ is the number of states of the arm.
 %The careful use of fast matrix multiplication leads to the first subcubic algorithm to compute Whittle or Gittins index: By using the current fastest matrix multiplication, the theoretical complexity of our algorithm is $\landauO(S^{2.5286})$.
-We prove that the theoretical complexity of this algorithm is $\landauO(S^{2.5286})$, where $S$ is the number of arm's states.
-We also develop an efficient implementation of this algorithm in python programming language.
-It can compute indices of restless arms with several thousands of states in less than a few seconds.
+The theoretical complexity of our algorithm is $\landauO(S^{2.5286})$, where $S$ is the number of arm's states.
+%We also develop an efficient implementation of this algorithm in python programming language.
+%It can compute indices of restless arms with several thousands of states in less than a few seconds.
 
 %For learning setup, we divide our work into two phases: (1) design algorithms with learning performance guarantee in rested Markovian bandits and (2) study the challenges when learning in restless Markovian bandit.
 %For rested bandits, Gittins index policy has been proven to be optimal when exactly one arm is activated at each decision and there is a discount on reward.
-For learning in rested bandits, we show that MB-PSRL and MB-UCBVI, respectively the modified versions of PSRL and UCBVI algorithms, can leverage Gittins index policy to have a regret bound and a runtime scalable in the number of arms. Furthermore, we show that MB-UCRL2, a modified version of UCRL2, also has a regret bound scalable in the number of arms. Yet, we show that MB-UCRL2 and any modification of UCRL2’s variants to rested bandit likely have a runtime exponential in the number of arms.
-When learning in restless bandits, the regret of algorithms depends heavily on the structure of the bandit.
-So, we study how the structure of arms translates into the structure of the bandit. We show that no learning algorithms can perform uniformly well over the general class of restless bandits. We also show that defining a subclass of restless bandits with a desirable learning structure by relying on the assumptions on arms is difficult.
+For learning rested bandits, we show that MB-PSRL and MB-UCBVI, modified versions of PSRL and UCBVI algorithms, can leverage Gittins index policy to have a regret guarantee and a runtime scalable in the number of arms. Furthermore, we show that MB-UCRL2, a modified version of UCRL2, also has a regret guarantee scalable in the number of arms. However, MB-UCRL2 and any modification of UCRL2’s variants to rested bandit likely have a runtime exponential in the number of arms.
+When learning restless bandits, the regret guarantee depends heavily on the structure of the bandit.
+So, we study how the structure of arms translates into the structure of the bandit.
+%We show that no learning algorithms can perform uniformly well over the general class of restless bandits whose arms are unichain.
+We identify a subclass of restless bandits that is not learnable.
+We also show that defining a subclass of restless bandits with a desirable learning structure by only making assumptions about arms is difficult.
 
 %in which each arm has an internal state that evolves in a Markovian manner depending on the decision maker's actions. 
