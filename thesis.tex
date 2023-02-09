@@ -443,12 +443,30 @@
 \iftotalcompilation
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
+{
+    \begin{refsection}
+    \makeatletter\@beginparpenalty=10000\makeatother  % prevent page break before list
+    \defbibenvironment{itembib}{\itemize}{\enditemize}{\item}
+    \nocite{*}
+    %
+    %\paragraph{List of publications}
+    \printbibliography[title={List of publications}, keyword={own}]
+    %
+    %\paragraph{Peer-reviewed international workshops}
+    %\printbibliography[heading=none,env=itembib,keyword={own},keyword={workshop}]
+    %\paragraph{National workshops}
+    %\printbibliography[heading=none,env=itembib,keyword={own},keyword={nworkshop}]
+    \end{refsection}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
+
 {
     \setstretch{1.1}
     \renewcommand{\bibfont}{\normalfont\small}
     \setlength{\biblabelsep}{0pt}
     \setlength{\bibitemsep}{0.5\baselineskip plus 0.5\baselineskip}
-    \printbibliography
+    \printbibliography[notkeyword={own}]
 }
 
 {\listoffigures \let\cleardoublepage\  \listoftables} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
@@ -456,28 +474,6 @@
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 
 
-
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
-% {
-%     \clearpage
-%     Additionally, the work conducted in this dissertation directly led to the
-%     following communications.
-
-%     \begin{refsection}
-%     \makeatletter\@beginparpenalty=10000\makeatother  % prevent page break before list
-%     \defbibenvironment{itembib}{\itemize}{\enditemize}{\item}
-%     \nocite{*}
-%     %
-%     \paragraph{Peer-reviewed international conferences}
-%     \printbibliography[heading=none,env=itembib,keyword={own},keyword={conference}]
-%     %
-%     \paragraph{Peer-reviewed international workshops}
-%     \printbibliography[heading=none,env=itembib,keyword={own},keyword={workshop}]
-%     \paragraph{National workshops}
-%     \printbibliography[heading=none,env=itembib,keyword={own},keyword={nworkshop}]
-%     \end{refsection}
-% }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
 
 
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS

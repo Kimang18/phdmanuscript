@@ -11,7 +11,7 @@ We construct variants of three algorithms specially tailored to Markovian bandit
 
 Even if their theoretical regrets are comparable, the \emph{time complexities} of the three agorithms vary greatly: We show that the {time} complexity of MB-UCRL2 and all optimistic algorithms that use confidence bonuses on transition matrices grows exponentially in $n$. In contrast, MB-UCBVI does not use bonuses on transition matrices, and we show that it can be implemented efficiently, with a time complexity linear in $n$. Our numerical experiments show, however, that its empirical regret is large. Our Bayesian algorithm, MB-PSRL, enjoys the best of both worlds: its running time is linear in the number of arms, and its empirical regret is the smallest of all three algorithms.
 This is a new addition to understanding the power of Bayesian algorithms, which can often be tailored to the structure of the problems to learn.
-This study is published in Transactions on Machine Learning Research (TMLR) venue (\cite{gast2022learning}).
+This study is published in Transactions on Machine Learning Research (TMLR) (\cite{gast2022learning}).
 
 Section~\ref{ch:rested:related} describes the work in learning with structured MDPs such as factored MDPs and rested bandit with no discount.
 We recall the formulation of the rested bandit problem with the discount factor $\gamma$ in Section~\ref{ch:rested:sec:bandits}.
@@ -40,7 +40,7 @@ We also conduct a series of numerical experiments to compare the performance of 
 \section{Related work}
 \label{ch:rested:related}
 
-Markovian bandits have been applied to many problems such as single-machine scheduling, choosing a job in  resource constraint problems  as well as other  industrial research problems. Many applications can be found in \cite[Section 3.6]{puterman2014markov} and \cite{gittins2011multi}. \cite{gittins1979bandit} shows that the discounted rested Markovian bandit can be solved linearly in the number of arms using Gittins index policy. Therefore, several papers are   focused  on the complexity of  computing  Gittins index \cite{chakravorty2014multi,gast2022computing}.
+Markovian bandits have been applied to many problems such as single-machine scheduling, choosing a job in  resource constraint problems  as well as other  industrial research problems. Many applications can be found in \cite[Section 3.6]{puterman2014markov} and \cite{gittins2011multi}. \cite{gittins1979bandit} shows that the discounted rested Markovian bandit can be solved linearly in the number of arms using Gittins index policy. Therefore, several papers are   focused  on the complexity of  computing  Gittins index (see, \eg, \cite{gast2022computing, chakravorty2014multi}).
 
 In this chapter, we focus on the rested Markovian bandit problems with a discount factor $\gamma<1$ where all
 reward functions and transition matrices are unknown.
