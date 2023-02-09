@@ -21,7 +21,7 @@ First, the Whittle index policy is defined for restless Markovian bandits whose 
 %For instance, given a multichain policy, one needs to compute its recurrent classes (or its subchains) characterizing the bias functions or 
 %The work of \cite{schweitzer1978functional}
 %Second, the regret guarantee of our three algorithms in the rested bandit is sublinear in the number of arms because the three algorithms learn the arms's parameters instead of the bandit.
-Second, by learning the arms' expected rewards and state transitions instead of the bandit's ones, our three learning algorithms manage to have a regret guarantee sublinear in the number of arms in rested bandits with discount.
+%Second, by learning the arms' expected rewards and state transitions instead of the bandit's ones, our three learning algorithms manage to have a regret guarantee sublinear in the number of arms in rested bandits with discount.
 Lastly, when learning in restless bandits, the MDP properties of the bandit, such as the diameter, the mixing time, and the span of the global bias functions, depend heavily on the arms' structure.
 
 This thesis also provides an argument that supports the power of Bayesian algorithms: They can be easily tailored to the structure of the problem to learn.
@@ -51,17 +51,16 @@ Therefore, we conjecture that the span of the global bias functions is upper bou
     \label{conj:span}
     Consider a restless bandit $M$ having $n$ arms.
     Each arm $\langle\gS_i,\{0,1\},r_i,p_i\rangle$ is an MDP with a finite state space $\gS_i$ and a binary action space $\{0,1\}$.
-    For each arm $i\in[n]$, the expected reward $r_i(s_i,a_i)$ is bounded in $[r_{min,i},r_{max,i}]$ for all $s_i\in\gS_i$ and $a_i\in\{0,1\}$.
+    %For each arm $i\in[n]$, the expected reward $r_i(s_i,a_i)$ is bounded in $[r_{min,i},r_{max,i}]$ for all $s_i\in\gS_i$ and $a_i\in\{0,1\}$.
     For each arm $i\in[n]$, let $\gamma_i$ be its ergodicity coefficient defined by
     \begin{align*}
         \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p_i(z_i \mid s_i, a), p_i(z_i \mid s'_i, a')\}.
     \end{align*}
     Let $\vh^*$ be the global optimal bias function of the bandit $M$ in the average reward criterion.
-    We have the following.
+    We conjecture that
     \begin{align*}
-        sp(\vh^*) \le \sum_{i=1}^n\frac{r_{max,i}-r_{min,i}}{1-\gamma_i},
+        sp(\vh^*) \le \sum_{i=1}^n\frac{sp(r_i)}{1-\gamma_i}.
     \end{align*}
-    where $sp(\cdot)$ is the span semi-norm.
 \end{conj}
 
 \paragraph{Model-free learning algorithms for Markovian bandits.}
@@ -72,8 +71,9 @@ Similarly, the work of \cite{avrachenkov2022whittle} uses a QL-based algorithm t
 Meanwhile, the works of \cite{jin2018q, wei2020model} derive QL-like algorithms with a regret guarantee when learning in generic MDPs.
 It would be interesting to investigate how these works can be connected.
 
-\paragraph{Restless multi-armed multi-action bandit problem.}
-Restless multi-armed multi-action bandit (R(MA)$^2$B) is a natural extension of restless Markovian bandit.
+%\paragraph{Restless multi-armed multi-action bandit problem.}
+\paragraph{Learning algorithms for restless multi-armed multi-action bandits.}
+Restless multi-armed multi-action bandits (R(MA)$^2$B) generalize the restless Markovian bandits.
 The works of \cite{glazebrook2011general,hodge2015asymptotic} extend the notion of indexability to R(MA)$^2$B.
 However, only the subclass of R(MA)$^2$B with a special monotonic structure is analyzed in their work.
 In \cite{gast2022lp}, a novel LP-update policy is proposed for the finite-horizon setting.
@@ -83,17 +83,6 @@ Moreover, their LP-update policy is applicable for general R(MA)$^2$Bs (\ie, the
 %It is interesting to compare these policies with the Whittle index policy.
 %In another direction, the work of \cite{killian2021beyond} studies the Lagrange policy in R(MA)$^2$B.
 %The authors design an algorithm to estimate the optimal Lagrange multiplier.
-
-%\paragraph{Optimistic posterior sampling algorithms for Markovian bandits}
-
-%Theorem~\ref{thm:regret_upper_bound} provides a Bayesian regret guarantee for MB-PSRL.
-%Yet, it is well-known that the Bayesian regret guarantee is weaker than the worst-case regret guarantee.
-%Finding a prior that would allow MB-PSRL to have a worst-case regret guarantee is an exciting open question. 
-%Alternatively, deriving an optimistic posterior sampling version of MB-PSRL is also interesting.
-%Such an algorithm will have a worst-case regret guarantee.
-%The work of \cite{ishfaq2021randomized,agrawal2021improved,wang2020reinforcement,agrawal2017posterior} considers this idea for general MDPs.
-
-\paragraph{Learning algorithms for restless multi-armed multi-action bandits.}
 A natural extension of our learning problem is to consider the case where the unknown environment is a R(MA)$^2$B.
 %For model-based algorithms, the work of \cite{xiong2022learning} proposes two RL algorithms: (i) GM-R2MAB when a generative model is given and (ii) UC-R2MAB when a navigating model is given.
 %Both algorithms are scalable in the number of arms by leveraging the index policy proposed in the same paper.

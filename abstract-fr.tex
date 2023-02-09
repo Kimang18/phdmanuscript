@@ -1,5 +1,7 @@
 %Les bandits à bras multiples sont des problèmes d'allocation séquentielle dans lesquels un sous-ensemble de bras doivent être activés à chaque instant de décision.
 Un bandit markovien est un problème de décision séquentielle dans lequel un sous-ensemble de bras doivent être activés à chaque instant, et les bras évoluent de manière markovienne.
+Il y a deux catégories de bandits markoviens. 
+%: les bandits \emph{avec repos} dans lesquels les bras qui ne sont pas activés restent figés, et les bandits \emph{sans repos} dans lesquels 
 %Les bandits markoviens sont une sous-classe de problèmes de  où l'on doit activer un sous-ensemble de bras à chaque instant de décision.
 %Les bras activés évoluent de manière markovienne et active.
 Si les bras qui ne sont pas activés restent figés, on entre alors dans la catégorie des bandits markoviens \emph{avec repos}.
@@ -17,6 +19,6 @@ Pour l'apprentissage dans les bandits avec repos, nous montrons que MB-PSRL et M
 De plus, nous montrons que MB-UCRL2, une version modifiée de UCRL2, possède également une garantie de regret qui passe à l'échelle.
 Cependant, MB-UCRL2 a un temps d'exécution exponentiel dans le nombre de bras.
 Lors de l'apprentissage dans les bandits sans repos, la garantie de regret dépend fortement de la structure du bandit. Ainsi, nous étudions comment la structure des bras se traduit dans la structure du bandit.
-Nous identifions une sous-classe de bandits sans repos qui n'est pas apprenable.
+Nous exposons une sous-classe de bandits sans repos qui n'est pas apprenable.
 %Nous montrons également qu'il est difficile de construire une sous-classe de bandits sans repos apprenables efficacement, en ne faisant que des hypothèses sur les bras.
 Nous montrons également qu'il est difficile de construire des hypothèses sur les bras qui rendent les bandits sans repos apprenables efficacement.

@@ -430,10 +430,10 @@
 \iftotalcompilation
 \pdfbookmark[-1]{Back Matter}{Back Matter}
 
-\pagenumbering{arabic}  % arabic page numbering (e.g., 1 2 3), reset counter
-\renewcommand*{\thepage}{A\arabic{page}}  % prepend A to appendix page number
-\pagestyle{scrheadings}  % display header and footer
-\addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
+%\pagenumbering{arabic}  % arabic page numbering (e.g., 1 2 3), reset counter
+%\renewcommand*{\thepage}{A\arabic{page}}  % prepend A to appendix page number
+%\pagestyle{scrheadings}  % display header and footer
+%\addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
 \fi
 
 %\appendix
@@ -444,29 +444,33 @@
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
-{
-    \begin{refsection}
-    \makeatletter\@beginparpenalty=10000\makeatother  % prevent page break before list
-    \defbibenvironment{itembib}{\itemize}{\enditemize}{\item}
-    \nocite{*}
-    %
-    %\paragraph{List of publications}
-    \printbibliography[title={List of publications}, keyword={own}]
-    %
-    %\paragraph{Peer-reviewed international workshops}
-    %\printbibliography[heading=none,env=itembib,keyword={own},keyword={workshop}]
-    %\paragraph{National workshops}
-    %\printbibliography[heading=none,env=itembib,keyword={own},keyword={nworkshop}]
-    \end{refsection}
-}
+%{
+%    \begin{refsection}
+%    \makeatletter\@beginparpenalty=10000\makeatother  % prevent page break before list
+%    \defbibenvironment{itembib}{\itemize}{\enditemize}{\item}
+%    \nocite{*}
+%    %
+%    %\paragraph{List of publications}
+%    \printbibliography[title={List of publications}, keyword={own}]
+%    %
+%    %\paragraph{Peer-reviewed international workshops}
+%    %\printbibliography[heading=none,env=itembib,keyword={own},keyword={workshop}]
+%    %\paragraph{National workshops}
+%    %\printbibliography[heading=none,env=itembib,keyword={own},keyword={nworkshop}]
+%    \end{refsection}
+%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
 
 {
+    \begingroup
     \setstretch{1.1}
     \renewcommand{\bibfont}{\normalfont\small}
     \setlength{\biblabelsep}{0pt}
     \setlength{\bibitemsep}{0.5\baselineskip plus 0.5\baselineskip}
+    \let\clearpage\relax
+    \printbibliography[title={List of publications}, keyword={own}]
     \printbibliography[notkeyword={own}]
+    \endgroup
 }
 
 %{\listoffigures \let\cleardoublepage\  \listoftables} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
