@@ -8,12 +8,12 @@
 %Whittle index is a generalization of Gittins index that provides very efficient allocation rules for restless multi-armed bandits.
 In the previous chapter, we introduced a new definition of indexability of a restless bandit arm and defined the Whittle index accordingly.
 In this chapter, we develop an algorithm for testing such indexability and computing the Whittle indices of any finite-state restless bandit arm.
-This work is a part of our article submitted to Mathematical Methods of Operations Research (MMOR) journal (\cite{gast2022computing}).
 Our algorithm works in discounted and undiscounted cases and can compute the Gittins index.
 This algorithm will be built on three tools: (1) a careful characterization of Whittle index that allows one to recursively compute the $k$th smallest index from the $(k-1)$th smallest, and to test the indexability, (2) the use of the Sherman-Morrison formula to make this recursive computation efficient, and (3) a sporadic use of the fastest matrix inversion and multiplication methods to obtain a subcubic complexity.
 We will show that efficient use of the Sherman-Morrison formula leads to an algorithm that computes the Whittle index in $(2/3)n^3 + o(n^3)$ arithmetic operations, where $n$ is the number of states of the arm. 
 Furthermore, the careful use of fast matrix multiplication leads to the first subcubic algorithm to compute the Whittle or Gittins index: By using the current fastest matrix multiplication, the theoretical complexity of our algorithm is $O(n^{2.5286})$.
 We also develop an efficient implementation of our algorithm that compute indices of restless Markovian arms with several thousands of states in less than a few seconds.
+This work is part of our article submitted to Mathematical Methods of Operations Research (MMOR) journal (\cite{gast2022computing}).
 
 We present our contributions in Section~\ref{ch:cpt:sec:contribute} and summarize the related work in Section~\ref{ch:cpt:sec:related}.
 In Section~\ref{ch:cpt:sec:charac}, we provide a technical lemma to characterize an indexable arm.

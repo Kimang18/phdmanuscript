@@ -7,11 +7,11 @@
 
 In this chapter, we study the scalability of model-based algorithms learning the optimal policy of the discounted rested Markovian bandit problem with $n$ arms. % There are two categories of model-based reinforcement learning algorithms: Bayesian algorithms (like PSRL), and optimistic algorithms (like UCRL2 or UCBVI).
 %In this chapter, 
-This study is published in Transactions on Machine Learning Research (TMLR) venue (\cite{gast2022learning}).
 We construct variants of three algorithms specially tailored to Markovian bandits (MB) that we call MB-PSRL, MB-UCRL2, and MB-UCBVI. We consider an episodic setting with geometrically distributed episode length and measure the performance of the algorithm in terms of regret (Bayesian regret for MB-PSRL, and expected regret for MB-UCRL2 and MB-UCBVI). For this setting, we prove that all algorithms have a low regret in $\tilde{\landauO}(S\sqrt{nK})$ -- where $K$ is the number of episodes, $n$ is the number of arms, and $S$ is the number of states of each arm. Up to a factor $\sqrt{S}$, these regrets match a Bayesian minimax regret lower bound of $\Omega(\sqrt{SnK})$ that we also derive.
 
 Even if their theoretical regrets are comparable, the \emph{time complexities} of the three agorithms vary greatly: We show that the {time} complexity of MB-UCRL2 and all optimistic algorithms that use confidence bonuses on transition matrices grows exponentially in $n$. In contrast, MB-UCBVI does not use bonuses on transition matrices, and we show that it can be implemented efficiently, with a time complexity linear in $n$. Our numerical experiments show, however, that its empirical regret is large. Our Bayesian algorithm, MB-PSRL, enjoys the best of both worlds: its running time is linear in the number of arms, and its empirical regret is the smallest of all three algorithms.
 This is a new addition to understanding the power of Bayesian algorithms, which can often be tailored to the structure of the problems to learn.
+This study is published in Transactions on Machine Learning Research (TMLR) venue (\cite{gast2022learning}).
 
 Section~\ref{ch:rested:related} describes the work in learning with structured MDPs such as factored MDPs and rested bandit with no discount.
 We recall the formulation of the rested bandit problem with the discount factor $\gamma$ in Section~\ref{ch:rested:sec:bandits}.

@@ -7,7 +7,7 @@
 
 In the previous chapter, we gave the formalism of Markovian bandits and recalled two index policies: Gittins and Whittle index policies.
 In this chapter, we discuss the existence of the Whittle index in undiscounted restless Markovian arm and provide a few main contributions to characterize such an existence.
-This work is a part of our article submitted to Mathematical Methods of Operations Research (MMOR) journal (\cite{gast2022computing}).
+This work is part of our article submitted to Mathematical Methods of Operations Research (MMOR) journal (\cite{gast2022computing}).
 
 We present our main contributions in Section~\ref{ch:idx:sec:contrib}.
 Then, the notations and $\lambda$-penalized MDP that is the basis for defining the indexability are described in Section~\ref{ch:idx:sec:notation}.
@@ -145,12 +145,12 @@ Also, the vector $\vg^*$ is the optimal gain if and only if there exists a vecto
 
 We define a new notion of optimality as the following.
 \begin{defn}[Bellman optimal policy]
-    \label{ch:idx:defn:bell}
     A policy $\pi$ is \emph{Bellman optimal} if there exists a vector $\vh^*\in\R^n$ satisfying Bellman optimality equation \eqref{ch:idx:eq:bias_opt} with the optimal gain $\vg^*$ such that, for all state $i\in[n]$,
     \begin{equation}
         \label{ch:idx:eq:bell}
         \sum_{j=1}^nP^{\pi_i}_{ij}g^*_j =g^*_i \text{ and } \pi_i=\argmax_{a\in\{0,1\}} \Big(r^{a}_i - \lambda a_i + \sum_{j=1}^n P^{a}_{ij}h^*_j\Big).
     \end{equation}
+    \label{ch:idx:defn:bell}
 \end{defn}
 By \cite[Theorem~9.1.7]{puterman2014markov}, Bellman optimal policy always exists in MDPs with finite state and action spaces, and Bellman optimality implies gain optimality.
 However, we will see in Section~\ref{ch:idx:ssec:gain_bell} that the converse is not true in general.
