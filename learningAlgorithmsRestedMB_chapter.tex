@@ -132,7 +132,7 @@ An alternative definition of $v$ is to consider a finite-horizon problem with a 
 \end{equation}
 \begin{prob}
 \label{pb:problem_1}
-Given a rested bandit $M$ with $n$ arms, each is a Markov reward process $\langle\gS_a,\vr_a,\mP_a\rangle$ with a finite state space of size $S$, find a policy $\pi\colon\gS_1{\times}\dots{\times}\gS_n\mapsto[n]$ that maximizes $v_{M}^\pi(\vs)$ for any state $\vs$ distributed according to initial global state distribution $\rho$.
+Given a rested bandit $M$ with $n$ arms, each is a Markov reward process $\langle\gS_a,\vr_a,\mP_a\rangle$ with a finite state space $\gS_a$, find a policy $\pi\colon\gS_1{\times}\dots{\times}\gS_n\mapsto[n]$ that maximizes $v_{M}^\pi(\vs)$ for any state $\vs$ distributed according to initial global state distribution $\rho$.
 \end{prob}
 
 By a small abuse of notation, we denote by $v_M^\pi(\rho)$ the expected reward when the initial state is randomly generated according to $\rho: v_M^\pi(\rho)=\sum_{\vs}\rho(\vs)v_{M}^\pi(\vs)$.
@@ -243,9 +243,9 @@ Compared to a vanilla implementation of UCRL2, MB-UCRL2 uses the structure of th
 
 \subsection{MB-UCBVI}
 
-At the beginning of episode $k$, MB-UCBVI uses the same quantities $N^{k}(s_a)$, $\hat{r}^{k}(s_a)$, and $\hat{\mP}^{k}(s_a,\cdot)$ as MB-UCRL2. The difference lies in the definition of the bonus terms. While MB-UCRL2 uses a bonus on the reward and on the transition matrices, MB-UCBVI defines a bonus $\beta^{k}_r(s_a){:=}\frac{1}{1-\gamma}\sqrt{\frac{\log(2SnKt^k)}{2\max\{1,N^{k}(s_a)\}}}$ that is used on the reward only. MB-UCBVI computes the Gittins index policy $\pi^k$ that is optimal for the bandit problem $\{(\hat{\vr}^{k}_a {+}\beta^{k}_{r}, \hat{\mP}^{k}_a)\}_{a\in[n]}$. 
+At the beginning of episode $k$, MB-UCBVI uses the same quantities $N^{k}(s_a)$, $\hat{r}^{k}(s_a)$, and $\hat{\mP}^{k}(s_a,\cdot)$ as MB-UCRL2. The difference lies in the definition of the bonus terms. While MB-UCRL2 uses a bonus on the reward and on the transition matrices, MB-UCBVI defines a bonus $\beta^{k}_{}(s_a){:=}\frac{1}{1-\gamma}\sqrt{\frac{\log(2SnKt^k)}{2\max\{1,N^{k}(s_a)\}}}$ that is used on the reward only. MB-UCBVI computes the Gittins index policy $\pi^k$ that is optimal for the bandit problem $\{(\hat{\vr}^{k}_a {+}\beta^{k}_{}, \hat{\mP}^{k}_a)\}_{a\in[n]}$. 
 
-Similarly to the case of UCRL2, a vanilla implementation of UCBVI would use a bonus that scales exponentially in the number of arms. MB-UCBVI makes an even  better use of the structure of the learned problem because the optimistic MDP $\{(\hat{\vr}^{k}_a {+}\beta^{k}_{r}, \hat{\mP}^{k}_a)\}_{a\in[n]}$ is still a Markovian bandit problem. This implies that the optimistic policy $\pi^k$ is a Gittins index policy, and that can therefore be computed efficiently.
+Similarly to the case of UCRL2, a vanilla implementation of UCBVI would use a bonus that scales exponentially in the number of arms. MB-UCBVI makes an even  better use of the structure of the learned problem because the optimistic MDP $\{(\hat{\vr}^{k}_a {+}\beta^{k}_{}, \hat{\mP}^{k}_a)\}_{a\in[n]}$ is still a Markovian bandit problem. This implies that the optimistic policy $\pi^k$ is a Gittins index policy, and that can therefore be computed efficiently.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -496,7 +496,7 @@ We are then left with $\ex{\Delta_{conc}^k \ind{\gE^{k}_\text{Algo}}}$. To do so
     & {\le} \mathbb{E}\left[\ind{\gE^{k}_\text{Algo}} \sum_{t=t^k}^{t^{k+1}{-}1}\abs{r^k(s_{t,a_t}){-}r(s_{t,a_t})}{+}B^k\norm{\mP^{k}(s_{t,a_t},\cdot){-}\mP(s_{t,a_t},\cdot)}_{\ell_1}\right] \label{eq:proof2}
 \end{align}
 where ${\norm{\mP^{k}(s_a,\cdot)-\mP(s_a,\cdot)}_{\ell_1}=\sum_{s'_a}\abs{P^{k}(s_a,s'_a)-P(s_a,s'_a)}}$. 
-For an arm $a$ and a state $s_a\in\gS_a$, we denote\footnote{In the paper, we use the notation $\ind{E}$ to denote a random variable that equals $1$ if $E$ is true and $0$ otherwise. For instance, $\ind{Y_i=y}=1$ if $Y_i=y$ and $0$ otherwise.} by $N^{k}(s_a){=} \sum_{t=1}^{t^{k}-1} \ind{s_{t,a_t}=s_a}$ the number of times that Arm~$a$ is activated before episode $k$ while being in state $s_a$. \Eqref{eq:proof2} relates the performance gap to the distance between the reward functions and transition matrices of the MDPs $M$ and $M^k$. 
+For an arm $a$ and a state $s_a\in\gS_a$, we denote\footnote{We use the notation $\ind{E}$ to denote a random variable that equals $1$ if $E$ is true and $0$ otherwise. For instance, $\ind{Y_i=y}=1$ if $Y_i=y$ and $0$ otherwise.} by $N^{k}(s_a){=} \sum_{t=1}^{t^{k}-1} \ind{s_{t,a_t}=s_a}$ the number of times that Arm~$a$ is activated before episode $k$ while being in state $s_a$. \Eqref{eq:proof2} relates the performance gap to the distance between the reward functions and transition matrices of the MDPs $M$ and $M^k$. 
 With $L^K{=}\sqrt{2\ln\frac{2SnK^2\ln K^2}{1-\gamma}}$, the event $\gE^{k}_\text{Algo}$ guarantees that for all $a, s_a$ and $ k\ge1$, 
 \begin{align}
     \label{eq:concentration}
@@ -521,7 +521,7 @@ To bound this, we use the geometric distribution of $H^k$ to show that $\ex{\max
 
 In this section, we establish a series of lemmas that are true for any learning algorithm used. They show that:
 \begin{itemize}
-    \item The estimates $\hat{r}$ and $\hat{Q}$ concentrates on their true values (Lemma~\ref{lem:concentration});
+    \item The estimates $\hat{r}$ and $\hat{P}$ concentrates on their true values (Lemma~\ref{lem:concentration});
     \item One can transform $\Delta_{conc}^k$ into \Eqref{eq:proof2} (Lemma~\ref{lem:regret_decomposition});
     \item The sum \Eqref{eq:proof3} can be analyzed (Lemma~\ref{lem:sum}).
 \end{itemize}
@@ -778,7 +778,7 @@ Before doing the proof, we start by a first lemma that essentially formalizes th
     \label{lem:concentration_psrl}
     At episode $k$, the event
     \begin{align*}
-        \gE_\text{PSRL}^{k} =
+        \gE_\textnormal{PSRL}^{k} =
         &\bigg\{ \forall a{\in}[n], s_a{\in}\gS_a, k'\le k{:}
             \abs{r^{k}(s_a){-}r(s_a)} \le\frac{L^{k}}{\sqrt{\max\{1,N^{k'}(s_a)\} }}, \\
         &\quad\norm{\mP^{k}(s_a,\cdot) {-}\mP(s_a,\cdot)}_{\ell_1} \le\frac{2L^{k}{+}3\sqrt{S}}{\sqrt{\max\{1,N^{k'}(s_a)\} }}, \text{ and } H^{k'}\le \frac{\ln(Kk)}{1-\gamma} \bigg\}
@@ -870,7 +870,7 @@ The proof follows the same steps as for MB-PSRL. While the high probability even
     \label{lem:concentration_ucrl}
     At episode $k$, the event
     \begin{align*}
-        \gE_\text{UCRL2}^{k} =
+        \gE_\textnormal{UCRL2}^{k} =
         &\bigg\{ \forall a{\in}[n], s_a{\in}\gS_a, k'\le k{:}
             \abs{\rhat^{k'}(s_a){-}r(s_a)} \le\frac{L^{k}}{2\sqrt{\max\{1,N^{k'}(s_a)\} }}, \\
         &\quad\norm{\hat{\mP}^{k'}(s_a,\cdot) {-}\mP(s_a,\cdot)}_{\ell_1} \le\frac{L^{k}{+}1.5\sqrt{S}}{\sqrt{\max\{1,N^{k'}(s_a)\} }}, \text{ and } H^{k'}\le \frac{\ln(Kk)}{1-\gamma} \bigg\}
@@ -934,7 +934,7 @@ We start by defining the high probability event. Then, we prove the optimistic p
     \label{lem:concentration_ucbvi}
     The event
     \begin{align*}
-        &\gE_\text{UCBVI}^{k} {=}\bigg\{ \forall a{\in}[n], \vs{\in}\gX, k'\le k{:} \\
+        &\gE_\textnormal{UCBVI}^{k} {=}\bigg\{ \forall a{\in}[n], \vs{\in}\gX, k'\le k{:} \\
         &\qquad \abs{\rhat^{k'}(s_a){-}r(s_a)} \le\frac{L^{k}}{2\sqrt{\max\{1,N^{k'}(s_a)\} }}, \\
         &\qquad \norm{\hat{\mP}^{k'}(s_a,\cdot) {-}\mP(s_a,\cdot)}_{\ell_1} \le\frac{L^{k}{+}1.5\sqrt{S}}{\sqrt{\max\{1,N^{k'}(s_a)\} }}, H^{k'}\le \frac{\ln(Kk)}{1-\gamma}, \text{ and } \\
         &\abs{\rhat^{k'}(s_a){-}r(s_a) {+}\gamma\sum_{\vs'}(\hat{p}^{k'}(\vs'\mid\vs,a){-}p(\vs'\mid\vs,a))v_M^{\pi^*}(\vs')} \le
@@ -957,31 +957,31 @@ The following lemma guarantees that $\ex{\Delta_{model}^k \ind{\gE^{k}_\text{UCB
 \end{align*}
 \begin{lem}[Optimism of MB-UCBVI]
     \label{lem:ucbvi_optim}
-   If $\gE^{k}_\text{UCBVI}$ holds, then for any $\vs\in\gX$, we have
+   If $\gE^{k}_\textnormal{UCBVI}$ holds, then for any $\vs\in\gX$, we have
    \begin{align*}
        v_{M^k}^{\pi^k}(\vs) \ge v_{M}^{\pi^*}(\vs)
     \end{align*}
 \end{lem}
 \begin{proof}
-    Recall that at episode $k$, we define the optimistic MDP of MB-UCBVI by $M^k$ in which the parameters of any arm $a\in[n]$ are $(\hat{\vr}^{k}_a +\beta^{k}_r, \hat{\mP}^{k}_a)$ with $\beta^k(s_a){=}\frac{L^{k}}{2(1-\gamma)\sqrt{\max\{1,N^{k}(s_a)\} }}$ for any $s_a\in\gS_a$.
+    Recall that at episode $k$, we define the optimistic MDP of MB-UCBVI by $M^k$ in which the parameters of any arm $a\in[n]$ are $(\hat{\vr}^{k}_a +\beta^{k}, \hat{\mP}^{k}_a)$ with $\beta^k(s_a){=}\frac{L^{k}}{2(1-\gamma)\sqrt{\max\{1,N^{k}(s_a)\} }}$ for any $s_a\in\gS_a$.
 The Gittins index policy $\pi^k$ is optimal for MDP $M^k$.
 For any state $\vs$, let $a=\pi^k(\vs)$ and $a^*=\pi^*(\vs)$.
 Then,
 \begin{align*}
     v_{M^k}^{\pi^k}(\vs) -v_M^{\pi^*}(\vs)
-    &= \beta^k_r(s_a) +\rhat^{k}(s_a) +\gamma\sum_{\vs'}\hat{p}^{k}(\vs'\mid \vs,a)v_{M^k}^{\pi^k}(\vs') -v_M^{\pi^*}(\vs)\\ 
-    &\ge \beta^{k}_r(s_{a^*}) +\rhat^{k}(s_{a^*}) +\gamma\sum_{\vs'}\hat{p}^{k}(\vs'\mid \vs,a^*)v_{M^k}^{\pi^k}(\vs') \\
+    &= \beta^k(s_a) +\rhat^{k}(s_a) +\gamma\sum_{\vs'}\hat{p}^{k}(\vs'\mid \vs,a)v_{M^k}^{\pi^k}(\vs') -v_M^{\pi^*}(\vs)\\ 
+    &\ge \beta^{k}(s_{a^*}) +\rhat^{k}(s_{a^*}) +\gamma\sum_{\vs'}\hat{p}^{k}(\vs'\mid \vs,a^*)v_{M^k}^{\pi^k}(\vs') \\
     &\quad -r(s_{a^*}) -\gamma\sum_{\vs'}p(\vs'\mid \vs,a^*)v_M^{\pi^*}(\vs') \\
-    &= \beta^{k}_r(s_{a^*}) +\rhat^{k}(s_{a^*}) {-}r(s_{a^*}) {+}\gamma\sum_{\vs'}\Bigl(\hat{p}^{k}(\vs'\mid \vs,a^*) {-}p(\vs'\mid \vs,a^*)\Bigr)v_M^{\pi^*}(\vs') \\
+    &= \beta^{k}(s_{a^*}) +\rhat^{k}(s_{a^*}) {-}r(s_{a^*}) {+}\gamma\sum_{\vs'}\Bigl(\hat{p}^{k}(\vs'\mid \vs,a^*) {-}p(\vs'\mid \vs,a^*)\Bigr)v_M^{\pi^*}(\vs') \\
     &\qquad +\gamma \sum_{\vs'}\hat{p}^{k}(\vs'\mid \vs,a^*)\Bigl(v_{M^k}^{\pi^k}(\vs') -v_M^{\pi^*}(\vs')\Bigr)
 \end{align*}
 Let $(r^{\pi}, P^{\pi})$ be the reward vector and transition matrix under policy $\pi$ (i.e. $\forall \vs, \vs'\in\gX, r^{\pi}(\vs)=r(s_{\pi(\vs)}), P^{\pi}(\vs,\vs')=p\Bigl( \vs'\mid \vs,\pi(\vs)\Bigr)$ as defined in \Eqref{eq:defP}).
 In matrix form, the above equations
 \begin{align*}
     v_{M^k}^{\pi^k} -v_M^{\pi^*}
-    &\ge (\beta_r^{k})^{\pi^*} +(\rhat^{k})^{\pi^*} -r^{\pi^*} {+}\gamma\Bigl((\Phat^{k})^{\pi^*} {-}P^{\pi^*}\Bigr)v_M^{\pi^*} +\gamma (\Phat^{k})^{\pi^*}(v_{M^k}^{\pi^k} -v_M^{\pi^*}).
+    &\ge (\beta^{k})^{\pi^*} +(\rhat^{k})^{\pi^*} -r^{\pi^*} {+}\gamma\Bigl((\Phat^{k})^{\pi^*} {-}P^{\pi^*}\Bigr)v_M^{\pi^*} +\gamma (\Phat^{k})^{\pi^*}(v_{M^k}^{\pi^k} -v_M^{\pi^*}).
 \end{align*}
-Under event $\gE^{k}_\text{UCBVI}$, $(\beta_r^{k})^{\pi^*} +(\rhat^{k})^{\pi^*} -r^{\pi^*} {+}\gamma\Bigl((\Phat^{k})^{\pi^*} {-}P^{\pi^*}\Bigr)v_M^{\pi^*}\ge 0$. This implies that:
+Under event $\gE^{k}_\text{UCBVI}$, $(\beta^{k})^{\pi^*} +(\rhat^{k})^{\pi^*} -r^{\pi^*} {+}\gamma\Bigl((\Phat^{k})^{\pi^*} {-}P^{\pi^*}\Bigr)v_M^{\pi^*}\ge 0$. This implies that:
 \begin{align*}
     \Bigl(I-\gamma (\Phat^{k})^{\pi^*}\Bigr)(v_{M^k}^{\pi^k} -v_M^{\pi^*}) &\ge 0.
 \end{align*}
@@ -999,7 +999,7 @@ We are therefore left with the last term.
 Using Lemma~\ref{lem:regret_decomposition} with $B^k=\frac{H^kL^{k}}{2(1-\gamma)}$ and the definition of $M^k$ for MB-UCBVI, we have:
 \begin{align*}
     \sum_{k=1}^K \ex{ \ind{\gE^{k}_\text{UCBVI}} \Delta^k_\text{conc}}
-    &{\le} \sum_{k=1}^K \mathbb{E}\bigg[ \ind{\gE^{k}_\text{UCBVI}}\sum_{t=t^k}^{t^{k+1}-1} \beta^{k}_r(s_{t,a_t}){+}\abs{\rhat^{k}(s_{t,a_t}){-}r(s_{t,a_t})} \\
+    &{\le} \sum_{k=1}^K \mathbb{E}\bigg[ \ind{\gE^{k}_\text{UCBVI}}\sum_{t=t^k}^{t^{k+1}-1} \beta^{k}(s_{t,a_t}){+}\abs{\rhat^{k}(s_{t,a_t}){-}r(s_{t,a_t})} \\
     &\qquad {+}\frac{H^kL^{k}}{2(1-\gamma)}\norm{\hat{\mP}^{k}(s_{t,a_t},\cdot){-}\mP(s_{t,a_t},\cdot)}_{\ell_1} \bigg] \\
     &\le \ex{\sum_{k=1}^{K}\sum_{t=t^k}^{t^{k+1}-1} \frac{(2-\gamma)L^{k}+H^kL^{k}(L^{k}+1.5\sqrt{S})}{2(1-\gamma)\sqrt{\max\{1,N^{k}(s_{t,a_t})\} }}} \\
     &\le \ex{\frac{2L^K(L^K+\sqrt{S})\max_{k\le K}H^k}{1-\gamma} \sum_{k=1}^{K} \sum_{t=t^k}^{t^{k+1}-1} \frac1{\sqrt{\max\{1,N^{k}(s_{t,a_t})\} }}} \\
