@@ -41,7 +41,7 @@ In this direction, the work of \cite{vanderbei1991splitting} investigates how th
 It would be exciting to adapt this work to our algorithm.
 
 \paragraph{Upper bounds on the span of the global bias functions of restless bandit and the number of arms.}
-The ergodicity coefficient of the bandit is used in the recent works of \cite{akbarzadeh2022learning, xiong2022learning} to upper bound the span of the global bias functions when learning in restless bandits with the average reward criterion.
+The ergodicity coefficient of the bandit is used in the recent works of \cite{akbarzadeh2022learning} to upper bound the span of the global bias functions when learning in restless bandits with the average reward criterion.
 Nevertheless, we still do not know the optimal upper bound on this span in terms of the number of arms. 
 Our Theorem~\ref{thm:ergodicity_coeff} shows an exponential dependency between an upper bound on the ergodicity coefficient of the bandit and the number of arms.
 However, we believe that this upper bound is not tight for the span of the global bias functions.
@@ -54,7 +54,7 @@ Therefore, we conjecture that the span of the global bias functions is upper bou
     For each arm $i\in[n]$, the expected reward $r_i(s_i,a_i)$ is bounded in $[r_{min,i},r_{max,i}]$ for all $s_i\in\gS_i$ and $a_i\in\{0,1\}$.
     For each arm $i\in[n]$, let $\gamma_i$ be its ergodicity coefficient defined by
     \begin{align*}
-        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p_i(z_i \mid x_i, a), p_i(z_i \mid y_i, a')\}.
+        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p_i(z_i \mid s_i, a), p_i(z_i \mid s'_i, a')\}.
     \end{align*}
     Let $\vh^*$ be the global optimal bias function of the bandit $M$ in the average reward criterion.
     We have the following.
@@ -78,8 +78,8 @@ The works of \cite{glazebrook2011general,hodge2015asymptotic} extend the notion 
 However, only the subclass of R(MA)$^2$B with a special monotonic structure is analyzed in their work.
 In \cite{gast2022lp}, a novel LP-update policy is proposed for the finite-horizon setting.
 When the number of arms grows to infinity, their policy is proven to achieve optimality.
-In the infinite-horizon average reward criterion, the work of \cite{xiong2022learning} proposes novel index definitions that are provably optimal.
-The index definitions of \cite{xiong2022learning} and the LP-update policy of \cite{gast2022lp} are applicable for general R(MA)$^2$Bs (\ie, they do not need indexability condition).
+%In the infinite-horizon average reward criterion, the work of \cite{xiong2022learning} proposes novel index definitions that are provably optimal.
+Moreover, their LP-update policy is applicable for general R(MA)$^2$Bs (\ie, the indexability condition is not required).
 %It is interesting to compare these policies with the Whittle index policy.
 %In another direction, the work of \cite{killian2021beyond} studies the Lagrange policy in R(MA)$^2$B.
 %The authors design an algorithm to estimate the optimal Lagrange multiplier.
@@ -95,8 +95,8 @@ The index definitions of \cite{xiong2022learning} and the LP-update policy of \c
 
 \paragraph{Learning algorithms for restless multi-armed multi-action bandits.}
 A natural extension of our learning problem is to consider the case where the unknown environment is a R(MA)$^2$B.
-For model-based algorithms, the work of \cite{xiong2022learning} proposes two RL algorithms: (i) GM-R2MAB when a generative model is given and (ii) UC-R2MAB when a navigating model is given.
-Both algorithms are scalable in the number of arms by leveraging the index policy proposed in the same paper.
+%For model-based algorithms, the work of \cite{xiong2022learning} proposes two RL algorithms: (i) GM-R2MAB when a generative model is given and (ii) UC-R2MAB when a navigating model is given.
+%Both algorithms are scalable in the number of arms by leveraging the index policy proposed in the same paper.
 For model-free algorithms, the work of \cite{killian2021q} proposes two algorithms: (i) QL-based algorithm to learn the index policy proposed by \cite{glazebrook2011general} and (ii) Lagrange policy QL algorithm.
 It is interesting to see how Bayesian approach can be used in this learning problem.
 
