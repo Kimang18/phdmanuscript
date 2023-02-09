@@ -31,7 +31,7 @@ For learning generic MDPs with average reward criterion, the current best algori
 %This regret bound is valid for communicating MDPs.
 From what we have observed, the MDP properties that appear in regret upper bound are:
 \begin{itemize}
-    \item the diameter $D$ (defined by Definition~\ref{ch:rl:defn:diameter}) used in \eg, \cite{jaksch2010near, fruit2020improved, tossou2019near};
+    \item the diameter $D$ (defined by Definition~\ref{ch:rl:defn:diameter}) used in \eg, \cite{jaksch2010near, fruit2020improved};
     \item the upper bound on the span of the optimal bias function $H\ge sp(\vh^*)$ used in \eg, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret};
     \item the mixing time $t_{mix}$ (defined by Definition~\ref{ch:restless:mixing}) used in \eg, \cite{ortner2020regret}.
 \end{itemize}
@@ -950,7 +950,7 @@ Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
 \begin{thm}[Local and global ergodicity coefficients]
     For each arm $i\in[n]$, the ergodicity coefficient $\gamma_i$ of the arm is defined by
     \begin{align*}
-        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\}.
+        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a), p(z_i \mid s'_i, a')\}.
     \end{align*}
     Similarly, the ergodicity coefficient $\beta_M$ of the bandit $M$ is defined in the same manner as \eqref{eq:ergodic_M}.
 
@@ -975,7 +975,7 @@ Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
     Since for any $i\in[n]$, $\gamma_i<1$, we have that
     \begin{align*}
         \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}
-        &\ge \min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid x_i, a), p(z_i \mid y_i, a')\} \\
+        &\ge \min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a), p(z_i \mid s'_i, a')\} \\
         &= 1-\gamma_i >0.
     \end{align*}
     In consequences, ${\sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}{>}0}$.
