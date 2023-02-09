@@ -5,30 +5,29 @@
 \chapter{Conclusions and Future Work}
 \label{chapter:conclusion}
 
-
 \section{Conclusions}
 
-In this thesis, two grand questions in Markovian bandits have been addressed: index computation given the bandit's parameters and minimizing the regret using the index policy when the bandit's parameters are unknown.
-For the former, we have introduced an algorithm for computing the Whittle or Gittins index in subcubic time complexity in indexable Markovian arms. 
-For the latter, we have proposed three algorithms with a regret guarantee for rested bandits with discount.
-Two of the three algorithms can leverage the Gittins index.
-We have also pointed out the difficulties of minimizing the regret in learning restless bandits with the average reward criterion.
+This thesis addresses two grand questions in Markovian bandits: (1) index computation given the bandit's parameters and (2) minimizing the regret and the runtime of learning algorithms using the problem structure and the index policy when the bandit's parameters are unknown.
+For the former, we have introduced an algorithm for computing the Whittle or the Gittins indices of a Markovian arm in subcubic time complexity.
+For the latter, we have proposed three learning algorithms with a regret guarantee sublinear in the number of arms for rested bandits with discount.
+Moreover, two of the three learning algorithms can leverage the Gittins index to have a runtime linear in the number of arms.
+We have also pointed out the difficulties of minimizing the regret when learning in restless bandits with the average reward criterion.
 
-From this thesis, we have seen that the structure of arms plays a crucial role in the Markovian bandit problems.
-First, when characterizing the indexability of undiscounted restless arms, the notion of indexability becomes elusive when a few optimal policies are multichain.
+We have seen that the structure of arms plays a crucial role in Markovian bandit problems.
+First, the Whittle index policy is defined for restless Markovian bandits whose arms satisfy a notion of indexability, but this notion becomes unclear when some arms admit some local optimal policies that are multichain.
 %This is because the indexability definition implicitly relies on the bias function of the optimal policy, and the multichain optimal policy induces bias functions that are computationally hard to characterize.
 %For instance, from \cite{schweitzer1978functional}, the bias of the multichain optimal policy is defined on the basis of the policy's recurrent classes (or subchains), which are expensive to compute.
 %By consequence, our algorithm cannot characterize the indexability of all multichain arms.
 %For instance, given a multichain policy, one needs to compute its recurrent classes (or its subchains) characterizing the bias functions or 
 %The work of \cite{schweitzer1978functional}
-Second, the regret guarantee of our three algorithms in the rested bandit is sublinear in the number of arms because the three algorithms learn the arms's parameters instead of the bandit.
-Lastly, when learning a restless bandit, the MDP properties, such as the diameter of the bandit, can be exponential in the number of arms.
+%Second, the regret guarantee of our three algorithms in the rested bandit is sublinear in the number of arms because the three algorithms learn the arms's parameters instead of the bandit.
+Second, by learning the arms' expected rewards and state transitions instead of the bandit's ones, our three learning algorithms manage to have a regret guarantee sublinear in the number of arms in rested bandits with discount.
+Lastly, when learning in restless bandits, the MDP properties of the bandit, such as the diameter, the mixing time, and the span of the global bias functions, depend heavily on the arms' structure.
 
 This thesis also provides an argument that supports the power of Bayesian algorithms: They can be easily tailored to the structure of the problem to learn.
-For instance, MB-PSRL has a regret guarantee, and a runtime scalable in the number of arms in learning rested Markovian bandits with discount.
-Also, RB-TSDE \cite{akbarzadeh2022learning} can leverage the Whittle index to have a scalable runtime in learning restless bandits with the average reward criterion.
-Meanwhile, the optimistic algorithms that use confidence bonuses on the arms' state transition are likely to have a runtime non-scalable in the number of arms in learning Markovian bandits.
-
+For instance, MB-PSRL has a regret guarantee and a runtime scalable in the number of arms when learning in rested Markovian bandits with discount.
+Also, RB-TSDE \cite{akbarzadeh2022learning} can leverage the Whittle index to have a scalable runtime when learning in restless Markovian bandits with the average reward criterion.
+Meanwhile, the optimistic algorithms that use confidence bonuses on the arms' state transitions likely have a runtime non-scalable in the number of arms in learning Markovian bandits.
 
 \section{Future work}
 
@@ -36,35 +35,52 @@ There are several directions to extend the work developed in this thesis. Some o
 
 \paragraph{Computing the Whittle index of arms with a sparse transition structure.}
 The possibility of designing a Whittle index computation algorithm in restless Markovian arms with sparse transition matrix warrants further investigation.
-Many applications in which the Whittle index policy performs exceptionally well usually admit a sparse arm's transition structure (see, \eg, \cite{wang1995finite, nino2002dynamic, aalto2018whittle}, also \cite{wang2020restless} and references therein).
+Many applications in which the Whittle index policy performs exceptionally well admit a sparse arm's transition structure (see, \eg, \cite{wang1995finite, nino2002dynamic, aalto2018whittle}, also \cite{wang2020restless} and references therein).
 On the basis of our index computation algorithm, one may want to investigate the combination of the sparse matrix inversion (see \eg, \cite{dulmage1962inversion, niessner1983computing}) with the Sherman-Morrison-Woodbury formula.
 In this direction, the work of \cite{vanderbei1991splitting} investigates how the Sherman-Morrison-Woodbury formula can be used in the inversion of a sparse matrix with dense columns.
 It would be exciting to adapt this work to our algorithm.
 
 \paragraph{Upper bounds on the span of the global bias functions of restless bandit and the number of arms.}
-The ergodicity coefficient of the bandit is used in the recent works of \cite{akbarzadeh2022learning, xiong2022learning} to upper bound the span of the global bias functions when learning restless bandits with the average reward criterion.
+The ergodicity coefficient of the bandit is used in the recent works of \cite{akbarzadeh2022learning, xiong2022learning} to upper bound the span of the global bias functions when learning in restless bandits with the average reward criterion.
 Nevertheless, we still do not know the optimal upper bound on this span in terms of the number of arms. 
 Our Theorem~\ref{thm:ergodicity_coeff} shows an exponential dependency between an upper bound on the ergodicity coefficient of the bandit and the number of arms.
 However, we believe that this upper bound is not tight for the span of the global bias functions.
 Indeed, we have performed a few numerical experiments that advocate a linear dependency between an upper bound on this span and the number of arms when the condition of Theorem~\ref{thm:ergodicity_coeff} is satisfied.
+Therefore, we conjecture that the span of the global bias functions is upper bounded linearly in the number of arms as the following.
+\begin{conj}
+    \label{conj:span}
+    Consider a restless bandit $M$ having $n$ arms.
+    Each arm $\langle\gS_i,\{0,1\},r_i,p_i\rangle$ is an MDP with a finite state space $\gS_i$ and a binary action space $\{0,1\}$.
+    For each arm $i\in[n]$, the expected reward $r_i(s_i,a_i)$ is bounded in $[r_{min,i},r_{max,i}]$ for all $s_i\in\gS_i$ and $a_i\in\{0,1\}$.
+    For each arm $i\in[n]$, let $\gamma_i$ be its ergodicity coefficient defined by
+    \begin{align*}
+        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p_i(z_i \mid x_i, a), p_i(z_i \mid y_i, a')\}.
+    \end{align*}
+    Let $\vh^*$ be the global optimal bias function of the bandit $M$ in the average reward criterion.
+    We have the following.
+    \begin{align*}
+        sp(\vh^*) \le \sum_{i=1}^n\frac{r_{max,i}-r_{min,i}}{1-\gamma_i},
+    \end{align*}
+    where $sp(\cdot)$ is the span semi-norm.
+\end{conj}
 
 \paragraph{Model-free learning algorithms for Markovian bandits.}
 This thesis focuses on model-based learning algorithms for Markovian bandits. 
-Another direction of research would be investigating the model-free algorithm.
+Another direction of research would be investigating model-free algorithms.
 For rested bandits with discount, the work of \cite{duff1995q} uses the Q-learning (QL) algorithm to estimate the Gittins index and softmax for the exploration.
 Similarly, the work of \cite{avrachenkov2022whittle} uses a QL-based algorithm to estimate the Whittle index of undiscounted restless bandits.
-Meanwhile, the works of \cite{jin2018q, wei2020model} derive QL-like algorithms with a regret guarantee in learning generic MDPs.
+Meanwhile, the works of \cite{jin2018q, wei2020model} derive QL-like algorithms with a regret guarantee when learning in generic MDPs.
 It would be interesting to investigate how these works can be connected.
 
 \paragraph{Restless multi-armed multi-action bandit problem.}
-Restless multi-armed multi-action bandit (R(MA)$^2$B) is a natural extension of our restless Markovian bandit.
+Restless multi-armed multi-action bandit (R(MA)$^2$B) is a natural extension of restless Markovian bandit.
 The works of \cite{glazebrook2011general,hodge2015asymptotic} extend the notion of indexability to R(MA)$^2$B.
 However, only the subclass of R(MA)$^2$B with a special monotonic structure is analyzed in their work.
-In \cite{xiong2021reinforcement}, a new index definition is proposed for the finite-horizon setting, and the indices are computed based on the occupancy measure.
-When the number of arms grows to infinity, their index policy is proven to achieve optimality.
-In the infinite-horizon average reward criterion, the work of \cite{xiong2022learning} also proposes novel index definitions that are provably optimal.
-The index definitions of \cite{xiong2021reinforcement, xiong2022learning} are applicable for general R(MA)$^2$Bs (\ie, the index is always defined).
-It is interesting to compare these indices with the Whittle index.
+In \cite{gast2022lp}, a novel LP-update policy is proposed for the finite-horizon setting.
+When the number of arms grows to infinity, their policy is proven to achieve optimality.
+In the infinite-horizon average reward criterion, the work of \cite{xiong2022learning} proposes novel index definitions that are provably optimal.
+The index definitions of \cite{xiong2022learning} and the LP-update policy of \cite{gast2022lp} are applicable for general R(MA)$^2$Bs (\ie, they do not need indexability condition).
+%It is interesting to compare these policies with the Whittle index policy.
 %In another direction, the work of \cite{killian2021beyond} studies the Lagrange policy in R(MA)$^2$B.
 %The authors design an algorithm to estimate the optimal Lagrange multiplier.
 
@@ -80,7 +96,7 @@ It is interesting to compare these indices with the Whittle index.
 \paragraph{Learning algorithms for restless multi-armed multi-action bandits.}
 A natural extension of our learning problem is to consider the case where the unknown environment is a R(MA)$^2$B.
 For model-based algorithms, the work of \cite{xiong2022learning} proposes two RL algorithms: (i) GM-R2MAB when a generative model is given and (ii) UC-R2MAB when a navigating model is given.
-Both algorithms are scalable with the number of arms by leveraging the index policy proposed in the same paper.
+Both algorithms are scalable in the number of arms by leveraging the index policy proposed in the same paper.
 For model-free algorithms, the work of \cite{killian2021q} proposes two algorithms: (i) QL-based algorithm to learn the index policy proposed by \cite{glazebrook2011general} and (ii) Lagrange policy QL algorithm.
 It is interesting to see how Bayesian approach can be used in this learning problem.
 

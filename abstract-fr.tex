@@ -1,19 +1,22 @@
-Les bandits à bras multiples sont des problèmes d'allocation séquentielle dans lesquels un sous-ensemble de bras doivent être activés à chaque instant de décision.
-Le bandit est dit markovien si ses bras évoluent de manière markovienne.
+%Les bandits à bras multiples sont des problèmes d'allocation séquentielle dans lesquels un sous-ensemble de bras doivent être activés à chaque instant de décision.
+Un bandit markovien est un problème de décision séquentielle dans lequel un sous-ensemble de bras doivent être activés à chaque instant, et les bras évoluent de manière markovienne.
 %Les bandits markoviens sont une sous-classe de problèmes de  où l'on doit activer un sous-ensemble de bras à chaque instant de décision.
 %Les bras activés évoluent de manière markovienne et active.
-Si les bras qui ne sont pas activés restent figés, on entre alors dans la catégorie des bandits markoviens avec repos.
-S'ils évoluent de manière markovienne, on parle alors de bandit markovien sans repos.
-De tels problèmes souffrent de la malédiction de la dimension qui rend souvent la solution exacte prohibitive en terme de calculs.
+Si les bras qui ne sont pas activés restent figés, on entre alors dans la catégorie des bandits markoviens \emph{avec repos}.
+S'ils évoluent de manière markovienne, on parle alors de bandit markovien \emph{sans repos}.
+En général, les bandits markoviens souffrent de la malédiction de la dimension qui rend souvent la solution exacte prohibitive en terme de calculs.
 Il faut donc recourir à des heuristiques telles que les politiques d'indice.
-Deux indices célèbres sont l'indice de Gittins et l'indice de Whittle.
-Cette thèse se concentre sur deux questions : (1) le calcul d'indices lorsque tous les paramètres du modèle sont connus et (2) la conception d'algorithmes d'apprentissage lorsque les paramètres sont inconnus.
-Pour le calcul de l'indice, nous relevons les ambiguïtés de la définition classique de l'indexabilité et proposons une définition correcte qui assure l'unicité de l'indice de Whittle pour chaque bras des bandits sans repos.
+Deux indices célèbres sont l'indice de Gittins pour les bandits avec repos et l'indice de Whittle pour les bandits sans repos.
+
+Cette thèse se concentre sur deux questions : (1) le calcul d'indices lorsque tous les paramètres du modèle sont connus et (2) les algorithmes d'apprentissage lorsque les paramètres sont inconnus.
+
+Pour le calcul de l'indice, nous relevons les ambiguïtés de la définition classique de l'indexabilité et proposons une définition qui assure l'unicité de l'indice de Whittle quand ce dernier existe.
 Nous développons ensuite un algorithme testant l'indexabilité et calculant les indices de Whittle.
 La complexité théorique de notre algorithme est $\landauO(S^{2.5286})$, où $S$ est le nombre d'états du bras.
-Pour l'apprentissage des bandits avec repos, nous montrons que MB-PSRL et MB-UCBVI, des versions modifiées des algorithmes PSRL et UCBVI, peuvent tirer parti de la politique d'indice de Gittins pour avoir une garantie de regret et un temps d'exécution qui passent à l'échelle avec le nombre de bras.
+Pour l'apprentissage dans les bandits avec repos, nous montrons que MB-PSRL et MB-UCBVI, des versions modifiées des algorithmes PSRL et UCBVI, peuvent tirer parti de la politique d'indice de Gittins pour avoir une garantie de regret et un temps d'exécution qui passent à l'échelle avec le nombre de bras.
 De plus, nous montrons que MB-UCRL2, une version modifiée de UCRL2, possède également une garantie de regret qui passe à l'échelle.
 Cependant, MB-UCRL2 a un temps d'exécution exponentiel dans le nombre de bras.
-Lors de l'apprentissage de bandits sans repos, la garantie de regret dépend fortement de la structure du bandit. Ainsi, nous étudions comment la structure des bras se traduit dans la structure du bandit. Nous identifions une sous-classe de bandits sans repos qui n'est pas apprenable.
+Lors de l'apprentissage dans les bandits sans repos, la garantie de regret dépend fortement de la structure du bandit. Ainsi, nous étudions comment la structure des bras se traduit dans la structure du bandit.
+Nous identifions une sous-classe de bandits sans repos qui n'est pas apprenable.
 %Nous montrons également qu'il est difficile de construire une sous-classe de bandits sans repos apprenables efficacement, en ne faisant que des hypothèses sur les bras.
 Nous montrons également qu'il est difficile de construire des hypothèses sur les bras qui rendent les bandits sans repos apprenables efficacement.
