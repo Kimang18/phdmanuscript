@@ -9,7 +9,7 @@ In the previous chapter, we adapted a few learning algorithms to discounted rest
 We also showed that there was no index definition such that, relying on the confidence bonuses on arms' transition, computing the optimistic index on each arm independently of the other arms guaranteed the optimism in face of uncertainty (OFU) principle in general discounted rested bandits.
 This chapter considers the learning problem in restless Markovian bandits with average reward criterion.
 Such a bandit is a Markov decision process (MDP) that suffers from the curse of dimensionality, and general-purpose learning algorithms are not efficient when directly applied. Recently, a few learning algorithms have been specifically designed for restless bandits. Yet, they most often work only for very particular subclasses of restless bandits or require conditions that are computationally hard to verify.
-Hence, in this chapter, we provide some arguments to explain why those conditions are needed when learning in restless Markovian bandits. We show that the properties of the local arms (like ergodic or small diameter) do not generally imply similar properties for the bandit. Therefore, defining a class of restless bandits with desirable properties (like small diameter) by relying on the assumption of local arms is difficult. 
+Hence, in this chapter, we provide some arguments to explain why those conditions are needed when learning in restless Markovian bandits. We show that the properties of the local arms (like ergodic or small diameter) do not generally imply similar properties for the bandit. Therefore, defining a subclass of restless bandits with desirable properties (like small diameter) by only making assumptions about arms is difficult. 
 Finally, we discuss a few issues when learning in the general class of restless bandits and present RB-TSDE \cite{akbarzadeh2022learning} along with its regret analysis under a few technical assumptions.
 
 Section~\ref{ch:restless:contribute} provides the context of learning in restless bandit problems and presents our contributions.
@@ -997,8 +997,8 @@ However, this certainly does not cancel the exponential improvement in the regre
 \section{Conclusion}
 \label{ch:restless:sec:conclude}
 
-In this chapter, we provide different examples that show that no RL algorithms can perform uniformly well over the general class of restless bandits whose arms are unichain. Moreover, our examples show that defining a subclass of restless bandits with desirable global properties by relying on the assumption of local arms is difficult.
-In particular, a restless bandit can be multichain even though its arms are ergodic.
+In this chapter, we provide different examples that show that defining a subclass of restless bandits with desirable global properties by only making assumptions about arms is difficult. Our examples also show that no RL algorithms can perform uniformly well over the general class of restless bandits whose arms are unichain.
+Furthermore, a restless bandit can be multichain even though its arms are ergodic.
 We also present a few positive results, such as a restless bandit is communicating if its arms are ergodic.
 Finally, we discuss the requirements when using Whittle index policy as the baseline policy in regret definition for learning restless bandits and provide an overview of regret analysis of RB-TSDE \cite{akbarzadeh2022learning}, a modified version of TSDE \cite{ouyang2017learning}, whose regret bound provides an exponential improvement over the current best general-purpose RL algorithms.
 

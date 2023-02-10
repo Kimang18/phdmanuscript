@@ -15,10 +15,11 @@ Cette thèse se concentre sur deux questions : (1) le calcul d'indices lorsque 
 Pour le calcul de l'indice, nous relevons les ambiguïtés de la définition classique de l'indexabilité et proposons une définition qui assure l'unicité de l'indice de Whittle quand ce dernier existe.
 Nous développons ensuite un algorithme testant l'indexabilité et calculant les indices de Whittle.
 La complexité théorique de notre algorithme est $\landauO(S^{2.5286})$, où $S$ est le nombre d'états du bras.
+
 Pour l'apprentissage dans les bandits avec repos, nous montrons que MB-PSRL et MB-UCBVI, des versions modifiées des algorithmes PSRL et UCBVI, peuvent tirer parti de la politique d'indice de Gittins pour avoir une garantie de regret et un temps d'exécution qui passent à l'échelle avec le nombre de bras.
 De plus, nous montrons que MB-UCRL2, une version modifiée de UCRL2, possède également une garantie de regret qui passe à l'échelle.
 Cependant, MB-UCRL2 a un temps d'exécution exponentiel dans le nombre de bras.
 Lors de l'apprentissage dans les bandits sans repos, la garantie de regret dépend fortement de la structure du bandit. Ainsi, nous étudions comment la structure des bras se traduit dans la structure du bandit.
-Nous exposons une sous-classe de bandits sans repos qui n'est pas apprenable.
+Nous exposons une sous-classe de bandits sans repos qui ne sont pas apprenables.
 %Nous montrons également qu'il est difficile de construire une sous-classe de bandits sans repos apprenables efficacement, en ne faisant que des hypothèses sur les bras.
 Nous montrons également qu'il est difficile de construire des hypothèses sur les bras qui rendent les bandits sans repos apprenables efficacement.

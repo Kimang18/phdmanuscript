@@ -143,10 +143,8 @@ Also, the last part of the lemma implies that $\pi^k$ is the unique Bellman opti
     So, the condition in Definition~\ref{ch:idx:defn:idx} is satisfied.
 \end{proof}
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Condition for indexability and basic algorithm}
 \label{sec:widx_compute}
 
@@ -154,9 +152,7 @@ This section aims to provide a basic algorithm to detect whether an arm is index
 This algorithm tries to construct a sequence of \emph{unichain} policies $\pi^1\supsetneq \pi^2\supsetneq\dots$ that satisfy the conditions of Lemma~\ref{ch:cpt:lem:idx}.
 We prove the correctness of our algorithm: if it can construct such a sequence, then the problem is indexable, and the computed indices are correct.
 On the contrary, if the algorithm cannot compute such a sequence of policies, this is either because the arm is not indexable or because the arm is multichain.
-
 \subsection{Condition for Bellman optimality}
-
 In this section, we provide two technical lemmas that we will use in our algorithm. %They provide conditions on the bias of a policy to verify whether this policy is Bellman optimal and if yes, whether it is the unique Bellman optimal policy. 
 They provide conditions to check whether a given unichain policy is Bellman optimal and, if so, whether it is the unique Bellman optimal policy.
 
@@ -183,6 +179,7 @@ Our algorithm computes the Whittle index in increasing order by trying to elimin
 The following lemma shows that to compute the next state to eliminate, one should look at when the active advantage of the active state equals $0$.
 In this lemma, $\pi\ominus\{i\}$ denotes the symmetric difference between $\pi$ and $\{i\}$, \emph{i.e.}, $\pi\ominus\{i\}=\pi\setminus\{i\}$ if $i\in\pi$ and $\pi\ominus\{i\}=\pi\cup\{i\}$ if $i\not\in\pi$.
 Also, the active advantage provides necessary and sufficient condition for a unichain policy to be Bellman optimal, and/or to be the unique Bellman optimal policy. % as shown in the following lemma.
+
 \begin{lem}
     \label{ch:cpt:lem:unicity_binary}
     In a finite-state arm, let $\pi$ be a unichain policy. Then, for any penalty $\lambda$:
@@ -288,7 +285,7 @@ Combined with the characterization of Lemma~\ref{ch:cpt:lem:idx}, this shows tha
     \item The model presented in Figure~\ref{fig:illustrate_non_indexable} is not indexable: the optimal policy $\pi^*(0.7)=\{3\}$ is not included in $\pi^*(0.6)=\{1\}$. 
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Overview of the algorithm}
 \label{ssec:informal_widx_algo}
 
@@ -309,7 +306,7 @@ We will describe later in this chapter how to implement these functions in an ef
 Note that in all the chapter, we use the superscript $k$ (\ie, $\pi^k, \mu^k, \sigma^k$) to refer to the quantities computed at iteration $k$.
 We use the subscripts $i$ or $j$ (\ie, $\pi_i, \widx_i, \mu_i, \pi_j$) to refer to the quantities related to states $i$ or $j$.
 
-\begin{algorithm}[ht]
+\begin{algorithm}[ht!]
     \DontPrintSemicolon
     \SetAlgoLined
     \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
@@ -346,7 +343,7 @@ Note that when $\mu^k_{\min}=+\infty$, the quantity $\alpha^{\pi^k}_i(\mu^k_{\mi
 These limits are well-defined because the functions $\alpha$s are affine in $\lambda$.
 
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
     \begin{tabular}{cc}
         \begin{subfigure}[t]{0.48\linewidth}
             \includegraphics[width=\linewidth]{alpha_by_algo_idx}
@@ -365,7 +362,7 @@ These limits are well-defined because the functions $\alpha$s are affine in $\la
     \label{fig:illustrate_algo}
 \end{figure}
 
-\medskip
+%\medskip
 
 To illustrate how the algorithm works, we plot in Figure~\ref{fig:illustrate_algo} the values computed by the algorithm for the two arms represented in Figure~\ref{fig:illustrate_indexability}. For both models (indexable and non-indexable), the algorithm starts with the policy $[n]$ for which the derivative of the active advantage with respect to $\lambda$ is $-1$ for all states. It then computes $\mu^1_{\min}$ which is the potential index of State~$\sigma^1=1$ for the example \ref{fig:illustrate_algo_ind} and of State~$\sigma^1=3$ for the example \ref{fig:illustrate_algo_nind}. The algorithm then moves to iteration 2 and computes $\mu^2_{\min}>\mu^1_{\min}$ for both models and observes that $\alpha^{\pi^2}_{\sigma^1}(\mu^2_{\min})<0$. Then the algorithm moves to iteration $3$ and computes $\mu^3_{\min}>\mu^2_{\min}$. There are now two cases: 
 \begin{itemize}

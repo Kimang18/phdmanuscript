@@ -7,7 +7,7 @@ A Markovian bandit is a sequential decision problem in which the decision maker 
 %Each arm generates a reward depending on its state and the active or passive evolution.
 %The decision maker wants to maximize its cumulative reward over an infinite horizon of time.
 %The arms that are not activated either remain frozen -- then one falls into the category of \emph{rested} Markovian bandits -- or evolve in a passive Markovian manner -- the setting is then called \emph{restless} Markovian bandit.
-There are two types of Markovian bandits: (i) \emph{rested} bandits, where the arms that are not activated remain frozen, and (ii) \emph{restless} bandits, where the arms that are not activated evolve in a Markovian manner.
+There are two types of Markovian bandits: (i) \emph{rested} bandits where the arms that are not activated (\ie, are passive) remain frozen, and (ii) \emph{restless} bandits where the passive arms evolve in a Markovian manner.
 In general, Markovian bandits suffer from the curse of dimensionality that often makes the exact solution computationally intractable.
 So, one has to resort to tractable heuristics such as index policies.
 Two celebrated indices are the Gittins index for rested bandits and the Whittle index for restless bandits.
@@ -38,6 +38,6 @@ However, MB-UCRL2 has a runtime exponential in the number of arms.
 When learning in restless bandits, the regret guarantee depends heavily on the structure of the bandit.
 We study how the structure of arms translates into the structure of the bandit.
 %We show that no learning algorithms can perform uniformly well over the general class of restless bandits whose arms are unichain.
-We exhibit a subclass of restless bandits that is not learnable.
+We exhibit a subclass of restless bandits that are not learnable.
 We also show that it is difficult to construct a subclass of restless bandits with a desirable learning structure by only making assumptions about arms.
 %in which each arm has an internal state that evolves in a Markovian manner depending on the decision maker's actions. 
