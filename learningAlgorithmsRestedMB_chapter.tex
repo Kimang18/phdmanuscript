@@ -359,7 +359,7 @@ Historically, Problem~{\ref{pb:problem_1}} was considered unresolved until \cite
 
 \subsection{MB-PSRL and MB-UCBVI are scalable}
 
-If one excludes the simulation of the MDP, the computational cost of MB-PSRL and MB-UCBVI of each episode is low. For MB-PSRL, its cost is essentially due to three components: Updating the observations, sampling from the posterior distribution and computing the optimal policy. The first two are relatively fast when the conjugate posterior has a closed form: updating the observation takes $O(1)$ at each time, and sampling from the posterior can be done in $O(nS^2)$ -- more details on posterior distributions are given in Appendix~\ref{apx:algos}. When the conjugate posterior is implicit (\emph{i.e.}, under the integral form), the computation can be higher but remains linear in the number of arms. For MB-UCBVI, the cost is due to two components: computing the bonus terms and computing the Gittins policy for the optimistic MDP. Computing the bonus is linear in the number of arms and the length of the episode. As explained in Section~\ref{ch:mb:ssec:gittins_idx} and Chapter~\ref{ch:index_computation}, the computation of the Gittins index policy for a given problem can be done in $O(nS^3)$. Hence, MB-PSRL and MB-UCBVI have a regret and a runtime both linear in the number of arms.
+If one excludes the simulation of the MDP, the computational cost of MB-PSRL and MB-UCBVI of each episode is low. For MB-PSRL, its cost is essentially due to three components: Updating the observations, sampling from the posterior distribution and computing the optimal policy. The first two are relatively fast when the conjugate posterior has a closed form: updating the observation takes $O(1)$ at each time, and sampling from the posterior can be done in $O(nS^2)$ -- more details on posterior distributions are given in Appendix~\ref{apx:algos}. When the conjugate posterior is implicit (\emph{i.e.}, under the integral form), the computation can be higher but remains linear in the number of arms. For MB-UCBVI, the cost is due to two components: computing the bonus terms and computing the Gittins policy for the optimistic MDP. Computing the bonus is linear in the number of arms and the length of the episode. As explained in Section~\ref{ch:mb:ssec:gittins_idx} and Chapter~\ref{ch:index_computation}, the computation of the Gittins index policy for a given rested bandit can be done in $O(nS^3)$. Hence, MB-PSRL and MB-UCBVI have a regret and a runtime both scale with the number of arms.
 
 \subsection{MB-UCRL2 is not scalable because it cannot use an index policy}
 \label{ssec:no-OFU}
@@ -1155,7 +1155,7 @@ In this proof, we reason by contradiction and assume that there exists a procedu
     \sup_{M\in\sM(\hatB)}v^{\pi^{I(\hatB)}}_{M}(\rho) \ge \sup_{\pi} v^\pi_{M}(\rho).
 \end{align}
 In the remaining of this section, we set the discount factor to $\gamma=0.5$. For a given state $s_a$, we denote by $I(s_a)$ the local index of state $s_a$ computed by this hypothetically optimal algorithm.
-Also, uniquely in this section, we denote the confidence bonus by $\epsilon$.
+%Also, uniquely in this section, we denote the confidence bonus by $\epsilon$.
 
 We first consider a Markovian bandit problem with two arms $\{b,c\}$. We consider that these two arms are perfectly estimated (\ie, $\beta_{r}(s_b)=\beta_{P}(s_b)=\beta_{r}(s_c)=\beta_{P}(s_c)=0$ for any $s_b,s_c$). The Markov chains for these arms are depicted in Figure~\ref{fig:counter-example1}. Their transitions matrices and rewards are
 \begin{align*}

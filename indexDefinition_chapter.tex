@@ -26,7 +26,7 @@ In this chapter, we discuss the definition of indexability and present two main 
 
 Our first contribution is to propose a univocal definition of indexability. This definition clarifies the ambiguities in the classical definitions: Classical definitions assume that an arm is indexable if the optimal set of active states is a non-increasing function of some penalty term $\lambda$. While this definition works for most practical cases, it is not always precise enough because the optimal set is not unique in general. In our definition, we specify the notion of increasingness that should be used. Our definition guarantees the uniqueness of Whittle indices.
 
-Lastly, we introduce a new notion of Bellman optimality for MDPs with the average reward criterion. This notion is more restrictive than the classical gain optimality, but it is rich enough to allow us to redefine the indexability in undiscounted restless Markovian bandits. We also study the characterization of gain optimal and Bellman optimal policies. In particular, we provide a checkable condition for the unicity of a given Bellman optimal policy.
+Lastly, we introduce a new notion of Bellman optimality for MDPs with the average reward criterion. This notion is more restrictive than the classical gain optimality, but it is rich enough to allow us to redefine the indexability in undiscounted restless Markovian bandits. We also study the characterization of gain optimal and Bellman optimal policies. In particular, we provide a checkable condition for the uniqueness of a given Bellman optimal policy.
 This condition is useful for index computation in the chapter that follows.
 This is a new contribution to the vast literature of MDP and Markovian bandit.
 
@@ -49,7 +49,7 @@ We consider a single arm $\langle[n],\{0,1\},r,P\rangle$.
 Following the Lagrangian relaxation in the previous chapter, we define a $\lambda$-penalized MDP\footnote{not to be confused with $\gamma$-discounted MDPs, where the discount is on rewards and not on actions.} for each $\lambda\in\R$ as the following.
 The state and action spaces, and transition of this MDP are the same as the ones of the arm.
 The instantaneous reward for action $a$ when the arm is in state $i$ is $r^a_i-\lambda a$.
-Recall that the quantity $\lambda$ is a penalty for taking action ``activate''.
+We recall from Chapter~\ref{ch:mb} that the quantity $\lambda$ is a penalty for taking action ``activate''.
 
 Since there are only two actions, a policy $\pi$ is a subset of the state space, $\pi\subseteq[n]$, such that the policy chooses to activate the arm in state $i$ if $i\in\pi$.
 We say that $\pi$ is a set of \emph{active} states, and state $i$ is \emph{passive} if $i\not\in\pi$.
@@ -118,7 +118,7 @@ This inspires us to introduce a new notion of optimality for policy $\{1,2\}$ wh
         \end{minipage}\\
     \end{tabular}
     
-    \caption{Ambiguous example for classical definition of indexability: All transitions are deterministic, and all labels on transitions indicate rewards. Solid black arrows correspond to the action ``activate'', and dashed red arrows to the action ``rest''.
+    \caption{Example in which the classical definition of indexability is ambiguous: All transitions are deterministic, and all labels on transitions indicate rewards. Solid black arrows correspond to the action ``activate'', and dashed red arrows to the action ``rest''.
 }
     \label{fig:ambiguous_example}
 \end{figure}
@@ -249,8 +249,8 @@ Indeed, let us consider the two examples in \figurename~\ref{fig:ambiguous_examp
                (A) edge[color=red, dashed]     node[below]{$1$} (C)
                (B) edge[color=red, dashed]     node[above]{$1$} (D)
                (C) edge[color=black]     node[below]{$1{-}\lambda$} (D)
-               (B) edge[color=black, loop above] node{$-10-\lambda$} (B)
-               (C) edge[color=red, dashed,loop below] node{$-10$} (C)
+               (B) edge[color=black, loop above] node{$-1000-\lambda$} (B)
+               (C) edge[color=red, dashed,loop below] node{$-1000$} (C)
                (D) edge[color=red, dashed,loop above] node{$10$} (D)
                (D) edge[color=black, loop below] node{$-\lambda$} (D)
                ;
@@ -258,12 +258,12 @@ Indeed, let us consider the two examples in \figurename~\ref{fig:ambiguous_examp
        \end{minipage}        \\
        (a) & (b)
     \end{tabular}
-    \caption{Ambiguous examples: All transitions are deterministic, and all labels on transitions indicate rewards. Solid black arrows correspond to the action ``activate'', and dashed red arrows to the action ``rest''.
+    \caption{Examples that are non-indexable when using Bellman optimality but indexable when using a stronger notion of optimality: All transitions are deterministic, and all labels on transitions indicate rewards. Solid black arrows correspond to the action ``activate'', and dashed red arrows to the action ``rest''.
 }
     \label{fig:ambiguous_example2}
 \end{figure}
 
-For example (a), the Bellman optimal and gain optimal policies are identical: policies $\{1,2\}$ and $\{2\}$ for $\lambda<0$, and $\{1\}$ and $\emptyset$ for $\lambda>0$.
+For example (a), the Bellman optimal and gain optimal policies are identical: policy $\{1,2\}$ for $\lambda<0$, and $\{1\}$ and $\emptyset$ for $\lambda>0$.
 Hence, example (a) is not indexable according to Definition~\ref{ch:idx:defn:idx}.
 However, the intuition would suggest that the index for this problem should be $\lambda_1=\lambda_2=0$. This is what would have happened if we had used the notion of \textbf{bias optimality}, which is stronger than the notion of Bellman optimality. Yet, this would not solve the ambiguity of example (b), for which the index of state $1$ is not clear unless one would use an even stronger notion of optimality (such as the notion of \textbf{Blackwell optimality} discussed in \cite[Chapter~10]{puterman2014markov}). In this thesis, we do not use these stronger definitions because computing a Blackwell-optimal policy in a $n$-state MDP is, to the best of our knowledge, not computable in $O(n^3)$ (the complexity of computing Blackwell-optimal policies is unknown to this date). Hence, in this thesis, we use the notion of Bellman optimality that we believe to be the best trade-off between expressiveness and computability. We discuss the Bellman optimality more in the following section.
 
@@ -412,11 +412,11 @@ Beside showing the difference between gain and Bellman optimalities, Lemma~\ref{
 \paragraph{Remark.} The characterization of gain optimal policies was analyzed in \cite{puterman2014markov, schweitzer1978functional}.
 However, it was expressed and proved differently from what we have done for Lemma~\ref{ch:idx:lem:opt_pol}.
 
-\subsection{Conditions for the unicity of the Bellman optimal policy}
+\subsection{Conditions for the uniqueness of the Bellman optimal policy}
 \label{ch:idx:ssec:unicity_bell}
 
 As mentioned in Section~\ref{ch:idx:sec:classic_idx}, we use the interpretation ``all Bellman optimal policies'' to define the indexability.
-We will see in the next chapter that this direction will require the unicity of the Bellman optimal policy.
+We will see in the next chapter that this direction will require the uniqueness of the Bellman optimal policy.
 So, we anticipate it in this section.
 
 \subsubsection{Conditions for Bellman optimal policies to induce the same bias vector}
@@ -470,7 +470,7 @@ In contrast, the following lemma clarifies this question for Bellman optimal pol
 
 By Definition~\ref{ch:idx:defn:bell}, checking if a given Bellman optimal policy is unique is not trivial due to the multiplicity of $\vh^*$ that satisfies the optimality equation \eqref{eq:bias_opt} with $\vg^*$.
 So, the following lemma shows a condition that can be used to verify if a given Bellman optimal and unichain policy is the unique Bellman optimal policy.
-\begin{lem}[Condition for unicity of Bellman optimal policy]
+\begin{lem}[Condition for uniqueness of Bellman optimal policy]
     \label{ch:idx:lem:unicity_BO}
     Let $\pi$ be a Bellman optimal policy that is unichain. If $\pi$ is not the unique Bellman optimal policy, then there exists a state $i$ and an action $a\neq\pi_i$ such that $B_i^a(\vg^*,\vh^\pi)=0$.
 \end{lem}
@@ -486,8 +486,8 @@ So, the following lemma shows a condition that can be used to verify if a given 
     Since $\theta\neq\pi$, there exists at least one state $i\in[n]$ such that $\theta_i\neq\pi_i$.
 \end{proof}
 Lemma~\ref{ch:idx:lem:unicity_BO} implies that a Bellman optimal and unichain policy $\pi$ is the unique Bellman optimal policy if and only if $B_i^a(\vg^*, \vh^\pi)<0$ for all action $a\neq\pi_i$ and all state $i$.
-%While this lemma provides a characterization of unicity for Bellman optimal policy in average reward criterion, the Bellman optimality coincides with the classical optimality in infinite-horizon discounted MDPs.
-%So, the lemma can be equally used to characterize unicity of optimal policy in discounted MDPs.
+%While this lemma provides a characterization of uniqueness for Bellman optimal policy in average reward criterion, the Bellman optimality coincides with the classical optimality in infinite-horizon discounted MDPs.
+%So, the lemma can be equally used to characterize uniqueness of optimal policy in discounted MDPs.
 To the best of our knowledge, this lemma is a new contribution to the literature of MDP.
 Also, it will play an important role in the indexability testing and index computation in the next chapter.
 
@@ -537,7 +537,7 @@ In MDPs that are not weakly communicating (see \figurename~\ref{ch:mdp:fig:mdp_c
 In conclusion, we presented the ambiguities in the classical indexability's definition and proposed a new definition that clarified those ambiguities.
 Along with this new definition of indexability, we gave the corresponding definition of the Whittle index.
 We introduced a new notion of Bellman optimality for MDPs with the average reward criterion. We derived a technical lemma to check if a given Bellman optimal policy was unique.
-This unicity property will play a crucial role in computing the Whittle index.
+This uniqueness property will play a crucial role in computing the Whittle index.
 
 %This chapter about indexability terminates here.
 In the next chapter, we will present a unified algorithm that can compute the Whittle index in both discounted and undiscounted restless Markovian bandit and the Gittins index in discounted rested bandit.
