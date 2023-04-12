@@ -89,7 +89,7 @@ At time step $t$, the learner has in its disposition the observations up to time
 The learner's objective is to maximize the expected cumulative reward $\ex{\sum_{t\ge1}r_t}$ incurred by the MDP by identifying an optimal policy $\pi^*$ as early as possible.
 When the context is clear, we will use the term ``algorithm'' to mean the learner.
 
-We focus on \textbf{model-based} algorithms in online learning with \textbf{episodic policy update}.
+This thesis focuses on \textbf{model-based} algorithms with \textbf{episodic policy update} in online learning.
 We present the fundamental structure of episodic learning algorithms in Algorithm~\ref{ch:rl:algo:generics}.
 Basically, the algorithm takes the state space $\gS$ and action space $\gA$ of the MDP $M$ as input.
 The initial state $s_1$ of $M$ is drawn from some categorical distribution over the state space $\gS$.
@@ -146,9 +146,9 @@ Then, the algorithm computes a new policy $\pi^{k+1}$ based on its observations,
 
 \section{Regret definition}
 
-In online RL, there are at least two performance metrics: (1) probably approximately correct (PAC) bounds on the sample complexity (see \eg, \cite{brafman2002r, kearns2002near, kakade2003sample, dann2015sample, jiang2018open, wang2020long}) and (2) regret (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax, jin2018q, zanette2019tighter, zhang2019regret}).
-However, it is shown that both metrics are ``equivalent'': the PAC bounds imply the regret bounds, and vice-versa \cite[Section~2.2.2]{osband2016deep}.
-Hence, the recent works often provide performance guarantees in terms of both metrics (see \eg, \cite{he2021nearly, zhang2021reinforcement}).
+In online learning, there are at least two performance metrics: (1) probably approximately correct (PAC) bounds on the sample complexity (see \eg, \cite{brafman2002r, kearns2002near, kakade2003sample, dann2015sample, jiang2018open, wang2020long}) and (2) regret (see \eg, \cite{jaksch2010near, osband2013more, azar2017minimax, jin2018q, zanette2019tighter, zhang2019regret}).
+%However, it is shown that both metrics are ``equivalent'': the PAC bounds imply the regret bounds, and vice-versa \cite[Section~2.2.2]{osband2016deep}.
+The recent works often provide performance guarantees in terms of both metrics (see \eg, \cite{he2021nearly, zhang2021reinforcement}).
 
 In this thesis, we measure the learner's performance using a notion of \emph{regret} that compares the expected cumulative reward of an optimal policy $\pi^*$ to the cumulative reward of the learner. 
 
@@ -394,7 +394,8 @@ However, we will see in the following that the term is \textbf{non-positive} for
 
 The second term $\Delta_{conc}^k$ can be interpreted as the ``dissimilarity'' between the \textbf{unknown} MDP $M$ and the \textbf{imagined} MDP $M^k$ along the trajectory induced by the policy $\pi^k$.
 In other words, it is the discordance between the value from $M^k$ and the value from $M$ for policy $\pi^k$.
-Since $M^k$ and $\pi^k$ are chosen by the learner, $\Delta_{conc}^k$ can be analyzed, and both approaches upper bound this term using concentration argument.
+Since $M^k$ and $\pi^k$ are chosen by the learner, $\Delta_{conc}^k$ can be analyzed.
+OFU and posterior sampling methods use concentration argument to bound this term $\Delta_{conc}^k$.
 
 \section{Sketch of proof on regret bound of three algorithms}
 
