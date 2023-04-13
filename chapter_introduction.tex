@@ -25,7 +25,7 @@ To the best of our knowledge, there is no efficient general-purpose algorithm to
 Meanwhile, few RL algorithms that leverage index policy in learning with Markovian bandits despite its desirable computational complexity compared to dynamic programming solutions.
 These raise two grand questions in this thesis:
 \begin{itemize}
-    \item {\color{myblue}\bfseries\large How to efficiently test the indexability and compute the Whittle index?}
+    \item {\color{myblue}\bfseries\large How to efficiently test indexability and compute Whittle index?}
     \item {\color{myblue}\bfseries\large Can index policy be a pillar for RL algorithms when learning in Markovian bandits?}
 \end{itemize}
 
@@ -33,7 +33,7 @@ These raise two grand questions in this thesis:
 
 Inspired by the challenging questions above, this thesis has several goals that can be regrouped into two main parts: (1) efficiently test the indexability and compute the Whittle index for Markovian bandits and (2) learn with efficiency in Markovian bandits.
 
-Firstly, we design an efficient single algorithm that tests indexability and computes the Whittle index for both discounted and undiscounted restless bandits and the Gittins index for discounted rested bandits.
+Firstly, we design an efficient single algorithm that tests indexability and computes Whittle index for both discounted and average reward restless bandits and Gittins index for discounted rested bandits.
 
 Secondly, we show that some RL algorithms can be tailored to the rested bandit with discount to have a regret bounded sublinearly in the number of arms and a runtime linear in the number of arms.
 
@@ -60,14 +60,14 @@ We finish this chapter by outlining all the questions discussed in the following
 In this part, we present our contributions to the computational side of Markovian bandit literature.
 
 In Chapter~\ref{ch:indexability}, we point out the possible ambiguities in the classical definition of indexability in restless Markovian bandits by providing a few simple counter-examples.
-This leads us to introduce a new notion of Bellman optimality in the MDP with a long-term average reward criterion.
+This leads us to introduce a new notion of Bellman optimality in the MDP with a long-run average reward criterion.
 This new notion is then used in our definition of indexability, which is thoroughly detailed in the chapter.
 Then, we give the corresponding Whittle index definition and illustrative examples.
 %Then, we give the corresponding definition of Whittle index accompanied by illustrative examples.
 Finally, we complete the chapter by studying the properties of the Bellman optimality that are useful for indexability tests and index computation.
 
-In Chapter~\ref{ch:index_computation}, we present a new algorithm to test the indexability presented in the previous chapter and compute the Whittle index of any finite state restless arm.
-It is a single algorithm that tests the indexability and computes the Whittle index in either discounted or undiscounted restless bandits, and the Gittins index in discounted rested bandits.
+In Chapter~\ref{ch:index_computation}, we present a new algorithm to test the indexability presented in the previous chapter and compute Whittle index of any finite state restless arm.
+It is a single algorithm that tests indexability and computes Whittle index in either discounted or average reward restless bandits, and the Gittins index in discounted rested bandits.
 Moreover, to the best of our knowledge, this algorithm is the first to achieve subcubic theoretical computational complexity.
 Indeed, if the considered arm has $S$ states, then the best variant of our algorithm performs $\landauO(S^{2.5286})$ arithmetic operations\footnote{multiplications and additions of real numbers, regardless of their values.}.
 %That is, if the considered arm has $S$ states, then our algorithm perform $\landauO(S^3)$ (the constant for $S^3$ is explicit in the chapter) arithmetic operations\footnote{multiplications and additions of real numbers, regardless of their values.}.
@@ -99,12 +99,12 @@ These experiments are reproducible by following this link \url{https://gitlab.in
 While acknowledging that posterior sampling has a weaker regret guarantee, we conclude that this approach has the upper hand in problem adaptability when compared to OFU method.
 This is vital when working with problems having a special structure such as weakly coupled MDPs.
 
-Chapter~\ref{ch:learning_restless} considers the RL problems in which the unknown environment is a restless Markovian bandit with a long-term average reward criterion.
+Chapter~\ref{ch:learning_restless} considers the RL problems in which the unknown environment is a restless Markovian bandit with a long-run average reward criterion.
 We study how the structure of arms translates into the structure of the restless bandit.
 In particular, we show that no RL algorithms can perform uniformly well in restless bandits whose arms are unichain and have a bounded span of any local bias function.
 This inspires us to study the restless bandit whose arms all have no local transient state.
-We provide examples that show that a restless bandit whose arms are ergodic, can be multichain.
-Also, an ergodic restless bandit can have an arbitrarily large mixing time, although all of its arms are ergodic and have an upper bounded mixing time.
+We provide an example in which a restless bandit is multichain even though its arms are ergodic.
+Also, an ergodic restless bandit can have an arbitrarily large mixing time, although its arms are ergodic and have an upper bounded mixing time.
 We also provide a piece of positive result showing that if all arms are ergodic, then the restless bandit is communicating.
 Moreover, if all arms have an ergodicity coefficient smaller than $1$, then the corresponding restless bandit also has an ergodicity coefficient smaller than $1$.
 Finally, we discuss a few issues such as which baseline policy to use in regret definition when learning general restless bandits.
