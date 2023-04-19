@@ -13,7 +13,7 @@ Even if their theoretical regrets are comparable, the \emph{time complexities} o
 This is a new addition to understanding the power of Bayesian algorithms, which can often be tailored to the structure of the problems to learn.
 This study is published in Transactions on Machine Learning Research (TMLR) (\cite{gast2022learning}).
 
-Section~\ref{ch:rested:related} describes the work in learning with structured MDPs such as factored MDPs and rested bandit with no discount.
+Section~\ref{ch:rested:related} describes the work in learning with structured MDPs such as factored MDPs and rested bandit with average reward criterion.
 We recall the formulation of the rested bandit problem with the discount factor $\gamma$ in Section~\ref{ch:rested:sec:bandits}.
 Section~\ref{ch:rested:sec:problem} contains the episodic learning setup in which the episode length is geometrically distributed.
 We present the modification of PSRL, UCRL2, and UCBVI to rested bandits with the discount factor $\gamma$ in Section~\ref{ch:rested:sec:learning_algorithms}.
@@ -61,11 +61,11 @@ Second, our reward is discounted over an infinite horizon while factored MDPs ha
 Finally, and most importantly, the factored MDP framework assumes that the successive optimal policies are computed by an unspecified solver (oracle). There is no guarantee that the time complexity of this solver scales linearly with the number of components, especially for OFU-based algorithms.
 For rested bandits with discount, we get additional leverage: when all parameters are known, the Gittins index policy is optimal, and its computational complexity is linear in the number of arms. This reveals an interesting difference between Bayesian and extended value based algorithms (the former being scalable and not the latter in general). This difference is absent from the literature on factored MDPs because such papers do not consider the time complexity.
 
-For rested bandits, \cite{tekin2012online} consider a non-discounted setting, $\gamma=1$, and provide algorithms with a logarithmic regret guarantee for rested and restless settings.
+For rested bandits, \cite{tekin2012online} consider an average reward setting, $\gamma=1$, and provide algorithms with a logarithmic regret guarantee for rested and restless settings.
 However, they consider a notion of regret known as \emph{weak regret}, which measures how fast the learning algorithm identifies the best arm in the stationary regime. So, it ignores the learning behavior at the beginning of the learning process.
 In contrast, we consider a discounted rested bandit setting in which the regret of \cite{tekin2012online} makes no more sense due to the discount factor, and we propose a regret definition similar to what is frequently used in RL literature.
 This regret captures the learning algorithm's performance during the whole learning process.
-In addition, \cite{ortner2012regret, jung2019regret, wang2020restless} consider a non-discounted restless bandit setting in which the learner observe only the state of chosen arms. \cite{ortner2012regret, wang2020restless} propose optimistic algorithms for the infinite-horizon setting and provide regret bounds that are sublinear in time. Again the discounted case is not considered in these papers, while it is particularly interesting because learning algorithms can leverage the optimal Gittins index policy.
+In addition, \cite{ortner2012regret, jung2019regret, wang2020restless} consider partially observed restless bandit setting in which the learner observe only the state of chosen arms. \cite{ortner2012regret, wang2020restless} propose optimistic algorithms for the infinite-horizon setting and provide regret bounds that are sublinear in time. Again the discounted case is not considered in these papers, while it is particularly interesting because learning algorithms can leverage the optimal Gittins index policy.
 \cite{jung2019regret} propose a Bayesian algorithm in the episodic finite-horizon setting and also provide a regret bound that is sublinear in the number of episodes. However, the computational complexity is not studied in their work (the algorithm of \cite{ortner2012regret} is intractable while the ones of \cite{jung2019regret, wang2020restless} rely on an unspecified problem solver called \emph{oracle}).
 Contrarily, we provide both performance guarantee and computational complexity analysis of each algorithm we consider in this chapter.
 Finally, \cite{killian2021beyond} consider a more general setting of restless bandits in which each arm is an MDP with multiple actions. The learner has to decide which arms to activate and which action to execute on each activated arm under a global action constraint. The authors propose a suboptimal Lagrangian policy to solve the restless bandit problem with known parameters and a sampling algorithm to learn their Lagrangian policy when the parameters are unknown. Unfortunately, no performance guarantee is provided in their work.
@@ -322,7 +322,7 @@ In the above Equation~\eqref{eq:equivalence_V_W}, the expectation is taken over 
     + \underbrace{W_{M^k,1:H^k}^{\pi^k}(\vs_{t^k}) {-} W_{M,1:H^k}^{\pi^k}(\vs_{t^k})}_{\customlabel{eq:B}{(B)}}.
     \label{eq:proofAB}%\vspace{-.3cm}
 \end{align}
-The analysis of the term \ref{eq:B} is similar for the three algorithms: it is bounded by the distance between the sampled MDP $M^k$ and the true MDP $M$ that can in turn be bounded by using a concentration argument (Lemma~\ref{lem:concentration}) based on Hoeffding's and Weissman's inequalities.  Compared with the literature \cite{azar2017minimax,ouyang2017learning}, our proof leverages on taking conditional expectations, making all terms whose conditional expectation is zero disappear. One of the main technical hurdle is to deal with the random episodes lengths $H^1,\ldots, H^k$.   This is required in our approach and is not needed in the classical analysis of finite-horizon problems.
+The analysis of the term \ref{eq:B} is similar for the three algorithms: it is bounded by the distance between the sampled MDP $M^k$ and the true MDP $M$ which in turn can be bounded by using a concentration argument (Lemma~\ref{lem:concentration}) based on Hoeffding's and Weissman's inequalities.  Compared with the literature \cite{azar2017minimax,ouyang2017learning}, our proof leverages on taking conditional expectations, making all terms whose conditional expectation is zero disappear. One of the main technical hurdle is to deal with the random episodes lengths $H^1,\ldots, H^k$.   This is required in our approach and is not needed in the classical analysis of finite-horizon problems.
 
 The analysis of \ref{eq:A} depends heavily on the algorithm used. The easiest case is PSRL: As our setting is Bayesian, the expectation of the first term \ref{eq:A} with respect to the model is zero (see Lemma~\ref{lem:bayesian}).   The case of MB-UCRL2 and MB-UCBVI are harder. In fact, our bonus terms are specially designed so that $v_{M^k}^{\pi^k}(\vs)$ is an optimistic upper bound of the true value function with high probability, that is:
 \begin{align}
@@ -355,7 +355,7 @@ Apart from the logarithmic terms, the lower bound provided by Theorem~\ref{thm:l
 \section{Scalability of learning algorithms for Markovian bandits}
 \label{ch:rested:scale}
 
-Historically, Problem~{\ref{pb:problem_1}} was considered unresolved until \cite{gittins1979bandit} proposed Gittins indices. This is because previous solutions were based on Dynamic Programming in the global MDP which are computationally expensive. Hence, after establishing regret guarantees, we are now interested in the computational complexity of our learning algorithms, which is often disregarded in the learning literature.
+Historically, Problem~{\ref{pb:problem_1}} was considered unresolved until \cite{gittins1979bandit} proposed Gittins index. This is because previous solutions were based on Dynamic Programming in the global MDP which are computationally expensive. Hence, after establishing regret guarantees, we are now interested in the computational complexity of our learning algorithms, which is often disregarded in the learning literature.
 
 \subsection{MB-PSRL and MB-UCBVI are scalable}
 
@@ -382,12 +382,11 @@ Let us consider that the estimates and confidence bonus for a given arm $a$ are 
 \end{proof}
 This theorem implies that one cannot define local indices such that \Eqref{eq:optimism} holds for all rested bandits $M'\in\sM^k$. Yet, the use of this inequality is central in the regret analysis of UCRL2 (see the proof of UCRL2 \cite{jaksch2010near}). This implies that the current methodology to obtain regret bounds for UCRL2 and its variants, \eg, \cite{bourel2020tightening,fruit2018efficient,talebi2018variance,filippi2010optimism}, that use Extended Value Iteration is not applicable to bound the regret of their modified version that computes indices locally. 
 
-Note that for any set $\sM$ such that $M \in \sM$, there still exists an index policy $\pi^{\mathrm{ind}}$ that is optimistic because all MDPs in $\sM$ are rested bandits. This optimistic index policy satisfies
-\begin{align*}
-  \sup_{M'\in\sM}V^{\pi^{\mathrm{ind}}}_{M'} \ge \sup_\pi V^{\pi}_{M}.
-\end{align*}
-This means that restricting to index policies is not a restriction for the optimism. What Theorem~\ref{thm:no_OFU} shows is that an optimistic index policy can be defined only after the optimistic MDP $M'\in\sM$ is computed (take MB-UCBVI, for example -- it computes the Gittins index of its optimistic MDP) and computing optimistic policy and $M'$ simultaneously depends on the confidence bonuses of all arms.
-
+%Note that for any set $\sM$ such that $M \in \sM$, there still exists an index policy $\pi^{\mathrm{ind}}$ that is optimistic because all MDPs in $\sM$ are rested bandits. This optimistic index policy satisfies
+%\begin{align*}
+%  \sup_{M'\in\sM}V^{\pi^{\mathrm{ind}}}_{M'} \ge \sup_\pi V^{\pi}_{M}.
+%\end{align*}
+%This means that restricting to index policies is not a restriction for the optimism. What Theorem~\ref{thm:no_OFU} shows is that an optimistic index policy can be defined only after the optimistic MDP $M'\in\sM$ is computed (take MB-UCBVI, for example -- it computes the Gittins index of its optimistic MDP) and computing optimistic policy and $M'$ simultaneously depends on the confidence bonuses of all arms.
 Therefore, we  believe that UCRL2 and its variants cannot compute optimistic  policy locally: they should all require the joint knowledge of all $\{\hatB_a\}_{a\in[n]}$.
 
 
@@ -1232,12 +1231,12 @@ This leaves two possibilities for $I(A_1)$:
 \end{itemize}  
 
 We use a numerical implementation of extended value iteration\footnote{available at \url{https://gitlab.inria.fr/kkhun/learning-in-rested-markovian-bandit}} to find that:
-\begin{align}
+\begin{align*}
     \sup_{M\in\mathbb{M}} V^{\pi_2}_{M}(A_1,B_3) \approx 6.42
-    &< \sup_{\pi}V^{\pi}_{M_1}(A_1,B_3) \approx 6.47 \label{eq:counter-example1}\\
+    &< \sup_{\pi}V^{\pi}_{M_1}(A_1,B_3) \approx 6.47 \\
     \sup_{M\in\mathbb{M}} V^{\pi_1}_{M}(A_1,B_1) \approx 5.96
     &< \sup_{\pi}V^{\pi}_{M_2}(A_1,B_1) \approx 6.00 \nonumber
-\end{align}
+\end{align*}
 This implies that there does not exist any definition of indices such that \Eqref{eq:optimism} holds regardless of $M$ and $\vs$. 
 
 %%%%%%%%%%%%%%%%%
