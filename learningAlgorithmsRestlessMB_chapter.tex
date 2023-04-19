@@ -14,7 +14,7 @@ Finally, we discuss a few issues when learning in the general class of restless 
 
 Section~\ref{ch:restless:contribute} provides the context of learning in restless bandit problems and presents our contributions.
 We discuss several existing works that design reinforcement learning (RL) algorithms for restless bandit problems in Section~\ref{ch:restless:related}.
-We then recall the notations and the problem formulation of the undiscounted restless bandit in Section~\ref{ch:restless:sec:restless}.
+We then recall the notations and the problem formulation of the average reward restless bandit in Section~\ref{ch:restless:sec:restless}.
 Section~\ref{ch:restless:sec:example} accumulates examples and counter-examples that respectively show ``desirable'' and ``non-desirable'' properties of restless bandit when its arms all have ``desirable'' properties.
 Section~\ref{ch:restless:sec:generic} discusses the requirements when using Whittle index policy as the baseline policy in regret definition.
 We also present an overview of regret analysis of RB-TSDE \cite{akbarzadeh2022learning}, a modified version of TSDE \cite{ouyang2017learning} for learning in restless bandits.
@@ -35,7 +35,7 @@ From what we have observed, the MDP properties that appear in regret upper bound
     \item the upper bound on the span of the optimal bias function $H\ge sp(\vh^*)$ used in \eg, \cite{bartlett2012regal, ouyang2017learning, fruit2018efficient, zhang2019regret};
     \item the mixing time $t_{mix}$ (defined by Definition~\ref{ch:restless:mixing}) used in \eg, \cite{ortner2020regret}.
 \end{itemize}
-Then, applying these algorithms to learn restless Markovian bandits with the average reward criterion provokes a few critical issues:
+So, applying these algorithms to learn restless Markovian bandits with average reward criterion provokes a few critical issues:
 \begin{itemize}
     %\item verifying the structure of restless bandit is computationally ``expensive'' 
     \item The state size of restless bandit is exponential in the number of arms.
@@ -109,14 +109,14 @@ It may be useful to note that the ergodicity coefficient provides an upper bound
 %This inspires us to study the implication of structure of arms in the structure of the bandit because verifying the structure of all arms can be done linearly in the number of arms.
 %\KK{To finish}
 
-\section{Undiscounted restless bandit}
+\section{Restless bandit with average reward criterion}
 \label{ch:restless:sec:restless}
 
 We recall from Chapter~\ref{ch:mb} that a restless Markovian bandit is multi-armed bandit having $n\in\N^+$ arms.
-Each arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ is an MDP with a finite state space $\gS_i$ of size $S$ and a binary action space $\{0,1\}$, where $0$ denotes the action ``rest'', and $1$ denotes the action ``activate''.
-If arm $i$ is in state $s_i$, and the decision maker executes $a_i\in\{0,1\}$, the arm incurs a random reward with the expected value $r_i(s_i,a_i)$ and transitions to state $s'_i\in\gS_i$ with a probability $p_i(s'_i\mid s_i,a_i)$.
+Each arm $\langle\gS_i, \{0,1\}, \{\vr^0_i, \vr^1_i\}, \{\mP^0_i, \mP^1_i\}\rangle$ is an MDP with a finite state space $\gS_i$ of size $S$ and a binary action space $\{0,1\}$, where $0$ denotes the action ``rest'', and $1$ denotes the action ``activate''.
+If arm $i$ is in state $s_i$, and the decision maker executes $a_i\in\{0,1\}$, the arm incurs a random reward with the expected value $r^{a_i}_i(s_i)$ and transitions to state $s'_i\in\gS_i$ with a probability $P_i^{a_i}(s_i, s'_i)$.
 Similarly to what is done in Chapter~\ref{ch:learning_rested}, we assume that the state space of the arms are pairwise distinct: $\gS_i\cap\gS_j=\emptyset$ for any $i\neq j$.
-So, we will drop the index $i$ from the expected reward and transition if no confusion is possible: we denote them by $r(s_i,a_i)$ instead of $r_i(s_i,a_i)$ and by $p(s'_i\mid s_i,a_i)$ instead of $p_i(s'_i\mid s_i,a_i)$.
+So, we will drop the index $i$ from the expected reward and transition if no confusion is possible: we denote them by $r^{a_i}(s_i)$ instead of $r^{a_i}_i(s_i)$ and by $P^{a_i}(s_i, s'_i)$ instead of $P_i^{a_i}(s_i, s'_i)$.
 
 At time step $1$, the state of all arms denoted by $\vs_1:=(s_{1,1},\dots,s_{1,n})$ is sampled according to some initial distribution $\rho$ over the state space $\gX:=\gS_1\times\dots\times\gS_n$.
 At time step $t\ge1$, the decision maker observes the current state of all arms denoted by $\vs_t:=(s_{t,1},\dots,s_{t,n})$ and activates exactly $m$ arms encoded by action $\va_t:=(a_{t,1},\dots,a_{t,n})$ such that $\va_t\in\{0,1\}^n$ and $\sum_{i=1}^{n} a_{t,i}=m$, and $m\in[n]$ is constant over time.
@@ -124,7 +124,7 @@ Each arm $i$ incurs then a random reward $r_{t,i}$ and makes
 a transition to the next state $s_{t+1,i}$ in function of $s_{t,i}$ and $a_{t,i}$ but independently of the other arms.
 So, the restless Markovian bandit is a specific MDP -- that we denote by $M$ -- whose state space is $\gX$, and action space is $\gA(m):=\{\va\in\{0,1\}^n : \sum_{i=1}^{n}a_i =m\}$.
 We will say \emph{global} to refer to the quantities related to the bandit $M$ and \emph{local} to refer to the quantities related to the arms.
-Without loss of generality, we assume that for any global state $\vs\in\gX$ and global action $\va\in\gA(m)$, the expected reward is bounded like $\sum_{i=1}^{n}r(s_i,a_i)\in[0,r_{max}]$.
+Without loss of generality, we assume that for any global state $\vs\in\gX$ and global action $\va\in\gA(m)$, the expected reward is bounded like $\sum_{i=1}^{n}r^{a_i}(s_i)\in[0,r_{max}]$.
 
 The decision maker wants to compute a policy $\pi:\gX\mapsto\gA(m)$ that maximizes the gain as defined in Section~\ref{ch:mdp:sec:gain}: for any global state $\vs\in\gX$,
 \begin{equation}
@@ -133,7 +133,7 @@ The decision maker wants to compute a policy $\pi:\gX\mapsto\gA(m)$ that maximiz
 \end{equation}
 
 As presented in Chapter~\ref{ch:mdp}, if the MDP $M$ has finite state and action spaces, then an optimal policy $\pi^*$ such that for all $\vs\in\gX, g^{\pi^*}(\vs)=g^*(\vs):=\max_{\pi}g^{\pi}(\vs)$ exists and is deterministic.
-However, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that computing an optimal policy in undiscounted restless bandit $M$ is PSPACE-hard.
+However, it is shown in \cite[Theorem~4]{papadimitriou1994complexity} that computing an optimal policy in  restless bandit with average reward is PSPACE-hard.
 
 We recall that the diameter of an MDP (see Definition~\ref{ch:rl:defn:diameter}) is finite if and only if the MDP is communicating.
 By \cite[Appendix A]{jaksch2010near}, the diameter of bandit $M$ is lower bounded by
@@ -195,7 +195,7 @@ The following theorem shows that the assumption that each arm is unichain and ha
     \begin{enumerate}[label=(\roman*)]
         \item[]
         \item \label{it:non_learnable1} For any learning algorithm $\gL$, there is a restless bandit whose arms are unichain and have a bounded span of local bias function under any policy such that for any total steps $T\ge2$, the expected regret of $\gL$ at least $\frac{T}4$.
-        \item \label{it:non_learnable2} For any learning algorithm $\gL$, any total steps $T\ge2$, there is a restless bandit whose arms are unichain and have a bounded span of local bias function under any policy, and that is weakly communicating and such that the expected regret of $\gL$ is at least $\frac{T}5$.
+        \item \label{it:non_learnable2} For any learning algorithm $\gL$, any total steps $T\ge2$, there is a weakly communicating restless bandit whose arms are unichain and have a bounded span of local bias function under any policy such that the expected regret of $\gL$ is at least $\frac{T}5$.
     \end{enumerate}
 \end{thm}
 \begin{proof}
@@ -760,13 +760,13 @@ The following theorem also provides a positive result on the structure of bandit
 \begin{proof}
     Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
     For each arm $i\in[n]$, let $z_i$ be the state that is reachable in one time step from any other states under both rest and activate actions.
-    We have that $p(z_i \mid s_i, a_i)>0$ for all $i\in[n], x_i\in\gS_i,a_i\in\{0,1\}$.
-    For any global action $\va\in\gA(m)$, any global states $\vs,\vs'\in\gX,$ the bandit $M$'s state transition is given by ${p(\vs' \mid \vs, \va) =\prod_{i=1}^n p(s'_i \mid s_i, a_i)}$.
+    We have that $P^{a_i}(s_i, z_i)>0$ for all $i\in[n], x_i\in\gS_i,a_i\in\{0,1\}$.
+    For any global action $\va\in\gA(m)$, any global states $\vs,\vs'\in\gX,$ the bandit $M$'s state transition is given by ${p(\vs' \mid \vs, \va) =\prod_{i=1}^n P^{a_i}(s_i, s'_i)}$.
     Then, for any action $\va\in\gA(m)$, any state $\vs\in\gX$, we have
     \begin{align*}
-        p(\vz \mid \vs, \va) =\prod_{i=1}^n p(z_i \mid s_i,a_i) > 0,
+        p(\vz \mid \vs, \va) =\prod_{i=1}^n P^{a_i}(s_i,z_i) > 0,
     \end{align*}
-    because $n$ is finite and for any $i$, $p(z_i \mid s_i, a_i)>0$.
+    because $n$ is finite and for any $i$, $P^{a_i}(s_i,z_i)>0$.
     Hence, the global state $\vz$ is reachable from any other global states in one step under any policies.
     In consequence, no policies induce a global Markov chain that has multiple closed irreducible recurrent classes.
     That concludes the proof.
@@ -843,16 +843,16 @@ RB-TSDE terminates episode $k\ge1$ at time step $t> t^k$ and updates its policy 
     \label{ch:restless:eq:update_crit}
     t-t^{k-1}>2t^k \text{ or } N_t(s_i,a_i) > 2N_{t^k}(s_i,a_i) \text{ for some }(s_i,a_i).
 \end{equation}
-RB-TSDE \cite{akbarzadeh2022learning} exploits the structure of restless bandit by choosing a prior distribution $\phi_i$ for each unknown arm $\langle\gS_i, \{0,1\}, r_i, p_i\rangle$ before the learning.
-At time step $t^k$, RB-TSDE uses the collected observations $o_{t^k}$ to derive a posterior $\phi_i(\cdot\mid o_{t^k})$, and draws a sample $(r^k_i,p^k_i)$ according to $\phi_i(\cdot\mid o_{t^k})$ for each arm $i$.
-The samples $\{(r^k_i,p^k_i)\}_{i\in[n]}$ is then used to compute Whittle index policy $\pi^k$.
+RB-TSDE \cite{akbarzadeh2022learning} exploits the structure of restless bandit by choosing a prior distribution $\phi_i$ for each unknown arm $\langle\gS_i, \{0,1\}, \{\vr^0_i,\vr^1_i\}, \{\mP^0_i,\mP^1_i\}\rangle$ before the learning.
+At time step $t^k$, RB-TSDE uses the collected observations $o_{t^k}$ to derive a posterior $\phi_i(\cdot\mid o_{t^k})$, and draws a sample $(\{\vr^{0k}_i,\vr^{1k}_i\},\{\mP^{0k}_i,\mP^{1k}_i\})$ according to $\phi_i(\cdot\mid o_{t^k})$ for each arm $i$.
+The samples $\{(\{\vr^{0k}_i,\vr^{1k}_i\},\{\mP^{0k}_i,\mP^{1k}_i\})\}_{i\in[n]}$ is then used to compute Whittle index policy $\pi^k$.
 
 RB-TSDE \cite{akbarzadeh2022learning} computes Whittle index policy $\pi^k$ of the sampled bandit $M^k$ because Whittle index policy of the unknown bandit $M$, denoted by $\pi^\lambda$, is used as the baseline policy for evaluating the regret of RB-TSDE.
 So, the work of \cite{akbarzadeh2022learning} assumes three conditions: Let $\mathrm{supp}(\phi_i)$ be the support of prior distribution $\phi_i$ for each arm $i$.
 Let $\phi$ be the joint prior distibution of all arms and $\mathrm{supp}(\phi):=\bigotimes_{i=1}^n\mathrm{supp}(\phi_i)$ be the support of the joint prior $\phi$.
 \begin{asmp}
     \label{asmp:indexable}
-    For any $i\in[n]$ and $(r'_i,p'_i)\in\mathrm{supp}(\phi_i)$, the arm $\langle\gS_i,\{0,1\},r'_i,p'_i\rangle$ is indexable.
+    For any $i\in[n]$ and $(\{\vr^{0'}_i,\vr^{1'}_i\}, \{\mP^{0'}_i,\mP^{1'}_i\})\in\mathrm{supp}(\phi_i)$, the arm $\langle\gS_i,\{0,1\},\{\vr^{0'}_i,\vr^{1'}_i\}, \{\mP^{0'}_i,\mP^{1'}_i\}\rangle$ is indexable.
 \end{asmp}
 \begin{asmp}
     \label{asmp:unichain}
@@ -884,8 +884,8 @@ Let $K_T$ be the total number of episodes up to time $T$.
 Then,
 \begin{align}
     \Reg(\textnormal{RB-TSDE},M,T) 
-    &= \sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \Bigl(g^\widx_M -\sum_{i=1}^{n}r(s_{t,i},a_{t,i})\Bigr) \label{ch:restless:eq:regret1}\\
-    &\qquad +\underbrace{\sum_{i=1}^{n}\Bigl(r(s_{t,i},a_{t,i})-r_{t,i}\Bigr)}_{\Delta_{t,0}} \nonumber
+    &= \sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \Bigl(g^\widx_M -\sum_{i=1}^{n}r^{a_{t,i}}(s_{t,i})\Bigr) \label{ch:restless:eq:regret1}\\
+    &\qquad +\underbrace{\sum_{i=1}^{n}\Bigl(r^{a_{t,i}}(s_{t,i})-r_{t,i}\Bigr)}_{\Delta_{t,0}} \nonumber
 \end{align}
 
 %The algorithm $\gL$ updates its policy in an episodic manner. %using doubling trick.
@@ -895,12 +895,12 @@ Under Assumption~\ref{asmp:indexable}, $\pi^k$ is well-defined, and under Assump
 Then, the Bellman evaluation equation for $\pi^k$ in $M^k$ gives: for global state $\vs_t\in\gX$, $\va_t=\pi^k(\vs_t)$,
 \begin{equation}
     \label{eq:be_imagined}
-    0 =  \sum_{i=1}^nr^k(s_{t,i}, a_{t,i}) -g^{\pi^k}_{M^k} +\sum_{\vs'\in\gX}p^k(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs') -h^{\pi^k}_{M^k}(\vs_t).
+    0 =  \sum_{i=1}^nr^{a_{t,i}k}(s_{t,i}) -g^{\pi^k}_{M^k} +\sum_{\vs'\in\gX}p^k(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs') -h^{\pi^k}_{M^k}(\vs_t).
 \end{equation}
 Then, adding \Eqref{eq:be_imagined}, $0=\sum_{\vs'\in\gX}p(\vs' \mid \vs_t, \va_t)\Bigl(h^{\pi^k}_{M^k}(\vs')-h^{\pi^k}_{M^k}(\vs')\Bigr)$, and $0=h^{\pi^k}_{M^k}(\vs_{t+1})-h^{\pi^k}_{M^k}(\vs_{t+1})$ to \Eqref{ch:restless:eq:regret1}, and regrouping terms give
 \begin{align*}
     \Reg(\textnormal{RB-TSDE},M,T)
-    &=\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \underbrace{(g^\widx_M{-}g^{\pi^k}_{M^k})}_{\Delta_{t,1}} {+}\underbrace{\sum_{i=1}^n\Bigl(r^k(s_{t,i},a_{t,i}){-}r(s_{t,i},a_{t,i})\Bigr)}_{\Delta_{t,2}} \\
+    &=\sum_{k=1}^{K_T}\sum_{t=t^k}^{t^{k+1}-1} \underbrace{(g^\widx_M{-}g^{\pi^k}_{M^k})}_{\Delta_{t,1}} {+}\underbrace{\sum_{i=1}^n\Bigl(r^{a_{t,i}k}(s_{t,i}){-}r^{a_{t,i}}(s_{t,i})\Bigr)}_{\Delta_{t,2}} \\
     &\quad {+}\underbrace{\sum_{\vs'\in\gX}\Bigl(p^k(\vs' \mid \vs_t, \va_t){-}p(\vs' \mid \vs_t, \va_t)\Bigr)h^{\pi^k}_{M^k}(\vs')}_{\Delta_{t,3}} {+}\underbrace{h^{\pi^k}_{M^k}(\vs_{t+1}){-}h^{\pi^k}_{M^k}(\vs_{t})}_{\Delta_{t,4}} \\
     &\quad {+}\underbrace{\sum_{\vs'\in\gX} p(\vs' \mid \vs_t, \va_t)h^{\pi^k}_{M^k}(\vs')-h^{\pi^k}_{M^k}(\vs_{t+1})}_{\Delta_{t,5}} +\Delta_{t,0}.
 \end{align*}
@@ -920,9 +920,9 @@ The work of \cite{akbarzadeh2022learning} exploits this structure as the followi
 For any global state $\vs\in\gX$ and global action $\va\in\gA(m)$, it follows from \cite[Lemma~13]{jung2019thompson} that
 \begin{align*}
     \sum_{\vs'\in\gX} \abs{p^k(\vs'\mid \vs,\va) -p(\vs'\mid \vs,\va)}
-    \le \sum_{i=1}^{n} \sum_{s'_i\in\gS_i} \abs{p^k(s'_i\mid s_i,a_i) -p(s'_i\mid s_i,a_i)},
+    \le \sum_{i=1}^{n} \sum_{s'_i\in\gS_i} \abs{P^{a_ik}(s_i, s'_i) -P^{a_i}(s_i, s'_i)},
 \end{align*}
-where $\sum_{s'_i\in\gS_i} \abs{p^k(s'_i\mid s_i,a_i) -p(s'_i\mid s_i,a_i)}$ is the concentration of the local transition, which is bounded proportionally to $\sqrt{S}$ using Weissman's inequality.
+where $\sum_{s'_i\in\gS_i} \abs{P^{a_ik}(s_i, s'_i) -P^{a_i}(s_i, s'_i)}$ is the concentration of the local transition, which is bounded proportionally to $\sqrt{S}$ using Weissman's inequality.
 
 Using the doubling trick \eqref{ch:restless:eq:update_crit}, \cite[Lemma~A.1]{akbarzadeh2022learning} gives $K_T\le2\sqrt{nST\ln(T)}$. So, what is left to bound is the span of the global bias function $sp(\vh^{\pi^k}_{M^k})$.
 By \cite[Lemma~5.1]{akbarzadeh2022learning}, for any $k\ge1$, $sp(\vh^{\pi^k}_{M^k})\le \displaystyle\frac{2r_{max}}{1-\beta^*}$.
@@ -950,7 +950,7 @@ Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
 \begin{thm}[Local and global ergodicity coefficients]
     For each arm $i\in[n]$, the ergodicity coefficient $\gamma_i$ of the arm is defined by
     \begin{align*}
-        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a), p(z_i \mid s'_i, a')\}.
+        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{P^a(s_i, z_i), P^{a'}(s'_i, z_i)\}.
     \end{align*}
     Similarly, the ergodicity coefficient $\beta_M$ of the bandit $M$ is defined in the same manner as \eqref{eq:ergodic_M}.
 
@@ -968,14 +968,14 @@ Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
     For any two global states $\vs,\vs'\in\gX$ and any two actions $\va,\va'\in\gA(m)$, we have
     \begin{align*}
         \sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}
-        &= \sum_{\vz\in\gX} \min\left\{\prod_{i=1}^np(z_i \mid s_i, a_i), \prod_{i=1}^np(z_i \mid s'_i, a'_i)\right\} \\
-        &\ge \sum_{\vz\in\gX}\prod_{i=1}^n \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\} \\
-        &= \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}\right).
+        &= \sum_{\vz\in\gX} \min\left\{\prod_{i=1}^nP^{a_i}(s_i, z_i), \prod_{i=1}^nP^{a'_i}(s'_i, z_i)\right\} \\
+        &\ge \sum_{\vz\in\gX}\prod_{i=1}^n \min\Big\{P^{a_i}(s_i, z_i), P^{a'_i}(s'_i, z_i)\Big\} \\
+        &= \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\Big\{P^{a_i}(s_i, z_i), P^{a'_i}(s'_i, z_i)\Big\}\right).
     \end{align*}
     Since for any $i\in[n]$, $\gamma_i<1$, we have that
     \begin{align*}
-        \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}
-        &\ge \min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a), p(z_i \mid s'_i, a')\} \\
+        \sum_{z_i\in\gS_i} \min\{P^{a_i}(s_i, z_i), P^{a'_i}(s'_i, z_i)\}
+        &\ge \min_{\substack{x_i,y_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{P^{a}(s_i, z_i), P^{a'}(s'_i, z_i)\} \\
         &= 1-\gamma_i >0.
     \end{align*}
     In consequences, ${\sum_{\vz\in\gX} \min\{p(\vz \mid \vs, \va), p(\vz \mid \vs', \va')\}{>}0}$.
@@ -983,7 +983,7 @@ Consider the bandit $M$ described in Section~\ref{ch:restless:sec:restless}.
     \smallskip
     Moreover, if there exists $\varepsilon>0$ such that \eqref{eq:gamma_ep} holds for any $i\in[n]$, then it follows that
     \begin{align*}
-        \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\{p(z_i \mid s_i, a_i), p(z_i \mid s'_i, a'_i)\}\right)
+        \prod_{i=1}^n \left(\sum_{z_i\in\gS_i} \min\{P^{a_i}(s_i, z_i), P^{a'_i}(s'_i, z_i)\}\right)
         &\ge \varepsilon^n.
     \end{align*}
     We can conclude that $\beta_M\le 1-\varepsilon^n$ using its definition.
