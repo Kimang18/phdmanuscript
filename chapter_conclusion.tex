@@ -10,8 +10,8 @@
 This thesis addresses two grand questions in Markovian bandits: (1) index computation given the bandit's parameters and (2) minimizing the regret and the runtime of learning algorithms using the problem structure and the index policy when the bandit's parameters are unknown.
 For the former, we have introduced an algorithm for computing the Whittle or the Gittins indices of a Markovian arm in subcubic time complexity.
 For the latter, we have proposed three learning algorithms with a regret guarantee sublinear in the number of arms for rested bandits with discount.
-Moreover, two of the three learning algorithms can leverage the Gittins index to have a runtime linear in the number of arms.
-We have also pointed out the difficulties of minimizing the regret when learning in restless bandits with the average reward criterion.
+Moreover, two of the three learning algorithms can leverage Gittins index to have a runtime linear in the number of arms.
+We have also pointed out the difficulties of minimizing the regret when learning in restless bandits with average reward criterion.
 
 We have seen that the structure of arms plays a crucial role in Markovian bandit problems.
 First, the Whittle index policy is defined for restless Markovian bandits whose arms satisfy a notion of indexability, but this notion becomes unclear when some arms admit some local optimal policies that are multichain.
@@ -50,11 +50,11 @@ Therefore, we conjecture that the span of the global bias functions is upper bou
 \begin{conj}
     \label{conj:span}
     Consider a restless bandit $M$ having $n$ arms.
-    Each arm $\langle\gS_i,\{0,1\},r_i,p_i\rangle$ is an MDP with a finite state space $\gS_i$ and a binary action space $\{0,1\}$.
+    Each arm $\langle\gS_i,\{0,1\},\{\vr^0_i,\vr^1_i\},\{\mP^0_i,\mP^1_i\}\rangle$ is an MDP with a finite state space $\gS_i$ and a binary action space $\{0,1\}$.
     %For each arm $i\in[n]$, the expected reward $r_i(s_i,a_i)$ is bounded in $[r_{min,i},r_{max,i}]$ for all $s_i\in\gS_i$ and $a_i\in\{0,1\}$.
     For each arm $i\in[n]$, let $\gamma_i$ be its ergodicity coefficient defined by
     \begin{align*}
-        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{p_i(z_i \mid s_i, a), p_i(z_i \mid s'_i, a')\}.
+        \gamma_i = 1-\min_{\substack{s_i,s'_i\in\gS_i \\a,a'\in\{0,1\}}} \sum_{z_i\in\gS_i} \min\{P^a(s_i,z_i), P^{a'}(s'_i, z_i)\}.
     \end{align*}
     Let $\vh^*$ be the global optimal bias function of the bandit $M$ in the average reward criterion.
     We conjecture that
