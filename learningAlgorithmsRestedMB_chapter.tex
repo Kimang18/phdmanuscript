@@ -301,9 +301,9 @@ Finally, our bound in Equation~\eqref{eq:regret_tilde} is linear in $S$, the sta
 A crucial ingredient of our proof is to work with the value function over a random finite time horizon ($W$ defined below), instead of working directly with the discounted value function $v$. For a given model $M$, and a deterministic policy $\pi$, a horizon $H$ and a time step $h\le H$, we define by $W_{M,{h:H}}^\pi(\vs)$ the value function of policy $\pi$ over the finite time horizon ${H-h+1}$ when starting in $\vs$ at time $h$. It is defined by: for any state $\vs\in\gX$, $a=\pi(\vs)$,
 \begin{equation}
     \label{eq:discounted_reward}
-    W_{M,{h:H}}^\pi(\vs)  :=  r(\vx,a) {+}\sum_{\vs'\in\gX}p(\vs'\mid \vs,a)W_{M,{h+1:H}}^\pi(\vs'),
+    W_{M,{h:H}}^\pi(\vs)  :=  r(s_a) {+}\sum_{\vs'\in\gX}p(\vs'\mid \vs,a)W_{M,{h+1:H}}^\pi(\vs'),
 \end{equation}
-with $W_{M,{H:H}}^\pi(\vs):=r(\vs,a)$. % and where $r^\pi$ and $P^\pi$ are reward vector and state transition matrix when following policy $\pi$.
+with $W_{M,{H:H}}^\pi(\vs):=r(s_a)$. % and where $r^\pi$ and $P^\pi$ are reward vector and state transition matrix when following policy $\pi$.
 We recall from \eqref{eq:discount_finite} that $v^{\pi}_M(\vs)=\ex{W_{M,1:H}^\pi(\vs)}$.
 
 %By definitions of $W$ in Equation~\eqref{eq:discounted_reward} and $V$ in Equation~\eqref{eq:V-vs_R}, for a fixed model $M$, a policy $\pi$ and a state $\vx$, and a time horizon $H$ that is geometrically distributed, one has $V^{\pi}_M(\vx)=\ex{W_{M,1:H}^\pi(\vx)}$.
@@ -374,7 +374,7 @@ Let us consider that the estimates and confidence bonus for a given arm $a$ are 
     \label{thm:no_OFU}
     For any algorithm that computes indices locally, there exists a rested bandit $M$, an initial state $\vs$ and estimates $\hatB_a:=(\hat{\vr}_a,\hat{\mP}_a, \beta_r, \beta_P)$ such that $M\in\sM(\hatB)$ and
     \begin{align*}
-        \sup_{M'\in\sM(\hatB)}V^{\pi^{I(\hatB)}}_{M'}(\vs) < \sup_\pi V^{\pi}_{M}(\vs).
+        \sup_{M'\in\sM(\hatB)}v^{\pi^{I(\hatB)}}_{M'}(\vs) < \sup_\pi v^{\pi}_{M}(\vs).
     \end{align*}
 \end{thm}
 \begin{proof}
