@@ -1,11 +1,5 @@
 %!TEX encoding = UTF-8 Unicode
 
-% rubber: path ./sty
-% rubber: path ./fig
-% rubber: path ./img
-% rubber: path ./inputs
-% rubber: shell_escape
-
 % The structure of this document is based on the my-thesis.tex example provided
 % with the cleanthesis package (see http://cleanthesis.der-ric.de/).
 % It also is inspired by the PhD manuscripts of Raphaël Bleuse, David Beniamine
@@ -40,11 +34,17 @@
 \usepackage{textcomp}
 \usepackage{lipsum}
 
+% --- MATHEMATICS TYPESETTING ----------
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bm}
+
 % --- SPECIFIC ABBREVIATIONS MACROS -------------
 
 \input{macros.local.tex}
 \input{macros.include.tex}
-
 
 \ifwatermark
 \input{watermark}
@@ -91,17 +91,19 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.13}
-\usetikzlibrary{arrows,shapes,positioning,shadows,trees,calc,decorations.text}
+\usetikzlibrary{arrows,shapes,shapes.geometric,positioning,shadows,trees,calc,decorations.text,arrows.meta}
+%\usetikzlibrary{matrix,backgrounds,arrows,shapes,positioning,shadows,trees,calc,decorations.text}
+\usetikzlibrary{matrix,fit,backgrounds}
 
-\usepackage{bm}
-
-\usepackage{titlesec}
-
-% --- MATHEMATICS TYPESETTING ----------
-
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{amsthm}
+%\usepackage{titlesec}
+%titlesec is outdated and create Warning Missing number blablabla
+%https://tex.stackexchange.com/questions/302111/multiple-missing-number-treated-as-zero-and-illegal-unit-of-measure-pt-insert
+\makeatletter
+\renewcommand{\sectionlinesformat}[4]{%
+  \Ifstr{#1}{section}{\clearpage}{}%
+  \@hangfrom{\hskip #2#3}{#4}%
+}
+\makeatother
 
 % --- MODULAR CHAPTER COMPILATION -----
 
@@ -113,8 +115,15 @@
 \usepackage{xspace}  % easy macros definition
 \usepackage{booktabs}
 %\usepackage[font=footnotesize]{subfig}
-\usepackage{subfigure}
-\usepackage[ruled,noend]{algorithm2e}
+\usepackage{subcaption}
+\usepackage[linesnumbered,ruled,noend,vlined]{algorithm2e}
+\SetKwProg{Init}{Init.}{}{}
+\newenvironment{subroutine}[1][htb]
+{\renewcommand{\algorithmcfname}{Subroutine}% Update algorithm name
+   \begin{algorithm}[#1]%
+}{\end{algorithm}}
+
+
 \usepackage{csquotes}
 \usepackage{tabularx}
 \usepackage{pifont}
@@ -133,6 +142,7 @@
 
 \usepackage{color,colortbl}
 \definecolor{gray98}{rgb}{0.98,0.98,0.98}
+\definecolor{gray95}{rgb}{0.95,0.95,0.95}
 \definecolor{gray20}{rgb}{0.20,0.20,0.20}
 \definecolor{gray25}{rgb}{0.25,0.25,0.25}
 \definecolor{gray16}{rgb}{0.161,0.161,0.161}
@@ -148,8 +158,8 @@
 \definecolor{myblue}{cmyk}{1, .50, .10, .01}  % see definition of "bluemagenta" in cleanthesis.sty
 \usepackage[procnames]{listings}
 \lstset{ %
-    backgroundcolor=\color{gray98},    % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
-    basicstyle=\ttfamily\scriptsize,        % the size of the fonts that are used for the code
+    backgroundcolor=\color{gray98},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+    basicstyle=\ttfamily\scriptsize,  % the size of the fonts that are used for the code
     breakatwhitespace=false,          % sets if automatic breaks should only happen at whitespace
     breaklines=true,                  % sets automatic line breaking
     showlines=true,                   % sets automatic line breaking
@@ -172,12 +182,14 @@
     stepnumber=2,                     % the step between two line-numbers. If it's 1, each line will be numbered
     stringstyle=\color{amdove},       % string literal style
     tabsize=2,                        % sets default tabsize to 2 spaces
-    % title=\lstname,                    % show the filename of files included with \lstinputlisting; also try caption instead of title
+    % title=\lstname,                 % show the filename of files included with \lstinputlisting; also try caption instead of title
     procnamekeys={call}
 }
 \definecolor{colorfuncall}{rgb}{0.6,0,0}
 
 % --- PDF SUPPORT ----------------------
+
+\usepackage{appendix}
 
 \usepackage{bookmark,hyperref}  % import as last package
 
@@ -201,17 +213,63 @@
 }
 
 % --- Custom TODO line ------------------------
-\usepackage{mdframed}
-\newmdenv[%
-  linecolor=red,%
-  backgroundcolor=red!20,%
-  linewidth=3pt,%
-  hidealllines=true,%
-  leftline=true,%
-]{todoenv}
-\newcommand{\todo}[1]{\begin{todoenv}#1\end{todoenv}}
-\newcommand{\todoC}[1]{\todo{#1}}
+%\usepackage{mdframed}
+%\newmdenv[%
+%  linecolor=red,%
+%  backgroundcolor=red!20,%
+%  linewidth=3pt,%
+%  hidealllines=true,%
+%  leftline=true,%
+%]{todoenv}
+%\newcommand{\todo}[1]{\begin{todoenv}#1\end{todoenv}}
+%\newcommand{\todoC}[1]{\todo{#1}}
+\usepackage[textwidth=\linewidth]{todonotes}		% for todo's
+\renewcommand{\NG}[1]{\todo[color=blue!10,author=\textbf{\small NG},inline]{\small #1\\}}
+\newcommand{\BG}[1]{\todo[color=red!10,author=\textbf{\small BG},inline]{\small #1\\}}
+\newcommand{\KK}[1]{\todo[color=green!10,author=\textbf{\small KK},inline]{\small #1\\}}
+\graphicspath{{}{img/}}
 
+% -- command for box colored --
+\usepackage[most]{tcolorbox}
+\tcolorboxenvironment{thm}{
+    enhanced,
+    breakable,
+    fonttitle=\bfseries,
+    colback=RoyalBlue!5,
+    colframe=RoyalBlue!30!black,
+}
+\tcolorboxenvironment{cor}{
+    enhanced,
+    breakable,
+    fonttitle=\bfseries,
+    colback=RoyalBlue!5,
+    colframe=RoyalBlue!40!black,
+}
+
+\tcolorboxenvironment{prop}{
+    enhanced,
+    breakable,
+    boxrule=0pt,frame hidden,
+    borderline west={2pt}{0pt}{RoyalBlue!90!black},
+    colback=gray95,
+    sharp corners,
+}
+\tcolorboxenvironment{defn}{
+    colback=gray95,
+    colframe=amgreen, 
+    rightrule=0pt, toprule=0pt,
+    enhanced,
+    breakable,
+    sharp corners,
+}
+\tcolorboxenvironment{lem}{
+    enhanced,
+    breakable,
+    boxrule=0pt,frame hidden,
+    borderline west={4pt}{0pt}{RoyalBlue!60!black},
+    colback=gray95,
+    sharp corners,
+}
 
 % === MACROS DEFINITION =======================================================
 
@@ -225,8 +283,8 @@
 %   - http://web.ece.ucdavis.edu/~jowens/commonerrors.html
 
 % === META DATA ===============================================================
-\title{One great title}
-\author{John \textsc{Doe}}
+\title{Indexability and Learning Algorithms\\ for Markovian Bandits}
+\author{Kimang \textsc{Khun}}
 
 % fill pdf meta data
 \makeatletter
@@ -236,8 +294,13 @@
 \makeatother
 
 \usepackage{enumitem}
+\setlistdepth{9}
+%\usepackage{minitoc}
 
 % === DOCUMENT CONTENT ========================================================
+
+%% Comment the following to have chapters numbered without interruption (numbering through parts)
+%\makeatletter\@addtoreset{chapter}{part}\makeatother%
 
 \begin{document}
 
@@ -254,11 +317,11 @@
 
 \pagenumbering{roman}  % roman page numbering (e.g., i ii iii), reset counter
 
-\input{dedication.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-%
-\input{epigraph.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
-\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%%\input{dedication.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%%\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%%
+%\input{epigraph.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 
 \pagestyle{plain}  % display page number only
 
@@ -268,7 +331,7 @@
 \input{abstract-front.tex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 
-\setcounter{tocdepth}{2}  % define depth of ToC
+\setcounter{tocdepth}{1}  % define depth of ToC
 \phantomsection\addcontentsline{toc}{chapter}{{\contentsname}}  % display ToC to ToC
 
 % Add a bit of space in the ToC
@@ -276,6 +339,8 @@
 \pretocmd{\chapter}{\addtocontents{toc}{\protect\addvspace{15\p@}}}{}{}
 \pretocmd{\section}{\addtocontents{toc}{\protect\addvspace{5\p@}}}{}{}
 \makeatother
+
+%\KK{Do not add citation in page 3, nor the résumé in French, nor the acknowledgments when sending to reviewers.}
 
 \tableofcontents %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
@@ -289,66 +354,129 @@
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % main chapters go here
 \bookmarksetup{startatroot}
 \inputchapter{\includechapterintroduction}{chapter_introduction.tex}
 
+\iftotalcompilation
+\part{Background on Markov decision process, reinforcement learning, and Markovian bandit}
+\label{part:background}
+%In this part, we recall the existing problem setups and results in the literature on Markov decision process, reinforcement learning, and Markovian bandit.
+%This part serves as the basis for understanding the whole thesis.
+%In Chapter~\ref{ch:mdp}, we present the formalism of Markov decision process.
+%In Chapter~\ref{ch:rl}, we recapitulate a few fundamental definitions and several existing results in reinforcement learning literature.
+%Finally, in Chapter~\ref{ch:mb}, we present the formalism of Markovian bandits and existing results and outline the questions discussed in the thesis.
+
+\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+\clearpage
+%\KK{Motivate why this part should be read, what are essential to understand in this part}
+\fi
+
+\inputchapter{\includemdpchapter}{markovDecisionProcess_chapter.tex}
+
+\inputchapter{\includereinforcementlearningchapter}{reinforcementLearning_chapter.tex}
+
+\inputchapter{\includemarkovianbanditchapter}{markovianBandit_chapter.tex}
+
+\iftotalcompilation
+\part{Indexability and Index Computation}
+\label{part:idx}
+
+
+%This part presents our results about indexability testing and index computation in Markovian bandits. First, in Chapter~\ref{ch:indexability}, we discuss the ambiguities in the classical definition of indexability and propose a new univocal definition for any restless bandits. Then, in Chapter~\ref{ch:index_computation}, we develop a unified algorithm that tests the indexability and computes the Whittle index in either discounted or undiscounted restless bandits, and the Gittins index in discounted rested bandits. This algorithm has a subcubic theoretical computational complexity, and to the best of our knowledge, it is the first to achieve such complexity. These are our contributions to the computational side of Markovian bandits literature.
+
+%Particularly, we redefine a few notations to ease the exposition.
+%We also introduce new notations when developing our algorithm.
+%Those redefined and new notations are used exclusively in this part.
+
+\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+\clearpage
+%\KK{Motivate why this part should be read, what are essential to understand in this part}
+\fi
+
+\inputchapter{\includeindexDefinitionchapter}{indexDefinition_chapter.tex}
+
+\inputchapter{\includeindexComputationchapter}{indexComputation_chapter.tex}
+
+\iftotalcompilation
+\part{Learning in Markovian bandits}
+\label{part:learning}
+
+%In this part, we focus on learning problems in Markovian bandits. We start by considering a learning setting where the unknown environment is a rested bandit with a discount. An efficient policy for such rested bandits is Gittins index policy. Hence, in Chapter~\ref{ch:learning_rested}, we show that MB-PSRL and MB-UCBVI, the modified versions of PSRL and UCBVI for rested bandits, can leverage Gittins index policy to have a regret bound and runtime scalable in the number of arms. We show that MB-UCRL2, a modified version of UCRL2, also has a regret upper bound scalable in the number of arms. Yet, we give an example showing that MB-UCRL2 and any modification of UCRL2’s variants to rested bandit likely have a runtime exponential in the number of arms. Chapter~\ref{ch:learning_restless}, considers the learning problem in restless bandits with the average reward criterion. In such a problem, the regret of learning algorithms depends heavily on the structure of restless bandit. So, we study the implication of local arms' structure into the bandit's structure. We provide a few examples showing that defining a subclass of restless bandits with desirable structures for learning by relying on the assumptions of local arms is difficult.
+
+\cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+\clearpage
+\fi
+
+%\bookmarksetup{startatroot}
+
+\inputchapter{\includelearningAlgorithmsRestedMBchapter}{learningAlgorithmsRestedMB_chapter.tex}
+
+\inputchapter{\includelearningAlgorithmsRestlessMBchapter}{learningAlgorithmsRestlessMB_chapter.tex}
+
 \bookmarksetup{startatroot}  % https://stackoverflow.com/questions/1483396/how-to-explicitly-end-a-part-in-latex-with-hyperref
 \addtocontents{toc}{\bigskip}
+
 \inputchapter{\includechapterconclusion}{chapter_conclusion.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % --- BACK MATTER ----------------------
 
 \iftotalcompilation
 \pdfbookmark[-1]{Back Matter}{Back Matter}
 
-\pagenumbering{arabic}  % arabic page numbering (e.g., 1 2 3), reset counter
-\renewcommand*{\thepage}{A\arabic{page}}  % prepend A to appendix page number
-\pagestyle{scrheadings}  % display header and footer
-\addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
+%\pagenumbering{arabic}  % arabic page numbering (e.g., 1 2 3), reset counter
+%\renewcommand*{\thepage}{A\arabic{page}}  % prepend A to appendix page number
+%\pagestyle{scrheadings}  % display header and footer
+%\addtocontents{toc}{\bigskip}  % visual hint for numbering change in ToC
 \fi
 
-\appendix
-\inputchapter{\includechapterappendix}{chapter_appendix.tex}
+%\appendix
+%\inputchapter{\includechapterappendix}{chapter_appendix.tex}
+%\inputchapter{\includechapterappendixtwo}{chapter_appendixtwo.tex}
 
 \iftotalcompilation
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
+%{
+%    \begin{refsection}
+%    \makeatletter\@beginparpenalty=10000\makeatother  % prevent page break before list
+%    \defbibenvironment{itembib}{\itemize}{\enditemize}{\item}
+%    \nocite{*}
+%    %
+%    %\paragraph{List of publications}
+%    \printbibliography[title={List of publications}, keyword={own}]
+%    %
+%    %\paragraph{Peer-reviewed international workshops}
+%    %\printbibliography[heading=none,env=itembib,keyword={own},keyword={workshop}]
+%    %\paragraph{National workshops}
+%    %\printbibliography[heading=none,env=itembib,keyword={own},keyword={nworkshop}]
+%    \end{refsection}
+%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
+
 {
+    \begingroup
     \setstretch{1.1}
     \renewcommand{\bibfont}{\normalfont\small}
     \setlength{\biblabelsep}{0pt}
     \setlength{\bibitemsep}{0.5\baselineskip plus 0.5\baselineskip}
-    \printbibliography
+    \let\clearpage\relax
+    \printbibliography[title={List of publications}, keyword={own}]
+    \printbibliography[notkeyword={own}]
+    \endgroup
 }
 
-{\listoffigures \let\cleardoublepage\  \listoftables} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
+%{\listoffigures \let\cleardoublepage\  \listoftables} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS
 
-
-
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
-% {
-%     \clearpage
-%     Additionally, the work conducted in this dissertation directly led to the
-%     following communications.
-
-%     \begin{refsection}
-%     \makeatletter\@beginparpenalty=10000\makeatother  % prevent page break before list
-%     \defbibenvironment{itembib}{\itemize}{\enditemize}{\item}
-%     \nocite{*}
-%     %
-%     \paragraph{Peer-reviewed international conferences}
-%     \printbibliography[heading=none,env=itembib,keyword={own},keyword={conference}]
-%     %
-%     \paragraph{Peer-reviewed international workshops}
-%     \printbibliography[heading=none,env=itembib,keyword={own},keyword={workshop}]
-%     \paragraph{National workshops}
-%     \printbibliography[heading=none,env=itembib,keyword={own},keyword={nworkshop}]
-%     \end{refsection}
-% }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% List of publications %%%%%%%%%%%%%%%%%
 
 
 \cleardoublepage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  COMMENTED OUT FOR SEPARATE CHAPTER COMPILATIONS

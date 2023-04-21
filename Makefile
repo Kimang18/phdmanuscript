@@ -1,5 +1,5 @@
 # Thesis
-THESIS_ALL_TEX= $(wildcard *.tex)
+THESIS_ALL_TEX= $(ls -l *.tex)
 DEFAULT_TARGET= whole_thesis
 DEFAULT_PDF= thesis.pdf
 COMPILE_SLIDES := xelatex -shell-escape
@@ -9,19 +9,6 @@ all: whole_thesis \
      chapter_introduction chapter_conclusion
 
 thesis.pdf: whole_thesis
-
-# Re-generate the figures by executing the code in figures.org file
-figures:
-	echo "\n\n\n\n\n\n\n" | emacs -batch \
-		--eval "(require 'package)" \
-		--eval "(package-initialize)" \
-		--eval "(setq enable-local-eval t)" \
-		--eval "(setq enable-local-variables t)" \
-		--eval "(org-babel-do-load-languages 'org-babel-load-languages '((shell . t) (python . t) (R . t)))" \
-		--eval "(setq org-export-babel-evaluate t)" \
-		--eval "(setq org-confirm-babel-evaluate nil)" \
-		figures.org \
-		--funcall org-babel-execute-buffer
 
 # Compile the whole thesis
 whole_thesis: $(THESIS_ALL_TEX) Makefile references.bib
@@ -34,23 +21,88 @@ whole_thesis: $(THESIS_ALL_TEX) Makefile references.bib
 ############################
 # Only compile one chapter #
 ############################
+	
 chapter_introduction: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterintroduction {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	rubber --pdf --unsafe -Wall --jobname $@ thesis.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	#nix-shell -p rubber --run "rubber --pdf --synctex --unsafe -Wall --jobname $@ thesis.tex"
+
+markovDecisionProcess_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \\\includemdpchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
+markovianBandit_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \\\includemarkovianbanditchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
+indexDefinition_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \includeindexDefinitionchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
+indexComputation_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \includeindexComputationchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
+reinforcementLearning_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \\\includereinforcementlearningchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
+learningAlgorithmsRestedMB_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \includelearningAlgorithmsRestedMBchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
+learningAlgorithmsRestlessMB_chapter: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \includelearningAlgorithmsRestlessMBchapter {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+	biber $@.bcf
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 chapter_conclusion: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterconclusion {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	rubber --pdf --unsafe -Wall --jobname $@ thesis.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
 
 chapter_appendix: $(THESIS_ALL_TEX) Makefile references.bib
 	echo "\\\def \\\includechapterappendix {true}" > macros.include.tex
 	echo "\\\totalcompilationfalse" >> macros.include.tex
 	echo "\\\watermarkfalse" >> macros.include.tex
-	rubber --pdf --unsafe -Wall --jobname $@ thesis.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
+chapter_appendixtwo: $(THESIS_ALL_TEX) Makefile references.bib
+	echo "\\\def \\\includechapterappendixtwo {true}" > macros.include.tex
+	echo "\\\totalcompilationfalse" >> macros.include.tex
+	echo "\\\watermarkfalse" >> macros.include.tex
+	pdflatex -synctex=1 -shell-escape -jobname=$@ thesis.tex
+
 
 #########################
 # Convenience shortcuts #
@@ -71,9 +123,9 @@ check_uncited_references:
 # cleaning #
 ############
 clean:
-	rm -f *.aux *.bbl *.bcf *.blg *.lof *.log *.lot *.out *.run.xml *.toc *.upa *-blx.bib *.snm *.nav *.vrb
+	rm -f *.aux *.bbl *.bcf *.blg *.lof *.log *.lot *.out *.run.xml *.toc *.upa *-blx.bib *.snm *.nav *.vrb *.synctex.gz
 	rm -f macros.include.tex
-	rm -rf svg-inkscape
+	#rm -rf svg-inkscape
 
 distclean: clean
 	rm -f thesis.pdf

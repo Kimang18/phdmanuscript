@@ -14,6 +14,22 @@ To build your own thesis you can use the provided [Dockerfile](Dockerfile), or d
   - `(GNU)make` (for the Makefile),
   - `texlive` (the full one is provided by Nix, just to be safe).
 
+# Local Bug Fix
+
+If you clone manuscript-template, `xurl.sty` is needed. It can be found on Internet.
+
+Note that for MacUser, Inkscape is required. We can install with homebrew by
+
+```
+brew install inkscape
+```
+
+Problem with `cleanthesis.sty`, at Line 284, it is written `bibliography{\cthesis@bibfile}`. Biblatex takes `cthesis@bibfile` as bib file while the real bib file is given in `thesis.tex` at Line 75.
+
+=> Current solution: give bib file name to `bibliograph{}` in `cleanthesis.sty`.
+
+If everything is good, you should be able to launch `make` command without errors. This produces a pdf file called `thesis.pdf`.
+
 # Adding your work
 
 This template contains only the introduction and conclusion chapter.

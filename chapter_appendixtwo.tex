@@ -1,0 +1,1036 @@
+\begingroup
+
+\let\clearpage\relax
+\chapter{Learning Algorithms}
+\label{chp:apx_learning}
+
+The appendix are organized as follows:
+\begin{itemize}
+    \item In Appendix~\ref{apx:proof_thm1}, we prove Theorem~\ref{thm:regret_upper_bound}. 
+    \item In Appendix~\ref{apx:sketch_of_proof_lower}, we obtain a Bayesian minimax regret lower bound for any reinforcement learning algorithm in Markovian bandits (Theorem~\ref{thm:lower_bound}).
+    \item In Appendix~\ref{apx:proof_OFU}, we show that \Eqref{eq:EVI} cannot be solved by local indices (Theorem~\ref{thm:no_OFU}).
+    \item In Appendix~\ref{apx:algos}, we provide a detailed description of the algorithms that we use in our numerical comparisons. 
+    \item In Appendix~\ref{apx:add_numerical}, we provide additional numerical experiments that show the good behavior of MB-PSRL. 
+    \item In Appendix~\ref{apx:envi}, we provide details about the experimental environment and the computation time needed. 
+\end{itemize}
+
+\section{Proof of Theorem~\ref{thm:regret_upper_bound}}
+\label{apx:proof_thm1}
+
+The proof of the regret bounds for our three algorithms share a common structure but with different technical details.  In this section, we do a detailed proof of the three algorithms by factorizing as much as possible what can be factorized in the different proofs. This proof is organized as follows:
+\begin{itemize}
+    \item In Section~\ref{ssec:overview}, we give an overview of the proof that is common to all algorithms. 
+    \item In Section~\ref{ssec:technical_lemmas}, we provide technical lemmas that are used in the detailed proofs of each algorithms. 
+    \item In Section~\ref{ssec:proof_PSRL}, \ref{ssec:proof_UCRL2} and \ref{ssec:proof_UCBVI}, we provide detailed analysis of MB-PSRL, MB-UCRL2, and MB-UCBVI. 
+\end{itemize}
+
+\subsection{Overview of the Proof}
+\label{ssec:overview}
+
+Let $\pi_*$ be the optimal policy of the true MDP $M$ and $\pi_k$ the optimal policy for $M_k$, the sampled MDP at episode $k$. Recall that the expected regret is $\sum_{k=1}^K \ex{\Delta_k}$, where $\Delta_k {=} W_{M,1:H_k}^{\pi_*}(\mX_{t_k}) {-} W_{M,1:H_k}^{\pi_k}(\mX_{t_k})$.
+For each of the three algorithms, we will define an event $\gE^\text{Algo}_{k-1}$ that is $\gO_{k-1}$-measurable. $\gE^\text{Algo}_{k-1}$ is true with high probability and guarantees that $M$ and $M_k$ are close.
+We have:
+\begin{align}
+    \ex{\Delta_k}
+    &= \ex{\Delta_k\ind{\lnot\gE_{k-1}^\text{Algo}} +\Delta_k\ind{\gE_{k-1}^\text{Algo}} } \nonumber\\
+    &\le \ex{H_k}\Proba{\lnot\gE_{k-1}^\text{Algo}} + \ex{\Delta_k \ind{\gE_{k-1}^\text{Algo}}} \label{eq:gap_overview}
+\end{align}
+because $\Delta_k\le H_k$ and the random variables $H_k$ and $\ind{\gE_{k-1}^\text{Algo}}$ are independent.
+For each of the three algorithms, the policy $\pi_k$ used at episode $k$ is optimal for a model $M_k$, that is either sampled from the posterior distribution for MB-PSRL, or computed by extended value iteration for MB-UCRL2, or equal to the model with the bonus for MB-UCBVI. We have
+\begin{align*}
+    \Delta_k=\underbrace{W_{M,1:H_k}^{\pi_*}(\mX_{t_k}) - W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k})}_{:=\Delta^{model}_k}%
+    + \underbrace{W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k}) - W_{M,1:H_k}^{\pi_k}(\mX_{t_k})}_{:=\Delta^{conc}_k}.
+\end{align*}
+As we deal with the expected regret and $H_k$ is independent of the model $M_k$ and of the policy $\pi_k$, we have:
+\begin{align}
+    \ex{\Delta^{model}_k} = V_{M}^{\pi_*}(\mX_{t_k}) - V_{M_k}^{\pi_k}(\mX_{t_k}) \label{eq:def_model}
+\end{align}
+As we see later, the above equation can be used to show that $\ex{\Delta^{model}_k \ind{\gE_{k-1}^\text{Algo}}}$ is either $0$ (for MB-PSRL) or non-positive (for MB-UCRL2 or MB-UCBVI). 
+
+We are then left with $\ex{\Delta^{conc}_k \ind{\gE_{k-1}^\text{Algo}}}$. To do so, we use Lemma~\ref{lem:regret_decomposition} to show that there exists a constant $B_k$ (equal to $H_k$ for MB-PSRL and MB-UCRL2, and $H_kL_{k-1}/(2(1-\beta))$ for MB-UCBVI) such that 
+\begin{align}
+    &\ex{\Delta^{conc}_k\ind{\gE_{k-1}^\text{Algo}}}=\ex{\ind{\gE_{k-1}^\text{Algo}} \Big(W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k}){-}W_{M,1:H_k}^{\pi_k}(\mX_{t_k})\Big)} \nonumber\\
+    & {\le} \mathbb{E}\left[\ind{\gE_{k-1}^\text{Algo}} \sum_{t=t_k}^{t_{k+1}{-}1}\norm{r_k(X_{t,A_t}){-}r(X_{t,A_t})}{+}B_k\norm{Q_{k}(X_{t,A_t},\cdot){-}Q(X_{t,A_t},\cdot)}_1\right] \label{eq:proof2}
+\end{align}
+where ${\norm{Q_{k}(x_a,\cdot)-Q(x_a,\cdot)}_1=\sum_{y_a}\norm{Q_{k}(x_a,y_a)-Q(x_a,y_a)}}$. 
+For an arm $a$ and a state $x_a\in\gS^a$, we denote\footnote{In the paper, we use the notation $\ind{E}$ to denote a random variable that equals $1$ if $E$ is true and $0$ otherwise. For instance, $\ind{Y_i=y}=1$ if $Y_i=y$ and $0$ otherwise.} by $N_{k-1}(x_a){=} \sum_{t=1}^{t_{k}-1} \ind{X_{t,A_t}=x_a}$ the number of times that Arm~$a$ is activated before episode $k$ while being in state $x_a$. \Eqref{eq:proof2} relates the performance gap to the distance between the reward functions and transition matrices of the MDPs $M$ and $M_k$. 
+With $L_K{=}\sqrt{2\log\frac{4SnK^2\log K}{1-\beta}}$, the event $\gE_{k-1}^\text{Algo}$ guarantees that for all $a, x_a$ and $ k\ge1$, 
+\begin{align}
+    \label{eq:concentration}
+    \norm{r_k(x_a){-}r(x_a)} {\le} \frac{L_K}{\sqrt{\max\{1,N_{k-1}(x_a)\}}} \text{ and }
+    \norm{Q_{k}(x_a,\cdot){-}Q(x_a, .)}_1 {\le} \frac{2L_K {+}3\sqrt{S}}{\sqrt{\max\{1,N_{k-1}(x_a)\}}}
+\end{align}
+We use this with \Eqref{eq:proof2} to show that:
+\begin{align}
+    \label{eq:proof3}
+    \sum_{k=1}^K\ex{\Delta^{conc}_k \ind{\gE^\text{Algo}_{k-1}}} &\le  \ex{C^\text{Algo}_K\sum_{k=1}^K\sum_{t=t_k}^{t_{k+1}-1}\frac{1}{\sqrt{\max\{1,N_{k-1}(x_a)\}}}},
+\end{align}
+where $C^\text{Algo}_K$ is a random variable that depends on the algorithm studied. 
+
+The final analysis takes care of the right term of \Eqref{eq:proof3} and is more technical. It uses the fact that there cannot be too many large terms in this sum because if an arm is activated many times, then $1/\sqrt{N_{k-1}(X_{t,A_t})}$ is small. 
+The main technical hurdle here is to deal with the $K$ random episodes $H_1,\ldots, H_K$. 
+This is specific to our approach compared to the analysis of finite horizons. 
+To bound this, one needs to bound terms of the form $\ex{\max_{1\leq k\leq K} (H_k)^\alpha}$ with $\alpha\in\{1.5,2\}$ (see \Eqref{eq:proof_bound}). 
+To bound this, we use the geometric distribution of $H_k$ to show that $\ex{\max_{1\leq k\leq K} (H_k)^{\alpha}}=O((\frac{\log K}{1-\beta})^{\alpha})$ (see Lemma~\ref{lem:moment}).
+
+\subsection{Technical lemmas common to the three algorithms}
+\label{ssec:technical_lemmas}
+
+In this section, we establish a series of lemmas that are true for any learning algorithm used. They show that:
+\begin{itemize}
+    \item The estimates $\hat{r}$ and $\hat{Q}$ concentrates on their true values (Lemma~\ref{lem:concentration});
+    \item One can transform $\Delta^{conc}_k$ into \Eqref{eq:proof2} (Lemma~\ref{lem:regret_decomposition});
+    \item The sum \Eqref{eq:proof3} can be analyzed (Lemma~\ref{lem:sum}).
+\end{itemize}
+
+\subsubsection{High Probability Events}
+
+Recall that $\gO_{k-1}$ are the observations collected by the decision maker before episode $k$. Based on $\gO_{k-1}$, we compute the empirical estimators of reward vector and transition matrix as the following: For all $a\in[n]$ and any $x_a\in\gS^a$, let $N_{k-1}(x_a)=\sum_{t=1}^{t_{k}-1}\ind{X_{t,A_t}=x_a}$ be the number of times so far that an arm $a$ was activated in state $x_a$ (at episode $1$, we have ${N_0(x_a)=0}$).
+Recall that $t_{k}{:=} 1 {+}\sum_{i=1}^{k-1}H_i$, and that $\hat{r}_{k-1}$ and $\hat{Q}_{k-1}$ are the empirical mean reward vector and transition matrix. More precisely, $\hat{r}_{k-1}(x_a)$ is the empirical mean reward earned when arm $a$ is chosen while being in state $x_a$:
+\begin{align*}
+    \hat{r}_{k-1}(x_a) = \frac{1}{N_{k-1}(x_a)}\sum_{t=1}^{t_{k}-1} R_t\ind{A_t=a \land X_{t,A_t}=x_a},
+\end{align*}
+and $\hat{Q}_{k-1}(x_a,y_a)$ is the fraction of times that arm $a$ moved from $x_a$ to $y_a$:
+\begin{align*}
+    \hat{Q}_{k-1}(x_a,y_a) = \frac{1}{N_{k-1}(x_a)}\sum_{t=1}^{t_{k}-1} \ind{A_t=a \land X_{t,A_t}=x_a \land X_{t+1,A_t}=y_a}.
+\end{align*}
+
+We design confidence sets similar to \cite{jaksch2010near,bartlett2012regal}.
+
+\begin{lem}
+    \label{lem:concentration}
+    For any $k\le K$, let $L_{k-1}=\sqrt{2\log\left(2SnK(k-1)\frac{\log(K(k-1))}{1-\beta}\right)}$. Let
+    \begin{align}
+        \gE_{k-1}^H&:= \bigg\{\forall k'\le k{-}1{:} H_{k'}\le \frac{\log(K(k-1))}{1-\beta}\bigg\} \label{eq:conc_h}\\
+        \gE_{k-1}^r&:= \bigg\{\forall a\in[n], x_a\in\gS^a, k'\le k{-}1{:} \norm{\hat{r}_{k'}(x_a){-}r(x_a)} \le \frac{L_{k-1}}{2\sqrt{\max\{1,N_{k'}(x_a)\}}}\bigg\} \label{eq:conc_r} \\
+        \gE_{k-1}^Q&:= \bigg\{\forall a\in[n], x_a\in\gS^a, k'\le k{-}1{:} \norm{\hat{Q}_{k'}(x_a,\cdot){-}Q(x_a, \cdot)}_1 \le \frac{L_{k-1}{+}1.5\sqrt{S}}{\sqrt{\max\{1,N_{k'}(x_a)\}}}\bigg\}. \label{eq:conc_q} \\
+        \gE_{k-1}^V&:= \bigg\{\forall a\in[n], \vx\in\gE, k'\le k{-}1{:} |\hat{r}_{k'}(x_a){-}r(x_a) \nonumber \\
+                   &\qquad +\beta \sum_{\vy}(\hat{P}_{k'}^a(\vx,\vy) {-}P^a(\vx,\vy))V_M^{\pi_*}(\vy)|
+        \le \frac{L_{k-1}}{2(1-\beta)\sqrt{\max\{1,N_{k'}(x_a)\}}}\bigg\} \label{eq:conc_V}
+    \end{align}
+    Then, the above events are all $\gO_{k-1}$-measurable. Moreover:
+    \begin{align*}
+        &\Proba{\lnot\gE_{k-1}^H}\le1/K \\ 
+        &\Proba{\lnot \gE_{k-1}^r }\le 2/K \\
+        &\Proba{\lnot \gE_{k-1}^Q }\le 2/K \\
+        &\Proba{\lnot \gE_{k-1}^V }\le 2/K.
+    \end{align*} 
+\end{lem}
+
+\begin{proof}
+    For event $\gE_{k-1}^H$, since $\{H_{k'}\}_{k'\le k{-}1}$ are i.i.d. and geometrically distributed with parameter $(1-\beta)$, we have that
+    \begin{align*}
+        \Proba{\exists k'\le k-1: H_{k'}>\epsilon} \le \sum_{k'=1}^{k-1} \Proba{H_{k'}>\epsilon} =(k-1)\beta^{\lfloor \epsilon\rfloor}.
+    \end{align*}
+    Then, with $\epsilon=\frac{\log(1/(K(k-1)))}{\log(\beta)}$, we get $\Proba{\exists k'\le k{-}1: H_{k'}>\epsilon}\le 1/K$.
+    Moreover,
+    \begin{align*}
+        \epsilon = \frac{\log(1/(K(k-1)))}{\log(\beta)}= \frac{\log(K(k-1))}{\log(1/\beta)} < \frac{\log(K(k-1))}{1-\beta}.
+    \end{align*}
+    Then, $\Proba{\exists k'\le k{-}1: H_{k'}>\frac{\log(K(k-1))}{1-\beta}}\le 1/K$.
+
+    Let $\tau_k = (k-1)\frac{\log(K(k-1))}{1-\beta}$. Under event $\gE_{k-1}^H$, the random variable $t_k$ is upper bounded by the deterministic quantity $\tau_k$. In what follows, we assume that event $\gE_{k-1}^H$ holds.
+
+    For event $\gE_{k-1}^r$, let $\tilde{r}_\ell(x_a)$ be a random variable that is the empirical mean of $\ell$ i.i.d. realization of the reward when the arm in state $x_a$ is chosen. In particular, ${\hat{r}_{k-1}(x_a) = \tilde{r}_{N_{k{-}1}(x_a)}(x_a)}$. By Hoeffding's inequality, for any $\epsilon>0$, one has:
+    \begin{align*}
+        \Proba{\norm{\tilde{r}_\ell(x_a) - r(x_a)} \ge \epsilon  } \le 2 e^{-2 \ell\epsilon^2}.
+    \end{align*}
+    In particular, this holds for $\epsilon=\sqrt{\frac{\log (2SnK\tau_k)}{2\ell}}$. As $N_{k-1}(x_a)< \tau_k$, by using the union-bound, this implies that: 
+    \begin{align}
+        &\Proba{\gE_{k-1}^H \land \exists a, x_a, k'\le k{-}1: \norm{\hat{r}_{k'}(x_a) - r(x_a)} \ge \sqrt{\frac{\log (2SnK\tau_k)}{2N_{k'}(x_a)}}}\label{eq:estR_k}\\
+        &\qquad\le \sum_{a}\sum_{x_a}\Proba{\exists \ell\in\{1,\dots,\tau_k-1\}: \norm{\tilde{r}_{\ell}(x_a) - r(x_a)} \ge \sqrt{\frac{\log (2SnK\tau_k)}{2\ell}}}\nonumber\\
+        &\qquad\le \sum_{\ell=1}^{\tau_k}\sum_a\sum_{x_a}\Proba{\norm{\tilde{r}_{\ell}(x_a) - r(x_a)} \ge \sqrt{\frac{\log (2SnK\tau_k)}{2\ell}}}\nonumber\\
+        &\qquad\le  n S \sum_{\ell=1}^{\tau_k} 2e^{-2 \ell \frac{\log (2SnK\tau_k)}{2\ell}} =1/K,\nonumber
+    \end{align}
+    where the second and third  line is the union on all possible events $N_{k'}(x_a){=}\ell$ for all ${\ell{\in}\{1,\dots, \tau_k-1\}}$.
+    In total this says $\Proba{\gE_{k-1}^H\land \lnot \gE_{k-1}^r}\le 1/K$.
+    Now, $\lnot \gE_{k-1}^r {=}(\gE_{k-1}^H \land \lnot \gE_{k-1}^r) \lor (\lnot \gE_{k-1}^H \land \lnot \gE_{k-1}^r)$.
+    Then, using union bound,
+    \begin{align*}
+        \Proba{\lnot \gE_{k-1}^r}
+        &\le \Proba{\lnot \gE_{k-1}^r \land \gE_{k-1}^H} + \Proba{\lnot \gE_{k-1}^r \land \lnot \gE_{k-1}^H} \\
+        &\le \Proba{\lnot \gE_{k-1}^r \land \gE_{k-1}^H} + \Proba{\lnot \gE_{k-1}^H} \le 2/K
+    \end{align*}
+
+    The event $\gE_{k-1}^Q$ is similar but by using Weissman's inequality \cite{weissman2003inequalities} instead of Hoeffding's bound. Indeed, by using Equation~(8) in Theorem~2.1 of \cite{weissman2003inequalities}, if $N_{k-1}(x_a)$ was not a random variable, one would have 
+    \begin{align*}
+        \Proba{\norm{\hat{Q}_{k-1}(x_a,\cdot){-}Q(x_a,\cdot)}_1\ge \epsilon} \le 2^S e^{- N_{k-1}(x_a) \epsilon^2/2}.
+    \end{align*}
+    Following the same approach as for \Eqref{eq:estR_k} with $\epsilon=\sqrt{2\log(SnK\tau_k2^S)/N_{k-1}(x_a)}$, we use the union-bound to show that:
+    \begin{align*}
+        &\Proba{\gE_{k-1}^H\land\exists a, x_a, k'{\le}k{-}1: \norm{\hat{Q}_{k'}(x_a,\cdot){-}Q(x_a,\cdot)}_1 {\ge} \sqrt{\frac{2\log(SnK\tau_k 2^S)}{N_{k'}(x_a)}}} \\
+        &\qquad \le \tau_k n S 2^Se^{ -N_{k'}(x_a)\frac{2\log(SnK\tau_k2^S)}{2N_{k'}(x_a)}} = 1/K.
+    \end{align*}
+    By definition of $L_{k-1}=\sqrt{2\log(2SnK\tau_k)}$ and since $\sqrt{x+y}\le\sqrt{x}+\sqrt{y}$, we have
+    \begin{align*}
+      \sqrt{2\log(SnK\tau_k2^S)}
+      &=\sqrt{2\log(2SnK\tau_k) {+} 2(S-1)\log 2}\\
+      & \le L_{k-1} +\sqrt{2(S-1)\log2} \le L_{k-1} + 1.5\sqrt{S}.
+    \end{align*}
+    Hence: 
+    \begin{align*}
+        &\Proba{\gE_{k-1}^H\land\exists a, x_a, k'\le k{-}1: \norm{\hat{Q}_{k'}(x_a,\cdot)-Q_{}(x_a,\cdot)}_1 \ge \frac{L_{k-1}+1.5\sqrt{S}}{\sqrt{N_{k'}(x_a)}}} \le 1/K.
+    \end{align*}
+    As done for $\gE^r_{k-1}$, we have $\lnot \gE_{k-1}^Q {=}(\gE_{k-1}^H \land \lnot \gE_{k-1}^Q) \lor (\lnot \gE_{k-1}^H \land \lnot \gE_{k-1}^Q)$. With the same process, we get $\Proba{\lnot \gE_{k-1}^Q}\le 2/K$.
+        
+    For event $\gE_{k-1}^V$, we have that $\hat{r}_{k-1}+\hat{P}_{k-1}V_M^{\pi_*}$ is the empirical mean of $r+PV_M^{\pi_*}$.
+    This is because $V_M^{\pi_*}$ is deterministic and $\hat{r}_{k-1}$ and $\hat{P}_{k-1}$ are empirical mean of $r$ and $P$ respectively.
+    Using Hoeffding's inequality and following the same approach above, we have $\Proba{\neg \gE_{k-1}^V}\le 2/K$.
+\end{proof}
+Note that Lemma~\ref{lem:concentration} is about the statistical properties of the observations $\gO_{k-1}$ in the observation space.
+These properties are true for any learning algorithms.
+In fact, we will combine different events of this lemma to bound the regret of our algorithm accordingly.
+
+\subsubsection{Concentration Gap}
+
+At episode $k$, our algorithms believe that the unknown MDP $M$ is the MDP $M_k$.
+For Bayesian algorithms, $M_k$ is sampled from posterior distribution while for optimistic algorithms, $M_k$ is chosen with respect to optimism principle.
+The algorithms follow the policy $\pi_k$ that is optimal for $M_k$.
+Recall that $W^{\pi_k}_{M,1:H_k}(\vx)$ is the expected reward of the MDP $M$ under policy $\pi_k$, starts in state $\vx$ and lasts for $H_k$ time steps and the expected cumulative discounted reward in $M$ starting from state $\vx$ under policy $\pi_k$ is $V_{M}^{\pi_k}(\vx){=}\mathbb{E}[W^{\pi_k}_{M, 1:H_k}(\vx)]$ where $H_k\sim \mathrm{Geom}(1-\beta)$ is the horizon of episode $k$.
+
+\begin{lem}
+    \label{lem:regret_decomposition}
+    For episode $k$, let $B_k\in\R^+$ be an upper bound\footnote{We will use $B_k=H_k$ for MB-PSRL and MB-UCRL2, and $B_k=H_kL_{k-1}/(2(1-\beta))$ for MB-UCBVI.} of $W_{M_k,1:H_k}^{\pi_k}(\vx)$, i.e., a constant $B_k$ such that for any $\vx\in\gE$, $W_{M_k,1:H_k}^{\pi_k}(\vx)\le B_k$. We have,
+    \begin{align}
+        \label{eq:lem_decompo}
+        &\ex{ \Delta_k^{conc} {\mid} \gO_{k-1}, H_k, M_k, M} {=} \ex{ W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k}){-}W_{M,1:H_k}^{\pi_k}(\mX_{t_k}) {\mid} \gO_{k-1}, H_k, M_k, M}\nonumber \\
+        &{\le}\mathbb{E}\bigg[\sum_{t=t_k}^{t_{k+1}-1}\norm{r_k(X_{t,A_t}){-}r(X_{t,A_t})}
+        {+}B_k\norm{Q_{k}(X_{t,A_t},\cdot){-}Q(X_{t,A_t},\cdot)}_1 {\mid} \gO_{k-1}, H_k, M_k, M\bigg]
+    \end{align}
+\end{lem}
+
+\begin{proof}
+    From \Eqref{eq:discounted_reward} with $a=\pi_k(\vx)$,
+    \begin{align}
+        W^{\pi_k}_{M, 1:H_k}(\vx) 
+        &=r(x_a) + \sum_{\vy} P^{\pi_k}(\vx, \vy)W^{\pi_k}_{M,2:H_k}(\vy) \label{eq:decompo2}
+    \end{align}
+    where $P^{\pi_k}$ is the state transition dynamic of the system when following the policy $\pi_k$. Comparing the sampled MDP $M_k$ with the original $M$ and using \Eqref{eq:decompo2}, one has
+    \begin{align}
+        W^{\pi_k}_{M_k, 1:H_k}(\vx) {-} W^{\pi_k}_{M, 1:H_k}(\vx)
+        &= r_k(x_a) {-} r(x_a) \nonumber \\
+        &{+} \sum_{\vy} P_k^{\pi_k}(\vx, \vy)W^{\pi_k}_{M_k, 2:H_k}(\vy) {-} \sum_{\vy} P^{\pi_k}(\vx, \vy)W^{\pi_k}_{M, 2:H_k}(\vy) \label{eq:depend_S}.
+    \end{align}
+    Note that in the above equation, the last term is of the form $P_k^{\pi_k}W^{\pi_k}_{M_k} {-}P^{\pi_k}W^{\pi_k}_{M}$, which is equal to $(P_k^{\pi_k} {-}P^{\pi_k})W^{\pi_k}_{M_k} {+}P^{\pi_k}(W^{\pi_k}_{M_k} {-}W^{\pi_k}_{M})$. Moreover, $W_{M_k}^{\pi_k}$ is less than $B_k$.
+    Plugging this to the above equation shows that:
+    \begin{align*}
+        &W^{\pi_k}_{M_k, 1:H_k}(\vx) {-} W^{\pi_k}_{M, 1:H_k}(\vx) \\
+        &\quad\le \norm{r_k(x_a) {-} r(x_a)} {+} B_k\sum_{\vy}\norm{P_k^{\pi_k}(\vx, \vy) {-} P^{\pi_k}(\vx, \vy)}\\
+        &\qquad {+} \sum_{\vy} P^{\pi_k}(\vx, \vy)(W^{\pi_k}_{M_k, 2:H_k}(\vy) {-} W^{\pi_k}_{M, 2:H_k}(\vy))\\
+        &\quad {=}\norm{r_k(x_a) {-} r(x_a)} {+} B_k\norm{P_k^{\pi_k}(\vx,\cdot){-}P^{\pi_k}(\vx,\cdot)}_1 {+} D^{M_k,M}_{H_k}(\vx) \\
+        &\qquad {+}W^{\pi_k}_{M_k, 2:H_k}(\mX_1) {-} W^{\pi_k}_{M, 2:H_k}(\mX_1)
+    \end{align*}
+    where $D^{M_k,M}_{H_k}(\vx){:=} \sum_{\vy}P^{\pi_k}(\vx, \vy)(W^{\pi_k}_{M_k, 2:H_k}(\vy) {-} W^{\pi_k}_{M, 2:H_k}(\vy)) {-}(W^{\pi_k}_{M_k, 2:H_k}(\mX_1) {-} W^{\pi_k}_{M, 2:H_k}(\mX_1))$.
+    Note that in the equation above, $D^{M_k,M}_{H_k}(\vx)$ is a martingale difference with ${\mX_1\sim P^{\pi_k}(\vx,\cdot)}$.
+    Hence, the expected value of the martingale difference sequence  is zero.
+    As only arm $a$ makes a transition, we have $\norm{P_k^{\pi_k}(\vx,\cdot)-P^{\pi_k}(\vx,\cdot)}_1=\norm{Q_{k}(x_a,\cdot)-Q(x_a,\cdot)}_1$. Hence, a direct induction shows that \Eqref{eq:lem_decompo} holds.
+\end{proof}
+
+\subsubsection{Bound on  the double sum}
+
+Recall that for $k\le K$, any $a\in[n]$ and any $x_a\in\gS^a$, $N_{k-1}(x_a)=\sum_{t=1}^{t_{k}-1}\ind{X_{t,A_t}=x_a}$ is the number of times so far that an arm $a$ was activated in state $x_a$ (at episode $1$, we have ${N_0(x_a)=0}$) and $\{H_k\}_{k\le K}$ be the sequence of episode horizons.
+
+\begin{lem}
+    \label{lem:sum}
+    For any learning algorithms, we have
+    \begin{align*}
+        \sum_{k=1}^K \sum_{t=t_k}^{t_{k+1}-1}\frac1{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }} \le Sn\max_{k\le K}H_k+2\sqrt{SnK\max_{k\le K}H_k}
+    \end{align*}
+\end{lem}
+\begin{proof}
+Let $\tilde{N}_t(x_a)$ be the number of times that arm $a$ has been activated before time $t$ while being in state $x_a$. By definition, $\tilde{N}_{t_k}(x_a)=N_{k-1}(x_a)$. Moreover, if $t\in\{t_k,\dots, t_{k+1}-1\}$, then $\tilde{N}_t(x_a)\le N_{k-1}(x_a) + H_k$. This shows that 
+\begin{align*}
+    \sum_{k=1}^K \sum_{t=t_k}^{t_{k+1}-1}\frac1{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }}
+    &\le \sum_{k=1}^K \sum_{t=t_k}^{t_{k+1}-1}\frac{1}{\sqrt{\max\{1, \tilde{N}_t(X_{t,A_t})-H_k\} }}\\
+    &\le \sum_{t=1}^{t_{K+1}-1} \frac{1}{\sqrt{\max\{1,\tilde{N}_t(X_{t,A_t})-\max_k H_k\} }}.
+\end{align*}
+The above sum can be reordered to group terms by state: The above sum equals
+\begin{align*}        
+    \sum_{a, x_a} \sum_{m=1}^{\tilde{N}_{t_{K+1}}(x_a)} \frac{1}{\sqrt{\max\{1, m-\max_k H_k\} }}
+    &\le \sum_{a, x_a} \left[\max_k H_k + \sum_{m=1}^{\max\{1,\tilde{N}_{t_{K+1}}(x_a)-\max_k H_k\}} \frac{1}{\sqrt{m}}\right],\\
+    &\le Sn\max_k H_k + \sum_{a, x_a} \sum_{m=1}^{\tilde{N}_{t_{K+1}}(x_a)} \frac{1}{\sqrt{m}},\\
+    &\le Sn\max_k H_k + 2\sum_{a, x_a} \sqrt{\tilde{N}_{t_{K+1}}(x_a)},
+\end{align*}
+where the last inequality holds because $\sum_{m=1}^{t_{K+1}}1/\sqrt{m}\le\int_1^{t_{K+1}}1/\sqrt{x}dx\le2\sqrt{{t_{K+1}}}$. 
+
+Now, by Cauchy-Schwartz inequality, and because $\sum_{a,x_a}\tilde{N}_{t_{K+1}}(x_a) =t_{K+1}-1 {=}\sum_{k=1}^{K}H_k$, we have:
+\begin{align*}
+    \sum_{a,x_a}\sqrt{\tilde{N}_{t_{K+1}}(x_a)} \le \Big(\sum_{a,x_a}\tilde{N}_{t_{K+1}}(x_a)\Big)^{1/2}\Big(\sum_{a,x_a}1\Big)^{1/2}=\sqrt{Sn\sum_{k=1}^{K}H_k}\le \sqrt{SnK \max_{k\le K}H_k}.
+\end{align*}
+\end{proof}
+
+\subsubsection{Bound on the expectation of $\ex{\max_{k\le K}H_k}$}
+
+\begin{lem}
+    \label{lem:moment}
+    Let $\alpha\in[1,2.5]$. Then,
+    \begin{align}
+        \label{eq:lemma_HK}
+        \ex{\max_{k\le K}(H_k)^\alpha} &\le 5+5\left(\frac{\log K}{1-\beta}\right)^\alpha.
+    \end{align}
+ \end{lem}
+ \begin{proof}
+    By definition, we have
+    \begin{align*}
+        \ex{\max_{k\le K}(H_k)^\alpha} &=  \sum_{i=1}^\infty \Proba{ \max_{k\le K}(H_k)^\alpha \ge i}\\
+        &\le \sum_{i=1}^\infty \min(1, K \Proba{ (H_k)^\alpha \ge i})\\
+        &= \sum_{i=1}^\infty \min(1, K \beta^{i^{1/\alpha}}),
+    \end{align*}
+    where the inequality comes from the union bound and the last equality is because the random variables $H_k$ are geometrically distributed.
+ 
+    Let $A=\min\{i : K \beta^{i^{1/\alpha}}\le 1\}$. Decomposing the above sum by group of size $A$, we have
+    \begin{align}
+        \sum_{i=1}^\infty \min(1, K \beta^{i^{1/\alpha}})
+        &= \sum_{j=0}^\infty \sum_{i=Aj+1}^{A(j+1)}\min(1, K \beta^{i^{1/\alpha}})\nonumber\\
+        &\le \sum_{j=0}^\infty A \min(1, K \beta^{(Aj)^{1/\alpha}})\nonumber\\
+        &= A + A\sum_{j=1}^\infty K (\beta^{A^{1/\alpha}})^{j^{1/\alpha}},
+        \label{eq:sum_A}
+    \end{align}
+    where the inequality holds because $\beta^{i^{1/\alpha}}$ is decreasing in $i$. 
+ 
+    By definition of $A$, we have $\beta^{A^{1/\alpha}}\le 1/K$. This implies that the second term of \Eqref{eq:sum_A} is smaller than $\sum_{j=1}^\infty K (1/K)^{j^{1/\alpha}}=\sum_{j=1}^\infty K^{1-j^{1/\alpha}}$. As $\alpha\le 2.5$, if  $K\ge5$, this is smaller than $\sum_{j=1}^\infty 5^{1-j^{1/2.5}}\approx 3.92<4$.
+ 
+    This shows that for $K\ge5$, we have:
+    \begin{align*}
+        \ex{\max_{k\le K}(H_k)^\alpha} \le 5A,
+    \end{align*}
+    where $A=\ceil{(-\log K/\log \beta)^{\alpha}}\le 1+(\log K/(1-\beta ))^\alpha$.
+ 
+    As for the case where $K\le4$, we have $\ex{\max_{k\le K}(H_k)^\alpha}\le K\ex{H_1^\alpha}\le \frac{K}{(1-\beta)^{\alpha}}$. This term is smaller than \Eqref{eq:lemma_HK} for $K\le4$.
+ \end{proof}
+
+
+\subsection{Detailed analysis of MB-PSRL}
+\label{ssec:proof_PSRL}
+
+We decompose the analysis of PSRL in three steps: 
+\begin{itemize}
+    \item We define the high-probability event $\gE^\text{PSRL}_{k-1}$.
+    \item We analyze $\sum_{k=1}^K\ex{\Delta^{model}_k \ind{\gE^\text{PSRL}_{k-1}}}$ (which equals $0$ here because of posterior sampling).
+    \item We analyze $\sum_{k=1}^K\ex{\Delta^{conc}_k \ind{\gE^\text{PSRL}_{k-1}}}$. 
+\end{itemize}
+We will use the same proof structure for MB-UCRL2 and MB-UCBVI. 
+
+Before doing the proof, we start by a first lemma that essentially formalizes the fact that the distribution of $M$ given $\gO_{k-1}$ is the same as the distribution of the sampled MDP $M_{k}$ conditioned on $\gO_{k-1}$. 
+\begin{lem}
+    \label{lem:bayesian}
+    Assume that the MDP $M$ is drawn according to the prior $\phi$ and that $M_k$ is drawn according to the posterior $\phi(\cdot \mid \gO_{k-1})$. Then, for any $\gO_{k-1}$-measurable function $g$, one has:
+    \begin{align}
+        \label{eq:lem_bayesian}
+        \ex{g(M)} = \ex{g(M_k)}. 
+    \end{align}
+\end{lem}
+\begin{proof}
+    At the start of each episode $k$, MB-PSRL computes the posterior distribution of $M$ conditioned on the observations $\gO_{k-1}$, and draws $M_k$ from it. This implies that $M$ and $M_k$ are identically distributed conditioned on $\gO_{k-1}$. Consequently, if $g$ is a $\gO_{k-1}$-measurable function, one has:
+    \begin{align*}
+        \ex{g(M) \mid \gO_{k-1}} = \ex{g(M_k) \mid \gO_{k-1}}. 
+    \end{align*}
+    \Eqref{eq:lem_bayesian} then follows from the tower rule. 
+\end{proof}
+
+%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%
+\subsubsection{Definition of the high-probability event $\gE^\text{PSRL}_{k-1}$}
+
+\begin{lem}
+    \label{lem:concentration_psrl}
+    At episode $k$, the event
+    \begin{align*}
+        \gE^\text{PSRL}_{k-1} = &\bigg\{ \forall a{\in}[n], x_a{\in}\gS^a, k'\le k{-}1{:}
+            \norm{r_{k'+1}(x_a){-}r(x_a)} \le\frac{L_{k-1}}{\sqrt{\max\{1,N_{k'}(x_a)\} }}, \\
+            &\quad\norm{Q_{k'+1}(x_a,\cdot) {-}Q(x_a,\cdot)}_1 \le\frac{2L_{k-1}{+}3\sqrt{S}}{\sqrt{\max\{1,N_{k'}(x_a)\} }}, \text{ and } H_{k'}\le \frac{\log(K(k-1))}{1-\beta} \bigg\}
+    \end{align*}
+    is $\gO_{k-1}$-measurable and true with probability at least $1-9/K$.
+\end{lem}
+
+\begin{proof}
+    Recall that for MB-PSRL, at the beginning of episode $k$, we sample a MDP $M_{k}$. We define the two events that are the analogue of the events \Eqref{eq:conc_r} and \Eqref{eq:conc_q} of Lemma~\ref{lem:concentration} but replacing the true MDP $M$ by the sampled MDP $M_{k}$: 
+    \begin{align*}
+        &\tilde{\gE}_{k-1}^r:= \bigg\{\forall a\in[n], x_a\in\gS^a, k'\le k{-}1{:} \norm{\hat{r}_{k'}(x_a){-}r_{k'+1}(x_a)} \le \frac{L_{k-1}}{2\sqrt{\max\{1,N_{k'}(x_a)\} }}\bigg\} \\
+        &\tilde{\gE}_{k-1}^Q:= \bigg\{\forall a\in[n], x_a\in\gS^a, k'\le k{-}1{:} \norm{\hat{Q}_{k'}(x_a,\cdot){-}Q_{k'+1}(x_a, \cdot)}_1 \le \frac{L_{k-1}{+}1.5\sqrt{S}}{\sqrt{\max\{1,N_{k'}(x_a)\} }}\bigg\} 
+    \end{align*}
+    These events are $\gO_{k-1}$-measurable. Hence, Lemma~\ref{lem:bayesian}, combined with Lemma~\ref{lem:concentration} implies that $\Proba{ \lnot \tilde{\gE}_{k-1}^r} =\Proba{ \lnot \gE_{k-1}^r}\le 2/K$ and $\Proba{\lnot \tilde{\gE}_{k-1}^Q}=\Proba{ \lnot \gE_{k-1}^Q}\le 2/K$. Since the complement of $\gE_{k-1}^\text{PSRL}$ is the union of $\lnot \gE_{k-1}^r, \lnot \tilde{\gE}_{k-1}^r, \lnot \gE_{k-1}^Q, \lnot \tilde{\gE}_{k-1}^Q$ and $\lnot \gE_{k-1}^H$, the union bound implies that $\Proba{\gE^\text{PSRL}_{k-1}}\ge1-9/K$.
+\end{proof}
+
+\subsubsection{Analysis of $\ex{\Delta^{model}_k \ind{\gE_{k-1}^\text{PSRL}}}$ for MB-PSRL.}
+
+Lemma~\ref{lem:bayesian} implies that for MB-PSRL, $\ex{\Delta^{model}_k \ind{\gE_{k-1}^\text{PSRL}}}{=}0$ because
+$\gE_{k-1}^\text{PSRL}$, $\pi_k$ and $M_k$ are $\gO_{k-1}$-measurable. 
+
+\subsubsection{Analysis of $\ex{\Delta^{conc}_k}$ for MB-PSRL.}
+Following \Eqref{eq:gap_overview}, the Bayesian regret can be written as:
+\begin{align}
+    \BayReg(K,\text{MB-PSRL},\phi)
+    &= \sum_{k=1}^K \ex{\Delta_k} \le \sum_{k=1}^{K}\ex{H_k}\Proba{\neg \gE^\text{PSRL}_{k-1}} {+}\ex{\Delta_k \ind{\gE^\text{PSRL}_{k-1}}} \nonumber \\
+    &\le \frac{9}{(1-\beta)} {+} \sum_{k=1}^{K} \ex{\Delta^{model}_k\ind{\gE^\text{PSRL}_{k-1}}} {+} \ex{\Delta^{conc}_k\ind{\gE^\text{PSRL}_{k-1}}}
+    \label{eq:proof_PSRL_regret}
+\end{align}
+where the last inequality holds due to Lemma~\ref{lem:concentration_psrl}.
+By the previous section, the second term of \Eqref{eq:proof_PSRL_regret} is zero.
+As all rewards are bounded by $1$, $W_{M_k,1:H_k}^{\pi_k}(\mX_{t_k})\le H_k$. Hence, by applying Lemma~\ref{lem:regret_decomposition} with the upper bound $B_k=H_k$, and because $\ind{\gE_{k-1}^\text{PSRL}}$ is deterministic given $\gO_{k-1}$, we have
+\begin{align}
+    \ex{\Delta_k^{conc} \ind{\gE_{k-1}^\text{PSRL}}}
+    &= \ex{\ex{\Delta_k^{conc} \ind{\gE_{k-1}^\text{PSRL}} \mid \gO_{k-1}, H_k, M_k, M}} \nonumber \\
+    &\le \mathbb{E}\bigg[ \ind{\gE_{k-1}^\text{PSRL}} \sum_{t=t_k}^{t_{k+1}-1}\norm{r_k(X_{t,A_t}){-}r(X_{t,A_t})} \nonumber\\
+    &\qquad +H_k\norm{Q_{k}(X_{t,A_t},\cdot){-}Q(X_{t,A_t},\cdot)}_1 \bigg]. \label{eq:conc_with_i}
+\end{align}
+Let $\gR_k := \sum_{t=t_k}^{t_{k+1}-1}\norm{r_k(X_{t,A_t}){-}r(X_{t,A_t})} {+}H_k\norm{Q_{k}(X_{t,A_t},\cdot){-}Q(X_{t,A_t},\cdot)}_1$. 
+By using the definition of $\gE_{k-1}^\text{PSRL}$, we have:
+\begin{align}
+    \ind{\gE_{k-1}^\text{PSRL}}\gR_k 
+    &\le \ind{\gE_{k-1}^\text{PSRL}} \sum_{t=t_k}^{t_{k+1}-1} \frac{L_{k-1}{+}(2L_{k-1} {+}3\sqrt{S})H_k}{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }} \nonumber\\
+    &\le \sum_{t=t_k}^{t_{k+1}-1} \frac{L_{k-1}{+}(2L_{k-1} {+}3\sqrt{S})H_k}{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }} \label{eq:PSRL_R_k}
+\end{align}
+Hence, summing over all $K$ episodes gives us:
+\begin{align}
+    \sum_{k=1}^{K} \ind{\gE_{k-1}^\text{PSRL}}\gR_k
+    &\le  \big(L_K {+}(2L_K {+}3\sqrt{S})\max_{k\le K}H_k\big)\sum_{k=1}^K \sum_{t=t_k}^{t_{k+1}-1}\frac1{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }}
+    \nonumber\\
+    &\le  3(L_K+\sqrt{S})\max_{k\le K}H_k \sum_{k=1}^K \sum_{t=t_k}^{t_{k+1}-1}\frac1{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }},
+    \label{eq:sum_not_E_k}
+\end{align}
+where the first inequality holds because $L_k\le L_K$ and $\max_{k\le K}H_k\ge1$. Note that the last inequality leads to a slightly worst bound but simplifies the expression. By Lemma~\ref{lem:sum}, we get
+\begin{align*}
+    \sum_{k=1}^{K} \ind{\gE_{k-1}^\text{PSRL}}\gR_k
+    &\le 3(L_K+\sqrt{S})\max_{k\le K}H_k(Sn\max_{k\le K}H_k +2\sqrt{SnK \max_{k\le K}H_k}) \\
+    &=3(L_K+\sqrt{S})(Sn\max_{k\le K}(H_k)^2 +2\sqrt{SnK} \max_{k\le K}(H_k)^{3/2})
+    \nonumber
+\end{align*}
+Then, 
+\begin{align}
+    \sum_{k=1}^K\ex{\Delta_k^{conc} \ind{\gE_{k-1}^\text{PSRL}}}
+    &{\le} 3(L_K {+}\sqrt{S})\bigg(Sn\ex{\max_{k\le K}(H_k)^2} {+}2\sqrt{SnK} \ex{\max_{k\le K}(H_k)^{3/2}}\bigg) \label{eq:proof_bound}\\
+    &{\le} 3(L_K {+}\sqrt{S})\bigg(Sn\left(5 {+}5\bigg(\frac{\log K}{1-\beta}\bigg)\right)^2 {+}\sqrt{SnK}\left(5 {+}5\bigg(\frac{\log K}{1-\beta}\bigg)\right)^{3/2}\bigg) \nonumber
+\end{align}
+where the last inequality is true due to Lemma~\ref{lem:moment}.
+With $L_K{=}\sqrt{2\log\frac{4SnK^2\log K}{1-\beta}}$, this implies that there exists a constant $C$ independent of all problem's parameters such that:
+\begin{align*}
+    \BayReg(K,\text{MB-PSRL},\phi) {\le} C\left(\sqrt{S}{+}\log\left(\frac{SnK\log K}{1-\beta}\right)\right) \left(Sn\left(\frac{\log K}{1-\beta}\right)^{2}
+    {+}\sqrt{SnK}\left(\frac{\log K}{1-\beta}\right)^{3/2}\right).
+\end{align*}
+
+\subsubsection{Remark on the dependence on $S$}
+\label{sssec:psrl_s}
+
+Our bound is linear in $S$, the state size of each arm, because our proof follows the approach used in \cite{osband2013more}. Using another proof methodology, it is argued in \cite{osband2017posterior} that the regret of PSRL grows as the square root of the state space size and not linearly. In our paper, we choose to use the more conservative approach of \cite{osband2013more} because we believe that the proof used in \cite{osband2017posterior} is not correct (in particular the use of a deterministic $v$ in Equation~(16) of the proof of Lemma~3 in Appendix~A in the arXiv version of \cite{osband2017posterior} seems incompatible with the use of Lemma~4 of the same paper).
+In fact, when considering the worst case realization of $v$, the concentration bound in Equation~(16) of the paper is equivalent to the (scaled) L1 norm of transition concentration.
+We are not alone to point out this error. Effectively, \cite{agrawal2017posterior} used Lemma~C.1 and Lemma~C.3 (equivalence of Lemma~3 of \cite{osband2017posterior}) to get a bound in square root of the state space size. But both lemmas are erroneous as mentioned in the latest arXiv version of \cite{agrawal2017posterior}. The validity of Lemma~3 is also questioned on page 87 of \cite{fruit2019exploration}. While it is informal, the recent work of \cite{qian2020concentration} also theoretically contradicts the lemma.
+
+\subsection{Case of MB-UCRL2}
+\label{ssec:proof_UCRL2}
+
+The proof follows the same steps as for MB-PSRL. While the high probability event is simpler, the additional complication is to show that $\sum_{k=1}^K\ex{\Delta^{model}_k}\le0$ by using the optimism principle. 
+
+\subsubsection{Definition of the high probability event} 
+
+\begin{lem}
+    \label{lem:concentration_ucrl}
+    At episode $k$, the event
+    \begin{align*}
+        \gE^\text{UCRL2}_{k-1} =&\bigg\{ \forall a{\in}[n], x_a{\in}\gS^a, k'\le k{-}1{:}
+            \norm{\rhat_{k'}(x_a){-}r(x_a)} \le\frac{L_{k-1}}{2\sqrt{\max\{1,N_{k'}(x_a)\} }}, \\
+            &\qquad\norm{\Qhat_{k'}(x_a,\cdot) {-}Q(x_a,\cdot)}_1 \le\frac{L_{k-1}{+}1.5\sqrt{S}}{\sqrt{\max\{1,N_{k'}(x_a)\} }}, \text{ and } H_{k'}\le \frac{\log(K(k-1))}{1-\beta} \bigg\}
+    \end{align*}
+    is $\gO_{k-1}$-measurable and true with probability at least $1-5/K$.
+\end{lem}
+\begin{proof}
+    The complement of $\gE_{k-1}^\text{UCRL2}$ is the union of $\neg \gE_{k-1}^r, \neg \gE_{k-1}^Q$ and $\neg \gE_{k-1}^H$. We conclude the proof by using the union bound and $\Proba{\neg \gE_{k-1}^r} \le 2/K$, $\Proba{\neg \gE_{k-1}^Q} \le 2/K$ and $\Proba{\neg \gE_{k-1}^H} \le 1/K$. 
+\end{proof}
+
+\subsubsection{Analysis of $\ex{\Delta^{model}_k\ind{\gE_{k-1}^\text{UCRL2}}}$ -- Optimism of MB-UCRL2}
+
+Recall that $\pi_*$ is the optimal policy of the unknown MDP $M$ and that $\pi_k$ is the policy used in episode $k$. $\pi_k$ is optimal for the optimistic MDP that is chosen from the plausible MDP set $\sM_k$:
+\begin{align*}
+    \pi_k \in \argmax_{\pi} \max_{M'\in\sM_k} V^\pi_{M'}.
+\end{align*}
+For each episode $k$, the plausible MDP set $\sM_k$ is defined by
+\begin{align}
+    \label{eq:plausible}
+    \sM_k=\bigg\{(r',Q'):\forall a, x_a, \norm{r'(x_a)-\hat{r}_{k-1}(x_a)} \le \frac{L_{k-1}}{2\sqrt{\max\{1,N_{k-1}(x_a)\} }} \text{, and }\nonumber\\
+    \norm{Q'(x_a,\cdot)-\hat{Q}_{k-1}(x_a, .)}_1 \le \frac{L_{k-1}+1.5\sqrt{S}}{\sqrt{\max\{1,N_{k-1}(x_a)\} }}\bigg\}.
+\end{align}
+As \cite{jaksch2010near}, we argue that there exists a MDP $M_k\in\sM_k$ such that $\pi_k$ is an optimal policy for $M_k$. Moreover, under event $\gE^\text{UCRL2}_{k-1}$, one has $M\in \sM_k$, which implies that $\max_{\pi}\max_{M'\in \sM_k} V^{\pi}_{M'}(\vx)\ge V^{\pi_*}_M(\vx)$. By \Eqref{eq:def_model}, we get $\ex{\Delta^{model}_k}{\le} 0$.
+If $\gE^\text{UCRL2}_{k-1}$ does not hold, we simply have $\Delta^{model}_k\ind{\gE_{k-1}^\text{UCRL2}}=0$. We conclude that: $\ex{\Delta^{model}_k\ind{\gE^\text{UCRL2}_{k-1}}}{\le}0$. 
+
+
+\subsubsection{Analysis of $\ex{\Delta^{conc}_k\ind{\gE^\text{UCRL2}_{k-1}}}$ for MB-UCRL2}
+Following \Eqref{eq:gap_overview}, the expected regret can be written as:
+\begin{align}
+    \ex{\Reg(K,\text{MB-UCRL2},M)}
+    &= \sum_{k=1}^K \ex{\Delta_k} \le \sum_{k=1}^{K}\ex{H_k}\Proba{\neg \gE^\text{UCRL2}_{k-1}} {+}\ex{\Delta_k \ind{\gE^\text{UCRL2}_{k-1}}} \nonumber \\
+    &\le \frac{5}{1-\beta} {+} \sum_{k=1}^{K} \ex{\Delta^{model}_k\ind{\lnot\gE^\text{UCRL2}_{k-1}}} {+} \ex{\Delta^{conc}_k\ind{\lnot\gE^\text{UCRL2}_{k-1}}}
+    \label{eq:proof_UCRL2_regret}
+\end{align}
+where the last inequality holds due to Lemma~\ref{lem:concentration_ucrl}.
+By the previous section, the second term of \Eqref{eq:proof_UCRL2_regret} is non-positive.
+In the following, we therefore analyze the last term whose analysis is then similar to the one for MB-PSRL.  Indeed, with $B_k=H_k$ and definition of $\gE_{k-1}^\text{UCRL2}$, the use of Lemma~\ref{lem:regret_decomposition} shows that one has
+\begin{align*}
+    \ex{\Delta^\text{conc}_k\ind{\gE_{k-1}^\text{UCRL2}}} \le \ex{\frac12 \sum_{t=t_k}^{t_{k+1}-1}\frac{L_{k-1} {+}(2L_{k-1} {+} 3\sqrt{S}) H_k}{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }}}.
+\end{align*}
+Up to a factor $1/2$, the expression inside the expectation is the same as \Eqref{eq:PSRL_R_k} of MB-PSRL. Hence, one can use Lemma~\ref{lem:sum} the same way to show that
+\begin{align*}
+    \sum_{k=1}^{K} \ex{\Delta_k^{conc}\ind{\gE_{k-1}^\text{PSRL}}}
+    \le \frac32(L_K+\sqrt{S})\bigg(Sn\ex{\max_{k\le K}H_k^2} +2\sqrt{SnK} \ex{\max_{k\le K}H_k^{3/2}}\bigg).
+\end{align*}
+Up to a factor $1/2$, the right term of the above equation is equal to the right term of \Eqref{eq:proof_bound}. Following the same process done for the latter, we can conclude that there exists a constant $C'$ independent of all problem's parameters such that:
+\begin{align*}
+    \Reg(K,\text{MB-UCRL2},M) \le C'\p{\sqrt{S}{+}\log\p{\frac{SnK\log K}{1-\beta}}} \p{Sn\p{\frac{\log K}{1-\beta}}^{2}
+    {+}\sqrt{SnK}\p{\frac{\log K}{1-\beta}}^{3/2} }
+\end{align*}
+
+
+\subsection{Case of MB-UCBVI}
+\label{ssec:proof_UCBVI}
+
+We start by defining the high probability event. Then, we prove the optimistic property of MB-UCBVI. Finally, we bound its expected regret.
+
+\subsubsection{Definition of the high-probability event}
+
+\begin{lem}
+    \label{lem:concentration_ucbvi}
+    The event
+    \begin{align*}
+        \gE^\text{UCBVI}_{k-1} {=}\bigg\{ \forall a{\in}[n], \vx{\in}\gE, k'\le k{-}1{:}
+            \norm{\rhat_{k'}(x_a){-}r(x_a)} \le\frac{L_{k-1}}{2\sqrt{\max\{1,N_{k'}(x_a)\} }}, \\
+            \norm{\Qhat_{k'}(x_a,\cdot) {-}Q(x_a,\cdot)}_1 \le\frac{L_{k-1}{+}1.5\sqrt{S}}{\sqrt{\max\{1,N_{k'}(x_a)\} }}, H_{k'}\le \frac{\log(K(k-1))}{1-\beta}, \\
+        \text{ and } \norm{\rhat_{k'}(x_a){-}r(x_a) {+}\beta\sum_{\vy}(\Phat_{k'}^a(\vx,\vy){-}P^a(\vx,\vy))V_M^{\pi_*}(\vy)} \le\frac{L_{k-1}}{2(1{-}\beta)\sqrt{\max\{1,N_{k'}(x_a)\} }} \bigg\}
+    \end{align*}
+    is $\gO_{k-1}$-measurable and true with probability at least $1-7/K$.
+\end{lem}
+\begin{proof}
+    The complement of $\gE_{k-1}^\text{UCBVI}$ is the union of $\neg \gE_{k-1}^r, \neg \gE_{k-1}^Q, \neg \gE_{k-1}^H$ and $\neg \gE_{k-1}^V$.
+    We conclude the proof by using the union bound and $\Proba{\neg \gE_{k-1}^r} \le 2/K$, $\Proba{\neg \gE_{k-1}^Q} \le 2/K$, $\Proba{\neg \gE_{k-1}^V} \le 2/K$ and $\Proba{\neg \gE_{k-1}^H} \le 1/K$
+\end{proof}
+
+\subsubsection{Analysis of $\ex{\Delta^{model}_k \ind{\gE_{k-1}^\text{UCBVI}}}$ -- Optimism of MB-UCBVI}
+
+The following lemma guarantees that $\ex{\Delta^{model}_k \ind{\gE_{k-1}^\text{UCBVI}}}\le0$. Indeed, as $\gE_{k-1}^\text{UCBVI}$ is $\gO_{k-1}$-measurable, one has 
+\begin{align*}
+    \ex{\Delta^{model}_k\ind{\gE_{k-1}^\text{UCBVI}}} &= \ex{\ex{\Delta^{model}_k\mid \gO_{k-1}}\ind{\gE_{k-1}^\text{UCBVI}}}\\
+    &=\ex{(V_M^{\pi_*}(\mX_{t_k}) - V_{M_k}^{\pi_k}(\mX_{t_k}))\ind{\gE_{k-1}^\text{UCBVI}}} \le 0.
+\end{align*}
+\begin{lem}
+    \label{lem:ucbvi_optim}
+   If $\gE_{k-1}^\text{UCBVI}$ is true, then, for any $\vx\in\gE$, we have
+   \begin{align*}
+       V_{M_k}^{\pi_k}(\vx) \ge V_{M}^{\pi_*}(\vx)
+    \end{align*}
+\end{lem}
+\begin{proof}
+    Recall that at episode $k$, we define the optimistic MDP of MB-UCBVI by $M_k$ in which the parameters of any arm $a\in[n]$ are $(\hat{\vr}_{k-1}^a +b_{k-1}^a, \hat{\mQ}_{k-1}^a)$ with $b_{k-1}(x_a){=}\frac{L_{k-1}}{2(1-\beta)\sqrt{\max\{1,N_{k-1}(x_a)\} }}$ for any $x_a\in\gS^a$.
+The Gittins index policy $\pi_k$ is optimal for MDP $M_k$.
+For any state $\vx$, let $a=\pi_k(\vx)$ and $a_*=\pi_*(\vx)$.
+Then,
+\begin{align*}
+    V_{M_k}^{\pi_k}(\vx) -V_M^{\pi_*}(\vx)
+    &= b_{k-1}(x_a) +\rhat_{k-1}(x_a) +\beta\sum_{\vy}\Phat_{k-1}^{a}(\vx,\vy)V_{M_k}^{\pi_k}(\vy) -V_M^{\pi_*}(\vx)\\ 
+    &\ge b_{k-1}(x_{a_*}) +\rhat_{k-1}(x_{a_*}) +\beta\sum_{\vy}\Phat_{k-1}^{a_*}(\vx,\vy)V_{M_k}^{\pi_k}(\vy) \\
+    &\quad -r(x_{a_*}) -\beta\sum_{\vy}P^{a_*}(\vx,\vy)V_M^{\pi_*}(\vy) \\
+    &= b_{k-1}(x_{a_*}) {+}\rhat_{k-1}(x_{a_*}) {-}r(x_{a_*}) {+}\beta\sum_{\vy}(\Phat_{k-1}^{a_*}(\vx,\vy) {-}P^{a_*}(\vx,\vy))V_M^{\pi_*}(\vy) \\
+    &\qquad +\beta \sum_{\vy}\Phat_{k-1}^{a_*}(\vx,\vy)(V_{M_k}^{\pi_k}(\vy) -V_M^{\pi_*}(\vy))
+\end{align*}
+In matrix form, we have
+\begin{align*}
+    V_{M_k}^{\pi_k} -V_M^{\pi_*}
+    &\ge b_{k-1}^{\pi_*} +\rhat^{\pi_*}_{k-1} -r^{\pi_*} {+}\beta(\Phat_{k-1}^{\pi_*} {-}P^{\pi_*})V_M^{\pi_*} +\beta \Phat_{k-1}^{\pi_*}(V_{M_k}^{\pi_k} -V_M^{\pi_*})
+\end{align*}
+Under event $\gE_{k-1}^\text{UCBVI}$, $b_{k-1}^{\pi_*} +\rhat^{\pi_*}_{k-1} -r^{\pi_*} {+}\beta(\Phat_{k-1}^{\pi_*} {-}P^{\pi_*})V_M^{\pi_*}\ge 0$. This implies that:
+\begin{align*}
+    (I-\beta \Phat_{k-1}^{\pi_*})(V_{M_k}^{\pi_k} -V_M^{\pi_*}) &\ge 0.
+\end{align*}
+As $(I-\beta \Phat_{k-1}^{\pi_*})^{-1} = I+ (I-\beta \Phat_{k-1}^{\pi_*}) +(I-\beta \Phat_{k-1}^{\pi_*})^2 +\dots$ is a matrix whose coefficients are all non-negative, this implies that $V_{M_k}^{\pi_k} -V_M^{\pi_*} \ge 0$. 
+\end{proof}
+
+\subsubsection{Analysis of $\ex{\Delta^{conc}_k\ind{\gE^\text{UCBVI}_{k-1}}}$ for MB-UCBVI}
+Following \Eqref{eq:gap_overview}, the expected regret can be written similarly to \Eqref{eq:proof_UCRL2_regret} for MB-UCRL2, one can write that
+\begin{align*}
+    \ex{\Reg(K,\text{MB-UCBVI},M)}
+    &\le \frac{7}{1-\beta} {+} \sum_{k=1}^{K} \ex{\Delta^{model}_k\ind{\gE^\text{UCBVI}_{k-1}}} {+} \ex{\Delta^{conc}_k\ind{\gE^\text{UCBVI}_{k-1}}}.
+\end{align*}
+The same as MB-UCRL2, the second term is non-positive.
+We are therefore left with the last term.
+Using Lemma~\ref{lem:regret_decomposition} with $B_k=\frac{H_kL_{k-1}}{2(1-\beta)}$ and the definition of $M_k$ for MB-UCBVI, we have:
+\begin{align*}
+    \sum_{k=1}^K \ex{ \ind{\gE_{k{-}1}^\text{UCBVI}} \Delta_k^\text{conc}} &{\le} \sum_{k=1}^K \mathbb{E}\bigg[ \ind{\gE_{k{-}1}^\text{UCBVI}}\sum_{t=t_k}^{t_{k+1}-1} \norm{b_{k-1}(X_{t,A_t}) {+}\rhat_{k-1}(X_{t,A_t}){-}r(X_{t,A_t})} \\
+    &\qquad {+}\frac{H_kL_{k-1}}{2(1-\beta)}\norm{\Qhat_{k-1}(X_{t,A_t},\cdot){-}Q(X_{t,A_t},\cdot)}_1 \bigg] \\
+    &\le \ex{\sum_{k=1}^{K}\sum_{t=t_k}^{t_{k+1}-1} \frac{(2-\beta)L_{k-1}+H_kL_{k-1}(L_{k-1}+1.5\sqrt{S})}{2(1-\beta)\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }}} \\
+    &\le \ex{\frac{2L_K(L_K+\sqrt{S})\max_{k\le K}H_k}{1-\beta} \sum_{k=1}^{K} \sum_{t=t_k}^{t_{k+1}-1} \frac1{\sqrt{\max\{1,N_{k-1}(X_{t,A_t})\} }}} \\
+    &\le \ex{\frac{2L_K(L_K+\sqrt{S})\max_{k\le K}H_k}{1-\beta} \p{Sn\max_{k\le K}H_k +2\sqrt{SnK\max_{k\le K}H_k} }} 
+\end{align*}
+where the second inequality holds due to the definition of $\gE_{k-1}^\text{UCBVI}$ and the last one holds due to Lemma~\ref{lem:sum}.
+With $L_K{=}\sqrt{2\log\frac{4SnK^2\log K}{1-\beta}}$, we have
+\begin{align*}
+    \sum_{k=1}^K \ex{ \ind{\gE_{k{-}1}^\text{UCBVI}} \Delta_k^\text{conc}}
+    &\le \frac{2(1{+}\sqrt{S})}{1-\beta} 2\log\p{\frac{4SnK^2\log K}{1-\beta}} \p{Sn\ex{\max_{k\le K}H_k^2} {+}2\sqrt{SnK} \ex{\max_{k\le K}H_k^{3/2}}}
+\end{align*}
+The last term of the right side above can be analyzed exactly the same as what is done for \Eqref{eq:proof_bound} using Lemma~\ref{lem:moment}.
+This concludes the proof.
+
+\subsubsection{Remark on the dependence on $S$}
+\label{sssec:ucbvi_s}
+
+In the analysis of UCBVI and in our analysis, one need to bound the last term of \Eqref{eq:depend_S}
+which is of the form ${P_k^{\pi_k}W^{\pi_k}_{M_k} -P^{\pi_k}W^{\pi_k}_{M}}$. \cite{azar2017minimax} rewrite this term as
+$(P_k^{\pi_k} -P^{\pi_k})W^{\pi_*}_M +(P_k^{\pi_k} -P^{\pi_k})(W^{\pi_k}_{M_k} -W^{\pi_*}_M) +P^{\pi_k}(W^{\pi_k}_{M_k} {-}W^{\pi_k}_{M})$.
+They then bound the first term by Chernoff-Hoeffding's inequality because the optimal value of the unknown MDP is deterministic.
+The second term, called the "correction" term, is bounded by using Bernstein's inequality and the optimism \cite[Step 1, page 6]{azar2017minimax}. The third term is bounded by using the inequalities for martingale difference sequences. This allows the authors to have a factor $\sqrt{S}$ (instead of the classical $S$) in the regret bound.
+
+If the technique to deal with the first and third terms would also apply to our case, the analysis of the second term uses heavily the optimism and the fact that $W^{\pi_k}_{M_k,h:H_k}(\vy)\ge W^{\pi_*}_{M,h:H_k}(\vy)$ in their setting. This cannot be adapted for MB-UCBVI because the optimism implies that $V^{\pi_k}_{M_k}(\vy) \ge V^{\pi_k}_{M}(\vy)$ but we do not necessarily have $W^{\pi_k}_{M_k,h:H_k}(\vy)\ge W^{\pi_*}_{M,h:H_k}(\vy)$ for all $\vy\in\gE$, all $h\in[H_k]$ and all $k$.  This is because we might lose the optimism when working with the value function over random episode length.
+That is why we need to use Lemma~\ref{lem:regret_decomposition} which is more conservative.
+
+%%%%%%%%%%%
+%%%%%%%%%%%
+\section{Proof of Theorem~\ref{thm:lower_bound}}
+\label{apx:sketch_of_proof_lower}
+
+To prove the lower bound, we consider a specific Markovian bandit problem that is composed of $S$ independent \emph{stochastic bandit problems}. 
+This allows us to reuse the existing minimax lower bound for stochastic bandit problems. 
+This existing result can be stated as follows: let $\Algo\sto$ be a learning algorithm for the stochastic bandit problem. 
+It is shown in Theorem~3.1 of \cite{bubeck2012regret} that for any number of arms $n$ and any number of time steps $\tau$, there exists parameters for a stochastic bandit problem $M\sto$ with $n$ arms such that the regret of the learning algorithm over $\tau$ time steps is at least $(1/20)\sqrt{n \tau}$. 
+\begin{align}
+    \label{eq:regret_sto}
+    \Reg\sto( \tau, \Algo\sto, M\sto) \ge \frac1{20}\sqrt{n\tau}. 
+\end{align}
+This lower bound (Theorem~3.1 of \cite{bubeck2012regret}) is constructed by considering $n$ stochastic bandit problems $M\stoi$ for $j\in[n]$ with parameters that depend on $\tau$ and $n$. 
+In the problem $M\stoi$, all arms have a reward $\gamma(\tau,n)$ except arm $j$ that has a reward $\gamma'(\tau,n)>\gamma(\tau,n)$. 
+It is shown in Theorem~3.1 of \cite{bubeck2012regret} that a learning algorithm cannot perform uniformly well on all problems because it is impossible to distinguish them \emph{a priori}. 
+More precisely, in the proof of Lemma~3.2 of \cite{bubeck2012regret}, it is shown that if the best arm is chosen at random, then the expected (Bayesian) regret of any learning algorithm is at least $(1/20)\sqrt{n \tau}$.
+
+As for our problem, let $K$ be a number of episodes, $\beta$ a discount factor, $n$ a number of arms, $S$ a number of states per arm and set $\tau=K/(2S(1-\beta))$. 
+We consider a random Markovian bandit model $M$ constructed as follows. 
+Each arm $a$ has $S$ states with the state space $\gS^a = \{ 1_a,2_a,\ldots, S_a\}$. 
+The transition matrix $Q^a$ is the identity matrix. 
+For each state $i\in\{1,\dots, S\}$, we choose the best arm $a^*_i$ uniformly at random among the $n$ arms, independently for each $i$. 
+The rewards of a state $i_a$ are \emph{i.i.d.} Bernoulli rewards with mean $\gamma(\tau,n)$ if $a\ne a^*_i$ and $\gamma'(\tau,n)$ if $a=a^*_i$. 
+The initial distribution $\rho$ couples the initial states of all arms for all $i\in\{1,\dots, S\}$, 
+\begin{align*}
+    \Proba{\forall a\in[n]: x_{1,a} = i_a} = \frac1S. 
+\end{align*} 
+In this case, the Markovian bandit problem becomes a combination of $S$ independent stochastic bandit problems with $n$ arms each. 
+We denote by $M\sto_i$ the random stochastic bandit problem for the initial state $\vi=(i_a)_{a\in[n]}$. As the best arm $a^*_i$ are chosen independently for each $i$, a learning algorithm $\Algo$ cannot use the information from $M\sto_i$ to perform better on $M\sto_j$, $j\ne i$.
+
+Let $\phi$ be the distribution of the random Markovian bandit model $M$ defined above and let $T_i$ be the number of time steps spent in state $\vi$ by the learning algorithm $\Algo$.
+\begin{align}
+    \BayReg(K,\Algo, \phi)
+    &\ge \sum_{i=1}^S\ex{\Reg\sto(T_i, \Algo\sto_i, M\sto_i)} \nonumber\\
+    &\ge \sum_{i=1}^S\ex{\Reg\sto(\tau, \Algo\sto_i,  M\sto_i)\ind{T_i\ge\tau}}\label{eq:non-decreasing}\\
+    &\ge \frac{S}{20} \sqrt{n\tau}\Proba{T_i\ge \tau}\label{eq:lower2}\\
+    &= \frac1{20} \sqrt{\frac{SnK}{2(1-\beta)}}\Proba{T_i\ge \tau},\label{eq:tau}
+\end{align}
+where \Eqref{eq:non-decreasing} is true because the expected regret is non-decreasing function of the number of episodes, \Eqref{eq:lower2} comes from \Eqref{eq:regret_sto} and \Eqref{eq:tau} from the definition of $\tau$.
+
+We show in the Lemma~\ref{lem:concentration_T_i} below that $\Proba{T_i\le K/(2S(1-\beta))}\le 8S/K$. This shows that for $K\ge16S$, one has $\Proba{T_i\ge \tau}\ge1/2$. This concludes the proof as $40\sqrt{2}\le60$. 
+
+\begin{lem}
+    \label{lem:concentration_T_i}
+    Recall that $T_i$ is the number of time steps that the MDP is in state $\vi$ for the MDP model above. Let $G_k$ be a sequence of \emph{i.i.d.} Bernoulli random variable of mean $1/S$ and let $H_k$ be an independent \emph{i.i.d.} sequence of geometric random variable of parameter $1-\beta$. Then:
+    \begin{itemize}
+        \item[(i)] $T_i\sim\sum_{k=1}^K G_k H_k$,
+        \item[(ii)] $\ex{T_i} = K/(S(1-\beta))$,
+        \item[(iii)] $\Proba{T_i \ge \ex{T_i}/2} \ge 1-8S/K$. 
+    \end{itemize}
+\end{lem}
+\begin{proof}
+    Let $G_k$ be a random variable that equals $1$ if the initial state $\vi$ is chosen at the beginning of episode $k$ and recall that $H_k$ is the episode length. By definition, the variables $G_k$ and $H_k$ are independent and follow respectively Bernoulli and geometric distribution. This shows \emph{(i)}. 
+    
+    Let $W_k=G_kH_k$. As the $W_k$ are \emph{i.i.d.} and $G_k$ and $H_k$ are independent, we have: 
+    \begin{align*}
+        \ex{T_i} = K\ex{H_1G_1} &= \frac{K}{S(1-\beta)}.
+    \end{align*}
+    This shows (ii). 
+    
+    Moreover, $\var{T_i} = K\var{H_1G_1}$. Hence, by using Chebyshev's inequality, one has:
+    \begin{align*}
+        \Proba{T_i \le \frac{\ex{T_i}}{2}} &\le \Proba{\norm{T_i-\ex{T_i}} \ge \frac{\ex{T_i}}{2}}\\
+        &\le \frac{4\var{T_i}}{(\ex{T_i})^2}\\
+        &= \frac{4}{K} \frac{\var{H_1G_1}}{(\ex{H_1G_1})^2}.
+    \end{align*}
+    
+    
+    Concerning the variance, the second moment of a geometric random variable of parameter $1-\beta$ is $(1+\beta)/(1-\beta)^2$. This shows that $\ex{(H_1G_1)^2}=(1+\beta)/(S(1-\beta)^2)\le 2S(\ex{H_1G_1})^2$. This implies:
+    \begin{align*}
+        \var{H_1G_1} &\le (2S-1)(\ex{H_1G_1})^2\le 2S(\ex{H_1G_1})^2.        
+    \end{align*}
+    This implies (iii).
+\end{proof}
+
+
+\section{Proof of Theorem~\ref{thm:no_OFU}}
+\label{apx:proof_OFU}
+
+\tikzstyle{state}=[circle, draw]
+\tikzstyle{reward}=[node distance=0.6cm,font=\small]
+
+\begin{figure}[ht]
+    \centering
+    \begin{tabular}{c|c|c}
+        \begin{tikzpicture}[xscale=0.7]
+            \node[state] at (0,0) (A) {$A_1$};
+            \node[state] at (2,0) (B) {$A_2$};
+            \node[state] at (4,0) (C) {$A_3$};
+            \node[below of=A,reward] {$+3$};
+            \node[below of=B,reward] {$+4$};
+            \node[below of=C,reward] {$+0$};
+            \draw (A) edge[loop above, ->] node[above]{$0.5$} (A);
+            \draw (A) edge[->] node[above]{$0.5$} (B);
+            \draw (B) edge[->] node[above]{$1$} (C);
+            \draw (C) edge[loop above, ->] node[above]{$1$} (C);
+        \end{tikzpicture}
+        &\begin{tikzpicture}[xscale=0.7]
+            \node[state] at (0,0) (A) {$B_1$};
+            \node[state] at (2,0) (B) {$B_2$};
+            \node[state] at (4,0) (C) {$B_3$};
+            \node[below of=A,reward] {$+3.21$};
+            \node[below of=B,reward] {$+0$};
+            \node[below of=C,reward] {$+3.21$};
+            \draw (A) edge[->] node[above]{$1$} (B);
+            \draw (B) edge[loop above, ->] node[above]{$1$} (B);
+            \draw (C) edge[loop above, ->] node[above]{$1$} (C);
+        \end{tikzpicture}
+        &\begin{tikzpicture}[xscale=0.7]
+            \node[state] at (0,0) (A) {$C_1$};
+            \node[below of=A,reward] {$+\mu$};
+            \draw (A) edge[loop above, ->] node[above]{$1$} (A);
+        \end{tikzpicture}
+        \\
+        (a) $\hat{\mQ}^a$ and $\hat{\vr}^a=\vr^a$.
+        &(b) $\hat{\mQ}^b=\mQ^b$ and $\hat{\vr}^b=\vr^b$.
+        &(c) $\hat{\mQ}^c=\mQ^c$ and $\hat{\vr}^c=\vr^c$.
+    \end{tabular}
+        \caption{Counterexample for OFU indices: $\hatB^a$, $\hatB^b=\gB^b$, $\hatB^c=\gB^c$.}
+        \label{fig:counter-example1}
+\end{figure}
+
+In this proof, we reason by contradiction and assume that there exists a procedure that computes local indices such that the obtained policy is such that for any estimate $\hatB$ and any initial condition $\rho$, then if $M\in\sM(\hatB)$, one has 
+\begin{align}
+    \sup_{M\in\sM(\hatB)}V^{\pi^{I(\hatB)}}_{M}(\rho) \ge \sup_{\pi} V^\pi_{M}(\rho).
+\end{align}
+In the remaining of this section, we set the discount factor to $\beta=0.5$. For a given state $x_a$, we denote by $I(x_a)$ the local index of state $x_a$ computed by this hypothetically optimal algorithm.
+Also, uniquely in this section, we denote the confidence bonus by $\epsilon$.
+
+We first consider a Markovian bandit problem with two arms $\{b,c\}$. We consider that these two arms are perfectly estimated (\ie, $\epsilon^r_b(x_b)=\epsilon^Q_b(x_b)=\epsilon^r_c(x_c)=\epsilon^Q_c(x_c)=0$). The Markov chains for these arms are depicted in Figure~\ref{fig:counter-example1}. Their transitions matrices and rewards are
+\begin{align*}
+    \mQ^b = \left[\begin{array}{ccc}
+        0 & 1 & 0\\
+        0 & 1 & 0\\
+        0 & 0 & 1
+    \end{array}\right]
+    \text{ and } \vr^b = [3.21,0,3.21];
+    && \mQ^c = [1] \text{ and } \vr^c = [\mu].
+\end{align*}
+As the Markovian bandit are perfectly known, the indices $I(B_1)$, $I(B_2)$, $I(B_3)$ and $I(C_1)$ must be such that the obtained priority policy is optimal for the true MDP, that is: states $B_1$ and $B_3$ should have priority over $C_1$ (\ie, $I(B_1)>I(C_1)$ and $I(B_3)>I(C_1)$) if and only if $\mu<3.21$, and state $B_2$ should have priority over $C_1$ (\ie, $I(B_2)>I(C_1)$) if and only if $\mu<0$ where $\mu$ is the reward incurred in state $C_1$. This implies that the local indices defined by our hypothetically optimal algorithm must satisfy
+\begin{align*}
+    I(B_1) = I(B_3) > I(B_2).
+\end{align*}
+Now, we consider Markovian bandit problems with two arms $\{a,b\}$, where Arm~$b$ is as before. For Arm~$a$, we consider a confidence set for $\hatB^a:=(\hat{\vr}^a,\hat{\mQ}^a,\epsilon^r_a,\epsilon^Q_a)$
+where $(\hat{\vr}^a,\hat{\mQ}^a)$ are depicted in Figure~\ref{fig:counter-example1}(a) and where $\epsilon^r_a(x_a)=0$ and $\epsilon^Q_a(x_a)=0.1$:
+\begin{align*}
+    \hat{\mQ}^a = \left[\begin{array}{ccc}
+        0.5 & 0.5 & 0\\
+        0 & 0 & 1\\
+        0 & 0 & 1
+    \end{array}\right]
+    \text{ and }\hat{\vr}^a = \vr^a = [3, 4, 0]
+    &&\epsilon_a^Q = [0.1, 0.1, 0.1] \text{ and }\epsilon_a^r=[0,0,0].
+\end{align*}
+We consider two possible instances of the ``true'' Markovian bandit problem, denoted $M_1$ and $M_2$. For $M_1$, the transition matrix and reward function of the first arm are depicted in Figure~\ref{fig:counter-example2}(a). For $M_2$, they are depicted in Figure~\ref{fig:counter-example2}(b). In both cases, $(\vr^b,\mQ^b)$ are as in Figure~\ref{fig:counter-example1}(b). It should be clear that $M_1\in\sM$ and $M_2\in\sM$. 
+
+\begin{figure}[ht]
+    \centering
+    \begin{tabular}{c|c}
+        \begin{tikzpicture}[xscale=0.7]
+            \node[state] at (0,0) (A) {$A_1$};
+            \node[state] at (2,0) (B) {$A_2$};
+            \node[state] at (4,0) (C) {$A_3$};
+            \node[below of=A,reward] {$+3$};
+            \node[below of=B,reward] {$+4$};
+            \node[below of=C,reward] {$+0$};
+            \draw (A) edge[loop above, ->] node[above]{$0.4$} (A);
+            \draw (A) edge[->] node[above]{$0.6$} (B);
+            \draw (B) edge[->] node[above]{$1$} (C);
+            \draw (C) edge[loop above, ->] node[above]{$1$} (C);
+        \end{tikzpicture}
+        &\begin{tikzpicture}[xscale=0.7]
+            \node[state] at (0,0) (A) {$A_1$};
+            \node[state] at (2,0) (B) {$A_2$};
+            \node[state] at (4,0) (C) {$A_3$};
+            \node[below of=A,reward] {$+3$};
+            \node[below of=B,reward] {$+4$};
+            \node[below of=C,reward] {$+0$};
+            \draw (A) edge[loop above, ->] node[above]{$0.6$} (A);
+            \draw (A) edge[->,bend right] node[above]{$0.4$} (B);
+            \draw (B) edge[->,bend right] node[above]{$0.1$} (A);
+            \draw (B) edge[->] node[above]{$0.9$} (C);
+            \draw (C) edge[loop above, ->] node[above]{$0.9$} (C);
+            \draw (C) edge[->, bend right] node[above]{$0.1$} (A);
+        \end{tikzpicture}
+        \\
+        (a) $(\vr^a,\mQ^a)$ for $M_1$ &  (b) $(\vr^a,\mQ^a)$ for $M_2$
+    \end{tabular}
+    \caption{The two instances of $\gB^a_1$ and $\gB^a_2$}
+    \label{fig:counter-example2}
+\end{figure}
+
+If there exist indices that can be computed locally, then the indices for an arm should not depend on the confidence that one has on the other arms. The indices $I(A_1)$, $I(A_2)$ and $I(A_3)$ must satisfy the following facts: 
+\begin{itemize}
+    \item $I(A_3)\in(I(B_2),I(B_3))$ because for all Markovian bandit $M\in\sM$, state $A_3$ should have priority over state $B_2$ and should not have priority over state $B_3$ (because of the discount factor $\beta=1/2$).
+    \item $I(A_2)>I(B_1)=I(B_3)$ because for all Markovian bandit $M\in\sM$, state $A_2$ will give a higher instantaneous reward than state $B_1$ or $B_3$. It should therefore have a higher priority.
+\end{itemize}
+This leaves two possibilities for $I(A_1)$: 
+\begin{itemize}
+\item If $I(A_1)>I(B_1)=I(B_3)$, then state $A_1$ has priority over both $B_1$ and $B_3$.  We denote the corresponding priority policy $\pi_1$.
+\item If $I(A_1)<I(B_1)=I(B_3)$, then state $B_1$ and $B_3$ have a higher priority than state $A_1$. We denote the corresponding priority policy by $\pi_2$.
+\end{itemize}  
+
+We use a numerical implementation of extended value iteration (available in the supplementary material) to find that:
+\begin{align}
+    \sup_{M\in\mathbb{M}} V^{\pi_2}_{M}(A_1,B_3) \approx 6.42
+    &< \sup_{\pi}V^{\pi}_{M_1}(A_1,B_3) \approx 6.47 \label{eq:counter-example1}\\
+    \sup_{M\in\mathbb{M}} V^{\pi_1}_{M}(A_1,B_1) \approx 5.96
+    &< \sup_{\pi}V^{\pi}_{M_2}(A_1,B_1) \approx 6.00 \nonumber
+\end{align}
+This implies that there does not exist any definition of indices such that \Eqref{eq:optimism} holds regardless of $M$ and $\vx$. 
+
+%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%
+\section{Description of the Algorithms and Choice of Hyperparameter}
+\label{apx:algos}
+
+In this section, we provide a detailed description of the simulation environment used in the paper. We first describe the Markov chain used in our example. Then, we describe all algorithms that we compare in the paper. For each algorithm, we give some details about our choice of hyperparameters. Last, we also describe the experimental methodology that we used in our simulations. 
+
+\subsection{Description of the example}
+\label{apx:scene1}
+
+We design an environment with 3 arms, all following a Markov chain represented in Table~\ref{fig:randomwalk}.  This Markov chain is obtained by applying the optimal policy on the river swim MDP of \cite{filippi2010optimism}. 
+In each chain, there are 2 rewarding states: state 1 with low mean reward $r_L$, and state 4) with high mean reward $r_R$, both with Bernoulli distributions. At the beginning of each episode, all chains start in their state 1. Each chain is parametrized by the values of $p_L,p_R,p_{RL},r_L,r_R$ that are given in Table~\ref{fig:randomwalk} along
+with the corresponding Gittins indices of each chain.
+
+
+\begin{table}[htbp]
+    \begin{tabular}{@{}c@{}c@{}}
+        \begin{tabular}{@{}c@{}}
+            \includegraphics[angle=0, width=0.43\linewidth]{RandomWalk}    
+        \end{tabular}
+        &\begin{tabular}{|@{~}c@{~}|@{~}c@{~}|@{~}c@{~}|@{~}c@{~}|@{~}c@{~}|c@{~}|@{~}c@{~}|@{~}c@{~}|@{~}c@{~}|}
+            \cline{6-9}
+            \multicolumn{5}{@{}c@{}}{} 
+            & \multicolumn{4}{@{}|@{~}c@{~}| }{Gittins index for each state} \\ \cline{1-9}
+             $p_L$ & $p_R$ & $p_{RL}$ & $r_L$ & $r_R$ & 1 & 2 & 3 & 4\\ \cline{1-9}
+              0.1  &  0.2  &   0.3    &  0.2  &  1.0  & 0.276 & 0.2894 & 0.392 & 1.0 \\ \cline{1-9}
+              0.1  &  0.5  &   0.7    & 0.35  &  0.7  & 0.35 & 0.256 & 0.2892 & 0.7 \\ \cline{1-9}
+              0.1  &  0.4  &   0.5    &  0.4  &  0.65 & 0.4 & 0.250 & 0.286 & 0.65 \\ \cline{1-9}
+            \end{tabular}            
+    \end{tabular}
+    \vspace{0.2cm}
+    \caption{The random walk chain with 4 states. In state 4, the chain has an average reward $r_R$. For state 2 and 3, the chain gives zero reward. In state 1, the mean reward is $r_L$. This chain is obtained by applying the optimal policy on the 4-state river swim MDP of \cite{filippi2010optimism}. The table contains the parameters that we used, along with Gittins indices of all states when the discount factor is $\beta=0.99$.}
+    \label{fig:randomwalk}
+\end{table}
+
+
+\subsection{MB-PSRL}
+\label{sssec:impl_gittinsPS}
+
+MB-PSRL, the adaption from PSRL, puts prior distribution on the parameters $(\vr^a,\mQ^a)$ of each Arm$~a$, draws a sample from the posterior distribution and uses it to compute the Gittins indices at the start of each episode. We implement two posterior updates for the mean reward vector $\vr^a$: Beta and Gaussian-Gamma. The second posterior, Gaussian-Gamma, will be used in prior choice sensitivity tests. For the transition matrix $\mQ^a$, we implemented Dirichlet posterior update because Dirichlet distribution is the only natural conjugate prior for categorical distribution. Beta, Gaussian-Gamma and Dirichlet distributions can be easily sampled using the \texttt{numpy} package of Python. This greatly contributes to the computational efficiency of MB-PSRL.
+
+We give more details on this prior distribution and their conjugate posterior in the subsections below.
+
+\subsubsection{Bayesian Updates: Conjugate Prior and Posterior Distributions}
+\label{apx:Bayes}
+
+MB-PSRL is a Bayesian learning algorithm. 
+As such, it samples reward vectors and transition matrices at the start each episode.
+We would like to emphasize that neither the definition of the algorithm nor its performance guarantees that we prove in Theorem~\ref{thm:regret_upper_bound} depend on a specific form of the prior distribution $\phi$. 
+Yet, in practice, some prior distributions are more preferable because their conjugate distributions are easy to implement. 
+In the following, we give concrete examples on how to update the conjugate distribution given the observations. 
+
+For $a\in[n]$ and $x_a\in\gS^a$, let $N_{k-1}(x_a)$ be the number of activations of arm $a$ while in state $x_a$ up to episode $k$. 
+For this state $x_a$, the number of samples of the reward and of transitions from $x_a$ are equal to $N_{k-1}(x_a)$. 
+To ease the exposition, we drop the label $a$ and assume that we are given: 
+\begin{itemize}
+    \item $N_{k-1}(x)$ \emph{i.i.d.} samples $\{Y_1,\dots,Y_{N_{k-1}(x)}\}$ of next states to which the arm transitioned from $x$.
+    \item $N_{k-1}(x)$ \emph{i.i.d.} samples $\{R_1,\dots,R_{N_{k-1}(x)}\}$ of random immediate rewards earned while the arm was activated in state $x$
+\end{itemize}
+Each $Y_i$ is such that $\Proba{Y_i=y}=Q(x,y)$ and each $R_i$ is such that $\ex{R_i}=r(x)$. In what follows, we describe natural priors that can be used to estimate the transition matrix and the reward vector. 
+
+\subsubsection{Transition Matrix}
+If no information is known about the arm, the natural prior distribution is to consider the lines $Q(x,\cdot)$ of the matrix as independent multivariate random variables uniformly distributed among all non-negative vectors of length $S$ that sum to $1$. 
+This corresponds to a Dirichlet distribution of parameters $\alpha=(1\ \dots\ 1)$. 
+For a given $x$, the variables $\{Y_1,\dots,Y_{N_{k-1}(x)}\}$ are generated according to a categorical distribution $Q(x,\cdot)$. 
+The Dirichlet distribution is self-conjugate with respect to the likelihood of a categorical distribution. 
+So, the posterior distribution $\phi(Q(x,\cdot)| Y_1,\dots,Y_{N_{k-1}(x)})$ is a Dirichlet distribution with parameters $\vc=(c_1\ \dots\ c_S)$ where $c_y=1+\sum_{i=1}^{N_{k-1}(x)}\ind{Y_i=y}$.
+
+\subsubsection{Reward Distribution}
+\label{apx:reward_post}
+
+As for the reward vector, the choice of a good prior depends on the distribution of rewards. 
+We consider two classical examples: Bernoulli and Gaussian.
+
+\paragraph{Bernoulli distribution}
+A classical case is to assume that the reward distribution of a state $x$ is Bernoulli with mean value $r(x)$.
+A classical prior in this case is to consider that $\{r(x)\}_{\{x\in\gS\}}$ are \emph{i.i.d.} random variables following a uniform distribution whose support is $[0,1]$. 
+The posterior distribution of $r(x)$ at time $t$ is the distribution of $r(x)$ conditional to the reward observations from state $x$ gathered up to time $t$. 
+The posterior distribution $\phi(r(x)\mid R_1,\dots,R_{N_{k-1}(x)})$ is then a Beta distribution with parameters $(1+\sum_{i=1}^{N_{k-1}(x)}\ind{R_i=1}, 1+\sum_{i=1}^{N_{k-1}(x)}\ind{R_i=0})$. 
+Recall that the Beta distribution is a special case of the Dirichlet distribution in the same way as the Bernoulli distribution is a special case of the Categorical distribution. 
+
+\paragraph{Gaussian distribution}
+We now consider the case of Gaussian rewards and we assume that the immediate rewards earned in state $x$ are \emph{i.i.d.} Gaussian random variables of mean and variance $(r(x), \sigma^2(x))$. 
+A natural prior for Gaussian rewards is to consider that $(r(x), \frac1{\sigma^2(x)})$ are \emph{i.i.d.} bivariate random variables where the marginal distribution of each $\frac{1}{\sigma^2(x)}$ is a Gamma distribution (it is a natural belief since the empirical variance of Gaussian has a chi-square distribution which is a special case of Gamma distribution). 
+Conditioned on $\frac1{\sigma^2(x)}$, $r(x)$ follows a Gaussian distribution of variance $\sigma^2(x)$. 
+We say that $(r(x), \frac1{\sigma^2(x)})$ has a Gaussian-Gamma distribution, which is self-conjugate with respect to a Gaussian likelihood (\emph{i.e.,} the likelihood of Gaussian rewards). 
+So, given the reward observations, the marginal distribution of $\frac{1}{\sigma^2(x)}$ is still a Gamma distribution. 
+$r(x)$ has Gaussian distribution conditioned on the reward observations and $\frac1{\sigma^2(x)}$. 
+Indeed, let $\hat{r}(x)=\frac{1}{N_{k-1}(x)}\sum_{i=1}^{N_{k-1}(x)}R_i$ and $\hat{\sigma}^2(x)=\frac{1}{N_{k-1}(x)}\sum_{i=1}^{N_{k-1}(x)}\left(R_i-\hat{r}(x)\right)^2$ be the empirical mean and empirical variance of $R_i$. Then it can be shown that the posterior distribution of $\frac{1}{\sigma^2(x)}$ and $r(x)$ are:
+\begin{align*}
+    \frac{1}{\sigma^2(x)}\mid R_1,\dots,R_{N_{k-1}(x)}&{\sim} 
+    \mathrm{Gamma}\bigg(\frac{N_{k-1}(x){+}1}{2}, \frac{1}{2}{+}\frac{N_{k-1}(x)\hat{\sigma}^2(x)}{2} {+}\frac{N_{k-1}(x)\hat{r}^2(x)}{2(N_{k-1}(x){+}1)}\bigg)\\
+    r(x)\mid \frac1{\sigma^2(x)}, R_1,\dots,R_{N_{k-1}(x)}&{\sim} \mathcal{N}\left(\frac{N_{k-1}(x)\hat{r}(x)}{N_{k-1}(x)+1}, \frac{\sigma^2(x)}{N_{k-1}(x)+1}\right).
+\end{align*}
+For more details about the analysis of conjugate prior and posterior presented above as well as more conjugate distributions, we refer the reader to \cite{fink1997compendium,murphy2007conjugate}.
+
+Notice that a reward that has a Gaussian distribution violates the property that all rewards are in $[0,1]$.
+This could invalidate the bound on the regret of our algorithm proven in Theorem \ref{thm:regret_upper_bound}. 
+Actually, it is possible to correct the proof to cover the Gaussian case by replacing the Hoeffding's inequality used in Lemma \ref{lem:concentration} by a similar inequality, also valid for sub-Gaussian random variables, see \cite{vershynin2018high}. 
+In the experimental section (see \ref{ssec:prior}), we also show that a bad choice for the prior distribution of the reward (assuming a Gaussian distribution while the rewards are actually Bernoulli) does not alter too much the performance of the learning algorithm. 
+
+\subsection{Experimental Methodology}
+\label{ssec:experimental_methodo}
+
+In our numerical experiment, we did 3 scenarios to evaluate the algorithms (scenario 2 and 3 are given in Appendix~\ref{apx:add_numerical}). In each scenario, we choose the discount factor $\beta=0.99$ (which is classical) and we compute the regret over $K=3000$ episodes. The number of simulations varies over scenario depending on how the regret is computed. For each run, we draw a sequence of horizons $\{H_k\}_{k\in[3000]}$ from a geometric distribution of parameter $0.01$ and we run all algorithms for this sequence of time-horizons to remove a source of noise in the comparisons.  
+
+For a given sequence of policies $\pi_k$, following \Eqref{eq:regretTraj}, the expected regret is $\ex{\sum_{k=1}^K\Delta_k(\mX_{t_k})}$ where $\Delta_k(\mX_{t_k})$ is the expected regret over episode $k$.
+To reduce the variance in the numerical experiment, we compute
+$\Delta_k(\mX_{t_k})=V^{\pi_*}_M(\mX_{t_k}) -V^{\pi_k}_M(\mX_{t_k})$.
+For a given Markovian bandit problem and state $\vx$, the value $V^{\pi_*}_{M}(\vx)$ can be computed by using the retirement evaluation presented in Page~272 of \cite{whittle1996optimal}. It seems, however, that the same methodology is not applicable to compute the value function of an index policy that is not the Gittins policy. This means that while the policy $\pi_k$ is easily computable, we do not know of an efficient algorithm to compute its value $V^{\pi_k}_{M}(\vx)$. Hence, in our simulations, we will use two methods to compute the regret, depending on the problem size:
+\begin{enumerate}
+    \item (Exact method) Let $(r^{\pi}, P^{\pi})$ be the reward vector and transition matrix under policy $\pi$ (i.e. $\forall \vx, \vy\in\gE, r^{\pi}(\vx)=r(\vx,\pi(\vx)), P^{\pi}(\vx,\vy)=P^{\pi(\vx)}(\vx, \vy)$ as defined in \Eqref{eq:defP}). Using the Bellman equation, the value function under policy $\pi$ is computed by
+    \begin{equation}
+        \label{eq:exact_value}
+        V_{M}^{\pi}=(\vone-\beta P^{\pi})^{-1}r^{\pi}.
+    \end{equation}
+    The matrix inversion can be done efficiently with the \texttt{numpy} package of Python. However, this takes $S^{2n}+2S^{n}$ of memory storage. Hence, when the number of states and arms are too large, the exact computation method cannot be performed. 
+
+    \item (Monte Carlo method) In Scenario~2, the model has $n=9$ arms with $S=11$ states each, which makes the exact method inapplicable. In this case, it is still possible to compute the optimal policy and to apply Gittins index based algorithms but computing their value is intractable. In such a case, to measure the performance, we do 240 simulations for each algorithm and try to approximate $\Delta_k$ by
+    \begin{equation}
+        \label{eq:simulation_value}
+        \hat{\Delta}_k=\frac1{\text{\#replicas}}\sum_{j=1}^{\text{\#replicas}}\sum_{t=0}^{H_k^{(j)}-1}\Big[r(X_{t,A^{*,(j)}_t}^{*,(j)}) -r(X_{t,A^{(j)}_t}^{(j)})\Big],
+    \end{equation}
+    where $H_k^{(j)}$ is the horizon of the $k$th episode of the $j$th simulation and $\{X_{t,A^{*,(j)}_t}^{*,(j)}\}$ and $\{X_{t,A^{(j)}_t}^{(j)}\}$ are the trajectories of the oracle and the agent respectively. The term oracle refers to the agent that knows the optimal policy $\pi_*$.
+\end{enumerate}
+Note that the expectation of \Eqref{eq:simulation_value} is equal to the value given in \Eqref{eq:exact_value} but \Eqref{eq:simulation_value} has a high variance. Hence, when applicable (Scenario~1~and~3) we use \Eqref{eq:exact_value} to compute the expected regret.
+
+\section{Additional Numerical Experiments}
+\label{apx:add_numerical}
+
+\subsection{Scenario 1: Small Dimensional Example (Random Walk chain)}
+\label{sssec:random_walk}
+
+This scenario is explained in Appendix~\ref{apx:scene1} and the main numerical results are presented in Section~\ref{sec:numerical}. Here, we provide the result with error bars with respect to the random seed. In \figurename~\ref{fig:randomwalk_3b4s_errorbar}, the error bar size equals twice the standard deviation over 80 samples (each sample is a simulation with a given random seed and the random seeds are different for different simulations).
+
+\begin{figure}[ht]
+    \center
+    \includegraphics[width=0.9\linewidth]{3b4s_errorbar}
+    \caption{Average cumulative regret in function of the number of episodes. Result from 80 simulations in a Markovian bandit problem with three 4-state random walk chains given in Table~\ref{fig:randomwalk}. The horizontal axis is the number of episodes. The size of the error bar equals twice the standard deviation over 80 simulations.}
+    \label{fig:randomwalk_3b4s_errorbar}
+\end{figure}
+
+\subsection{Scenario 2: Higher Dimensional Example (Task Scheduling)}
+\label{sssec:task_scheduling}
+
+We now study an example that is too large to apply MB-UCRL2 . Hence, here we only compare MB-PSRL and MB-UCBVI. 
+
+We implement the environment proposed on page 19 of \cite{duff1995q} that was used as a benchmark for the algorithm in the cited paper. Each chain represents a task that needs to be executed, and is represented in \figurename~\ref{fig:task_scheduling}(a). 
+Each task has 11 states (including finished state $\star$ that is absorbing). 
+For a given chain $a\in\{1,\dots,9\}$ and a state $i\in\{1,\dots,10\}$, the probability that a task $a$ ends at state $i$ is $\rho^{(a)}_{i}=\Proba{\tau^{(a)}=i \mid\tau^{(a)}\ge i}$ where $\tau^{(a)}$ is the execution time of task $a$. 
+We choose the same values of the parameters as in \cite{duff1995q}: $\rho^{(a)}_{1}=0.1a$ for $a\in\{1,\dots,9\}$, $\lambda=0.8$, $\beta=0.99$ and for $i\ge2$, 
+\begin{align*}
+    \mathbb{P}\{x_a=i\}=\left[1-[1-\rho^{(a)}_{1}]\lambda^{i-1}\right][1-\rho^{(a)}_{1}]^{i-1}\lambda^{\frac{(i-1)(i-2)}{2}}.
+\end{align*}
+Hence, the hazard rate $\rho^{(a)}_{i}$ is increasing with $i$. The reward in this scenario is deterministic: the agent receives 1 if the task is finished (\emph{i.e.,} under the transition from any state $i$ to state $\star$) and 0 otherwise (\emph{i.e.,} any other transitions including the one from state $\star$ to itself).
+For MB-PSRL, we use a uniform prior for the expected rewards and consider that the rewards are Bernoulli distributed.
+
+\begin{figure}[ht]
+    \center
+    \begin{tabular}{cc}
+        \begin{minipage}{.5\linewidth}
+            \includegraphics[angle=270, width=\textwidth]{Task_Scheduling}
+            (a) In state $i$, the task is finished with probability $\rho_i$ or transitions to state $i+1$ with probability $1-\rho_i$. For $i=1,\dots,10$, the transition from state $i$ to state $\star$ provides 1 as the immediate reward. Otherwise, the agent always receives 0 reward.
+        \end{minipage}
+        &
+        \begin{minipage}{.4\linewidth}
+            \includegraphics[angle=0, width=\columnwidth]{9b11s}
+            (b) Average cumulative regret over 240 simulations.
+        \end{minipage}        
+    \end{tabular}
+    \caption{Task Scheduling with 11 states including the absorbing state (finished state). }
+    \label{fig:task_scheduling}
+    %\Description{Markov chain from Duff (1995).}
+\end{figure}
+
+
+The average regret of the two algorithms is displayed in \figurename~\ref{fig:task_scheduling}(b). As before, MB-PSRL outperforms MB-UCBVI.  Note that we also studied the time to run one simulation for 3000 episodes. This time is around 1 min for MB-PSRL and MB-UCBVI. 
+
+\subsection{Scenario 3: Bayesian Regret and Sensitivity to the Prior}
+\label{ssec:prior}
+
+In this section, we study how robust the two implementations of PSRL are, namely MB-PSRL and vanilla PSRL (to simplify, we will just call the latter PSRL), to a choice of prior distributions. 
+As explained in Appendix~\ref{apx:reward_post}, the natural conjugate prior for Bernoulli reward is the Beta distribution. 
+In this section, we simulate MB-PSRL and PSRL in which the rewards are Bernoulli but the conjugate prior used for the rewards are Gaussian-Gamma which is incorrect for Bernoulli random reward. 
+In other words, MB-PSRL and PSRL have Gaussian-Gamma prior belief while the real rewards are Bernoulli random variables. 
+
+
+To conduct our experiments, we use a Markovian bandit problem with three $4$-state random walk chains represented in Table~\ref{fig:randomwalk}. 
+We draw 16 models by generating 16 pairs of $(r_L, r_R)$ from $U[0,1]$, 16 pairs of $(p_L, p_R)$ from Dirichlet(3,(1,1,1)) and 16 values of $p_{RL}$ from Dirichlet(2, (1,1)) for each chain. 
+Each model is an unknown MDP that will be learned by MB-PSRL or PSRL. 
+For each of these $16$ models, we simulate MB-PSRL and PSRL 5 times with correct priors and 5 times with incorrect priors. 
+The result can be found in \figurename~\ref{fig:bayes_gittinsPS} which suggests that MB-PSRL performs better when the prior is correct and is relatively robust to the choice of priors in term of Bayesian regret. 
+This figure also shows that PSRL seems more sensitive to the choice of prior distribution. 
+Also note that for both MB-PSRL and PSRL, some trajectories deviate a lot from the mean, under correct priors but even more so with  incorrect priors. 
+This illustrates the general fact that learning can go wrong, but with a small probability.
+
+\begin{figure*}[tb]
+    \begin{tabular}{cccc}
+        \rotatebox{90}{\quad\qquad MB-PSRL}
+        &\includegraphics[width=0.3\linewidth]{gittinsPS_corr_prior}
+        &\includegraphics[width=0.3\linewidth]{gittinsPS_incorr_prior}
+        &\includegraphics[width=0.3\linewidth]{gittinsPS_prior_choices}\\
+        \rotatebox{90}{\qquad\qquad PSRL}
+        &\includegraphics[width=0.3\linewidth]{PSRL_corr_prior}
+        &\includegraphics[width=0.3\linewidth]{PSRL_incorr_prior}
+        &\includegraphics[width=0.3\linewidth]{PSRL_prior_choices}\\
+        &\begin{subfigure}[b]{0.3\linewidth}\caption{Correct Prior}\label{subfig:gittinsPS_corr_prior}\end{subfigure}
+        &\begin{subfigure}[b]{0.3\linewidth}\caption{Incorrect Prior}\label{subfig:gittinsPS_incorr_prior}\end{subfigure}
+        &\begin{subfigure}[b]{0.3\linewidth}\caption{Bayesian Regret}\label{subfig:gittinsPS_prior_choices}\end{subfigure}
+    \end{tabular}
+    \caption{Bayesian regret of MB-PSRL and vanilla PSRL in 3 4-state Random Walk chains. For each chain, we draw 16 random models and run the algorithms for 5 simulations in each model (there are 80 simulations in total). In panels (a) and (b), we plot 16 dotted lines that correspond to the average cumulative regret over 5 simulations in the 16 samples. The solid and dash-dot lines are the average regret each over 80 simulations (the estimated Bayesian regret). \figurename~\ref{subfig:gittinsPS_corr_prior} shows the performance when reward prior is well chosen (namely, $U([0,1])$). \figurename~\ref{subfig:gittinsPS_incorr_prior} is when the reward prior is incorrectly chosen (namely Gaussian-Gamma distribution). \figurename~\ref{subfig:gittinsPS_prior_choices} compares the Bayesian regret of the correct prior with the incorrect one (dash-dot line). In both case, the prior of next state transition is well chosen (namely, Dirichlet distribution). Y-axis range changes for each figure.}
+    \label{fig:bayes_gittinsPS}
+\end{figure*}
+
+
+\section{Experimental environment}
+\label{apx:envi}
+
+The code of all experiments is given in a separated zip file that contains all necessary material to reproduce the simulations and the figures. 
+
+Our experiments were run on HPC platform with 1 node of 16 cores of Xeon E5. The experiments were made using Python 3 and Nix and submitted as supplementary material and will be made publicly available with the full release of the paper. The package requirement are detailed in README.md. Using only \emph{1 core} of Xeon E5, the Table~\ref{tab:sim_time} gives some orders of duration taken by each experiment (with discount factor $\beta=0.99$, and 3000 episodes per simulation). We would like to draw two remarks. First, the duration reported in Figure~\ref{fig:randomwalk_cpt_3b4s} is the time for policy computation (algorithm's parameters update and policy computation). The duration reported in Table~\ref{tab:sim_time} includes this plus the computation time for oracle (because we track the regret), the state transition time along the trajectories of oracle and of each algorithm, resetting time... This explains why the duration reported in Table~\ref{tab:sim_time} cannot be compared to the duration reported in Figure~\ref{fig:randomwalk_cpt_3b4s}.  Second, the duration shown in Table~\ref{tab:sim_time} are meant to be a rough estimation of the computation time (we only ran the simulation once and the average duration might fluctuate). 
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{ |c|c|c|c|c|c| } 
+    \hline
+    Experiment & MB-PSRL  & PSRL & MB-UCRL2 & MB-UCBVI & Total\\
+    \hline
+    Scenario 1 & 40 min  & - & 6days & 50 min & 6days\\ 
+    \hline
+    Scenario 2 & 200 min  & - & - & 200 min & 400 min\\ 
+    \hline
+    Scenario 3 & 90 min  & 260 min & - & - & 350 min\\ 
+    \hline
+    \end{tabular}
+\vspace{0.2cm}
+\caption{Approximative execution time for simulating each algorithm and tracking its regret in each scenario. This time includes the time given in Figure~\ref{fig:randomwalk_cpt_3b4s} and the computation time needed by oracle (because we track the regret), the state transition time along the trajectories of oracle and each algorithm, etc. In each scenario, we set the discount factor $\beta=0.99$ and run the algorithms for $3000$ episodes per simulation.}
+\label{tab:sim_time}
+\end{table}
+
+\endgroup
+
+

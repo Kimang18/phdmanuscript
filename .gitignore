@@ -1,0 +1,15 @@
+macros.include.tex
+thesis.fdb_latexmk
+*.synctex.gz
+*.aux
+*.bbl
+*.blg
+*.out
+*.log
+*.fls
+*.bcf
+*.run.xml
+*.pdf
+thesis.lof
+thesis.lot
+thesis.toc

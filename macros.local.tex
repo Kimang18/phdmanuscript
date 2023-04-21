@@ -4,11 +4,36 @@
 % requires amsthm, xspace
 
 % theorem-like environment
-\newtheorem{thm}{Theorem}
+\newtheoremstyle{breakthm}
+  {\topsep}%
+  {\topsep}%
+  {\itshape}%
+  {}%
+  {\color{RoyalBlue!80!black}\bfseries}%
+  {}%
+  {\newline}%
+  {}%
+\theoremstyle{breakthm}
+\newtheorem{thm}{Theorem}[chapter]
 \newtheorem{lem}[thm]{Lemma}
-\newtheorem{prop}{Proposition}
-\newtheorem{propty}{Property}
-\newtheorem{defn}{Definition}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{propty}[thm]{Property}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{conj}[thm]{Conjecture}
+
+\newtheoremstyle{breakdefn}
+  {\topsep}%
+  {\topsep}%
+  {\itshape}%
+  {}%
+  {\color{ForestGreen!70!black}\bfseries}%
+  {}%
+  {\newline}%
+  {}%
+\theoremstyle{breakdefn}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{asmp}[thm]{Assumption}
+\newtheorem{prob}[thm]{Problem}
 
 % asymptotic complexity (Landau) notations
 \newcommand{\landauO}{\ensuremath{\mathcal{O}}\xspace}
@@ -28,19 +53,6 @@
 % \newcommand{\cNP}{\ensuremath{\mathcal{N\!P}}\xspace}  % round notations
 % \newcommand{\cP}{\ensuremath{\mathcal{P}}\xspace}
 
-% Machine states
-\newcommand{\computing}{computing}
-\newcommand{\idle}{idle}
-\newcommand{\off}{of\!f}
-\newcommand{\on}{on}
-\newcommand{\ontooff}{\on\rightarrow\off}
-\newcommand{\offtoon}{\off\rightarrow\on}
-
-% CCGRID 2017
-\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
-
-% Cluster 2017
-\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
 \newlength\mylen % algorithm2e hack
 \newcommand\myinput[1]{%
@@ -59,7 +71,6 @@
 \renewcommand{\bottomfraction}{0.8}
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%
 % Modular compilation %
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -76,11 +87,6 @@
 }
 
 % Modeling notations
-\newcommand{\model}[2][]{\ensuremath{\bm{M}_{#1}\ifthenelse{\equal{#2}{}}{}{\!-\!}{#2}}\xspace}
-\newcommand{\modelp}[2][]{\ensuremath{\bm{M'}_{#1}\!\ifthenelse{\equal{#2}{}}{}{\!-\!}{#2}}\xspace}
-\newcommand{\noise}[2][]{\ensuremath{\bm{N}_{#1}\ifthenelse{\equal{#2}{}}{}{\!-\!}{#2}}\xspace}
-\newcommand{\noisep}[2][]{\ensuremath{\bm{N'}_{#1}\!\ifthenelse{\equal{#2}{}}{}{\!-\!}{#2}}\xspace}
-\newcommand{\norm}{\ensuremath{\mathcal{N}}\xspace}
 \newcommand{\mcdots}{\ensuremath{\!\cdot\!\cdot\!\cdot\!}\xspace}
 \newcommand{\unif}[2]{\ensuremath{\mathcal{U}\left({#1},{#2}\right)}\xspace}
 
@@ -90,36 +96,248 @@
 \newcommand{\aka}{a.k.a.\@\xspace}
 \newcommand{\resp}{resp.\@\xspace}
 \newcommand{\etal}{et~al.\@\xspace}
-\newcommand{\dgemm}{\texttt{dgemm}\@\xspace}
-\newcommand{\recv}{\texttt{MPI\_Recv}\@\xspace}
-\newcommand{\send}{\texttt{MPI\_Send}\@\xspace}
-\newcommand{\isend}{\texttt{MPI\_Isend}\@\xspace}
-\newcommand{\iprobe}{\texttt{MPI\_Iprobe}\@\xspace}
-\newcommand{\pyce}{\texttt{pycewise}\@\xspace}
-\newcommand{\peanut}{\texttt{peanut}\@\xspace}
-\newcommand{\cashew}{\texttt{cashew}\@\xspace}
-\newcommand{\execo}{\texttt{execo}\@\xspace}
-\newcommand{\enoslib}{\texttt{EnOSlib}\@\xspace}
-\newcommand{\cluster}[2][]{\textcolor{myblue}{\texttt{#2\ifthenelse{\equal{#1}{}}{}{-#1}}}\@\xspace}
-\newcommand{\dahu}[1][]{\cluster[#1]{dahu}}
-\newcommand{\dada}[1]{\cluster[#1]{dahu}}  % for some reason, optionnal arguments do not work in subfigure, so I need this crap...
-\newcommand{\drac}{\cluster{drac}}
-\newcommand{\yeti}[1][]{\cluster[#1]{yeti}}
-\newcommand{\troll}[1][]{\cluster[#1]{troll}}
-\newcommand{\gros}{\cluster{gros}}
-\newcommand{\grisou}[1][]{\cluster[#1]{grisou}}
-\newcommand{\grvingt}{\cluster{grvingt}}
-\newcommand{\paravance}{\cluster{paravance}}
-\newcommand{\parasilo}[1][]{\cluster[#1]{parasilo}}
-\newcommand{\paranoia}{\cluster{paranoia}}
-\newcommand{\chiclet}{\cluster{chiclet}}
-\newcommand{\chetemi}{\cluster{chetemi}}
-\newcommand{\pyxis}{\cluster{pyxis}}
-\newcommand{\nova}{\cluster{nova}}
-\newcommand{\taurus}{\cluster{taurus}}
-\newcommand{\ecotype}[1][]{\cluster[#1]{ecotype}}
 
 % Referencing several times a footnote
 % See https://tex.stackexchange.com/a/54240
 \newcommand{\savefootnote}[2]{\footnote{\label{#1}#2}}
 \newcommand{\repeatfootnote}[1]{\textsuperscript{\ref{#1}}}
+
+
+% MDP Notation
+\newcommand{\StateSpace}{\mathcal{S}}       % MC state space -->
+\newcommand{\sSpace}{\mathcal{S}}       % MC state space -->
+\newcommand{\nStateSpace}{S}                % state space size
+\newcommand{\sSize}{S}                % state space size
+\newcommand{\mdpTran}{p}                       % mdp transition kernel -->
+\newcommand{\mdpRew}{r}                        % mdp reward function -->
+\newcommand{\tran}{P}                       % MC transition kernel -->
+\newcommand{\rew}{\mathbf{r}}                        % MC reward function -->
+\newcommand{\pol}{\pi}                      % policy -->
+\newcommand{\vfunc}{v}                      % value function -->
+\newcommand{\qfunc}{q}                     % action-value function -->
+\newcommand{\SC}{SC}                        % sample complexity -->
+\newcommand{\Algo}{\mathfrak{A}}            % algorithm used -->
+\newcommand{\Reg}{\mathrm{Regret}}              % regret -->
+\newcommand{\BayReg}{\mathrm{BayesRegret}}              % bayesian regret -->
+\newcommand{\nbStates}{k}                   % number of states in each Markovian bandit -->
+\newcommand{\nbBandits}{n}                  % number of Markovian bandits -->
+\newcommand{\state}{x}                      % Markovian bandit state -->
+\newcommand{\statePrime}{y}                % Markovian bandit next state -->
+\newcommand{\mdpModel}{\mathcal{M}}         % MDP Model
+\newcommand{\mdpStateSpace}{\mathcal{E}}    % MDP state space
+
+\newcommand{\mSpace}{\mathcal{X}}    % MDP state space
+\newcommand{\mSize}{E}    % MDP state space
+\newcommand{\ActionSpace}{\mathcal{A}}      % MDP action space -->
+\newcommand{\aSpace}{\mathcal{A}}      % MDP action space -->
+
+\newcommand{\Action}{a}                     % MDP action -->
+\newcommand{\ActionPrime}{b}                % MDP next action -->
+\newcommand{\mdpState}{\mathbf{x}}                   % MDP state -->
+\newcommand{\mdpStatePrime}{\mathbf{y}}              % MDP next state -->
+\newcommand{\discount}{\beta}               % MDP discount factor -->
+\newcommand{\bandit}{\mathcal{B}}           % bandit symbol -->
+\newcommand{\GIndex}{\gamma}                % Gittins Index symbol -->
+\newcommand{\horizon}{H}                    % episode's length in FiniteHorizon setting -->
+\newcommand{\nbEpisodes}{K}                 % the total number of episodes
+% Estimate symbols
+\newcommand{\estTran}{\hat{\tran}}          % estimated transition
+\newcommand{\estRew}{\hat{\rew}}            % estimated reward
+\newcommand{\estMdp}{\hat{\mdpModel}}       % estimated MDP Model
+\newcommand{\estPol}{\hat{\pol}}       % estimated MDP Model
+% Random Variables
+\newcommand{\RVmdpState}{X}                 % MDP state random variable
+\newcommand{\RVmdpStatePrime}{Y}                 % MDP state random variable
+\newcommand{\RVaction}{A}                 % MDP state random variable
+\newcommand{\RVstate}{X}                    % Markovian bandit state random variable
+\newcommand{\RVrew}{R}                      % reward random variable
+\newcommand{\RVvfunc}{V}                    % reward random variable
+\newcommand{\RVqfunc}{Q}                    % reward random variable
+
+\newcommand\sto{^{\mathrm{stoc.pb}}} % notation for stochastic bandit problem
+\newcommand\stoi{^{\mathrm{stoc.pb},j}} % notation for stochastic bandit problem
+\newcommand\p[1]{\left(#1\right)} % parenthesis
+\newcommand\ceil[1]{\left\lceil#1\right\rceil}
+\newcommand\floor[1]{\left\lfloor#1\right\rfloor}
+\newcommand\norm[1]{\left\|#1\right\|}      % norm
+\newcommand\abs[1]{\left\vert#1\right\vert}      % norm
+\newcommand\ind[1]{\mathbb{I}_{\{#1\}}} % indicator function
+
+
+\newcommand\Eqref[1]{Equation~\eqref{#1}}
+
+% Matrix
+\def\mA{{\bm{A}}}
+\def\mB{{\bm{B}}}
+\def\mC{{\bm{C}}}
+\def\mD{{\bm{D}}}
+\def\mE{{\bm{E}}}
+\def\mF{{\bm{F}}}
+\def\mG{{\bm{G}}}
+\def\mH{{\bm{H}}}
+\def\mI{{\bm{I}}}
+\def\mJ{{\bm{J}}}
+\def\mK{{\bm{K}}}
+\def\mL{{\bm{L}}}
+\def\mM{{\bm{M}}}
+\def\mN{{\bm{N}}}
+\def\mO{{\bm{O}}}
+\def\mP{{\bm{P}}}
+\def\mQ{{\bm{Q}}}
+\def\mR{{\bm{R}}}
+\def\mS{{\bm{S}}}
+\def\mT{{\bm{T}}}
+\def\mU{{\bm{U}}}
+\def\mV{{\bm{V}}}
+\def\mW{{\bm{W}}}
+\def\mX{{\bm{X}}}
+\def\mY{{\bm{Y}}}
+\def\mZ{{\bm{Z}}}
+\def\mBeta{{\bm{\beta}}}
+\def\mPhi{{\bm{\Phi}}}
+\def\mDelta{{\bm{\Delta}}}
+\def\mLambda{{\bm{\Lambda}}}
+\def\mSigma{{\bm{\Sigma}}}
+
+% Graph
+\def\gA{{\mathcal{A}}}
+\def\gB{{\mathcal{B}}}
+\def\gC{{\mathcal{C}}}
+\def\gD{{\mathcal{D}}}
+\def\gE{{\mathcal{E}}}
+\def\gF{{\mathcal{F}}}
+\def\gG{{\mathcal{G}}}
+\def\gH{{\mathcal{H}}}
+\def\gI{{\mathcal{I}}}
+\def\gJ{{\mathcal{J}}}
+\def\gK{{\mathcal{K}}}
+\def\gL{{\mathcal{L}}}
+\def\gM{{\mathcal{M}}}
+\def\gN{{\mathcal{N}}}
+\def\gO{{\mathcal{O}}}
+\def\gP{{\mathcal{P}}}
+\def\gQ{{\mathcal{Q}}}
+\def\gR{{\mathcal{R}}}
+\def\gS{{\mathcal{S}}}
+\def\gT{{\mathcal{T}}}
+\def\gU{{\mathcal{U}}}
+\def\gV{{\mathcal{V}}}
+\def\gW{{\mathcal{W}}}
+\def\gX{{\mathcal{X}}}
+\def\gY{{\mathcal{Y}}}
+\def\gZ{{\mathcal{Z}}}
+
+
+% Vectors
+\def\vzero{{\bm{0}}}
+\def\vone{{\bm{1}}}
+\def\vmu{{\bm{\mu}}}
+\def\vtheta{{\bm{\theta}}}
+\def\vbeta{{\bm{\beta}}}
+\def\valpha{{\bm{\alpha}}}
+\def\vdelta{{\bm{\delta}}}
+\def\vpi{{\bm{\pi}}}
+\def\va{{\bm{a}}}
+\def\vb{{\bm{b}}}
+\def\vc{{\bm{c}}}
+\def\vd{{\bm{d}}}
+\def\ve{{\bm{e}}}
+\def\vf{{\bm{f}}}
+\def\vg{{\bm{g}}}
+\def\vh{{\bm{h}}}
+\def\vi{{\bm{i}}}
+\def\vj{{\bm{j}}}
+\def\vk{{\bm{k}}}
+\def\vl{{\bm{l}}}
+\def\vm{{\bm{m}}}
+\def\vn{{\bm{n}}}
+\def\vo{{\bm{o}}}
+\def\vp{{\bm{p}}}
+\def\vq{{\bm{q}}}
+\def\vr{{\bm{r}}}
+\def\vs{{\bm{s}}}
+\def\vt{{\bm{t}}}
+\def\vu{{\bm{u}}}
+\def\vv{{\bm{v}}}
+\def\vw{{\bm{w}}}
+\def\vx{{\bm{x}}}
+\def\vy{{\bm{y}}}
+\def\vz{{\bm{z}}}
+
+% Sets
+\def\sA{{\mathbb{A}}}
+\def\sB{{\mathbb{B}}}
+\def\sC{{\mathbb{C}}}
+\def\sD{{\mathbb{D}}}
+% Don't use a set called E, because this would be the same as our symbol
+% for expectation.
+\def\sF{{\mathbb{F}}}
+\def\sG{{\mathbb{G}}}
+\def\sH{{\mathbb{H}}}
+\def\sI{{\mathbb{I}}}
+\def\sJ{{\mathbb{J}}}
+\def\sK{{\mathbb{K}}}
+\def\sL{{\mathbb{L}}}
+\def\sM{{\mathbb{M}}}
+\def\sN{{\mathbb{N}}}
+\def\sO{{\mathbb{O}}}
+\def\sP{{\mathbb{P}}}
+\def\sQ{{\mathbb{Q}}}
+\def\sR{{\mathbb{R}}}
+\def\sS{{\mathbb{S}}}
+\def\sT{{\mathbb{T}}}
+\def\sU{{\mathbb{U}}}
+\def\sV{{\mathbb{V}}}
+\def\sW{{\mathbb{W}}}
+\def\sX{{\mathbb{X}}}
+\def\sY{{\mathbb{Y}}}
+\def\sZ{{\mathbb{Z}}}
+\def\hatB{\hat{\gB}}
+
+\newcommand{\E}{\mathbb{E}}
+
+\newcommand{\widx}{\lambda}
+\newcommand{\gidx}{\mathrm{GittinsIndex}}
+\newcommand{\mcal}[1]{\mathcal{#1}}
+\newcommand{\Proba}[1]{\sP\left(#1\right)}
+\newcommand{\ex}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\var}[1]{\mathbb{V}\left[#1\right]}
+\newcommand{\pik}{\pi_k}
+\newcommand{\Mk}{M_k}
+\newcommand{\Mbar}{\bar{M}}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\rhat}{\hat{r}}
+\newcommand{\Phat}{\hat{P}}
+\newcommand{\Ahat}{\hat{A}}
+\newcommand{\Bhat}{\hat{B}}
+\newcommand{\Qhat}{\hat{Q}}
+\newcommand{\rbar}{\bar{r}}
+\newcommand{\Pbar}{\bar{P}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\bA}{\boldsymbol{A}}
+\newcommand{\bX}{\boldsymbol{X}}
+\newcommand{\bY}{\boldsymbol{Y}}
+\newcommand{\voisin}{\mathcal{V}}
+\newcommand{\brhat}{\hat{\br}}
+\newcommand{\event}{\xi}
+\newcommand{\mTilde}{\tilde{M}}
+\newcommand{\aTilde}{\tilde{a}}
+\newcommand{\piTilde}{\tilde{\pi}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Clim}{C-\,lim}
+
+% For a custom label (in underbrace)
+\makeatletter
+\newcommand{\customlabel}[2]{%
+   \protected@write \@auxout {}{\string \newlabel {#1}{{#2}{\thepage}{#2}{#1}{}} }%
+   \hypertarget{#1}{#2}
+}
+\makeatother
+
+% Math notations
+
+
+
