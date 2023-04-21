@@ -35,7 +35,7 @@ Inspired by the challenging questions above, this thesis has several goals that 
 
 Firstly, we design an efficient single algorithm that tests indexability and computes Whittle index for both discounted and average reward restless bandits and Gittins index for discounted rested bandits.
 
-Secondly, we show that some RL algorithms can be tailored to the rested bandit with discount to have a regret bounded sublinearly in the number of arms and a runtime linear in the number of arms.
+Secondly, we show that some RL algorithms can be tailored to discounted rested bandits to have a regret bounded sublinearly in the number of arms and a runtime linear in the number of arms.
 
 Thirdly, we study the implication of the arms' structure in the structure of bandit and regret when learning in a restless bandit with average reward criterion.
 We show that it is difficult to construct a subclass of restless bandits with desirable learning structure by only making assumptions about arms.
@@ -90,7 +90,7 @@ To do so, we adapt UCRL2 \cite{jaksch2010near} and UCBVI \cite{azar2017minimax},
 The adapted versions are respectively called MB-UCRL2, MB-UCBVI, and MB-PSRL, where ``MB'' stands for Markovian bandit.
 We show that the three MB-* algorithms have a regret upper bounded like $\tilde{\landauO}(S\sqrt{nK})$, where $K$ is the number of episodes.
 This is an exponential improvement in terms of the number of arms $n$.
-We also derive the baseline regret for learning algorithms in rested bandit with discount.
+We also derive the baseline regret for learning algorithms in discounted rested bandit.
 That is, any algorithm learning in discounted rested bandit suffers a regret that is at least $\Omega(\sqrt{SnK})$.
 For the computational aspect, we show that UCRL2 and its variants that use extended value iteration \cite{jaksch2010near} cannot leverage Gittins index policy to achieve efficient policy computation.
 This is because such algorithms rely on the confidence bonus on arms' transition; which does not allow them to guarantee the OFU principle when working on each arm independently of the other arms.
